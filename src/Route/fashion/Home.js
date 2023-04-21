@@ -37,7 +37,7 @@ const HomeNav = () => {
 
 
             <Stack.Screen name="Category" component={CategoryScreen}/>
-            <Stack.Screen name="Store" component={StoreScreen}/>
+            <Stack.Screen name="store" component={StoreScreen}/>
 
             <Stack.Screen name="PickupAndDropoff" component={PickupAndDropoff}/>
             <Stack.Screen name="OurFarms" component={OurFarms}/>

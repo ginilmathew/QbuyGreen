@@ -37,7 +37,8 @@ const CartProvider = (props) => {
                 defaultAddress,
                 setCart,
                 setAddress,
-                getDefaultAddress
+                getDefaultAddress,
+                setDefaultAddress
             }}
         >
             {props.children}

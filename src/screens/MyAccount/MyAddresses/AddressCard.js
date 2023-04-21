@@ -3,13 +3,16 @@ import React, { memo, useCallback, useContext, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import CommonTexts from '../../../Components/CommonTexts'
 import PandaContext from '../../../contexts/Panda'
+import AuthContext from '../../../contexts/Auth'
 
 const AddressCard = memo(({setSelected, selected, item}) => {
 
     const contextPanda = useContext(PandaContext)
+    const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
     const onClick = useCallback(() => {
+        
         setSelected(item?._id)
     },[])
 
@@ -19,7 +22,7 @@ const AddressCard = memo(({setSelected, selected, item}) => {
             style={styles.container}
         >
             <View style={{marginHorizontal:5}}>
-                <Ionicons name={selected === item?._id ? 'checkmark-circle' : 'ellipse-outline'} color = { active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} size={20}/>
+                <Ionicons name={selected ? 'checkmark-circle' : 'ellipse-outline'} color = { active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} size={20}/>
             </View>
             <View style={{flex:0.9}}>
                 <CommonTexts label={item?.address_type} fontSize={13}/>

@@ -360,7 +360,7 @@ const Checkout = ({ navigation }) => {
 
 
     const navigateToAddress = () => {
-        navigation.navigate("account", { screen: "MyAddresses" })
+        navigation.navigate("account", { screen: "MyAddresses", params : { mode: 'checkout' } })
     }
 
 

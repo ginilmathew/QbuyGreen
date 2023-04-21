@@ -170,6 +170,19 @@ const Route = () => {
         loadingContext.setLoading(true)
         await customAxios.get(`customer/address/list`)
             .then(async response => {
+                if(response?.data?.data?.length > 0){
+                    if(response?.data?.data?.length === 1){
+                        userContext.setLocation([response?.data?.data?.[0]?.area?.latitude, response?.data?.data?.[0]?.area?.longitude])
+                        userContext?.setCurrentAddress(response?.data?.data?.[0]?.area?.address)
+                    }
+                    else{
+                        let defaultAdd = response?.data?.data?.find(add => add?.default === true)
+                        userContext.setLocation([defaultAdd?.area?.latitude, defaultAdd?.area?.longitude])
+                        userContext?.setCurrentAddress(defaultAdd?.area?.address)
+                    }
+                }
+                
+                
                 cartContext.setAddress(response?.data?.data)
                 loadingContext.setLoading(false)
             })

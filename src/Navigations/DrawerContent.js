@@ -1,5 +1,5 @@
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
-import React, { useCallback } from 'react'
+import React, { useCallback, useContext } from 'react'
 import Octicons from 'react-native-vector-icons/Octicons'
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
@@ -12,8 +12,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import ListItem from '../Components/ListItem'
 import CommonTexts from '../Components/CommonTexts'
+import AuthContext from '../contexts/Auth'
 
 const DrawerContent = ({ navigation }) => {
+
+    const auth = useContext(AuthContext)
 
     const {width, height} = useWindowDimensions()
 
@@ -51,7 +54,7 @@ const DrawerContent = ({ navigation }) => {
                         source={require('../Images/drawerLogo.png')}
                     />
                     <CommonTexts
-                        label={'Shaan Johnson'}
+                        label={auth?.userData?.name}
                         color="#fff"
                         fontSize={13}
                         mt={3}
@@ -62,7 +65,7 @@ const DrawerContent = ({ navigation }) => {
                             color:'#fff',
                             fontSize: 9,
                         }}
-                    >{'shaan@gmail.com'}</Text>
+                    >{auth?.userData?.email}</Text>
                     <Text
                         style={{
                             fontFamily: 'Poppins-Regular',
@@ -70,7 +73,7 @@ const DrawerContent = ({ navigation }) => {
                             fontSize: 9,
                             marginTop: 1,
                         }}
-                    >{'1234567890'}</Text>
+                    >{auth?.userData?.mobile}</Text>
                 </View>
                 
 

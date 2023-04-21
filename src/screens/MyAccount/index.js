@@ -88,7 +88,7 @@ const MyAccount = ({ navigation }) => {
 
 
                     <CommonTexts
-                        label={'Shaan Johnson'}
+                        label={userData?.name}
                         color="#23233C"
                         fontSize={13}
                         mt={3}
@@ -99,7 +99,7 @@ const MyAccount = ({ navigation }) => {
                             color: '#A9A9A9',
                             fontSize: 9,
                         }}
-                    >{'shaan@gmail.com'}</Text>
+                    >{userData?.email}</Text>
                     <Text
                         style={{
                             fontFamily: 'Poppins-Regular',

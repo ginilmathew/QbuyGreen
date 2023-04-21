@@ -62,7 +62,7 @@ const Header = ({  onPress, openAddress, goCart}) => {
 					source={ active === 'green' ? require('../Images/locationGrocery.png') : active === 'fashion' ? require('../Images/fashionLocation.png') : require('../Images/location.png')}
 				/>
                 <View style={{marginLeft:5, flex:0.98,}}>
-                <Text numberOfLines={2} style={styles.textStyle}>{cartContext?.defaultAddress?.area?.address ? cartContext?.defaultAddress?.area?.address : userContext?.currentAddress}</Text>
+                <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress}</Text>
                 </View>
             </TouchableOpacity>
             {active === 'fashion' &&

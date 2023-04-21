@@ -22,6 +22,7 @@ import SearchBox from '../../../Components/SearchBox';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import AuthContext from '../../../contexts/Auth';
+import reactotron from 'reactotron-react-native';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -30,6 +31,8 @@ const QBuyGreen = ({ navigation }) => {
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
+
+    reactotron.log({userContext: userContext.userData})
 
     let loader = loadingg?.loading
 
@@ -167,7 +170,7 @@ const QBuyGreen = ({ navigation }) => {
         <>
             <Header onPress={onClickDrawer} />
             <ScrollView style={styles.container} >
-                <NameText userName={'Shaan Johnson'} mt={8} />
+                <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
                 <SearchBox onPress={onSearch}/>
                 {categories?.length > 0 && <ScrollView
                     horizontal

@@ -31,7 +31,7 @@ const QBuyFashion = () => {
 
     let coord = auth.location
 
-    // reactotron.log({coord})
+    reactotron.log({auth: auth?.userData})
 
 
     const loadingg = useContext(LoaderContext)
@@ -190,7 +190,7 @@ const QBuyFashion = () => {
             <Header onPress={onClickDrawer} />
             <ScrollView style={styles.container}>
 
-                <NameText userName={'Shaan Johnson'} mt={8} />
+                <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
                 <SearchBox onPress={onSearch}/>
                 <ScrollView
                     horizontal

@@ -13,6 +13,7 @@ import reactotron from '../../../ReactotronConfig'
 import { useFocusEffect } from '@react-navigation/native'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-simple-toast';
+import AuthContext from '../../../contexts/Auth'
 
 
 const MyAddresses = ({ route, navigation }) => {
@@ -22,6 +23,7 @@ const MyAddresses = ({ route, navigation }) => {
 
 
     const contextPanda = useContext(PandaContext)
+    const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
     let active = contextPanda.active
 
@@ -94,6 +96,47 @@ const MyAddresses = ({ route, navigation }) => {
         navigation.navigate('LocationScreen')
     }, [])
 
+    const selectAddress = async(id) => {
+        let address = addrList.find(addr => addr._id === id);
+        userContext.setLocation([address?.area?.latitude, address.area?.longitude])
+        userContext.setCurrentAddress(address?.area?.address)
+        //reactotron.log({address})
+        if(address.default == 0){
+            address.default_status =true;
+            address.id = address._id
+            loadingContex.setLoading(true)
+            await customAxios.post(`customer/address/update`, address)
+            .then(async response => {
+                let address = addrList?.map(add => {
+                    if(add._id === id){
+                        return response?.data?.data
+                    }
+                    else{
+                        return add
+                    }
+                })
+                setAddrList(add)
+                // cartContext.setAddress(response?.data?.data)
+                // setAddrList(response?.data?.data)
+                loadingContex.setLoading(false)
+            })
+            .catch(async error => {
+                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                loadingContex.setLoading(false)
+            })
+        }
+
+        if(mode === "home"){
+            navigation.goBack()
+        }
+        else if(mode === "checkout"){
+            reactotron.log({address : address?.area?.address})
+            cartContext.setDefaultAddress(address)
+            navigation.navigate("Checkout")
+        }
+        
+    }
+
 
 
     return (
@@ -119,8 +162,8 @@ const MyAddresses = ({ route, navigation }) => {
                         <AddressCard
                             item={item}
                             key={index}
-                            selected={selected}
-                            setSelected={setSelected}
+                            selected={item?.default}
+                            setSelected={selectAddress}
                         />
                     )}
                     {addrList?.length === 0 && <CustomButton

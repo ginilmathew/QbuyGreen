@@ -82,7 +82,7 @@ const AddDeliveryAddress = ({route, navigation}) => {
                 address: data?.address,
                 location: locationData?.city,
             },
-            default_status: isEnabled ? "1" : "0",
+            default_status: isEnabled ? true : false,
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,
