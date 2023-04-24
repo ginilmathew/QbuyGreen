@@ -621,7 +621,31 @@ const Checkout = ({ navigation }) => {
                             style={styles.boldText}
                         >Total Bill</Text>
                     </View>
-                    {charges.map(item => 
+                    <View style={styles.charges}>
+                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
+                                <Text
+                                    style={styles.textMedium}
+                                >{"Sub Total"}</Text>
+                            </View>
+                            <Text
+                                style={styles.textMedium}
+                            >₹{getTotalAmount()}</Text>
+                            
+                        </View>
+                        <View style={styles.charges}>
+                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
+                                <Text
+                                    style={styles.textMedium}
+                                >{"Delivery Charge"}</Text>
+                            </View>
+                            <Text
+                                style={styles.textMedium}
+                            >₹{getDeliveryFee()}</Text>
+                            
+                        </View>
+                    {/* {charges.map(item => 
                         (<View key={item?._id} style={styles.charges}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
                                 {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>}
@@ -634,14 +658,14 @@ const Checkout = ({ navigation }) => {
                             >₹{item?.rate}</Text>
                             
                         </View>)
-                    )}
+                    )} */}
                     <View style={styles.grandTotal}>
                         <Text
                             style={styles.textMedium}
                         >{'Grand Total  '}</Text>
                         <Text
                             style={styles.boldText}
-                        >₹{price}</Text>
+                        >₹{getTotalAmount() + getDeliveryFee()}</Text>
                     </View>
                 </>}
 

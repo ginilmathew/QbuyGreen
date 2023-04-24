@@ -7,7 +7,7 @@ import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
 import reactotron from 'reactotron-react-native'
 
-const CheckoutItemCard = memo(({item, index, refreshCart}) => {
+const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
 
 
     const cartContext = useContext(CartContext)
@@ -227,14 +227,14 @@ const CheckoutItemCard = memo(({item, index, refreshCart}) => {
         <View style={styles.container}>
             <View style={{ flex: 0.8 }}>
                 <Text style={styles.text1}>{item?.name}</Text>
-                <Text style={styles.text2}>{item?.productdata?.store?.name}</Text>
+                {!view && <Text style={styles.text2}>{item?.productdata?.store?.name}</Text>}
             </View>
             <Text style={styles.text1}>₹ {getPrice()}</Text>
-            <CommonCounter 
+            {!view && <CommonCounter 
                 count={item?.quantity}
                 addItem={addItem}
                 removeItem={removeItem}
-            />
+            />}
 
             <Text style={styles.text1}>₹ {(getPrice() * parseFloat(item?.quantity)).toFixed(2)}</Text>
         </View>
