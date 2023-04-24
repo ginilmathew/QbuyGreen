@@ -1,4 +1,4 @@
-import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
+import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import CustomButton from '../../Components/CustomButton';
 import HeaderWithTitle from '../../Components/HeaderWithTitle';
@@ -26,7 +26,7 @@ const Cart = ({ navigation }) => {
 
     let active = contextPanda.active
 
-    reactotron.log({active})
+    //reactotron.log({active})
 
     const user = useContext(AuthContext)
     const cartContext = useContext(CartContext)
@@ -187,10 +187,10 @@ const Cart = ({ navigation }) => {
     },[])
 
     return (
-        <>
+        <View style={{ height: height-50, paddingBottom: 50, backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
             <HeaderWithTitle title={'Cart'} noBack />
 
-            <ScrollView style={{ flex: 1, backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', height: height-150 }}>
+            <ScrollView style={{ flex: 1, backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
                 {cartItemsList?.length <= 0 ? <View
                     style={{ backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
                 >
@@ -260,7 +260,7 @@ const Cart = ({ navigation }) => {
                 )}
             </ScrollView> */}
             </ScrollView>
-        </>
+        </View>
     )
 }
 

@@ -45,6 +45,7 @@ const Checkout = ({ navigation }) => {
 
 
     const [cartItems, setCartItems] = useState(null)
+    const [deliveryCharge, setDeliveryCharge] = useState(null)
 
 
     const [selected, setSelected] = useState('1')
@@ -125,66 +126,103 @@ const Checkout = ({ navigation }) => {
     // let result = [...new Set(duplicate)];
     //  console.log({result})
 
-    const getTotalAmount = () => {
-        let amount = 0;
+
+    const getDeliveryFee = () => {
+        let delivery = 0;
         cartItems?.product_details?.map(data => {
             if(data?.type === "single"){
-                if(data?.productdata?.offer_price){
+                if(data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0){
+                    delivery += parseFloat(data?.productdata?.fixed_delivery_price)
+                }
+            }
+            else{
+                if(data?.variants?.fixed_delivery_price && parseFloat(data?.variants?.fixed_delivery_price) > 0){
+                    delivery += parseFloat(data?.variants?.fixed_delivery_price)
+                }
+            }
+        })
+
+        return delivery;
+    }
+
+    const getTotalAmount = () => {
+        let amount = 0;
+        let delivery = 0;
+        let amountArray = []
+        cartItems?.product_details?.map(data => {
+            if(data?.type === "single"){
+                if(data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0){
+                    delivery += parseFloat(data?.productdata?.fixed_delivery_price)
+                }
+                if(parseFloat(data?.productdata?.offer_price) > 0){
                     if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()){
                         let finalPrice = parseFloat(data?.productdata?.offer_price)* parseFloat(data?.quantity);
+                        //amountArray.push(finalPrice)
                         amount += finalPrice
                     }
                     else{
-                        if(data?.productdata?.regular_price){
+                        if(parseFloat(data?.productdata?.regular_price) > 0){
                             let finalPrice = parseFloat(data?.productdata?.regular_price)* parseFloat(data?.quantity);
+                            //amountArray.push(finalPrice)
+                            //amountArray.push(`${data?.productdata?.regular_price} -${finalPrice}`)
                             amount +=  finalPrice
                         }
                         else{
-                            let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+                            let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                             let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
+                            
                             amount +=  amounts
                         }
                     }
                 }
-                else if(data?.productdata?.regular_price){
+                else if(parseFloat(data?.productdata?.regular_price) > 0){
                     let finalPrice = parseFloat(data?.productdata?.regular_price)* parseFloat(data?.quantity);
+                    //amountArray.push(finalPrice)
+                    
                     amount +=  finalPrice
                 }
                 else{
-                    let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
-                    let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
+                    let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                    let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
+                    //amountArray.push(`${data?.productdata?.seller_price} ${amounts}`)
                     amount +=  amounts
                 }
             }
             else{
-                if(data?.variants?.offer_price){
+                if(parseFloat(data?.variants?.offer_price) > 0){
                     if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()){
                         let finalPrice = parseFloat(data?.variants?.offer_price)* parseFloat(data?.quantity);
+                        //amountArray.push(finalPrice)
                         amount +=  finalPrice
                     }
                     else{
-                        if(data?.variants?.regular_price){
+                        if(parseFloat(data?.variants?.regular_price) > 0){
                             let finalPrice = parseFloat(data?.variants?.regular_price)* parseFloat(data?.quantity);
+                            //amountArray.push(finalPrice)
                             amount +=  finalPrice
                         }
                         else{
-                            let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+                            let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                             let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
+                            //amountArray.push(amounts)
                             amount +=  amounts
                         }
                     }
                 }
-                else if(data?.variants?.regular_price){
+                else if(parseFloat(data?.variants?.regular_price) > 0){
                     let finalPrice = parseFloat(data?.variants?.regular_price)* parseFloat(data?.quantity);
+                    //amountArray.push(finalPrice)
                     amount +=  finalPrice
                 }
                 else{
-                    let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+                    let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                     let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
+                    //amountArray.push(amounts)
                     amount +=  amounts
                 }
             }
         })
+        reactotron.log({amountArray})
         return amount;
     }
 
@@ -383,7 +421,7 @@ const Checkout = ({ navigation }) => {
                         {cartItems?.product_details.map((item, index) =>
                             <CheckoutItemCard
                                 item={item}
-                                key={item?._id}
+                                key={index}
                                 index={index}
                                 refreshCart={refreshCart}
                             />
@@ -538,6 +576,11 @@ const Checkout = ({ navigation }) => {
                         <Text style={styles.textMedium}>{'Govt Taxes & Other Charges'}</Text>
                         <Text style={styles.textMedium}>₹ {'10'}</Text>
                     </View> */}
+                    <View style={styles.grandTotalMid}>
+                        <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
+                        <Text style={styles.textMedium}>₹ {getDeliveryFee()}</Text>
+                    </View>
+                    
                     <View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
                         <Text style={styles.boldText}>₹ {getTotalAmount()}</Text>
@@ -569,7 +612,7 @@ const Checkout = ({ navigation }) => {
                     >{'Grand Total  '}</Text>
                     <Text
                         style={styles.boldText}
-                    >₹{getTotalAmount()}</Text>
+                    >₹{getTotalAmount() + getDeliveryFee()}</Text>
                 </View>}
 
                 {showList && <>

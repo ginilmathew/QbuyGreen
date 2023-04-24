@@ -345,6 +345,12 @@ const SingleItemScreen = ({ route, navigation }) => {
         let cartItems;
 
         if(singleProduct?.variants?.length > 0 && cart?.cart){
+            if(selectedVariant?.stock){
+                if(parseFloat(selectedVariant?.stock_value) === 0){
+                    Toast.show("Out of Stock", 2000)
+                    return false;
+                }
+            }
             url = "customer/cart/update";
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id && prod?.variants?.[0]?.variant_id === selectedVariant?._id)
 
@@ -383,6 +389,12 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         }
         else if(cart?.cart){
+            if(singleProduct?.stock){
+                if(parseFloat(singleProduct?.stock_value) === 0){
+                    Toast.show("Out of Stock", 2000)
+                    return false;
+                }
+            }
             url = "customer/cart/update";
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
             if(existing >= 0){
@@ -413,6 +425,18 @@ const SingleItemScreen = ({ route, navigation }) => {
         }
         else{
             url = "customer/cart/add";
+            if(singleProduct?.variants?.length > 0 && selectedVariant?.stock){
+                if(parseFloat(selectedVariant?.stock_value) === 0){
+                    Toast.show("Out of Stock", 2000)
+                    return false;
+                }
+            }
+            else if(singleProduct?.stock){
+                if(parseFloat(singleProduct?.stock_value) === 0){
+                    Toast.show("Out of Stock", 2000)
+                    return false;
+                }
+            }
             let productDetails = {
                 product_id: singleProduct?._id,
                 name: singleProduct?.name,
@@ -514,13 +538,26 @@ const SingleItemScreen = ({ route, navigation }) => {
                     //return singleProduct?.variants?.[0]?.offer_price;
                 }
                 else {
-                    setPrice(singleProduct?.variants?.[0]?.regular_price)
+                    if(singleProduct?.variants?.[0]?.regular_price > 0){
+                        setPrice(singleProduct?.variants?.[0]?.regular_price)
+                    }
+                    else{
+                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price)/100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                        let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
+                        setPrice(price)
+                    }
                     //return singleProduct?.variants?.[0]?.regular_price;
                 }
             }
             else {
-                setPrice(singleProduct?.variants?.[0]?.regular_price)
-                //return singleProduct?.variants?.[0]?.regular_price;
+                if(singleProduct?.variants?.[0]?.regular_price > 0){
+                    setPrice(singleProduct?.variants?.[0]?.regular_price)
+                }
+                else{
+                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price)/100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                    let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
+                    setPrice(price)
+                }
             }
         }
         else {
@@ -530,13 +567,27 @@ const SingleItemScreen = ({ route, navigation }) => {
                     //return singleProduct?.offer_price;
                 }
                 else {
-                    setPrice(singleProduct?.regular_price)
+                    if(singleProduct?.regular_price > 0){
+                        setPrice(singleProduct?.regular_price)
+                    }
+                    else{
+                        let commission = (parseFloat(singleProduct?.seller_price)/100) * parseFloat(singleProduct?.commission)
+                        let price = parseFloat(singleProduct?.seller_price) + commission
+                        setPrice(price)
+                    }
+                    //setPrice(singleProduct?.regular_price)
                     //return singleProduct?.regular_price;
                 }
             }
             else {
-                setPrice(singleProduct?.regular_price)
-                //return singleProduct?.regular_price;
+                if(singleProduct?.regular_price > 0){
+                    setPrice(singleProduct?.regular_price)
+                }
+                else{
+                    let commission = (parseFloat(singleProduct?.seller_price)/100) * parseFloat(singleProduct?.commission)
+                    let price = parseFloat(singleProduct?.seller_price) + commission
+                    setPrice(price)
+                }
             }
         }
     }, [])

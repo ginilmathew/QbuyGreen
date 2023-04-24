@@ -70,10 +70,11 @@ const Header = ({  onPress, openAddress, goCart}) => {
                 <TouchableOpacity onPress={onClickFashionCat}> 
                     <AntDesign name={"appstore1"} color="#FF7190" size={20} />
                 </TouchableOpacity> 
-                <TouchableOpacity onPress={onClickWishlist}>
+                
+            </>}
+            <TouchableOpacity onPress={onClickWishlist}>
                     <Fontisto name={"heart"} color="#FF6464" size={20} marginHorizontal={8}/>
                 </TouchableOpacity> 
-            </>}
             <TouchableOpacity onPress={onClickNotificatn} style={{marginRight:8}}>
                 <Ionicons name={"notifications"} color="#23233C" size={25} />
             </TouchableOpacity> 

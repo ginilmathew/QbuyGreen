@@ -10,11 +10,18 @@ const ItemDetails = ({itemName, hotelName, views, sold, minQty, price, onPress})
 
     const [tooltip, setTooltip] = useState(true)
 
+    useEffect(() => {
+      setTimeout(() => {
+        setTooltip(false)
+      }, 1000);
+    }, [])
+    
+
     const {width} = useWindowDimensions()
 
     return (
         <View style={styles.container}>
-            <View style={{flex:0.35,}}>
+            <View style={{flex:0.35, overflow: 'hidden'}}>
                 <CommonTexts label={itemName} fontSize={13}/>
                 <TouchableOpacity 
                     onPress={onPress}
@@ -35,7 +42,7 @@ const ItemDetails = ({itemName, hotelName, views, sold, minQty, price, onPress})
                         placement="bottom"
                         onClose={() => setTooltip(false)}
                         backgroundColor = 'transparent'
-                        contentStyle={{backgroundColor:'#000', width:width/3, height:30, alignItems:'center', justifyContent:'center', borderRadius:12}}
+                        contentStyle={{backgroundColor:'#000', width:width/3, height:30, alignItems:'center', justifyContent:'center', borderRadius:12, flexWrap: 'wrap'}}
                         >
                         <TouchableHighlight style={styles.touchable } onPress={onPress}>
                             <Text
@@ -43,7 +50,7 @@ const ItemDetails = ({itemName, hotelName, views, sold, minQty, price, onPress})
                                     fontFamily: 'Poppins-BoldItalic',
                                     color: '#1185E0',
                                     fontSize:  11,
-                                
+                                    flexWrap: 'wrap'
                                 }}
                             >{hotelName}</Text>
                         </TouchableHighlight>

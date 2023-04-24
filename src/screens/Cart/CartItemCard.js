@@ -12,6 +12,7 @@ import moment from 'moment'
 import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import reactotron from 'reactotron-react-native'
+import SimpleToast from 'react-native-simple-toast'
 
 
 const CartItemCard = ({item, index, refreshCart}) => {
@@ -34,6 +35,16 @@ const CartItemCard = ({item, index, refreshCart}) => {
 
 
     const addItem = async () => {
+        if(item?.type === "single" && item?.productdata?.stock){
+            if(parseFloat(item?.productdata?.stock_value) < data?.quantity + 1){
+                SimpleToast.show("Required quantity not available")
+                return false;
+            }
+        }
+        else if(item?.variants?.stock_value < data?.quantity + 1){
+            SimpleToast.show("Required quantity not available")
+            return false;
+        }
         data.quantity = data?.quantity + 1
         reactotron.log(data)
         //setData(data)
@@ -128,6 +139,8 @@ const CartItemCard = ({item, index, refreshCart}) => {
         navigation.navigate('SingleHotel',{item : data, mode:'cartItem'})
     }, [])
 
+   
+
 
     const getPrice = useCallback(() => {
         if(data?.type === "single"){
@@ -142,18 +155,18 @@ const CartItemCard = ({item, index, refreshCart}) => {
                         return `₹${finalPrice.toFixed(2)}`
                     }
                     else{
-                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                         let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                         return `₹${amount.toFixed(2)}`
                     }
                 }
             }
-            else if(data?.productdata?.regular_price){
+            else if(parseFloat(data?.productdata?.regular_price) > 0){
                 let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
                 return `₹${finalPrice.toFixed(2)}`
             }
             else{
-                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                 let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                 return `₹${amount.toFixed(2)}`
             }
@@ -170,7 +183,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                         return `₹${finalPrice.toFixed(2)}`
                     }
                     else{
-                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                         let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                         return `₹${amount.toFixed(2)}`
                     }
@@ -181,12 +194,12 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 return `₹${finalPrice.toFixed(2)}`
             }
             else{
-                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                 let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                 return `₹${amount.toFixed(2)}`
             }
         }
-    }, [])
+    }, [item])
 
     
     return (

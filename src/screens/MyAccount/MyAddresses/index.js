@@ -97,25 +97,25 @@ const MyAddresses = ({ route, navigation }) => {
     }, [])
 
     const selectAddress = async(id) => {
-        let address = addrList.find(addr => addr._id === id);
-        userContext.setLocation([address?.area?.latitude, address.area?.longitude])
+        let address = addrList.find(addr => addr?._id === id);
+        userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
-        //reactotron.log({address})
-        if(address.default == 0){
+        reactotron.log({address})
+        if(!address?.default){
             address.default_status =true;
-            address.id = address._id
+            address.id = address?._id
             loadingContex.setLoading(true)
             await customAxios.post(`customer/address/update`, address)
             .then(async response => {
                 let address = addrList?.map(add => {
-                    if(add._id === id){
+                    if(add?._id === response?.data?.data?._id){
                         return response?.data?.data
                     }
                     else{
                         return add
                     }
                 })
-                setAddrList(add)
+                setAddrList(address)
                 // cartContext.setAddress(response?.data?.data)
                 // setAddrList(response?.data?.data)
                 loadingContex.setLoading(false)

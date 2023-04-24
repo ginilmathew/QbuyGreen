@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import HeaderWithTitle from '../../Components/HeaderWithTitle'
-import { useNavigation } from '@react-navigation/native'
+import { CommonActions, useNavigation } from '@react-navigation/native'
 import PandaContext from '../../contexts/Panda'
 import LogoutModal from './LogoutModal'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -15,12 +15,14 @@ import AuthContext from '../../contexts/Auth'
 import reactotron from '../../ReactotronConfig'
 import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-simple-toast';
+import CartContext from '../../contexts/Cart'
 
 
 
 const MyAccount = ({ navigation }) => {
 
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
     let active = contextPanda.active
     const user = useContext(AuthContext)
     let userData = user?.userData
@@ -55,8 +57,18 @@ const MyAccount = ({ navigation }) => {
         await customAxios.post(`auth/customerlogout`, datas)
             .then(async response => {
                 Toast.showWithGravity(response?.data?.message, Toast.SHORT, Toast.BOTTOM);
-                navigation.navigate('Login')
                 await AsyncStorage.clear()
+                cartContext.setCart(null)
+                user?.setUserData(null)
+                navigation.navigate('Login')
+                navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0,
+                      routes: [
+                        { name: 'Login' },
+                      ],
+                    })
+                  );
 
             })
             .catch(async error => {

@@ -23,6 +23,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import AuthContext from '../../../contexts/Auth';
 import reactotron from 'reactotron-react-native';
+import { env, location } from '../../../config/constants';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -149,7 +150,7 @@ const QBuyGreen = ({ navigation }) => {
 
         let datas = {
             type: "green",
-            coordinates : userContext?.location
+            coordinates : env === "dev" ? location : userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {

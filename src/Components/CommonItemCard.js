@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View, ImageBackground, useWindowDimensions, ScrollView } from 'react-native'
-import React, { useRef, useState, useEffect, useContext, useTransition, useCallback, memo } from 'react'
+import React, { useRef, useState, useEffect, useContext, useTransition, useCallback, memo, useMemo } from 'react'
 import FastImage from 'react-native-fast-image'
 import CommonAddButton from './CommonAddButton'
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -19,30 +19,112 @@ import { IMG_URL } from '../config/constants';
 import moment from 'moment';
 import { min, max } from 'lodash'
 import customAxios from '../CustomeAxios';
+import CartContext from '../contexts/Cart';
+import AuthContext from '../contexts/Auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoaderContext from '../contexts/Loader';
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon }) => {
 
-    reactotron.log({item})
+    //reactotron.log({item})
 
     let rating = 4.1
 
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
+    const userContext = useContext(AuthContext)
     let active = contextPanda.active
+
+    const loadingg = useContext(LoaderContext)
     
 
 
     const refRBSheet = useRef();
     const navigation = useNavigation()
     const [total, setTotal] = useState('')
-    const [heart, setHeart] = useState('')
+    const [heart, setHeart] = useState(item?.is_wishlist)
 
     const handleClick = useCallback(() => {
         navigation.navigate('SingleItemScreen', { item: item })
     }, [])
 
     const openBottomSheet = useCallback(() => {
-        refRBSheet.current.open()
+        //addToCart()
+        //refRBSheet.current.open()
+        navigation.navigate('SingleItemScreen', { item: item })
     }, [])
+
+    const addToCart = useCallback(async () => {
+        loadingg.setLoading(true)
+        let cartItems;
+        let url;
+
+        if(item?.variants?.length === 0){
+            if(cartContext?.cart){
+                url = "customer/cart/update";
+                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
+                if(existing >= 0){
+                    let cartProducts = cartContext?.cart?.product_details;
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userContext?.userData?._id
+                    }
+                }
+                else{
+                    let productDetails = {
+                        product_id: item?._id,
+                        name: item?.name,
+                        image: item?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: 1
+                    };
+
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: [...cartContext?.cart?.product_details, productDetails],
+                        user_id: userContext?.userData?._id
+                    }
+                }
+            }
+            else{
+                url = "customer/cart/add";
+                let productDetails = {
+                    product_id: item?._id,
+                    name: item?.name,
+                    image: item?.product_image,
+                    type: "single",
+                    variants:  null,
+                    quantity: 1
+                };
+
+                cartItems = {
+                    product_details: [productDetails],
+                    user_id: userContext?.userData?._id
+                }
+            }
+
+            await customAxios.post(url, cartItems)
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                loadingg.setLoading(false)
+            })
+            .catch(async error => {
+                loadingg.setLoading(false)
+            })
+        }
+        else{
+            navigation.navigate('SingleItemScreen', { item: item })
+        }
+        
+
+
+       
+
+    }, [cartContext?.cart])
 
     const closeRbSheet = useCallback(() => {
         refRBSheet.current.close()
@@ -76,14 +158,24 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     return `₹${item?.offer_price}`;
                 }
                 else{
-                    if(vari?.regular_price){
-                        variants.push(vari?.regular_price);
+                    if(item?.regular_price){
+                        return `₹${item?.regular_price}`;
                     }
                     else{
-                        let commission = (parseFloat(vari?.seller_price)/100) * parseFloat(vari?.commission)
-                        let price = parseFloat(vari?.seller_price) + commission;
-                        variants.push(price)
+                        let commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                        let price = parseFloat(item?.seller_price) + commission;
+                        return `₹${price}`
                     }
+                }
+            }
+            else{
+                if(parseFloat(item?.regular_price) > 0){
+                    return `₹${item?.regular_price}`;
+                }
+                else{
+                    let commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                    let price = parseFloat(item?.seller_price) + commission;
+                    return `₹${price}`;
                 }
             }
         }
@@ -145,18 +237,18 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     source={item?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${item?.product_image}` }}
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 13 }}
                 >
-                    <View style={{ marginLeft: 7, marginBottom:3 }}>
+                    <View style={{ paddingLeft: 7, marginBottom:3, backgroundColor: 'rgba(0,0,0,0.2)' }}>
                         <Text style={styles.textSemi}>{item?.name}</Text>
                          <Text style={styles.textSemi}>{getPrice()}</Text>
                         <Text style={styles.lightText}>{item?.store?.name}</Text> 
                         {/* <CommonRating rating={3.5} fontSize={9} alignSelf='flex-start'/> */}
                     </View>
 
-                    <View style={styles.addContainer}>
+                    {/* <View style={styles.addContainer}>
                         <CommonAddButton
-                        // onPress={openBottomSheet}
+                            onPress={openBottomSheet}
                         />
-                    </View>
+                    </View> */}
 
                     {/* {!fashion && item?.openCloseTag && <View
                         style={{ position: 'absolute', right: 7, top: 7, backgroundColor: item?.openCloseTag === 'Closes Soon' ? '#FF0000' : '#58D36E', borderRadius: 8 }}
@@ -164,7 +256,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         <Text style={styles.tagText}>{item?.openCloseTag}</Text>
                     </View>} */}
 
-                    {active === 'fashion' && <TouchableOpacity
+                    {active === 'fashion' || active === 'green' && <TouchableOpacity
                         onPress={heart ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >

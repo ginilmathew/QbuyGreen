@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
 	let loader = loadingg?.loading
 
 	const schema = yup.object({
-		mobile: yup.string().required('Phone number is required'),
+		mobile: yup.string().required('Phone number is required').max(10, "Phone Number must be 10 digits").min(10, "Phone Number must be 10 digits"),
 	}).required();
 
 	const { control, handleSubmit, formState: { errors }, setValue } = useForm({

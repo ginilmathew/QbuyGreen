@@ -19,3 +19,4 @@ export const BASE_URL = URLS[env]
 
 export const IMG_URL = IMG_BASEPATH[env]
 
+export const location = [8.5728749, 76.8636977];

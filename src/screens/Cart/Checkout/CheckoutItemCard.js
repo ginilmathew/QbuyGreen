@@ -78,7 +78,91 @@ const CheckoutItemCard = memo(({item, index, refreshCart}) => {
                     // loadingg.setLoading(false)
                 })
         }
+        else{
+            let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
+            let cartItems = {
+                cart_id : cartContext?.cart?._id,
+                product_details: allProducts,
+                user_id: userContext?.userData?._id
+            }
+
+            await customAxios.post(`customer/cart/update`, cartItems)
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    refreshCart()
+                    //data.quantity = data?.quantity - 1
+                    //navigation.navigate('CartNav',{screen: 'Cart'})
+                })
+                .catch(async error => {
+                    console.log(error)
+                    // ToastAndroid.showWithGravity(
+                    //     error,
+                    //     ToastAndroid.SHORT,
+                    //     ToastAndroid.CENTER,
+                    // )
+                    // loadingg.setLoading(false)
+                })
+        }
     }, [])
+
+    // const getPrice = useCallback(() => {
+    //     if(data?.type === "single"){
+    //         if(data?.productdata?.offer_price){
+    //             if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()){
+    //                 let finalPrice = parseFloat(data?.productdata?.offer_price);
+    //                 return finalPrice
+    //             }
+    //             else{
+    //                 if(data?.productdata?.regular_price){
+    //                     let finalPrice = parseFloat(data?.productdata?.regular_price);
+    //                     return finalPrice
+    //                 }
+    //                 else{
+    //                     let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+    //                     let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission));
+    //                     return amount
+    //                 }
+    //             }
+    //         }
+    //         else if(data?.productdata?.regular_price){
+    //             let finalPrice = parseFloat(data?.productdata?.regular_price);
+    //             return finalPrice
+    //         }
+    //         else{
+    //             let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+    //             let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission));
+    //             return amount
+    //         }
+    //     }
+    //     else{
+    //         if(data?.variants?.offer_price){
+    //             if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()){
+    //                 let finalPrice = parseFloat(data?.variants?.offer_price);
+    //                 return finalPrice
+    //             }
+    //             else{
+    //                 if(data?.variants?.regular_price){
+    //                     let finalPrice = parseFloat(data?.variants?.regular_price);
+    //                     return finalPrice
+    //                 }
+    //                 else{
+    //                     let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+    //                     let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission));
+    //                     return amount
+    //                 }
+    //             }
+    //         }
+    //         else if(data?.variants?.regular_price){
+    //             let finalPrice = parseFloat(data?.variants?.regular_price);
+    //             return finalPrice
+    //         }
+    //         else{
+    //             let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+    //             let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission));
+    //             return amount
+    //         }
+    //     }
+    // }, [])
 
     const getPrice = useCallback(() => {
         if(data?.type === "single"){
@@ -93,18 +177,18 @@ const CheckoutItemCard = memo(({item, index, refreshCart}) => {
                         return finalPrice
                     }
                     else{
-                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                         let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission));
                         return amount
                     }
                 }
             }
-            else if(data?.productdata?.regular_price){
+            else if(parseFloat(data?.productdata?.regular_price) > 0){
                 let finalPrice = parseFloat(data?.productdata?.regular_price);
                 return finalPrice
             }
             else{
-                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(commission)
+                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                 let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission));
                 return amount
             }
@@ -121,7 +205,7 @@ const CheckoutItemCard = memo(({item, index, refreshCart}) => {
                         return finalPrice
                     }
                     else{
-                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                         let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission));
                         return amount
                     }
@@ -132,12 +216,12 @@ const CheckoutItemCard = memo(({item, index, refreshCart}) => {
                 return finalPrice
             }
             else{
-                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(commission)
+                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
                 let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission));
                 return amount
             }
         }
-    }, [])
+    }, [data])
 
     return (
         <View style={styles.container}>
