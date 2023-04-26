@@ -5,9 +5,12 @@ import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import { IMG_URL } from '../../../config/constants'
 import PandaContext from '../../../contexts/Panda'
+import reactotron from 'reactotron-react-native'
 
 
-const TypeCard = memo(({item, mode}) => {
+const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
+
+    //reactotron.log({selected, id: item})
 
     const contextPanda = useContext(PandaContext)
 
@@ -15,7 +18,7 @@ const TypeCard = memo(({item, mode}) => {
     const navigation = useNavigation()
 
     const onClick = useCallback(() => {
-        navigation.navigate('Category', {name : item?.name, mode: contextPanda.active, item : item, })
+        navigation.navigate('Category', {name : item?.name, mode: contextPanda.active, item : item, storeId })
     }, [])
 
     return (
@@ -26,7 +29,7 @@ const TypeCard = memo(({item, mode}) => {
             style={{ alignItems: 'center', width: width / 4 }}
         >
             <FastImage
-                style={{ width: 60, height: 60, borderRadius: 30 }}
+                style={{ width: 60, height: 60, borderRadius: 30,  }}
                 source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../../Images/jeans.jpg')}
                 borderRadius={30}
             />

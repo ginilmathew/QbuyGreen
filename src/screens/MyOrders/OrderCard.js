@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 import ItemsCard from './ItemsCard'
 import PandaContext from '../../contexts/Panda'
 import reactotron from '../../ReactotronConfig'
+import moment from 'moment'
 
 const OrderCard = memo(({ item }) => {
 
@@ -56,20 +57,20 @@ const OrderCard = memo(({ item }) => {
             <View style={styles.header}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={styles.textMedum}>{'Order ID '}</Text>
-                    <CommonTexts label={item?._id} />
+                    <CommonTexts label={item?.order_id} />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.dateText}>{item?.date}</Text>
+                    <Text style={styles.dateText}>{moment(item?.created_at).format("DD-MM-YYYY") }</Text>
                 </View>
             </View>
             <View style={styles.itemsContainer}>
                 <View>
                     <Text style={styles.textRegular}>{'Total Items'}</Text>
-                    <Text style={styles.textBold}>{qty}</Text>
+                    <Text style={styles.textBold}>{item?.product_details.length}</Text>
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Total Payment'}</Text>
-                    <Text style={styles.textBold}>{totalRate}</Text>
+                    <Text style={styles.textBold}>{item?.grand_total}</Text>
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Current Status'}</Text>
@@ -99,8 +100,8 @@ const OrderCard = memo(({ item }) => {
                         <Text style={styles.textBold}>{'Qty'}</Text>
                         <Text style={styles.textBold}>{'Price'}</Text>
                     </View>
-                    {item?.myOrder.map((item) => 
-                        <ItemsCard item={item} key={item?._id}/>
+                    {item?.product_details.map((ite) => 
+                        <ItemsCard item={ite} key={ite?._id} date={item?.created_at} />
                     )}
                 </>}
             </View>
@@ -117,7 +118,7 @@ const OrderCard = memo(({ item }) => {
                 </View>
                 {showAddress && <View style={styles.addressBox}>
                     <CommonTexts label={'HOME'} fontSize={13} />
-                    <Text style={styles.addressText}>{'Lorem Ipsum, Lorem Street, Lorem,Trivandrum,Kerala, India 953741'}</Text>
+                    <Text style={styles.addressText}>{item?.shipaddress?.area?.address}</Text>
                 </View>}
 
                 {item?.paymentStatus === 'success' && 
@@ -157,7 +158,7 @@ const OrderCard = memo(({ item }) => {
                 
                 }
 
-                {item?.paymentStatus === 'pending' && <CustomButton
+                {item?.payment_status === 'pending' && <CustomButton
                     label={'Pay Now'}
                     bg={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}

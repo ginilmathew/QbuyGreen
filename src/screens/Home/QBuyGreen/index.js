@@ -24,6 +24,7 @@ import Toast from 'react-native-simple-toast';
 import AuthContext from '../../../contexts/Auth';
 import reactotron from 'reactotron-react-native';
 import { env, location } from '../../../config/constants';
+import CartContext from '../../../contexts/Cart';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -32,6 +33,7 @@ const QBuyGreen = ({ navigation }) => {
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
+    const cartContext = useContext(CartContext)
 
     reactotron.log({userContext: userContext.userData})
 
@@ -167,25 +169,98 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('ProductSearchScreen', {mode :'fashion'})
     }, [])
 
+    const addToCart = async (item) => {
+        
+        let cartItems;
+        let url;
+
+        if(item?.variants?.length === 0){
+            loadingg.setLoading(true)
+            if(cartContext?.cart){
+                url = "customer/cart/update";
+                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
+                if(existing >= 0){
+                    let cartProducts = cartContext?.cart?.product_details;
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userContext?.userData?._id
+                    }
+                }
+                else{
+                    let productDetails = {
+                        product_id: item?._id,
+                        name: item?.name,
+                        image: item?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: 1
+                    };
+
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: [...cartContext?.cart?.product_details, productDetails],
+                        user_id: userContext?.userData?._id
+                    }
+                }
+            }
+            else{
+                url = "customer/cart/add";
+                let productDetails = {
+                    product_id: item?._id,
+                    name: item?.name,
+                    image: item?.product_image,
+                    type: "single",
+                    variants:  null,
+                    quantity: 1
+                };
+
+                cartItems = {
+                    product_details: [productDetails],
+                    user_id: userContext?.userData?._id
+                }
+            }
+
+            await customAxios.post(url, cartItems)
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                loadingg.setLoading(false)
+            })
+            .catch(async error => {
+                loadingg.setLoading(false)
+            })
+        }
+        else{
+            navigation.navigate('SingleItemScreen', { item: item })
+        }
+        
+
+
+       
+
+    }
+
     return (
         <>
             <Header onPress={onClickDrawer} />
             <ScrollView style={styles.container} >
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
-                <SearchBox onPress={onSearch}/>
+                
                 {categories?.length > 0 && <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', marginTop: 15 }}
+                    style={{ flexDirection: 'row', marginTop: 20, marginLeft: 10, marginRight: 10 }}
                 >
                     {categories?.map((item, index) =>
                         (<TypeCard item={item} key={index} />)
                     )}
                 </ScrollView>}
-
+                <SearchBox onPress={onSearch}/>
                 <ImageSlider datas={groceImg} mt={20} />
                 {storeList?.length > 0 && <>
-                    <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={20} />
+                    <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={25} />
                     <View style={styles.grossCatView}>
                         {storeList?.map((item, index) => (
                             <ShopCard key={index} item={item} />
@@ -216,7 +291,7 @@ const QBuyGreen = ({ navigation }) => {
                 </View>
 
                 {recentViewList?.length > 0 && <>
-                    <CommonTexts label={'Recently Viewed'} fontSize={13} mt={5} ml={15} mb={5} />
+                    <CommonTexts label={'Recently Viewed'} fontSize={13} mt={5} ml={15} mb={15} />
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -228,6 +303,7 @@ const QBuyGreen = ({ navigation }) => {
                                 item={item}
                                 width={width / 2.5}
                                 marginHorizontal={5}
+                                addToCart={addToCart}
                             />
                         )}
                     </ScrollView>
@@ -256,15 +332,16 @@ const QBuyGreen = ({ navigation }) => {
                 /> */}
 
                 {availablePdts?.length > 0 && <>
-                    <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
+                    <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={15} mt={15} />
                     <View style={styles.productContainer}>
                         {availablePdts?.map((item) => (
                             <CommonItemCard
                                 item={item}
                                 key={item?._id}
                                 width={width / 2.25}
-                                height={250}
+                                height={220}
                                 wishlistIcon
+                                addToCart={addToCart}
                             />
                         ))}
                     </View>
@@ -294,7 +371,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 2,
-        paddingHorizontal: '1%'
+        marginLeft: 20,
+        marginRight: 10
     },
     pickupReferContainer: {
         flexDirection: 'row',

@@ -65,7 +65,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({ singleProduct })
+    //reactotron.log({ singleProduct })
 
     const { width, height } = useWindowDimensions()
 

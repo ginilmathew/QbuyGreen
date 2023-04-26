@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         borderWidth: 1, 
         borderColor: '#FF6600', 
         borderStyle: 'dashed', 
-        borderColor:'#F3F3F3', 
+        //borderColor:'#F3F3F3', 
         paddingHorizontal:8, 
     },
     labelView : { 

@@ -7,7 +7,7 @@ import PandaContext from '../../../contexts/Panda'
 import CommonItemSelect from '../../../Components/CommonItemSelect'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import TypeCard from '../Grocery/TypeCard'
-import { IMG_URL } from '../../../config/constants'
+import { IMG_URL, env, location } from '../../../config/constants'
 import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
@@ -15,9 +15,11 @@ import HotelCard from '../Category/HotelCard'
 import StoreAddressCard from '../Category/StoreAddressCard'
 import Toast from 'react-native-simple-toast';
 import AuthContext from '../../../contexts/Auth'
+import CartContext from '../../../contexts/Cart'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
-const StoreScreen = ({ route }) => {
+const StoreScreen = ({ route, navigation }) => {
 
     const { width } = useWindowDimensions()
 
@@ -27,13 +29,14 @@ const StoreScreen = ({ route }) => {
 
     const loadingContex = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
+    const cartContext = useContext(CartContext)
     let loadingg = loadingContex?.loading
 
     const name = route?.params?.name
     const mode = route?.params?.mode
     const item = route?.params?.item
 
-    reactotron.log({ item })
+    //reactotron.log({ item })
 
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
@@ -49,7 +52,7 @@ const StoreScreen = ({ route }) => {
 
         let data = {
             vendor_id: item?._id,
-            coordinates: userContext?.location
+            coordinates: env === "dev" ? location : userContext?.location
         }
 
         await customAxios.post(`customer/store`, data)
@@ -228,6 +231,79 @@ const StoreScreen = ({ route }) => {
         },
     ]
 
+    const addToCart = async (item) => {
+        
+        let cartItems;
+        let url;
+
+        if(item?.variants?.length === 0){
+            loadingContex.setLoading(true)
+            if(cartContext?.cart){
+                url = "customer/cart/update";
+                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
+                if(existing >= 0){
+                    let cartProducts = cartContext?.cart?.product_details;
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userContext?.userData?._id
+                    }
+                }
+                else{
+                    let productDetails = {
+                        product_id: item?._id,
+                        name: item?.name,
+                        image: item?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: 1
+                    };
+
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: [...cartContext?.cart?.product_details, productDetails],
+                        user_id: userContext?.userData?._id
+                    }
+                }
+            }
+            else{
+                url = "customer/cart/add";
+                let productDetails = {
+                    product_id: item?._id,
+                    name: item?.name,
+                    image: item?.product_image,
+                    type: "single",
+                    variants:  null,
+                    quantity: 1
+                };
+
+                cartItems = {
+                    product_details: [productDetails],
+                    user_id: userContext?.userData?._id
+                }
+            }
+
+            await customAxios.post(url, cartItems)
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                loadingContex.setLoading(false)
+            })
+            .catch(async error => {
+                loadingContex.setLoading(false)
+            })
+        }
+        else{
+            navigation.navigate('SingleItemScreen', { item: item })
+        }
+        
+
+
+       
+
+    }
+
 
     return (
         <>
@@ -253,8 +329,8 @@ const StoreScreen = ({ route }) => {
                         showsHorizontalScrollIndicator={false}
                         style={{ flexDirection: 'row', marginTop: 15 }}
                     >
-                        {storeDetails?.category_id?.map((item, index) =>
-                            (<TypeCard item={item} key={index} />)
+                        {storeDetails?.category_id?.map((cat, index) =>
+                            (<TypeCard item={cat} key={index} storeId={item?._id} />)
                         )}
                     </ScrollView>
                 </View>
@@ -268,6 +344,7 @@ const StoreScreen = ({ route }) => {
                             key={item?._id}
                             width={width / 2.2}
                             height={250}
+                            addToCart={addToCart}
                         />
                     ))}
                 </View>

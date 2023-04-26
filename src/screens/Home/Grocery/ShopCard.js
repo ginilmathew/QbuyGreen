@@ -19,7 +19,7 @@ const ShopCard = memo(({item}) => {
         <TouchableOpacity 
             key={item?._id}  
             onPress={onClick} 
-            style={{width: width/4.2,height:80,alignItems:'center', marginTop:10}}
+            style={{width: width/4.5,height:80,alignItems:'center', marginTop:10}}
         >
             <FastImage
                 style={{ width: 60, height: 60, borderRadius: 10 }}

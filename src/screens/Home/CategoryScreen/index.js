@@ -6,16 +6,17 @@ import FastImage from 'react-native-fast-image'
 import PandaContext from '../../../contexts/Panda'
 import CommonItemSelect from '../../../Components/CommonItemSelect'
 import CommonItemCard from '../../../Components/CommonItemCard'
-import TypeCard from '../Grocery/TypeCard'
-import { IMG_URL } from '../../../config/constants'
+import { IMG_URL, env, location } from '../../../config/constants'
 import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
 import Toast from 'react-native-simple-toast';
+import CartContext from '../../../contexts/Cart'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
-const CategoryScreen = ({ route }) => {
+const CategoryScreen = ({ route, navigation }) => {
 
     const { width } = useWindowDimensions()
 
@@ -25,9 +26,10 @@ const CategoryScreen = ({ route }) => {
 
 
     const loadingContex = useContext(LoaderContext)
+    const cartContext = useContext(CartContext)
     let loadingg = loadingContex?.loading
 
-    const { name, mode, item } = route?.params
+    const { name, mode, item, storeId } = route?.params
 
     reactotron.log({item})
 
@@ -46,19 +48,30 @@ const CategoryScreen = ({ route }) => {
 
     const getProductBasedCat = async(coords) => {
         loadingContex.setLoading(true)
-        let datas = {
-            category_id: item?._id ? item?._id : item?.id,
-            coordinates :  coords
-        }
-        await customAxios.post(`customer/product/category-based`, datas)
-        .then(async response => {
-            setAvailabelPdts(response?.data?.data)
-            loadingContex.setLoading(false)
-        })
-        .catch(async error => {
-            Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
-            loadingContex.setLoading(false)
-        })
+            let datas = {
+                category_id: item?._id ? item?._id : item?.id,
+                coordinates : env === "dev" ? location : coords 
+            }
+            await customAxios.post(`customer/product/category-based`, datas)
+            .then(async response => {
+                
+                if(storeId){
+                    
+                    let products = response?.data?.data?.filter(prod => prod?.store?._id === storeId);
+                    //reactotron.log({storeId, products})
+                    setAvailabelPdts(products)
+                }
+                else{
+                    setAvailabelPdts(response?.data?.data)
+                }
+                
+                loadingContex.setLoading(false)
+            })
+            .catch(async error => {
+                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                loadingContex.setLoading(false)
+            })
+        
     }
 
 
@@ -227,6 +240,78 @@ const CategoryScreen = ({ route }) => {
 
 
 
+
+    const addToCart = async (item) => {
+        
+        let cartItems;
+        let url;
+
+        if(item?.variants?.length === 0){
+            loadingContex.setLoading(true)
+            if(cartContext?.cart){
+                url = "customer/cart/update";
+                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
+                if(existing >= 0){
+                    let cartProducts = cartContext?.cart?.product_details;
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: auth?.userData?._id
+                    }
+                }
+                else{
+                    let productDetails = {
+                        product_id: item?._id,
+                        name: item?.name,
+                        image: item?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: 1
+                    };
+
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: [...cartContext?.cart?.product_details, productDetails],
+                        user_id: auth?.userData?._id
+                    }
+                }
+            }
+            else{
+                url = "customer/cart/add";
+                let productDetails = {
+                    product_id: item?._id,
+                    name: item?.name,
+                    image: item?.product_image,
+                    type: "single",
+                    variants:  null,
+                    quantity: 1
+                };
+
+                cartItems = {
+                    product_details: [productDetails],
+                    user_id: auth?.userData?._id
+                }
+            }
+
+            await customAxios.post(url, cartItems)
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                loadingContex.setLoading(false)
+            })
+            .catch(async error => {
+                loadingContex.setLoading(false)
+            })
+        }
+        else{
+            navigation.navigate('SingleItemScreen', { item: item })
+        }
+
+    }
+
+
+
     return (
         <>
             <HeaderWithTitle mode={mode} title={name} />
@@ -259,7 +344,7 @@ const CategoryScreen = ({ route }) => {
                     </ScrollView>
 
 
-                    {loadingg ? <ActivityIndicator/> : availablePdts?.length > 0 && <>                    
+                    {availablePdts?.length > 0 && <>                    
                         <CommonTexts label={'Available Products'} mt={15} ml={10} fontSize={13} mb={5} />
                         <View style={styles.itemContainer}>
                             {availablePdts?.map((item) => (
@@ -268,6 +353,7 @@ const CategoryScreen = ({ route }) => {
                                     key={item?._id}
                                     width={width / 2.2}
                                     height={250}
+                                    addToCart={addToCart}
                                     // wishlistIcon={fashion ? true : false}
                                 />
                             ))}

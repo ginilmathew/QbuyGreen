@@ -139,7 +139,7 @@ const MyOrders = () => {
             <ScrollView 
                 style={{  paddingHorizontal: 10 , paddingTop:10}}
             >
-                {OrderedItems.map((ord, index)=><OrderCard key={index} item = {ord} />)}
+                {orderList.map((ord, index)=><OrderCard key={index} item = {ord} />)}
             </ScrollView>
             </View>
         </>

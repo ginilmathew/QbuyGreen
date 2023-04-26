@@ -23,8 +23,9 @@ import CartContext from '../contexts/Cart';
 import AuthContext from '../contexts/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderContext from '../contexts/Loader';
+import LinearGradient from 'react-native-linear-gradient';
 
-const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon }) => {
+const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart }) => {
 
     //reactotron.log({item})
 
@@ -48,83 +49,83 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         navigation.navigate('SingleItemScreen', { item: item })
     }, [])
 
-    const openBottomSheet = useCallback(() => {
-        //addToCart()
+    const openBottomSheet = () => {
+        addToCart(item)
         //refRBSheet.current.open()
-        navigation.navigate('SingleItemScreen', { item: item })
-    }, [])
+        //navigation.navigate('SingleItemScreen', { item: item })
+    }
 
-    const addToCart = useCallback(async () => {
-        loadingg.setLoading(true)
-        let cartItems;
-        let url;
+    // const addToCart = useCallback(async () => {
+    //     loadingg.setLoading(true)
+    //     let cartItems;
+    //     let url;
 
-        if(item?.variants?.length === 0){
-            if(cartContext?.cart){
-                url = "customer/cart/update";
-                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-                if(existing >= 0){
-                    let cartProducts = cartContext?.cart?.product_details;
-                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: cartProducts,
-                        user_id: userContext?.userData?._id
-                    }
-                }
-                else{
-                    let productDetails = {
-                        product_id: item?._id,
-                        name: item?.name,
-                        image: item?.product_image,
-                        type: 'single',
-                        variants: null,
-                        quantity: 1
-                    };
+    //     if(item?.variants?.length === 0){
+    //         if(cartContext?.cart){
+    //             url = "customer/cart/update";
+    //             let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
+    //             if(existing >= 0){
+    //                 let cartProducts = cartContext?.cart?.product_details;
+    //                 cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+    //                 cartItems = {
+    //                     cart_id: cartContext?.cart?._id,
+    //                     product_details: cartProducts,
+    //                     user_id: userContext?.userData?._id
+    //                 }
+    //             }
+    //             else{
+    //                 let productDetails = {
+    //                     product_id: item?._id,
+    //                     name: item?.name,
+    //                     image: item?.product_image,
+    //                     type: 'single',
+    //                     variants: null,
+    //                     quantity: 1
+    //                 };
 
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: [...cartContext?.cart?.product_details, productDetails],
-                        user_id: userContext?.userData?._id
-                    }
-                }
-            }
-            else{
-                url = "customer/cart/add";
-                let productDetails = {
-                    product_id: item?._id,
-                    name: item?.name,
-                    image: item?.product_image,
-                    type: "single",
-                    variants:  null,
-                    quantity: 1
-                };
+    //                 cartItems = {
+    //                     cart_id: cartContext?.cart?._id,
+    //                     product_details: [...cartContext?.cart?.product_details, productDetails],
+    //                     user_id: userContext?.userData?._id
+    //                 }
+    //             }
+    //         }
+    //         else{
+    //             url = "customer/cart/add";
+    //             let productDetails = {
+    //                 product_id: item?._id,
+    //                 name: item?.name,
+    //                 image: item?.product_image,
+    //                 type: "single",
+    //                 variants:  null,
+    //                 quantity: 1
+    //             };
 
-                cartItems = {
-                    product_details: [productDetails],
-                    user_id: userContext?.userData?._id
-                }
-            }
+    //             cartItems = {
+    //                 product_details: [productDetails],
+    //                 user_id: userContext?.userData?._id
+    //             }
+    //         }
 
-            await customAxios.post(url, cartItems)
-            .then(async response => {
-                cartContext.setCart(response?.data?.data)
-                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                loadingg.setLoading(false)
-            })
-            .catch(async error => {
-                loadingg.setLoading(false)
-            })
-        }
-        else{
-            navigation.navigate('SingleItemScreen', { item: item })
-        }
+    //         await customAxios.post(url, cartItems)
+    //         .then(async response => {
+    //             cartContext.setCart(response?.data?.data)
+    //             await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+    //             loadingg.setLoading(false)
+    //         })
+    //         .catch(async error => {
+    //             loadingg.setLoading(false)
+    //         })
+    //     }
+    //     else{
+    //         navigation.navigate('SingleItemScreen', { item: item })
+    //     }
         
 
 
        
 
-    }, [cartContext?.cart])
+    // }, [cartContext?.cart])
 
     const closeRbSheet = useCallback(() => {
         refRBSheet.current.close()
@@ -235,20 +236,20 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
                     source={item?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${item?.product_image}` }}
-                    style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 13 }}
+                    style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                 >
-                    <View style={{ paddingLeft: 7, marginBottom:3, backgroundColor: 'rgba(0,0,0,0.2)' }}>
+                    <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{item?.name}</Text>
                          <Text style={styles.textSemi}>{getPrice()}</Text>
                         <Text style={styles.lightText}>{item?.store?.name}</Text> 
                         {/* <CommonRating rating={3.5} fontSize={9} alignSelf='flex-start'/> */}
-                    </View>
+                    </LinearGradient>
 
-                    {/* <View style={styles.addContainer}>
+                    <View style={styles.addContainer}>
                         <CommonAddButton
                             onPress={openBottomSheet}
                         />
-                    </View> */}
+                    </View>
 
                     {/* {!fashion && item?.openCloseTag && <View
                         style={{ position: 'absolute', right: 7, top: 7, backgroundColor: item?.openCloseTag === 'Closes Soon' ? '#FF0000' : '#58D36E', borderRadius: 8 }}
@@ -358,6 +359,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
         fontSize: 10,
+        paddingBottom: 2
     },
     lightText: {
         fontFamily: 'Poppins-Light',
@@ -368,7 +370,7 @@ const styles = StyleSheet.create({
     addContainer: {
         position: 'absolute',
         right: 5,
-        bottom: 5
+        bottom: 10
     },
     tagText: {
         fontFamily: 'Poppins-SemiBold',
