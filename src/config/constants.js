@@ -1,4 +1,4 @@
-export const env = "dev"
+export const env = "live"
 
 const URLS = {
     live: "https://api.qbuygreen.com/public/api/",

@@ -348,7 +348,7 @@ const Checkout = ({ navigation }) => {
 
         let storeId = cartItems?.product_details?.map(prod => {
             //reactotron.log({prod})
-            return prod?.productdata?.store?.id
+            return prod?.productdata?.store?._id
         })
 
         //reactotron.log({storeId})

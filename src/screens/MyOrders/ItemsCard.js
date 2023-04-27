@@ -26,15 +26,16 @@ const ItemsCard = memo(({item, date}) => {
             }
         }
         else{
-            if(item?.offer_price && item?.offer_price >0 && moment(item?.offer_date_from, "YYYY-MM-DD") <= moment(date) && moment(item?.offer_date_to, "YYYY-MM-DD") <= moment(date)){
-                return item?.offer_price;
+            if(item?.productdata?.offer_price && parseFloat(item?.productdata?.offer_price) >0 && moment(item?.productdata?.offer_date_from, "YYYY-MM-DD") <= moment(date) && moment(item?.productdata?.offer_date_to, "YYYY-MM-DD") <= moment(date)){
+                return item?.productdata?.offer_price;
             }
-            else if(item?.regular_price && parseFloat(item?.regular_price) > 0){
-                return item?.regular_price;
+            //return item?.regular_price;
+            else if(item?.productdata?.regular_price && parseFloat(item?.productdata?.regular_price) > 0){
+                return item?.productdata?.regular_price;
             }
             else{
-                let commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
-                let price = parseFloat(item?.seller_price) + commission
+                let commission = (parseFloat(item?.productdata?.seller_price)/100) * parseFloat(item?.productdata?.commission)
+                let price = parseFloat(item?.productdata?.seller_price) + commission
                 return price
             }
         }
