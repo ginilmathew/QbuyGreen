@@ -70,21 +70,10 @@ const SingleItemScreen = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
 
 
-    // useEffect(() => {
-
-    //     let productImage = [];
-    //     let pdtImages = singleProduct?.variants?.map((item, index) => {
-    //         return (
-    //             {
-    //                 label: item?.attributs?.[1],
-    //                 value: index
-    //             }
-    //         )
-    //     })
-        
-      
-    //     reactotron.log({newArray})
-    // }, [singleProduct?.product_image])
+    useEffect(() => {
+        singleProduct?.image?.splice(0, 0, singleProduct?.product_image)
+        // reactotron.log({newArray: singleProduct?.image})
+    }, [singleProduct?.product_image, singleProduct?.image])
     
     let colors = singleProduct?.variants?.map((item, index) => {
         return (
@@ -676,7 +665,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     </View>}
 
                 </View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {singleProduct?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {singleProduct?.image?.map((item, index) =>
                         <ImageVideoBox
                             key={index}
@@ -686,7 +675,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             index={index}
                         />
                     )}
-                </ScrollView>
+                </ScrollView>}
 
                 <ItemDetails
                     // onPress={gotoHotel}
