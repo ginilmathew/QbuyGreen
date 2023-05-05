@@ -418,7 +418,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         attributs: selectedVariant?.attributs
                     }
                 ] : null,
-                quantity: 1
+                quantity:  1
             };
 
             cartItems = {
