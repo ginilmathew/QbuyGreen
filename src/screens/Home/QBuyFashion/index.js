@@ -25,6 +25,10 @@ import SearchBox from '../../../Components/SearchBox';
 import Toast from 'react-native-simple-toast';
 import CartContext from '../../../contexts/Cart';
 import { env, location } from '../../../config/constants';
+import CategoryCard from '../QBuyGreen/CategoryCard';
+import AvailableStores from '../QBuyGreen/AvailableStores';
+import RecentlyViewed from '../QBuyGreen/RecentlyViewed';
+import AvailableProducts from '../QBuyGreen/AvailableProducts';
 
 
 const QBuyFashion = () => {
@@ -34,16 +38,15 @@ const QBuyFashion = () => {
 
     let coord = auth.location
 
-    reactotron.log({auth: auth?.userData})
-
+    reactotron.log({coord})
 
     const loadingg = useContext(LoaderContext)
+    let loader = loadingg?.loading
 
-    let loading = loadingg?.loading
 
     //const homeData = fashionHome?.fashionHomeData
     const [homeData, setHomeData] = useState(null)
-    const [location, setLocation] = useState(null)
+    // const [location, setLocation] = useState(null)
 
     const { width } = useWindowDimensions()
 
@@ -111,7 +114,7 @@ const QBuyFashion = () => {
     }, [])
 
     useEffect(() => {
-        getHomedata(auth.location)
+        getHomedata(coord)
     }, [])
 
 
@@ -183,7 +186,7 @@ const QBuyFashion = () => {
         }
     }
 
-    const getHomedata = async (coords) => {
+    const getHomedata = async (coord) => {
         loadingg.setLoading(true)
         let datas = {
             type: "fashion",
@@ -208,13 +211,81 @@ const QBuyFashion = () => {
         navigation.navigate('ProductSearchScreen', {mode :'fashion'})
     }, [])
 
+
+    const renderItems = ({ item }) => {
+        if (item?.type === 'categories') {
+            return (
+                <>
+                    <CategoryCard data={item?.data} />
+                    
+                    <ImageSlider datas={fashionImg} mt={20} />
+                </>
+            )
+        }
+        if (item?.type === 'stores') {
+            return (
+                <>
+                    <AvailableStores data={item?.data} />
+                    <View style={styles.pickupReferContainer}>
+                    <PickDropAndReferCard
+                        onPress={pickupDropClick}
+                        lotties={require('../../../Lottie/farmer.json')}
+                        label={'Test'}
+                        lottieFlex={0.7}
+                    />
+                    <PickDropAndReferCard
+                        onPress={clickSellItem}
+                        lotties={require('../../../Lottie/dresses.json')}
+                        label={'Sell Your Items'}
+                        lottieFlex={0.5}
+                        ml={8}
+                    />
+                </View>
+                    <View style={styles.offerView}>
+                        <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+                        <Offer onPress={goToShop} shopName={offer?.hotel} />
+                        {/* <CountDownComponent /> */}
+                        <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+                    </View>
+                </>
+            )
+        }
+        if (item?.type === 'recentlyviewed') {
+            return (
+                <>
+                    <RecentlyViewed data={item?.data} addToCart={addToCart} />
+                </>
+            )
+        }
+        if (item?.type === 'available_products') {
+            return (
+                <>
+                    <AvailableProducts data={item?.data} addToCart={addToCart} />
+                </>
+            )
+        }
+
+    }
+
     return (
         <>
             <Header onPress={onClickDrawer} />
-            <ScrollView style={styles.container}>
+            <View style={styles.container}>
 
                 <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
-                <SearchBox onPress={onSearch}/>
+                <SearchBox onPress={onSearch} />
+
+                <FlatList
+                    data={homeData}
+                    keyExtractor={(item, index) => index}
+                    renderItem={renderItems}
+                    showsVerticalScrollIndicator={false}
+                    pt={2}
+                    mb={170}
+                    refreshing={loader}
+                    onRefresh={getHomedata}
+                />
+                {/* <SearchBox onPress={onSearch}/>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -275,21 +346,7 @@ const QBuyFashion = () => {
                     </ScrollView>
                 </>}
 
-                {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7 }}
-                >
-                    {trend.map((item) =>
-                        <CommonItemCard
-                            key={item?._id}
-                            item={item}
-                            width={width / 2.5}
-                            marginHorizontal={5}
-                        />
-                    )}
-                </ScrollView> */}
+             
                 {loading ? <ActivityIndicator/> : availablePdts?.length > 0 &&<>
                     <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
                     <View style={styles.productContainer}>
@@ -301,12 +358,11 @@ const QBuyFashion = () => {
                                 height={250}
                                 addToCart={addToCart}
                             />
-                            // <View key={index} style={{backgroundColor:'red', width:50, height:50}}></View>
                         ))}
                     </View>
-                </>}    
+                </>}     */}
 
-            </ScrollView>
+            </View>
 
             <CommonSquareButton
                 onPress={gotoChat}

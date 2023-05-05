@@ -24,12 +24,6 @@ import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const fashions = require('../../../Images/jeans.jpg')
-const fashion1 = require('../../../Images/jeans2.jpg')
-const fashion2 = require('../../../Images/jeans3.jpg')
-const thumbnailFashion = require('../../../Images/jeans4.jpg')
-const fashion3 = require('../../../Images/jeans1.jpg')
-const fashionVideo = require('../../../Videos/jeansVideo.mp4')
 import Toast from 'react-native-simple-toast';
 
 
@@ -43,6 +37,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [attributes, setAttributes] = useState([])
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
+
+
+    // reactotron.log({attributes})
 
 
     let loader = loadingg?.loading
@@ -604,7 +601,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
-        reactotron.log({ attr })
+        // reactotron.log({ attr })
 
         setAttributes([...attr])
     }
@@ -693,7 +690,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 key={index}
                                 placeholder={attr?.name}
                                 data={attr.options}
-                                value={attr.selected}
+                                // value={attr.selected}
                                 setValue={selectAttributes}
                                 height={35}
                                 width={'48%'}

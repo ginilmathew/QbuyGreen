@@ -45,12 +45,7 @@ const QBuyGreen = ({ navigation }) => {
 
     const [homeData, setHomeData] = useState(null)
 
-    reactotron.log({ homeData })
 
-    const categories = homeData?.type?.category_list
-    const storeList = homeData?.type?.store_list
-    const recentViewList = homeData?.type?.recently_viewed
-    const availablePdts = homeData?.type?.available_products
 
 
     const schema = yup.object({
