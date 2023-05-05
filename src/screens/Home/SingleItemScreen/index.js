@@ -65,10 +65,27 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    //reactotron.log({ singleProduct })
+    reactotron.log({ singleProduct })
 
     const { width, height } = useWindowDimensions()
 
+
+    // useEffect(() => {
+
+    //     let productImage = [];
+    //     let pdtImages = singleProduct?.variants?.map((item, index) => {
+    //         return (
+    //             {
+    //                 label: item?.attributs?.[1],
+    //                 value: index
+    //             }
+    //         )
+    //     })
+        
+      
+    //     reactotron.log({newArray})
+    // }, [singleProduct?.product_image])
+    
     let colors = singleProduct?.variants?.map((item, index) => {
         return (
             {
@@ -93,8 +110,6 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     let varient = singleProduct?.variants?.map((item, index) => (item))
     selectedVarient = varient?.find((item) => (item?.attributs?.[0] === valueSize && item?.attributs?.[1] === valueColor))
-
-    reactotron.log({ selectedVarient })
 
 
     useEffect(() => {
@@ -133,13 +148,13 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const addViewCount = async () => {
         let datas = {
-            type : mode,
-            product_id : item?._id,
-            customer_id : userData?._id
+            type: mode,
+            product_id: item?._id,
+            customer_id: userData?._id
         }
         await customAxios.post(`customer/product/viewcount`, datas)
             .then(async response => {
-               
+
             })
             .catch(async error => {
                 // Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
@@ -147,47 +162,13 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    reactotron.log({ attributes })
-
     const data = [
         { label: 'Full', value: '1' },
         { label: 'Half', value: '2' },
         { label: 'Quarter', value: '3' },
     ];
 
-    let fashionImg = [
-        {
-            _id: '1',
-            name: fashions,
-            file_type: 'image'
-        },
-        {
-            _id: '2',
-            name: fashion1,
-            file_type: 'image'
-        },
-        {
-            _id: '3',
-            name: fashion2,
-            file_type: 'image'
-        },
-        {
-            _id: '4',
-            name: thumbnailFashion,
-            file_type: 'video',
-            video: fashionVideo,
-        },
-        {
-            _id: '5',
-            name: fashion3,
-            file_type: 'image'
-        },
-        {
-            _id: '6',
-            name: fashions,
-            file_type: 'image'
-        },
-    ]
+   
 
     more = [
         {
@@ -324,7 +305,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     ]
 
     const gotoHotel = useCallback(() => {
-        navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item : singleProduct})
+        navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
 
     const proceedCheckout = useCallback(() => {
@@ -344,9 +325,9 @@ const SingleItemScreen = ({ route, navigation }) => {
         loadingg.setLoading(true)
         let cartItems;
 
-        if(singleProduct?.variants?.length > 0 && cart?.cart){
-            if(selectedVariant?.stock){
-                if(parseFloat(selectedVariant?.stock_value) === 0){
+        if (singleProduct?.variants?.length > 0 && cart?.cart) {
+            if (selectedVariant?.stock) {
+                if (parseFloat(selectedVariant?.stock_value) === 0) {
                     Toast.show("Out of Stock", 2000)
                     return false;
                 }
@@ -354,7 +335,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             url = "customer/cart/update";
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id && prod?.variants?.[0]?.variant_id === selectedVariant?._id)
 
-            if(existing >= 0){
+            if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
                 cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                 cartItems = {
@@ -363,9 +344,9 @@ const SingleItemScreen = ({ route, navigation }) => {
                     user_id: userData?._id
                 }
 
-               
+
             }
-            else{
+            else {
                 let productDetails = {
                     product_id: singleProduct?._id,
                     name: singleProduct?.name,
@@ -388,16 +369,16 @@ const SingleItemScreen = ({ route, navigation }) => {
 
             }
         }
-        else if(cart?.cart){
-            if(singleProduct?.stock){
-                if(parseFloat(singleProduct?.stock_value) === 0){
+        else if (cart?.cart) {
+            if (singleProduct?.stock) {
+                if (parseFloat(singleProduct?.stock_value) === 0) {
                     Toast.show("Out of Stock", 2000)
                     return false;
                 }
             }
             url = "customer/cart/update";
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
-            if(existing >= 0){
+            if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
                 cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                 cartItems = {
@@ -406,7 +387,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     user_id: userData?._id
                 }
             }
-            else{
+            else {
                 let productDetails = {
                     product_id: singleProduct?._id,
                     name: singleProduct?.name,
@@ -423,16 +404,16 @@ const SingleItemScreen = ({ route, navigation }) => {
                 }
             }
         }
-        else{
+        else {
             url = "customer/cart/add";
-            if(singleProduct?.variants?.length > 0 && selectedVariant?.stock){
-                if(parseFloat(selectedVariant?.stock_value) === 0){
+            if (singleProduct?.variants?.length > 0 && selectedVariant?.stock) {
+                if (parseFloat(selectedVariant?.stock_value) === 0) {
                     Toast.show("Out of Stock", 2000)
                     return false;
                 }
             }
-            else if(singleProduct?.stock){
-                if(parseFloat(singleProduct?.stock_value) === 0){
+            else if (singleProduct?.stock) {
+                if (parseFloat(singleProduct?.stock_value) === 0) {
                     Toast.show("Out of Stock", 2000)
                     return false;
                 }
@@ -442,7 +423,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 name: singleProduct?.name,
                 image: singleProduct?.product_image,
                 type: singleProduct?.variants?.length > 0 ? 'variant' : "single",
-                variants: singleProduct?.variants?.length > 0 ?  [
+                variants: singleProduct?.variants?.length > 0 ? [
                     {
                         variant_id: selectedVariant?._id,
                         attributs: selectedVariant?.attributs
@@ -538,11 +519,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                     //return singleProduct?.variants?.[0]?.offer_price;
                 }
                 else {
-                    if(singleProduct?.variants?.[0]?.regular_price > 0){
+                    if (singleProduct?.variants?.[0]?.regular_price > 0) {
                         setPrice(singleProduct?.variants?.[0]?.regular_price)
                     }
-                    else{
-                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price)/100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                    else {
+                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(singleProduct?.variants?.[0]?.commission)
                         let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
                         setPrice(price)
                     }
@@ -550,11 +531,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                 }
             }
             else {
-                if(singleProduct?.variants?.[0]?.regular_price > 0){
+                if (singleProduct?.variants?.[0]?.regular_price > 0) {
                     setPrice(singleProduct?.variants?.[0]?.regular_price)
                 }
-                else{
-                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price)/100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                else {
+                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(singleProduct?.variants?.[0]?.commission)
                     let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
                     setPrice(price)
                 }
@@ -567,11 +548,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                     //return singleProduct?.offer_price;
                 }
                 else {
-                    if(singleProduct?.regular_price > 0){
+                    if (singleProduct?.regular_price > 0) {
                         setPrice(singleProduct?.regular_price)
                     }
-                    else{
-                        let commission = (parseFloat(singleProduct?.seller_price)/100) * parseFloat(singleProduct?.commission)
+                    else {
+                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(singleProduct?.commission)
                         let price = parseFloat(singleProduct?.seller_price) + commission
                         setPrice(price)
                     }
@@ -580,11 +561,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                 }
             }
             else {
-                if(singleProduct?.regular_price > 0){
+                if (singleProduct?.regular_price > 0) {
                     setPrice(singleProduct?.regular_price)
                 }
-                else{
-                    let commission = (parseFloat(singleProduct?.seller_price)/100) * parseFloat(singleProduct?.commission)
+                else {
+                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(singleProduct?.commission)
                     let price = parseFloat(singleProduct?.seller_price) + commission
                     setPrice(price)
                 }
@@ -670,19 +651,19 @@ const SingleItemScreen = ({ route, navigation }) => {
                         } */}
 
                         {singleProduct?.image && singleProduct?.image?.length > 0 ?
-                        <FastImage
-                            // source={singleProduct?.image[selectedImage]?.name} 
-                            source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
-                            style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                            resizeMode='cover'
-                        >
-                        </FastImage> : <FastImage
-                            // source={singleProduct?.image[selectedImage]?.name} 
-                            source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
-                            style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                            resizeMode='cover'
-                        >
-                        </FastImage>
+                            <FastImage
+                                // source={singleProduct?.image[selectedImage]?.name} 
+                                source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
+                                style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                                resizeMode='cover'
+                            >
+                            </FastImage> : <FastImage
+                                // source={singleProduct?.image[selectedImage]?.name} 
+                                source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
+                                style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                                resizeMode='cover'
+                            >
+                            </FastImage>
                         }
 
 
@@ -717,19 +698,19 @@ const SingleItemScreen = ({ route, navigation }) => {
                     price={price}
                 />
                 <View style={{ paddingHorizontal: 10 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
-                            {(attributes?.map((attr, index) =>
-                                <CommonSelectDropdown
-                                    key={index}
-                                    placeholder={attr?.name}
-                                    data={attr.options}
-                                    value={attr.selected}
-                                    setValue={selectAttributes}
-                                    height={35}
-                                    width={'48%'}
-                                />
-                            ))}
-                        </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
+                        {(attributes?.map((attr, index) =>
+                            <CommonSelectDropdown
+                                key={index}
+                                placeholder={attr?.name}
+                                data={attr.options}
+                                value={attr.selected}
+                                setValue={selectAttributes}
+                                height={35}
+                                width={'48%'}
+                            />
+                        ))}
+                    </View>
 
                     {contextPanda?.active === "panda" && <CommonSelectDropdown
                         mb={20}

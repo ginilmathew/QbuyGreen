@@ -25,6 +25,10 @@ import AuthContext from '../../../contexts/Auth';
 import reactotron from 'reactotron-react-native';
 import { env, location } from '../../../config/constants';
 import CartContext from '../../../contexts/Cart';
+import CategoryCard from './CategoryCard';
+import AvailableStores from './AvailableStores';
+import RecentlyViewed from './RecentlyViewed';
+import AvailableProducts from './AvailableProducts';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -35,16 +39,19 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
-    reactotron.log({userContext: userContext.userData})
+    reactotron.log({ userContext: userContext.userData })
 
     let loader = loadingg?.loading
 
     const [homeData, setHomeData] = useState(null)
 
-    const categories = homeData?.category_list
-    const storeList = homeData?.store_list
-    const recentViewList = homeData?.recently_viewed
-    const availablePdts = homeData?.available_products
+    reactotron.log({ homeData })
+
+    const categories = homeData?.type?.category_list
+    const storeList = homeData?.type?.store_list
+    const recentViewList = homeData?.type?.recently_viewed
+    const availablePdts = homeData?.type?.available_products
+
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -54,48 +61,7 @@ const QBuyGreen = ({ navigation }) => {
         resolver: yupResolver(schema)
     });
 
-    let recentView = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
 
-    
-
-   
-
-
-    
-
-
-    
 
     const groceImg = [
         {
@@ -152,7 +118,7 @@ const QBuyGreen = ({ navigation }) => {
 
         let datas = {
             type: "green",
-            coordinates : env === "dev" ? location : userContext?.location
+            coordinates: env === "dev" ? location : userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
@@ -166,20 +132,20 @@ const QBuyGreen = ({ navigation }) => {
             })
     }
     const onSearch = useCallback(() => {
-        navigation.navigate('ProductSearchScreen', {mode :'fashion'})
+        navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
 
     const addToCart = async (item) => {
-        
+
         let cartItems;
         let url;
 
-        if(item?.variants?.length === 0){
+        if (item?.variants?.length === 0) {
             loadingg.setLoading(true)
-            if(cartContext?.cart){
+            if (cartContext?.cart) {
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-                if(existing >= 0){
+                if (existing >= 0) {
                     let cartProducts = cartContext?.cart?.product_details;
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                     cartItems = {
@@ -188,7 +154,7 @@ const QBuyGreen = ({ navigation }) => {
                         user_id: userContext?.userData?._id
                     }
                 }
-                else{
+                else {
                     let productDetails = {
                         product_id: item?._id,
                         name: item?.name,
@@ -205,14 +171,14 @@ const QBuyGreen = ({ navigation }) => {
                     }
                 }
             }
-            else{
+            else {
                 url = "customer/cart/add";
                 let productDetails = {
                     product_id: item?._id,
                     name: item?.name,
                     image: item?.product_image,
                     type: "single",
-                    variants:  null,
+                    variants: null,
                     quantity: 1
                 };
 
@@ -223,32 +189,96 @@ const QBuyGreen = ({ navigation }) => {
             }
 
             await customAxios.post(url, cartItems)
-            .then(async response => {
-                cartContext.setCart(response?.data?.data)
-                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                loadingg.setLoading(false)
-            })
-            .catch(async error => {
-                loadingg.setLoading(false)
-            })
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                    loadingg.setLoading(false)
+                })
+                .catch(async error => {
+                    loadingg.setLoading(false)
+                })
         }
-        else{
+        else {
             navigation.navigate('SingleItemScreen', { item: item })
         }
-        
+    }
 
 
-       
+
+    const renderItems = ({ item }) => {
+        if (item?.type === 'categories') {
+            return (
+                <>
+                    <CategoryCard data={item?.data} />
+                    <SearchBox onPress={onSearch} />
+                    <ImageSlider datas={groceImg} mt={20} />
+                </>
+            )
+        }
+        if (item?.type === 'stores') {
+            return (
+                <>
+                    <AvailableStores data={item?.data} />
+                    <View style={styles.pickupReferContainer}>
+                        <PickDropAndReferCard
+                            onPress={ourFarm}
+                            lotties={require('../../../Lottie/farmer.json')}
+                            label={'Our Farms'}
+                            lottieFlex={1}
+                        />
+                        <PickDropAndReferCard
+                            onPress={referRestClick}
+                            lotties={require('../../../Lottie/farm.json')}
+                            label={"Let's Farm Together"}
+                            lottieFlex={0.4}
+                        />
+                    </View>
+                    <View style={styles.offerView}>
+                        <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+                        <Offer onPress={goToShop} shopName={offer?.hotel} />
+                        {/* <CountDownComponent /> */}
+                        <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+                    </View>
+                </>
+            )
+        }
+        if (item?.type === 'recentlyviewed') {
+            return (
+                <>
+                    <RecentlyViewed data={item?.data} addToCart={addToCart} />
+                </>
+            )
+        }
+        if (item?.type === 'available_products') {
+            return (
+                <>
+                    <AvailableProducts data={item?.data} addToCart={addToCart} />
+                </>
+            )
+        }
 
     }
 
     return (
         <>
             <Header onPress={onClickDrawer} />
-            <ScrollView style={styles.container} >
+            <View style={styles.container} >
+
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
-                
-                {categories?.length > 0 && <ScrollView
+
+                <FlatList
+                    data={homeData}
+                    keyExtractor={(item, index) => index}
+                    renderItem={renderItems}
+                    showsVerticalScrollIndicator={false}
+                    pt={2}
+                    mb={170}
+                    refreshing={loader}
+                    onRefresh={getHomedata}
+                />
+                {/* <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} /> */}
+
+                {/* {categories?.length > 0 && <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', marginTop: 20, marginLeft: 10, marginRight: 10 }}
@@ -266,9 +296,9 @@ const QBuyGreen = ({ navigation }) => {
                             <ShopCard key={index} item={item} />
                         ))}
                     </View>
-                </>}
+                </>} */}
 
-                <View style={styles.pickupReferContainer}>
+                {/* <View style={styles.pickupReferContainer}>
                     <PickDropAndReferCard
                         onPress={ourFarm}
                         lotties={require('../../../Lottie/farmer.json')}
@@ -281,16 +311,16 @@ const QBuyGreen = ({ navigation }) => {
                         label={"Let's Farm Together"}
                         lottieFlex={0.4}
                     />
-                </View>
+                </View> */}
 
-                <View style={styles.offerView}>
+                {/* <View style={styles.offerView}>
                     <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
                     <Offer onPress={goToShop} shopName={offer?.hotel} />
-                    {/* <CountDownComponent/> */}
+                    <CountDownComponent/>
                     <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-                </View>
+                </View> */}
 
-                {recentViewList?.length > 0 && <>
+                {/* {recentViewList?.length > 0 && <>
                     <CommonTexts label={'Recently Viewed'} fontSize={13} mt={5} ml={15} mb={15} />
                     <ScrollView
                         horizontal
@@ -307,7 +337,7 @@ const QBuyGreen = ({ navigation }) => {
                             />
                         )}
                     </ScrollView>
-                </>}
+                </>} */}
 
                 {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
@@ -331,7 +361,7 @@ const QBuyGreen = ({ navigation }) => {
                     mb={80}
                 /> */}
 
-                {availablePdts?.length > 0 && <>
+                {/* {availablePdts?.length > 0 && <>
                     <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={15} mt={15} />
                     <View style={styles.productContainer}>
                         {availablePdts?.map((item) => (
@@ -345,9 +375,9 @@ const QBuyGreen = ({ navigation }) => {
                             />
                         ))}
                     </View>
-                </>}
+                </>} */}
 
-            </ScrollView>
+            </View>
 
             <CommonSquareButton
                 onPress={gotoChat}

@@ -34,7 +34,7 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
                 borderRadius={30}
             />
             <Text
-                numberOfLines={1}
+                numberOfLines={2}
                 style={styles.shopName}
             >{item?.name}</Text>
         </TouchableOpacity>

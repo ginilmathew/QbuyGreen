@@ -7,12 +7,15 @@ import CommonItemCard from '../../Components/CommonItemCard'
 import LoaderContext from '../../contexts/Loader'
 import reactotron from '../../ReactotronConfig'
 import customAxios from '../../CustomeAxios'
+import PandaContext from '../../contexts/Panda'
 
 const Wishlist = ({navigation}) => {
 
     const loadingContex = useContext(LoaderContext)
     let loadingg = loadingContex?.loading
 
+    const contextPanda = useContext(PandaContext)
+    let active = contextPanda.active
 
     const { width } = useWindowDimensions()
 
@@ -47,47 +50,12 @@ const Wishlist = ({navigation}) => {
         })
     }
 
-    let wishlistss = [
-        {
-            _id: '1',
-            name: 'Shirt',
-            rate: 250,
-            hotel : 'Raymond Store',
-            wish : true,
-            image : require('../../Images/shirt.jpg')
-        },
-        {
-            _id: '2',
-            name: 'Saree',
-            rate: 90,
-            hotel : 'Pattom Silks',
-            wish : false,
-            image : require('../../Images/saree.jpg')
-        },
-        {
-            _id: '3',
-            name: 'Jeans',
-            rate: 150,
-            hotel : 'CJ Designers',
-            wish : false,
-            image : require('../../Images/jeans.jpg')
-        },
-        {
-            _id: '4',
-            name: 'Shoes',
-            rate: 180,
-            hotel : 'Raymond Store',
-            wish : true,
-            image : require('../../Images/shoes.jpg')
-        },
-    ]
-
 
     return (
         <>
             <HeaderWithTitle title={'Wishlist'}  />
             <ScrollView
-                style={{ flex: 1, backgroundColor: '#FFF5F7' , paddingTop:10}}
+                style={{ flex: 1,  backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' , paddingTop:10}}
             >
                 <View style={styles.container}>
                     {loadingg ? <ActivityIndicator style={{width:width}}/> : wishlist?.map((item) => (
