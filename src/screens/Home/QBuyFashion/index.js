@@ -22,7 +22,7 @@ import reactotron from '../../../ReactotronConfig';
 import { useNavigation } from '@react-navigation/native';
 import AuthContext from '../../../contexts/Auth';
 import SearchBox from '../../../Components/SearchBox';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message'
 import CartContext from '../../../contexts/Cart';
 import { env, location } from '../../../config/constants';
 
@@ -197,7 +197,10 @@ const QBuyFashion = () => {
             })
             .catch(async error => {
                 // console.log(error)
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingg.setLoading(false)
             })
     }

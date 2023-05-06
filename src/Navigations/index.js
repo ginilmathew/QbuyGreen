@@ -13,6 +13,7 @@ import reactotron from '../ReactotronConfig';
 import AuthContext from '../contexts/Auth';
 import customAxios from '../CustomeAxios';
 import LoaderContext from '../contexts/Loader';
+import Toast from 'react-native-toast-message'
 
 
 // import Menu from './Menu';
@@ -45,11 +46,10 @@ const Navigation = () => {
                     loadingg.setLoading(false)
                 })
                 .catch(async error => {
-                    ToastAndroid.showWithGravity(
-                        error,
-                        ToastAndroid.SHORT,
-                        ToastAndroid.CENTER,
-                    )
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
                     loadingg.setLoading(false)
                 })
 

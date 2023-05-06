@@ -17,6 +17,7 @@ import { IMG_URL } from '../../../config/constants'
 import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
+import Toast from 'react-native-toast-message'
 
 
 const Category = ({ route }) => {
@@ -64,11 +65,10 @@ const Category = ({ route }) => {
             loadingContex.setLoading(false)
         })
         .catch(async error => {
-            // toast.show({
-            //     title: 'Error',
-            //     description : error,
-            //     backgroundColor:'red.500'
-            // })
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
             loadingContex.setLoading(false)
         })
     }
@@ -90,11 +90,10 @@ const Category = ({ route }) => {
             loadingContex.setLoading(false)
         })
         .catch(async error => {
-            // toast.show({
-            //     title: 'Error',
-            //     description : error,
-            //     backgroundColor:'red.500'
-            // })
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
             loadingContex.setLoading(false)
         })
     }

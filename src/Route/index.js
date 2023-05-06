@@ -21,7 +21,7 @@ import reactotron from 'reactotron-react-native';
 import customAxios from '../CustomeAxios';
 import LoaderContext from '../contexts/Loader';
 import { isObject } from 'lodash'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
 
@@ -73,16 +73,16 @@ const Route = () => {
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
-                ToastAndroid.show(
-                    'Location permission denied by user.',
-                    ToastAndroid.LONG,
-                );
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
             }
             else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-                ToastAndroid.show(
-                    'Location permission revoked by user.',
-                    ToastAndroid.LONG,
-                );
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission revoked by user.',
+                });
             }
         }
 
@@ -108,7 +108,10 @@ const Route = () => {
                 checkLogin();
             },
             error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 checkLogin();
             },
             {
@@ -137,8 +140,12 @@ const Route = () => {
             setInitialScreen(mode);
         })
         .catch(async error => {
-            Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
             setInitialScreen('Login');
+            await AsyncStorage.clear()
             loadingContext.setLoading(false);
         })
     }, [])
@@ -159,7 +166,10 @@ const Route = () => {
                 
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingContext.setLoading(false);
             })
         }
@@ -188,8 +198,11 @@ const Route = () => {
             })
             .catch(async error => {
                 getAddressFromCoordinates()
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 reactotron.log({error})
-                //Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
                 loadingContext.setLoading(false)
             })
         }

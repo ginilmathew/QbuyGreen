@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import AuthContext from '../../contexts/Auth'
 import reactotron from '../../ReactotronConfig'
 import customAxios from '../../CustomeAxios'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
 
 
@@ -56,7 +56,10 @@ const MyAccount = ({ navigation }) => {
         }
         await customAxios.post(`auth/customerlogout`, datas)
             .then(async response => {
-                Toast.showWithGravity(response?.data?.message, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'success',
+                    text1: response?.data?.message
+                });
                 await AsyncStorage.clear()
                 cartContext.setCart(null)
                 user?.setUserData(null)
@@ -72,7 +75,10 @@ const MyAccount = ({ navigation }) => {
 
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
     })
 

@@ -30,7 +30,7 @@ import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/core'
 import CartContext from '../../../contexts/Cart'
-import SimpleToast from 'react-native-simple-toast'
+import Toast from 'react-native-toast-message'
 
 
 const Checkout = ({ navigation }) => {
@@ -83,13 +83,10 @@ const Checkout = ({ navigation }) => {
             setCartItems(response?.data?.data)
         })
         .catch(async error => {
-            console.log(error)
-            // ToastAndroid.showWithGravity(
-            //     error,
-            //     ToastAndroid.SHORT,
-            //     ToastAndroid.CENTER,
-            // )
-            // loadingg.setLoading(false)
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
         })
        
     }
@@ -342,7 +339,10 @@ const Checkout = ({ navigation }) => {
     const placeOrder = async() => {
 
         if(!cartContext.defaultAddress?.area?.location){
-            SimpleToast.show("Please add Delevery Address to continue")
+            Toast.show({
+                type: 'error',
+                text1: 'Please add Delevery Address to continue'
+            });
             return false;
         }
 

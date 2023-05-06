@@ -6,7 +6,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import CommonTexts from './CommonTexts'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-
+import Toast from 'react-native-toast-message'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import FoodSuggestionCard from './FoodSuggestionCard'
 import { BlurView } from "@react-native-community/blur";
@@ -137,35 +137,50 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         if(item?.variants?.length > 0){
             let variants = [];
             item?.variants?.map(vari => {
-                if(vari?.offer_price && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment()) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment())){
+                if(vari?.offer_price && vari?.offer_price > 0 && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment()) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment())){
                     variants.push(vari?.offer_price);
                 }
                 else{
-                    if(vari?.regular_price){
+                    if(vari?.regular_price > 0){
                         variants.push(vari?.regular_price);
                     }
-                    else{
-                        let commission = (parseFloat(vari?.seller_price)/100) * parseFloat(vari?.commission)
+                    else if(vari?.seller_price > 0){
+                        let commission = 0;
+                        if(vari?.commission){
+                            commission = (parseFloat(vari?.seller_price)/100) * parseFloat(vari?.commission)
+                        }
+                        
                         let price = parseFloat(vari?.seller_price) + commission;
                         variants.push(price)
                     }
                 }
             })
-            return `₹${min(variants)} - ₹${max(variants)}`
+            if(variants && variants?.length > 0){
+                return `₹${min(variants)} - ₹${max(variants)}`
+            }
+            else{
+                return 0;
+            }
         }
         else{
-            if(item?.offer_price){
+            if(item?.offer_price && item?.offer_price > 0){
                 if(item?.offer_price && (moment(item?.offer_date_from, "YYYY-MM-DD") <= moment()) && (moment(item?.offer_date_to, "YYYY-MM-DD") >= moment())){
                     return `₹${item?.offer_price}`;
                 }
                 else{
-                    if(item?.regular_price){
+                    if(item?.regular_price && item?.regular_price > 0){
                         return `₹${item?.regular_price}`;
                     }
-                    else{
-                        let commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                    else if(item?.seller_price && item?.seller_price > 0){
+                        let commission = 0;
+                        if(item?.commission){
+                            commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                        }
                         let price = parseFloat(item?.seller_price) + commission;
                         return `₹${price}`
+                    }
+                    else{
+                        return 0;
                     }
                 }
             }
@@ -173,10 +188,16 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 if(parseFloat(item?.regular_price) > 0){
                     return `₹${item?.regular_price}`;
                 }
-                else{
-                    let commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                else if(item?.seller_price > 0){
+                    let commission = 0;
+                    if(item?.commission){
+                        commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                    }
                     let price = parseFloat(item?.seller_price) + commission;
                     return `₹${price}`;
+                }
+                else{
+                    return 0;
                 }
             }
         }
@@ -195,11 +216,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 // setAvailabelPdts(response?.data?.data)
             })
             .catch(async error => {
-                // toast.show({
-                //     title: 'Error',
-                //     description : error,
-                //     backgroundColor:'red.500'
-                // })
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
 
     })
@@ -217,11 +237,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 // reactotron.log({response})
             })
             .catch(async error => {
-                // toast.show({
-                //     title: 'Error',
-                //     description : error,
-                //     backgroundColor:'red.500'
-                // })
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
 
     })
@@ -230,7 +249,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     return (
         <>
             <TouchableOpacity
-                onPress={handleClick}
+                onPress={getPrice() != 0 ? handleClick : null}
                 style={{ marginHorizontal: marginHorizontal }}
             >
                 <FastImage
@@ -245,11 +264,11 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         {/* <CommonRating rating={3.5} fontSize={9} alignSelf='flex-start'/> */}
                     </LinearGradient>
 
-                    <View style={styles.addContainer}>
+                    {getPrice() != 0 && <View style={styles.addContainer}>
                         <CommonAddButton
                             onPress={openBottomSheet}
                         />
-                    </View>
+                    </View>}
 
                     {/* {!fashion && item?.openCloseTag && <View
                         style={{ position: 'absolute', right: 7, top: 7, backgroundColor: item?.openCloseTag === 'Closes Soon' ? '#FF0000' : '#58D36E', borderRadius: 8 }}

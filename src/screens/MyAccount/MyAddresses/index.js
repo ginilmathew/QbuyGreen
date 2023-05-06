@@ -12,7 +12,7 @@ import LoaderContext from '../../../contexts/Loader'
 import reactotron from '../../../ReactotronConfig'
 import { useFocusEffect } from '@react-navigation/native'
 import CartContext from '../../../contexts/Cart'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message'
 import AuthContext from '../../../contexts/Auth'
 
 
@@ -57,7 +57,10 @@ const MyAddresses = ({ route, navigation }) => {
                 loadingContex.setLoading(false)
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingContex.setLoading(false)
             })
     }
@@ -121,7 +124,10 @@ const MyAddresses = ({ route, navigation }) => {
                 loadingContex.setLoading(false)
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingContex.setLoading(false)
             })
         }
@@ -150,7 +156,7 @@ const MyAddresses = ({ route, navigation }) => {
                 <ScrollView
                     showsHorizontalScrollIndicator={false}
                 >
-                    {mode === 'home' && <CustomButton
+                    {(mode === 'home' || addrList?.length === 0) && <CustomButton
                         onPress={chooseCrntLocation}
                         bg={'#19B836'}
                         label='Choose Current Location'
@@ -166,13 +172,6 @@ const MyAddresses = ({ route, navigation }) => {
                             setSelected={selectAddress}
                         />
                     )}
-                    {addrList?.length === 0 && <CustomButton
-                        onPress={chooseCrntLocation}
-                        bg={'#19B836'}
-                        label='Choose Current Location'
-                        mt={10}
-                        leftIcon={<Foundation name={'target-two'} color='#fff' size={20} marginRight={10} />}
-                    />}
                 </ScrollView>
                 <CustomButton
                     onPress={chooseCrntLocation}

@@ -13,6 +13,7 @@ import AuthContext from '../../contexts/Auth';
 import customAxios from '../../CustomeAxios';
 import CartContext from '../../contexts/Cart';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 
 const Cart = ({ navigation }) => {
@@ -56,12 +57,10 @@ const Cart = ({ navigation }) => {
             })
             .catch(async error => {
                 console.log(error)
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.SHORT,
-                //     ToastAndroid.CENTER,
-                // )
-                // loadingg.setLoading(false)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
         }
        

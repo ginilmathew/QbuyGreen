@@ -16,7 +16,7 @@ import reactotron from '../../../../../ReactotronConfig'
 import customAxios from '../../../../../CustomeAxios'
 import LoaderContext from '../../../../../contexts/Loader'
 import CommonSwitch from '../../../../../Components/CommonSwitch'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 
 
 const AddDeliveryAddress = ({route, navigation}) => {
@@ -97,7 +97,10 @@ const AddDeliveryAddress = ({route, navigation}) => {
 			navigation.navigate('MyAddresses', {mode : 'MyAcc'})
         })
         .catch(async error => {
-            Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
             loadingContex.setLoading(false)
         })
     })
