@@ -47,8 +47,9 @@ const Cart = ({ navigation }) => {
     // }, [])
 
     const getCartItems = async () => {
-        if(cartContext?.cart?._id){
+        if (cartContext?.cart?._id) {
             await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
+<<<<<<< HEAD
             .then(async response => {
                 setCartItemsList([...response?.data?.data?.product_details])
                 // reactotron.log({ response })
@@ -62,8 +63,25 @@ const Cart = ({ navigation }) => {
                     text1: error
                 });
             })
+=======
+                .then(async response => {
+                    setCartItemsList([...response?.data?.data?.product_details])
+                    // reactotron.log({ response })
+                    // setSingleProduct(response?.data?.data)
+                    // loadingg.setLoading(false)
+                })
+                .catch(async error => {
+                    console.log(error)
+                    // ToastAndroid.showWithGravity(
+                    //     error,
+                    //     ToastAndroid.SHORT,
+                    //     ToastAndroid.CENTER,
+                    // )
+                    // loadingg.setLoading(false)
+                })
+>>>>>>> 1cdf185621a83417d38ed0f53f0514feb5375d1a
         }
-       
+
     }
 
 
@@ -71,7 +89,7 @@ const Cart = ({ navigation }) => {
         React.useCallback(() => {
             getCartItems()
         }, [])
-      );
+    );
 
 
     const { width } = useWindowDimensions()
@@ -172,9 +190,9 @@ const Cart = ({ navigation }) => {
 
 
 
-    const gotoCheckout = useCallback(async() => {
+    const gotoCheckout = useCallback(async () => {
         navigation.navigate('Checkout')
-        
+
     }, [])
 
     const goHome = useCallback(() => {
@@ -183,15 +201,15 @@ const Cart = ({ navigation }) => {
 
     const refreshCart = useCallback(() => {
         getCartItems()
-    },[])
+    }, [])
 
     return (
-        <View style={{ height: height-50, paddingBottom: 50, backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
+        <View style={{ height: height - 50, paddingBottom: 50, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
             <HeaderWithTitle title={'Cart'} noBack />
 
-            <ScrollView style={{ flex: 1, backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
+            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
                 {cartItemsList?.length <= 0 ? <View
-                    style={{ backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
+                    style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
                 >
                     <View style={{ height: grocery ? 250 : 170 }}>
                         <Lottie
@@ -220,14 +238,14 @@ const Cart = ({ navigation }) => {
                     </>}
 
 
-                {cartItemsList?.length > 0 && 
-                <CustomButton
-                onPress={gotoCheckout}
-                label={'Proceed To Checkout'}
-                bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
-                mt={20}
-                mx={10}
-            />}
+                {cartItemsList?.length > 0 &&
+                    <CustomButton
+                        onPress={gotoCheckout}
+                        label={'Proceed To Checkout'}
+                        bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
+                        mt={20}
+                        mx={10}
+                    />}
                 {/* <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
                     horizontal

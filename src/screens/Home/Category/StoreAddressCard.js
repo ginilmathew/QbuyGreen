@@ -6,12 +6,11 @@ import PandaContext from '../../../contexts/Panda'
 const StoreAddressCard = ({address}) => {
 
     const contextPanda = useContext(PandaContext)
-    let fashion = contextPanda.pinkPanda
-    let grocery = contextPanda.pinkPanda
+    let active = contextPanda.active
 
     return (
         <View style={styles.container}>
-            <Ionicons name='ios-location-sharp' color={fashion ? '#FF7190' : grocery ? '#8ED053' : '#58D36E'} size={15}/>
+            <Ionicons name='ios-location-sharp' color={active === 'fashion' ? '#FF7190' : active === 'green' ? '#8ED053' : '#58D36E'} size={15}/>
             <Text style={styles.regularText}>{address}</Text>
         </View>
     )

@@ -45,6 +45,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [selectedVariant, setSelectedVariant] = useState(null)
 
 
+    // reactotron.log({attributes})
+
+
     let loader = loadingg?.loading
 
     const user = useContext(AuthContext)
@@ -436,7 +439,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         attributs: selectedVariant?.attributs
                     }
                 ] : null,
-                quantity: 1
+                quantity:  1
             };
 
             cartItems = {
@@ -594,7 +597,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
-        reactotron.log({ attr })
+        // reactotron.log({ attr })
 
         setAttributes([...attr])
     }
@@ -663,7 +666,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 key={index}
                                 placeholder={attr?.name}
                                 data={attr.options}
-                                value={attr.selected}
+                                // value={attr.selected}
                                 setValue={selectAttributes}
                                 height={35}
                                 width={'48%'}

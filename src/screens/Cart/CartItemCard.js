@@ -210,7 +210,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     source={{ uri: `${IMG_URL}${item?.productdata?.product_image}` }}
                 />
                 <View style={{marginLeft:5, flex:0.95}}>
-                    <Text style={styles.nameText}>{item?.name}</Text>
+                    {item?.variants?.title ? <Text style={styles.nameText}>{`${item?.name}${'('}${item?.variants?.title}${')'} `}</Text> : <Text style={styles.nameText}>{item?.name}</Text>}
                     <TouchableOpacity onPress={goToShop}>
                         <Text style={styles.shopText}>{item?.productdata?.store?.name}</Text>
                     </TouchableOpacity>
