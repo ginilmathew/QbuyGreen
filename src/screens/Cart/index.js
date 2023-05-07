@@ -49,7 +49,6 @@ const Cart = ({ navigation }) => {
     const getCartItems = async () => {
         if (cartContext?.cart?._id) {
             await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
-<<<<<<< HEAD
             .then(async response => {
                 setCartItemsList([...response?.data?.data?.product_details])
                 // reactotron.log({ response })
@@ -63,23 +62,6 @@ const Cart = ({ navigation }) => {
                     text1: error
                 });
             })
-=======
-                .then(async response => {
-                    setCartItemsList([...response?.data?.data?.product_details])
-                    // reactotron.log({ response })
-                    // setSingleProduct(response?.data?.data)
-                    // loadingg.setLoading(false)
-                })
-                .catch(async error => {
-                    console.log(error)
-                    // ToastAndroid.showWithGravity(
-                    //     error,
-                    //     ToastAndroid.SHORT,
-                    //     ToastAndroid.CENTER,
-                    // )
-                    // loadingg.setLoading(false)
-                })
->>>>>>> 1cdf185621a83417d38ed0f53f0514feb5375d1a
         }
 
     }
