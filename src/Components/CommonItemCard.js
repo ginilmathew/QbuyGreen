@@ -27,10 +27,6 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart }) => {
 
-    //reactotron.log({item})
-
-    let rating = 4.1
-
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
@@ -185,7 +181,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const RemoveAction = useCallback(async () => {
         setHeart(!heart)
         let datas = {
-            type: "fashion",
+            type: active,
             product_id: item?._id
         }
 
@@ -208,7 +204,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         setHeart(!heart)
 
         let datas = {
-            type: "fashion",
+            type: active,
             product_id: item?._id
         }
 
@@ -242,7 +238,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         <Text style={styles.textSemi}>{item?.name}</Text>
                          <Text style={styles.textSemi}>{getPrice()}</Text>
                         <Text style={styles.lightText}>{item?.store?.name}</Text> 
-                        {/* <CommonRating rating={3.5} fontSize={9} alignSelf='flex-start'/> */}
                     </LinearGradient>
 
                     <View style={styles.addContainer}>
