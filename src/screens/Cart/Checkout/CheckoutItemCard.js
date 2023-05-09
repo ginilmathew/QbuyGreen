@@ -39,12 +39,10 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
             })
             .catch(async error => {
                 console.log(error)
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.SHORT,
-                //     ToastAndroid.CENTER,
-                // )
-                // loadingg.setLoading(false)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
     }, [])
 
@@ -70,12 +68,10 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                 })
                 .catch(async error => {
                     console.log(error)
-                    // ToastAndroid.showWithGravity(
-                    //     error,
-                    //     ToastAndroid.SHORT,
-                    //     ToastAndroid.CENTER,
-                    // )
-                    // loadingg.setLoading(false)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
                 })
         }
         else{
@@ -95,12 +91,10 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                 })
                 .catch(async error => {
                     console.log(error)
-                    // ToastAndroid.showWithGravity(
-                    //     error,
-                    //     ToastAndroid.SHORT,
-                    //     ToastAndroid.CENTER,
-                    // )
-                    // loadingg.setLoading(false)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
                 })
         }
     }, [])

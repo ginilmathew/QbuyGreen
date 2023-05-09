@@ -11,7 +11,7 @@ import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message'
 import CartContext from '../../../contexts/Cart'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -68,7 +68,10 @@ const CategoryScreen = ({ route, navigation }) => {
                 loadingContex.setLoading(false)
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingContex.setLoading(false)
             })
         

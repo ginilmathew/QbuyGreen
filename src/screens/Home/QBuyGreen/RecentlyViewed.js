@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
-const RecentlyViewed = ({data, addToCart}) => {
+const RecentlyViewed = memo(({data, addToCart}) => {
     const {width} = useWindowDimensions()
 
     return (
@@ -27,7 +27,7 @@ const RecentlyViewed = ({data, addToCart}) => {
         </>
         
     )
-}
+})
 
 export default RecentlyViewed
 

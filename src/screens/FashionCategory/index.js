@@ -8,6 +8,7 @@ import customAxios from '../../CustomeAxios'
 import reactotron from '../../ReactotronConfig'
 import { useNavigation } from '@react-navigation/native'
 import FashionCatCard from './FashionCatCard'
+import Toast from 'react-native-toast-message'
 
 
 const FashionCategory = ({route}) => {
@@ -47,11 +48,10 @@ const FashionCategory = ({route}) => {
             loadingContex.setLoading(false)
         })
         .catch(async error => {
-            // toast.show({
-            //     title: 'Error',
-            //     description : error,
-            //     backgroundColor:'red.500'
-            // })
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
             loadingContex.setLoading(false)
         })
     }

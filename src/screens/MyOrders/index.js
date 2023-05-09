@@ -10,6 +10,7 @@ import LoaderContext from '../../contexts/Loader'
 import AuthContext from '../../contexts/Auth'
 import customAxios from '../../CustomeAxios'
 import reactotron from '../../ReactotronConfig'
+import Toast from 'react-native-toast-message';
 
 
 const MyOrders = () => {
@@ -38,11 +39,10 @@ const MyOrders = () => {
             })
             .catch(async error => {
                 console.log(error)
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.SHORT,
-                //     ToastAndroid.CENTER,
-                // )
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingg.setLoading(false)
             })
     }

@@ -8,6 +8,7 @@ import store from './Redux/store'
 import LoadProvider from './contexts/Loader/loaderContext'
 import Route from './Route'
 import CartProvider from './contexts/Cart/CartContext'
+import Toast from 'react-native-toast-message';
 
 
 const App = () => {
@@ -23,6 +24,10 @@ const App = () => {
                     <CartProvider>
                         <PandaProvider>
                             <Route />
+                            <Toast 
+                                position='bottom'
+                                bottomOffset={20}
+                            />
                         </PandaProvider>
                     </CartProvider>
                 </AuthProvider>

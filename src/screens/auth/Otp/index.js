@@ -14,7 +14,7 @@ import LoaderContext from '../../../contexts/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import customAxios from '../../../CustomeAxios';
 import { mode } from '../../../config/constants';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 import { CommonActions } from '@react-navigation/native';
 
 const Otp = ({ navigation }) => {
@@ -71,7 +71,10 @@ const Otp = ({ navigation }) => {
 
         })
         .catch(async error => {
-			Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+			Toast.show({
+				type: 'error',
+				text1: error
+			});
             loadingg.setLoading(false)
         })
 	})

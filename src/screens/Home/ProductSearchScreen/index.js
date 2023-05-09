@@ -10,7 +10,7 @@ import customAxios from '../../../CustomeAxios'
 import LoaderContext from '../../../contexts/Loader'
 import { IMG_URL } from '../../../config/constants'
 import SearchResultsCard from './SearchResultsCard'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 
 
 const ProductSearchScreen = ({route}) => {
@@ -51,7 +51,10 @@ const ProductSearchScreen = ({route}) => {
                 loadingg.setLoading(false)
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingg.setLoading(false)
             })
     }, [])

@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import ImageSlider from '../../../Components/ImageSlider';
 import CustomSearch from '../../../Components/CustomSearch';
@@ -20,7 +20,7 @@ import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
 import SearchBox from '../../../Components/SearchBox';
 import { useFocusEffect } from '@react-navigation/native';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 import AuthContext from '../../../contexts/Auth';
 import reactotron from 'reactotron-react-native';
 import { env, location } from '../../../config/constants';
@@ -47,14 +47,9 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
-
     const schema = yup.object({
         name: yup.string().required('Name is required'),
     }).required();
-
-    const { control, handleSubmit, formState: { errors }, setValue } = useForm({
-        resolver: yupResolver(schema)
-    });
 
 
 
@@ -101,11 +96,10 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
-    useFocusEffect(
-        React.useCallback(() => {
-            getHomedata()
-        }, [])
-    );
+    useEffect(() => {
+        getHomedata()
+    }, [])
+    
 
     const getHomedata = async () => {
 
@@ -122,7 +116,10 @@ const QBuyGreen = ({ navigation }) => {
             })
             .catch(async error => {
                 console.log(error)
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingg.setLoading(false)
             })
     }
@@ -200,7 +197,7 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
-    const renderItems = ({ item }) => {
+    const renderItems = (item) => {
         if (item?.type === 'categories') {
             return (
                 <>
@@ -260,17 +257,25 @@ const QBuyGreen = ({ navigation }) => {
             <View style={styles.container} >
 
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
-
-                <FlatList
+                <ScrollView 
+                    removeClippedSubviews
+                    refreshControl={
+                        <RefreshControl refreshing={loader} onRefresh={getHomedata} />
+                    }>
+                    {homeData?.map(home => renderItems(home))}
+                </ScrollView>
+                {/* <FlatList
                     data={homeData}
                     keyExtractor={(item, index) => index}
                     renderItem={renderItems}
                     showsVerticalScrollIndicator={false}
+                    initialNumToRender={2}
+                    removeClippedSubviews={true}
                     pt={2}
                     mb={170}
                     refreshing={loader}
                     onRefresh={getHomedata}
-                />
+                /> */}
                 {/* <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} /> */}
 
                 {/* {categories?.length > 0 && <ScrollView

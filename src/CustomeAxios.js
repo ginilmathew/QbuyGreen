@@ -3,6 +3,7 @@ import axios from 'axios';
 import reactotron from './ReactotronConfig';
 import * as RootNavigation from './Navigations/RootNavigation'
 import { BASE_URL } from './config/constants';
+import { has } from 'lodash'
 // const axios = require('axios');
 
 // Step-1: Create a new Axios instance with a custom config.
@@ -41,7 +42,7 @@ const responseHandler = async response => {
 };
 
 const errorHandler = async error => {
-    //reactotron.log(error.response)
+    reactotron.log(error.response)
     let err="";
     if (error?.response) {
         if (error?.response.status === 405) {
@@ -54,6 +55,10 @@ const errorHandler = async error => {
         else if(error?.response?.data === "undefined"){
             reactotron.log(error.message)
             err = "Network Error"
+        }
+        else if(has(error?.response?.data, 'error')){
+            //reactotron.log(error.message)
+            err = error?.response?.data?.error
         }
         else{
             err = JSON.stringify(error?.response?.data?.message)

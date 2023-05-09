@@ -12,7 +12,7 @@ import moment from 'moment'
 import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import reactotron from 'reactotron-react-native'
-import SimpleToast from 'react-native-simple-toast'
+import Toast from 'react-native-toast-message';
 
 
 const CartItemCard = ({item, index, refreshCart}) => {
@@ -37,12 +37,18 @@ const CartItemCard = ({item, index, refreshCart}) => {
     const addItem = async () => {
         if(item?.type === "single" && item?.productdata?.stock){
             if(parseFloat(item?.productdata?.stock_value) < data?.quantity + 1){
-                SimpleToast.show("Required quantity not available")
+                Toast.show({
+                    type: 'error',
+                    text1: 'Required quantity not available'
+                });
                 return false;
             }
         }
         else if(item?.variants?.stock_value < data?.quantity + 1){
-            SimpleToast.show("Required quantity not available")
+            Toast.show({
+                type: 'error',
+                text1: 'Required quantity not available'
+            });
             return false;
         }
         data.quantity = data?.quantity + 1
@@ -67,13 +73,10 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 //navigation.navigate('CartNav',{screen: 'Cart'})
             })
             .catch(async error => {
-                console.log(error)
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.SHORT,
-                //     ToastAndroid.CENTER,
-                // )
-                // loadingg.setLoading(false)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
     }
 
@@ -98,13 +101,11 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     //navigation.navigate('CartNav',{screen: 'Cart'})
                 })
                 .catch(async error => {
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
                     console.log(error)
-                    // ToastAndroid.showWithGravity(
-                    //     error,
-                    //     ToastAndroid.SHORT,
-                    //     ToastAndroid.CENTER,
-                    // )
-                    // loadingg.setLoading(false)
                 })
         }
         else{
@@ -124,12 +125,10 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 })
                 .catch(async error => {
                     console.log(error)
-                    // ToastAndroid.showWithGravity(
-                    //     error,
-                    //     ToastAndroid.SHORT,
-                    //     ToastAndroid.CENTER,
-                    // )
-                    // loadingg.setLoading(false)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
                 })
         }
         

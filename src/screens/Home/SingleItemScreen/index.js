@@ -24,7 +24,13 @@ import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import Toast from 'react-native-simple-toast';
+const fashions = require('../../../Images/jeans.jpg')
+const fashion1 = require('../../../Images/jeans2.jpg')
+const fashion2 = require('../../../Images/jeans3.jpg')
+const thumbnailFashion = require('../../../Images/jeans4.jpg')
+const fashion3 = require('../../../Images/jeans1.jpg')
+const fashionVideo = require('../../../Videos/jeansVideo.mp4')
+import Toast from 'react-native-toast-message';
 
 
 const SingleItemScreen = ({ route, navigation }) => {
@@ -128,7 +134,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                 // loadingg.setLoading(false)
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
     }
 
@@ -143,7 +152,10 @@ const SingleItemScreen = ({ route, navigation }) => {
 
             })
             .catch(async error => {
-                // Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
             })
     }
 
@@ -314,7 +326,10 @@ const SingleItemScreen = ({ route, navigation }) => {
         if (singleProduct?.variants?.length > 0 && cart?.cart) {
             if (selectedVariant?.stock) {
                 if (parseFloat(selectedVariant?.stock_value) === 0) {
-                    Toast.show("Out of Stock", 2000)
+                    Toast.show({
+                        type: 'error',
+                        text1: "Out of Stock"
+                    });
                     return false;
                 }
             }
@@ -358,7 +373,10 @@ const SingleItemScreen = ({ route, navigation }) => {
         else if (cart?.cart) {
             if (singleProduct?.stock) {
                 if (parseFloat(singleProduct?.stock_value) === 0) {
-                    Toast.show("Out of Stock", 2000)
+                    Toast.show({
+                        type: 'error',
+                        text1: "Out of Stock"
+                    });
                     return false;
                 }
             }
@@ -394,13 +412,19 @@ const SingleItemScreen = ({ route, navigation }) => {
             url = "customer/cart/add";
             if (singleProduct?.variants?.length > 0 && selectedVariant?.stock) {
                 if (parseFloat(selectedVariant?.stock_value) === 0) {
-                    Toast.show("Out of Stock", 2000)
+                    Toast.show({
+                        type: 'error',
+                        text1: "Out of Stock"
+                    });
                     return false;
                 }
             }
             else if (singleProduct?.stock) {
                 if (parseFloat(singleProduct?.stock_value) === 0) {
-                    Toast.show("Out of Stock", 2000)
+                    Toast.show({
+                        type: 'error',
+                        text1: "Out of Stock"
+                    });
                     return false;
                 }
             }
@@ -436,62 +460,12 @@ const SingleItemScreen = ({ route, navigation }) => {
             })
             .catch(async error => {
                 console.log(error)
-                // ToastAndroid.showWithGravity(
-                //     error,
-                //     ToastAndroid.SHORT,
-                //     ToastAndroid.CENTER,
-                // )
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingg.setLoading(false)
             })
-
-        // // navigation.navigate('CartNav')
-        // let productDetails = {
-        //     product_id: singleProduct?._id,
-        //     name: singleProduct?.name,
-        //     image: singleProduct?.product_image,
-        //     type: singleProduct?.variants?.length > 0 ? 'variant' : "single",
-        //     variants: singleProduct?.variants?.length > 0 ?  [
-        //         {
-        //             variant_id: selectedVariant?._id,
-        //             attributs: selectedVariant?.attributs
-        //         }
-        //     ] : null,
-        //     quantity: 1
-        // };
-        // let url;
-        // if (cart?.cart) {
-        //     cartItems = {
-        //         cart_id: cart?.cart?._id,
-        //         product_details: [...cart?.cart?.product_details, productDetails],
-        //         user_id: userData?._id
-        //     }
-        //     url = "customer/cart/update";
-        // }
-        // else {
-        //     cartItems = {
-        //         product_details: [productDetails],
-        //         user_id: userData?._id
-        //     }
-        //     url = "customer/cart/add";
-        // }
-
-        // await customAxios.post(url, cartItems)
-        //     .then(async response => {
-        //         cart.setCart(response?.data?.data)
-        //         //user?.setCartId(response?.data?.data?._id)
-        //         await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-        //         loadingg.setLoading(false)
-        //         //navigation.navigate('cart')
-        //     })
-        //     .catch(async error => {
-        //         console.log(error)
-        //         // ToastAndroid.showWithGravity(
-        //         //     error,
-        //         //     ToastAndroid.SHORT,
-        //         //     ToastAndroid.CENTER,
-        //         // )
-        //         loadingg.setLoading(false)
-        //     })
 
     }, [varient])
 
@@ -561,27 +535,49 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
+        reactotron.log({value, attributes})
         let attri = [];
         let attr = attributes?.map(att => {
             if (att?.optArray.includes(value)) {
-                attri.push(value)
+                if(att?.variant){
+                    attri.push(value)
+                }
+               
                 return {
                     ...att,
                     selected: value
                 }
             }
             else {
-                attri.push(att.selected)
+                if(att?.variant){
+                    attri.push(att.selected)
+                }
                 return att
             }
         })
 
+        //let filtered = 
+
+        
+        reactotron.log({attri})
         singleProduct?.variants?.map(sin => {
-            const containsAll = attri.every(element => {
-                return sin?.attributs?.includes(element);
-            });
+            let attributes = []
+            sin?.attributs?.map(att => {
+                attributes.push(att)
+            })
+            reactotron.log({attributes})
+            const containsAll = attri.every(elem => attributes.includes(elem));
+            // const containsAll = attri.every(element => {
+            //     reactotron.log(sin?.attributs?.includes(element), sin?.attributs, element)
+            //     return sin?.attributs?.includes(element);
+            // });
+
+
+            reactotron.log({containsAll})
+            
 
             if (containsAll) {
+                reactotron.log({containsAll})
                 setSelectedVariant(sin)
                 if (sin?.offer_price) {
                     if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
@@ -615,26 +611,6 @@ const SingleItemScreen = ({ route, navigation }) => {
 
                 <View style={{ height: 200 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
-                        {/* { fashionImg[selectedImage]?.file_type?.includes('image') &&
-                        <FastImage 
-                            source={fashionImg[selectedImage]?.name} 
-                            style={{width:width-30, height:180, borderRadius:15,}}
-                        >
-                        </FastImage>}
-
-                        { fashionImg[selectedImage]?.file_type?.includes('video') && 
-                        <View style={{backgroundColor:'#000', width:width-30, paddingVertical:10, borderRadius:15, height:180,}}>
-                            <VideoPlayer
-                                video={fashionImg[selectedImage]?.video} 
-                                // showDuration={true}
-                                controlsTimeout={2000}
-                                pauseOnPress={true}
-                                videoHeight={550}
-                                resizeMode='contain'
-                                thumbnail={fashionImg[selectedImage]?.name} 
-                            />
-                        </View> 
-                        } */}
 
                         {singleProduct?.image && singleProduct?.image?.length > 0 ?
                             <FastImage

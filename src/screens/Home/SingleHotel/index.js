@@ -14,7 +14,7 @@ import CommonItemCard from '../../../Components/CommonItemCard'
 import reactotron from '../../../ReactotronConfig'
 import customAxios from '../../../CustomeAxios'
 import LoaderContext from '../../../contexts/Loader'
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message'
 
 
 const SingleHotel = ({ route, navigation }) => {
@@ -84,7 +84,10 @@ const SingleHotel = ({ route, navigation }) => {
                 loadingContex.setLoading(false)
             })
             .catch(async error => {
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
                 loadingContex.setLoading(false)
             })
     }

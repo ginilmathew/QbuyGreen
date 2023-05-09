@@ -13,6 +13,7 @@ import AuthContext from '../../contexts/Auth';
 import customAxios from '../../CustomeAxios';
 import CartContext from '../../contexts/Cart';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 
 const Cart = ({ navigation }) => {
@@ -48,21 +49,19 @@ const Cart = ({ navigation }) => {
     const getCartItems = async () => {
         if (cartContext?.cart?._id) {
             await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
-                .then(async response => {
-                    setCartItemsList([...response?.data?.data?.product_details])
-                    // reactotron.log({ response })
-                    // setSingleProduct(response?.data?.data)
-                    // loadingg.setLoading(false)
-                })
-                .catch(async error => {
-                    console.log(error)
-                    // ToastAndroid.showWithGravity(
-                    //     error,
-                    //     ToastAndroid.SHORT,
-                    //     ToastAndroid.CENTER,
-                    // )
-                    // loadingg.setLoading(false)
-                })
+            .then(async response => {
+                setCartItemsList([...response?.data?.data?.product_details])
+                // reactotron.log({ response })
+                // setSingleProduct(response?.data?.data)
+                // loadingg.setLoading(false)
+            })
+            .catch(async error => {
+                console.log(error)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+            })
         }
 
     }

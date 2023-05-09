@@ -15,7 +15,7 @@ import AuthContext from '../../../contexts/Auth';
 import reactotron from '../../../ReactotronConfig';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message'
 
 
 const Login = ({ navigation }) => {
@@ -48,7 +48,10 @@ const Login = ({ navigation }) => {
 			navigation.navigate('Otp')
         })
         .catch(async error => {
-            Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+            Toast.show({
+				type: 'error',
+				text1: error
+			});
             loadingg.setLoading(false)
         })
 	}, [])

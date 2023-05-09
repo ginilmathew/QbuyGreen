@@ -8,6 +8,7 @@ import LoaderContext from '../../contexts/Loader'
 import reactotron from '../../ReactotronConfig'
 import customAxios from '../../CustomeAxios'
 import PandaContext from '../../contexts/Panda'
+import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -44,11 +45,10 @@ const Wishlist = ({navigation}) => {
             loadingContex.setLoading(false)
         })
         .catch(async error => {
-            // toast.show({
-            //     title: 'Error',
-            //     description : error,
-            //     backgroundColor:'red.500'
-            // })
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
             loadingContex.setLoading(false)
         })
     }

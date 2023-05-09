@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
-const AvailableProducts = ({ data, addToCart }) => {
+const AvailableProducts = memo(({ data, addToCart }) => {
 
     const { width } = useWindowDimensions()
     return (
@@ -23,7 +23,7 @@ const AvailableProducts = ({ data, addToCart }) => {
             </View>
         </>
     )
-}
+})
 
 export default AvailableProducts
 
