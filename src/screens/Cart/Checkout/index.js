@@ -15,6 +15,9 @@ import Foundation from 'react-native-vector-icons/Foundation'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import { uniq } from 'lodash'
+import has from 'lodash/has'
+import isEmpty from 'lodash/isEmpty'
+import AllInOneSDKManager from 'paytm_allinone_react-native';
 
 
 
@@ -66,29 +69,29 @@ const Checkout = ({ navigation }) => {
         resolver: yupResolver(schema)
     });
 
-    
 
-    reactotron.log({cartItems})
+
+    reactotron.log({ cartItems })
 
     useFocusEffect(
         React.useCallback(() => {
             getCartItems()
         }, [cartContext?.cart?._id])
-      );
+    );
 
     const getCartItems = async () => {
         await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
-        .then(async response => {
-            reactotron.log({data: response?.data?.data})
-            setCartItems(response?.data?.data)
-        })
-        .catch(async error => {
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-        })
-       
+            .then(async response => {
+                reactotron.log({ data: response?.data?.data })
+                setCartItems(response?.data?.data)
+            })
+            .catch(async error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+            })
+
     }
 
 
@@ -127,13 +130,13 @@ const Checkout = ({ navigation }) => {
     const getDeliveryFee = () => {
         let delivery = 0;
         cartItems?.product_details?.map(data => {
-            if(data?.type === "single"){
-                if(data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0){
+            if (data?.type === "single") {
+                if (data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0) {
                     delivery += parseFloat(data?.productdata?.fixed_delivery_price)
                 }
             }
-            else{
-                if(data?.variants?.fixed_delivery_price && parseFloat(data?.variants?.fixed_delivery_price) > 0){
+            else {
+                if (data?.variants?.fixed_delivery_price && parseFloat(data?.variants?.fixed_delivery_price) > 0) {
                     delivery += parseFloat(data?.variants?.fixed_delivery_price)
                 }
             }
@@ -147,79 +150,79 @@ const Checkout = ({ navigation }) => {
         let delivery = 0;
         let amountArray = []
         cartItems?.product_details?.map(data => {
-            if(data?.type === "single"){
-                if(data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0){
+            if (data?.type === "single") {
+                if (data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0) {
                     delivery += parseFloat(data?.productdata?.fixed_delivery_price)
                 }
-                if(parseFloat(data?.productdata?.offer_price) > 0){
-                    if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()){
-                        let finalPrice = parseFloat(data?.productdata?.offer_price)* parseFloat(data?.quantity);
+                if (parseFloat(data?.productdata?.offer_price) > 0) {
+                    if (moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()) {
+                        let finalPrice = parseFloat(data?.productdata?.offer_price) * parseFloat(data?.quantity);
                         //amountArray.push(finalPrice)
                         amount += finalPrice
                     }
-                    else{
-                        if(parseFloat(data?.productdata?.regular_price) > 0){
-                            let finalPrice = parseFloat(data?.productdata?.regular_price)* parseFloat(data?.quantity);
+                    else {
+                        if (parseFloat(data?.productdata?.regular_price) > 0) {
+                            let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
                             //amountArray.push(finalPrice)
                             //amountArray.push(`${data?.productdata?.regular_price} -${finalPrice}`)
-                            amount +=  finalPrice
+                            amount += finalPrice
                         }
-                        else{
-                            let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
-                            let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
-                            
-                            amount +=  amounts
+                        else {
+                            let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
+
+                            amount += amounts
                         }
                     }
                 }
-                else if(parseFloat(data?.productdata?.regular_price) > 0){
-                    let finalPrice = parseFloat(data?.productdata?.regular_price)* parseFloat(data?.quantity);
+                else if (parseFloat(data?.productdata?.regular_price) > 0) {
+                    let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
                     //amountArray.push(finalPrice)
-                    
-                    amount +=  finalPrice
+
+                    amount += finalPrice
                 }
-                else{
-                    let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                else {
+                    let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
                     let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                     //amountArray.push(`${data?.productdata?.seller_price} ${amounts}`)
-                    amount +=  amounts
+                    amount += amounts
                 }
             }
-            else{
-                if(parseFloat(data?.variants?.offer_price) > 0){
-                    if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()){
-                        let finalPrice = parseFloat(data?.variants?.offer_price)* parseFloat(data?.quantity);
+            else {
+                if (parseFloat(data?.variants?.offer_price) > 0) {
+                    if (moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()) {
+                        let finalPrice = parseFloat(data?.variants?.offer_price) * parseFloat(data?.quantity);
                         //amountArray.push(finalPrice)
-                        amount +=  finalPrice
+                        amount += finalPrice
                     }
-                    else{
-                        if(parseFloat(data?.variants?.regular_price) > 0){
-                            let finalPrice = parseFloat(data?.variants?.regular_price)* parseFloat(data?.quantity);
+                    else {
+                        if (parseFloat(data?.variants?.regular_price) > 0) {
+                            let finalPrice = parseFloat(data?.variants?.regular_price) * parseFloat(data?.quantity);
                             //amountArray.push(finalPrice)
-                            amount +=  finalPrice
+                            amount += finalPrice
                         }
-                        else{
-                            let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
-                            let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
+                        else {
+                            let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                             //amountArray.push(amounts)
-                            amount +=  amounts
+                            amount += amounts
                         }
                     }
                 }
-                else if(parseFloat(data?.variants?.regular_price) > 0){
-                    let finalPrice = parseFloat(data?.variants?.regular_price)* parseFloat(data?.quantity);
+                else if (parseFloat(data?.variants?.regular_price) > 0) {
+                    let finalPrice = parseFloat(data?.variants?.regular_price) * parseFloat(data?.quantity);
                     //amountArray.push(finalPrice)
-                    amount +=  finalPrice
+                    amount += finalPrice
                 }
-                else{
-                    let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
-                    let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission))* parseFloat(data?.quantity);
+                else {
+                    let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                     //amountArray.push(amounts)
-                    amount +=  amounts
+                    amount += amounts
                 }
             }
         })
-        reactotron.log({amountArray})
+        reactotron.log({ amountArray })
         return amount;
     }
 
@@ -295,25 +298,25 @@ const Checkout = ({ navigation }) => {
             _id: '1',
             name: 'Sub-Total',
             rate: '460',
-            flashIcon : false
+            flashIcon: false
         },
         {
             _id: '2',
             name: 'Platform & Other Charges',
             rate: '10',
-            flashIcon : false
+            flashIcon: false
         },
         {
             _id: '3',
             name: 'Surge Charge',
             rate: '20',
-            flashIcon : true
+            flashIcon: true
         },
         {
             _id: '4',
             name: 'Delivery Charge (Slot Based)',
             rate: '60',
-            flashIcon : false
+            flashIcon: false
 
         },
     ]
@@ -336,9 +339,9 @@ const Checkout = ({ navigation }) => {
         setShowList(!showList)
     })
 
-    const placeOrder = async() => {
+    const placeOrder = async () => {
 
-        if(!cartContext.defaultAddress?.area?.location){
+        if (!cartContext.defaultAddress?.area?.location) {
             Toast.show({
                 type: 'error',
                 text1: 'Please add Delevery Address to continue'
@@ -360,34 +363,65 @@ const Checkout = ({ navigation }) => {
         //navigation.navigate('Payment')
         const orderDetails = {
             product_details: cartContext?.cart?.product_details,
-            user_id : authContext?.userData?._id,
-            billing_address : cartContext?.defaultAddress?._id,
-            shipping_address : cartContext?.defaultAddress?._id,
-            payment_status : "pending",
-            payment_type : "COD",
-            type : active,
-            total_amount : getTotalAmount(),
-            delivery_charge:0,
-            delivery_type : "Slot based",
-            franchise : cartItems?.product_details?.[0]?.productdata?.franchisee?.id,
+            user_id: authContext?.userData?._id,
+            billing_address: cartContext?.defaultAddress?._id,
+            shipping_address: cartContext?.defaultAddress?._id,
+            payment_status: "pending",
+            payment_type: "online",
+            type: active,
+            total_amount: getTotalAmount(),
+            delivery_charge: 0,
+            delivery_type: "Slot based",
+            franchise: cartItems?.product_details?.[0]?.productdata?.franchisee?._id,
             cart_id: cartItems?._id,
             store: uniqueStore
         }
 
-        reactotron.log({orderDetails})
+        reactotron.log({ orderDetails })
 
         await customAxios.post(`customer/order/create`, orderDetails)
             .then(async response => {
-                cartContext?.setCart(null)
-                setCartItems(null)
-                AsyncStorage.removeItem("cartId");
-                navigation.navigate('OrderPlaced')
-                
-
-            })
-            .catch(async error => {
+                console.log("response ==>", JSON.stringify(response.data), response.status)
+                const { data } = response
+                if (data?.status) {
+                    if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
+                        payWithPayTM(data?.data)
+                    } else {
+                        cartContext?.setCart(null)
+                        setCartItems(null)
+                        await AsyncStorage.removeItem("cartId");
+                        navigation.navigate('OrderPlaced')
+                    }
+                } else {
+                    Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
+                }
+            }).catch(async error => {
                 console.log(error)
+                Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             })
+    }
+
+    const payWithPayTM = async (data) => {
+        const { paymentDetails } = data
+        let isStaging = true
+        const callbackUrl = {
+            true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
+            false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
+        }
+        AllInOneSDKManager.startTransaction(
+            paymentDetails?.orderId,//orderId
+            paymentDetails?.mid,//mid
+            paymentDetails?.txnToken,//txnToken
+            paymentDetails?.amount.toFixed(2),//amount
+            `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
+            isStaging,//isStaging
+            false,//appInvokeRestricted
+            "ee"//urlScheme
+        ).then((result) => {
+            console.log("PAYTM =>", JSON.stringify(result));
+        }).catch((err) => {
+            console.log("PAYTM ERROR=>", JSON.stringify(err));
+        });
 
     }
 
@@ -398,16 +432,16 @@ const Checkout = ({ navigation }) => {
 
 
     const navigateToAddress = () => {
-        navigation.navigate("account", { screen: "MyAddresses", params : { mode: 'checkout' } })
+        navigation.navigate("account", { screen: "MyAddresses", params: { mode: 'checkout' } })
     }
 
 
     return (
         <>
             <HeaderWithTitle title={'Checkout'} />
-            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3',}}>
+            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
 
-{/* products */}
+                {/* products */}
                 <View style={styles.productBox}>
                     <View style={styles.productHeader}>
                         <View style={{ flex: 0.45 }}>
@@ -443,7 +477,7 @@ const Checkout = ({ navigation }) => {
                     </View> */}
                 </View>
 
-{/* Order for Others */}
+                {/* Order for Others */}
                 {/* <View style={styles.commonContainer}>
                     <Text style={styles.boldText}>{'Order for Others'}</Text>
                     <Text style={styles.mediumGrayText}>{'Order food for your friends, family etc...'}</Text>
@@ -455,7 +489,7 @@ const Checkout = ({ navigation }) => {
                     />
                 </View> */}
 
-{/* Delivery Speed */}
+                {/* Delivery Speed */}
                 {/* <View style={styles.commonContainer}>
                     <Text style={styles.boldText}>{'Delivery Speed'}</Text>
                     {datas.map((item, index) =>
@@ -467,8 +501,8 @@ const Checkout = ({ navigation }) => {
                         />
                     )}
                 </View> */}
-                
-{/* Add Coupon */}
+
+                {/* Add Coupon */}
                 {/* <View style={styles.commonContainer}>
                     <View style={{flexDirection:'row', alignItems:'center',justifyContent:'space-between'}}>
                         <Text style={styles.boldText}>{'Add Coupon'}</Text>
@@ -508,7 +542,7 @@ const Checkout = ({ navigation }) => {
                     </View>
                 </View> */}
 
-{/* Give a Tip */}
+                {/* Give a Tip */}
                 {/* <View style={styles.commonContainer}>
                     <Text style={styles.boldText}>{'Give a Tip!'}</Text>
                     <Text style={styles.mediumGrayText}>{'Leave your delivery partner with a tip so that you could show an appreciation for his efforts!'}</Text>
@@ -524,7 +558,7 @@ const Checkout = ({ navigation }) => {
                     </View>
                 </View> */}
 
-{/* Add Delivery Instructions */}
+                {/* Add Delivery Instructions */}
                 {/* <View style={styles.commonContainer}>
                     <Text style={styles.boldText}>{'Add Delivery Instructions'}</Text>
                     <Text style={styles.mediumGrayText}>{'Add necessary instruction for your delivery partner'}</Text>
@@ -540,7 +574,7 @@ const Checkout = ({ navigation }) => {
                     </View>
                 </View> */}
 
-{/* panda coins */}
+                {/* panda coins */}
                 {/* <View 
                     style={{
                         backgroundColor: active === 'green' ? '#fae8d4' : '#cae2fa',
@@ -560,15 +594,15 @@ const Checkout = ({ navigation }) => {
                     <CustomButton label={'Apply'} bg={ active === 'green' ? '#FF9C0C' : active === 'fashion' ? '#2D8FFF' :  '#586DD3'} width={100} />
                 </View> */}
 
-{/* grand total */}
+                {/* grand total */}
                 <View style={styles.grandTotalBox}>
                     <View style={styles.grandTotalTop}>
                         <Text style={styles.textMedium}>{'Delivery Tip'}</Text>
-                        <Text   
+                        <Text
                             style={{
                                 fontFamily: 'Poppins-Medium',
                                 fontSize: 11,
-                                color:  active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'
+                                color: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'
                             }}
                         >{'Add Tip'}</Text>
                     </View>
@@ -580,7 +614,7 @@ const Checkout = ({ navigation }) => {
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
                         <Text style={styles.textMedium}>₹ {getDeliveryFee()}</Text>
                     </View>
-                    
+
                     <View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
                         <Text style={styles.boldText}>₹ {getTotalAmount()}</Text>
@@ -589,8 +623,8 @@ const Checkout = ({ navigation }) => {
 
             </ScrollView>
 
-{/* Bottom View */}
-            <View  style={styles.addressContainer}>
+            {/* Bottom View */}
+            <View style={styles.addressContainer}>
                 <View style={styles.addrHeader}>
                     <View >
                         <Foundation name={'target-two'} color='#FF0000' size={20} marginTop={5} />
@@ -603,7 +637,7 @@ const Checkout = ({ navigation }) => {
                     </View>
 
                     <TouchableOpacity style={{ position: 'absolute', right: 20, top: 10 }} onPress={navigateToAddress}>
-                        <MaterialCommunityIcons name={'lead-pencil'} color={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
+                        <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
                     </TouchableOpacity>
                 </View>
                 {!showList && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
@@ -622,29 +656,29 @@ const Checkout = ({ navigation }) => {
                         >Total Bill</Text>
                     </View>
                     <View style={styles.charges}>
-                            <View style={{flexDirection:'row', alignItems:'center'}}>
-                                {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
-                                <Text
-                                    style={styles.textMedium}
-                                >{"Sub Total"}</Text>
-                            </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
                             <Text
                                 style={styles.textMedium}
-                            >₹{getTotalAmount()}</Text>
-                            
+                            >{"Sub Total"}</Text>
                         </View>
-                        <View style={styles.charges}>
-                            <View style={{flexDirection:'row', alignItems:'center'}}>
-                                {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
-                                <Text
-                                    style={styles.textMedium}
-                                >{"Delivery Charge"}</Text>
-                            </View>
+                        <Text
+                            style={styles.textMedium}
+                        >₹{getTotalAmount()}</Text>
+
+                    </View>
+                    <View style={styles.charges}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
                             <Text
                                 style={styles.textMedium}
-                            >₹{getDeliveryFee()}</Text>
-                            
+                            >{"Delivery Charge"}</Text>
                         </View>
+                        <Text
+                            style={styles.textMedium}
+                        >₹{getDeliveryFee()}</Text>
+
+                    </View>
                     {/* {charges.map(item => 
                         (<View key={item?._id} style={styles.charges}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
@@ -777,7 +811,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginBottom: 200
     },
-   
+
     enterCouponBox: {
         flexDirection: 'row',
         marginTop: 15,
@@ -818,22 +852,22 @@ const styles = StyleSheet.create({
         paddingVertical: 5
     },
 
-    addressContainer: { 
-        backgroundColor: '#fff', 
-        position: 'absolute', 
-        bottom: 0, 
-        width: '100%', 
-        borderTopLeftRadius: 20, 
-        borderTopRightRadius: 20, 
-        paddingBottom: 63, 
-        shadowOpacity:0.08, 
-        elevation:1 
+    addressContainer: {
+        backgroundColor: '#fff',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingBottom: 63,
+        shadowOpacity: 0.08,
+        elevation: 1
     },
-    addrHeader: { 
-        flexDirection: 'row', 
-        padding: 10, 
-        borderBottomWidth: 0.5, 
-        borderBottomColor: '#F3F3F3' 
+    addrHeader: {
+        flexDirection: 'row',
+        padding: 10,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#F3F3F3'
     },
 
     address: {
@@ -842,32 +876,32 @@ const styles = StyleSheet.create({
         fontSize: 11,
         marginTop: 5
     },
-    totalBill: { 
-        paddingHorizontal: 40, 
-        paddingVertical: 5, 
-        borderBottomWidth: 0.5, 
-        borderBottomColor: '#F3F3F3' 
+    totalBill: {
+        paddingHorizontal: 40,
+        paddingVertical: 5,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#F3F3F3'
     },
-    charges: { 
+    charges: {
         flexDirection: 'row',
-        justifyContent: 'space-between', 
-        paddingHorizontal: 40, 
-        paddingVertical: 5 
+        justifyContent: 'space-between',
+        paddingHorizontal: 40,
+        paddingVertical: 5
     },
-    grandTotal: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        paddingHorizontal: 40, 
-        paddingVertical: 5, 
-        borderTopWidth: 0.5, 
-        borderTopColor: '#F3F3F3' 
+    grandTotal: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 40,
+        paddingVertical: 5,
+        borderTopWidth: 0.5,
+        borderTopColor: '#F3F3F3'
     },
-    viewDetails: { 
-        borderRightWidth: 3, 
-        borderColor: '#fff', 
-        flex: 0.5, 
-        flexDirection: 'row', 
-        alignItems: 'center' 
+    viewDetails: {
+        borderRightWidth: 3,
+        borderColor: '#fff',
+        flex: 0.5,
+        flexDirection: 'row',
+        alignItems: 'center'
     }
 
 
