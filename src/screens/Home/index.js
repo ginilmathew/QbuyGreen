@@ -282,7 +282,7 @@ const QbuyPanda = ({ navigation }) => {
     const pickupDropClick = useCallback(() => {
         navigation.navigate('PickupAndDropoff')
     }, [])
-    
+
     const referRestClick = useCallback(() => {
         navigation.navigate('RefferRestaurant')
     }, [])
@@ -296,31 +296,31 @@ const QbuyPanda = ({ navigation }) => {
     }, [])
 
     const onSearch = useCallback(() => {
-        navigation.navigate('ProductSearchScreen', {mode :'fashion'})
+        navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
 
     return (
         <>
-            <Header onPress={onClickDrawer}/>
+            <Header onPress={onClickDrawer} />
             <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} >
 
                 <ImageSlider datas={images} mt={5} />
-       
+
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={styles.foodTypeView}
                 >
                     {datas.map((item, index) =>
-                        (<CommonItemSelect 
-                            item={item} key={index} 
-                            selected={selected}
-                            setSelected={setSelected}
-                        />)
+                    (<CommonItemSelect
+                        item={item} key={index}
+                        selected={selected}
+                        setSelected={setSelected}
+                    />)
                     )}
                 </ScrollView>
 
-                <SearchBox onPress={onSearch}/>
+                <SearchBox onPress={onSearch} />
 
 
                 <NameText userName={'Shaan Johnson'} mb={20} />
@@ -333,7 +333,7 @@ const QbuyPanda = ({ navigation }) => {
 
                 <View style={styles.pickupReferContainer}>
                     <PickDropAndReferCard
-                        onPress={ pickupDropClick }
+                        onPress={pickupDropClick}
                         lotties={require('../../Lottie/deliveryBike.json')}
                         label={'Pick Up & Drop Off'}
                         lottieFlex={0.5}
@@ -353,67 +353,67 @@ const QbuyPanda = ({ navigation }) => {
                     <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
                 </View>
 
-                <View 
-                    style={{flexDirection:'row', alignItems:'center', marginLeft: 15, marginBottom:5,justifyContent:'space-between', marginRight:5}}
+                <View
+                    style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginBottom: 5, justifyContent: 'space-between', marginRight: 5 }}
                 >
                     <CommonTexts label={'Recently Viewed'} fontSize={13} />
-                    <CommonFiltration/>
+                    <CommonFiltration />
                 </View>
-                
+
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7,  }}
+                    style={{ flexDirection: 'row', paddingLeft: 7, }}
                 >
                     {recentView.map((item) =>
                         <CommonItemCard
                             key={item?._id}
                             item={item}
-                            width={ width/2.5 }
+                            width={width / 2.5}
                             marginHorizontal={5}
                         />
                     )}
                 </ScrollView>
-          
-                <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={ 15} mb={5} mt={15}/>
+
+                <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7,  }}
+                    style={{ flexDirection: 'row', paddingLeft: 7, }}
                 >
                     {pandaSugg.map((item) =>
                         <CommonItemCard
                             key={item?._id}
                             item={item}
-                            width={ width/2.5 }
+                            width={width / 2.5}
                             marginHorizontal={5}
                         />
                     )}
                 </ScrollView>
 
-                <CommonTexts label={'Lunch Menu'} fontSize={13} ml={ 15} mb={5} mt={15}/>
+                <CommonTexts label={'Lunch Menu'} fontSize={13} ml={15} mb={5} mt={15} />
                 <View style={styles.menuContainer}>
                     {menus?.map((item) => (
                         <CommonItemCard
                             item={item}
                             key={item?._id}
-                            width={width/2.25}
+                            width={width / 2.25}
                             height={250}
                         />
                     ))}
                 </View>
 
-                <CommonTexts label={'Trending Sales'} fontSize={13} ml={ 15} mb={5} mt={15}/>
+                <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7, marginBottom:80 }}
+                    style={{ flexDirection: 'row', paddingLeft: 7, marginBottom: 80 }}
                 >
                     {trend.map((item) =>
                         <CommonItemCard
                             key={item?._id}
                             item={item}
-                            width={ width/2.5 }
+                            width={width / 2.5}
                             marginHorizontal={5}
                         />
                     )}
@@ -438,8 +438,8 @@ const styles = StyleSheet.create({
     foodTypeView: {
         flexDirection: 'row',
         backgroundColor: '#F7F7F7',
-        marginTop:10,
-        paddingLeft:8
+        marginTop: 10,
+        paddingLeft: 8
     },
     foodTypeText: {
         fontFamily: 'Poppins-Regular',
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
         color: '#23233C',
         fontSize: 10,
         marginBottom: 5,
-        marginTop:3
+        marginTop: 3
     },
     shopName: {
         fontFamily: 'Poppins-Medium',
@@ -492,9 +492,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },
     menuContainer: {
-        flexDirection:'row', 
-        flexWrap:'wrap', 
-        gap:17, 
-        paddingHorizontal:'3%'
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 17,
+        paddingHorizontal: '3%'
     }
 })

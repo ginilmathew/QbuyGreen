@@ -655,10 +655,26 @@ const SingleItemScreen = ({ route, navigation }) => {
                     itemName={singleProduct?.name}
                     hotelName={singleProduct?.store?.name}
                     views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}
-                    sold={5}
+                    sold={singleProduct?.order_count}
                     minQty={singleProduct?.minimum_qty}
                     price={price}
-                />
+                />  
+               {singleProduct?.weight !== ('' || null)  && 
+                <View style={{paddingLeft:10,display:'flex',flexDirection:'row',alignItems:'center',gap:2}}>
+                    <Text style={{
+                        fontFamily: 'Poppins',
+                        letterSpacing:1,
+                        fontSize:  10,
+                    
+                    }}>weight :</Text>
+                    <Text style={{
+                        fontFamily: 'Poppins',
+                        letterSpacing:1,
+                        fontSize:  10,
+                    
+                    }}>{singleProduct?.weight}</Text>
+
+                </View>}
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
                         {(attributes?.map((attr, index) =>

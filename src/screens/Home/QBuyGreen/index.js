@@ -227,7 +227,7 @@ const QBuyGreen = ({ navigation }) => {
                     </View>
                     <View style={styles.offerView}>
                         <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
-                        <Offer onPress={goToShop} shopName={offer?.hotel} />
+                         <Offer onPress={goToShop} shopName={offer?.hotel} />
                         {/* <CountDownComponent /> */}
                         <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
                     </View>
