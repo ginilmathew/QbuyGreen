@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, Image, ActivityIndicator, SafeAreaView } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, Image, ActivityIndicator, SafeAreaView, RefreshControl } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import ImageSlider from '../../../Components/ImageSlider';
 import CustomSearch from '../../../Components/CustomSearch';
@@ -29,33 +29,38 @@ import CategoryCard from '../QBuyGreen/CategoryCard';
 import AvailableStores from '../QBuyGreen/AvailableStores';
 import RecentlyViewed from '../QBuyGreen/RecentlyViewed';
 import AvailableProducts from '../QBuyGreen/AvailableProducts';
+import PandaSuggestions from '../QBuyGreen/PandaSuggestions';
 
 
 const QBuyFashion = () => {
+
+    const { width } = useWindowDimensions()
+
+    const navigation = useNavigation()
+
 
     const auth = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
     let coord = auth.location
 
-    reactotron.log({coord})
-
     const loadingg = useContext(LoaderContext)
     let loader = loadingg?.loading
 
-
-    //const homeData = fashionHome?.fashionHomeData
     const [homeData, setHomeData] = useState(null)
-    // const [location, setLocation] = useState(null)
 
-    const { width } = useWindowDimensions()
+    const [availablePdt, setavailablePdt] = useState(null)
+    const [slider, setSlider] = useState(null)
 
-    const navigation = useNavigation()
-    
-    const categories = homeData?.category_list
-    const storeList = homeData?.store_list
-    const recentViewList = homeData?.recently_viewed
-    const availablePdts = homeData?.available_products
+
+    useEffect(() => {
+        let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
+        setavailablePdt(availPdt?.data)
+
+        let slider = homeData?.find((item, index) => item?.type === 'sliders')
+        setSlider(slider?.data)
+    }, [homeData])
+
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -64,29 +69,6 @@ const QBuyFashion = () => {
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema)
     });
-
-    
-
-    
-
-    const fashionImg = [
-        {
-            id: "1",
-            img: require('../../../Images/fashionAd.jpeg')
-        },
-        {
-            id: "2",
-            img: require('../../../Images/image1.jpeg')
-        },
-        {
-            id: "3",
-            img: require('../../../Images/image2.jpeg')
-        },
-        {
-            id: "4",
-            img: require('../../../Images/image3.jpeg')
-        }
-    ]
 
     const pickupDropClick = useCallback(() => {
         navigation.navigate('PickupAndDropoff')
@@ -119,16 +101,16 @@ const QBuyFashion = () => {
 
 
     const addToCart = async (item) => {
-        
+
         let cartItems;
         let url;
 
-        if(item?.variants?.length === 0){
+        if (item?.variants?.length === 0) {
             loadingg.setLoading(true)
-            if(cartContext?.cart){
+            if (cartContext?.cart) {
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-                if(existing >= 0){
+                if (existing >= 0) {
                     let cartProducts = cartContext?.cart?.product_details;
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                     cartItems = {
@@ -137,7 +119,7 @@ const QBuyFashion = () => {
                         user_id: auth?.userData?._id
                     }
                 }
-                else{
+                else {
                     let productDetails = {
                         product_id: item?._id,
                         name: item?.name,
@@ -154,14 +136,14 @@ const QBuyFashion = () => {
                     }
                 }
             }
-            else{
+            else {
                 url = "customer/cart/add";
                 let productDetails = {
                     product_id: item?._id,
                     name: item?.name,
                     image: item?.product_image,
                     type: "single",
-                    variants:  null,
+                    variants: null,
                     quantity: 1
                 };
 
@@ -172,16 +154,16 @@ const QBuyFashion = () => {
             }
 
             await customAxios.post(url, cartItems)
-            .then(async response => {
-                cartContext.setCart(response?.data?.data)
-                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                loadingg.setLoading(false)
-            })
-            .catch(async error => {
-                loadingg.setLoading(false)
-            })
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                    loadingg.setLoading(false)
+                })
+                .catch(async error => {
+                    loadingg.setLoading(false)
+                })
         }
-        else{
+        else {
             navigation.navigate('SingleItemScreen', { item: item })
         }
     }
@@ -211,17 +193,16 @@ const QBuyFashion = () => {
     // reactotron.log({category: homeData?.category_list})
 
     const onSearch = useCallback(() => {
-        navigation.navigate('ProductSearchScreen', {mode :'fashion'})
+        navigation.navigate('ProductSearchScreen')
     }, [])
 
 
-    const renderItems = ({ item }) => {
+    const renderItems = (item) => {
         if (item?.type === 'categories') {
             return (
                 <>
                     <CategoryCard data={item?.data} />
-                    
-                    <ImageSlider datas={fashionImg} mt={20} />
+                    {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />}
                 </>
             )
         }
@@ -230,26 +211,33 @@ const QBuyFashion = () => {
                 <>
                     <AvailableStores data={item?.data} />
                     <View style={styles.pickupReferContainer}>
-                    <PickDropAndReferCard
-                        onPress={pickupDropClick}
-                        lotties={require('../../../Lottie/farmer.json')}
-                        label={'Test'}
-                        lottieFlex={0.7}
-                    />
-                    <PickDropAndReferCard
-                        onPress={clickSellItem}
-                        lotties={require('../../../Lottie/dresses.json')}
-                        label={'Sell Your Items'}
-                        lottieFlex={0.5}
-                        ml={8}
-                    />
-                </View>
-                    <View style={styles.offerView}>
+                        <PickDropAndReferCard
+                            onPress={pickupDropClick}
+                            lotties={require('../../../Lottie/farmer.json')}
+                            label={'Test'}
+                            lottieFlex={0.7}
+                        />
+                        <PickDropAndReferCard
+                            onPress={clickSellItem}
+                            lotties={require('../../../Lottie/dresses.json')}
+                            label={'Sell Your Items'}
+                            lottieFlex={0.5}
+                            ml={8}
+                        />
+                    </View>
+
+                </>
+            )
+        }
+        if (item?.type === 'offer_array') {
+            return (
+                <>
+                    {item?.data?.length > 0 && <View style={styles.offerView}>
                         <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
                         <Offer onPress={goToShop} shopName={offer?.hotel} />
                         {/* <CountDownComponent /> */}
                         <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-                    </View>
+                    </View>}
                 </>
             )
         }
@@ -260,14 +248,36 @@ const QBuyFashion = () => {
                 </>
             )
         }
-        if (item?.type === 'available_products') {
+        if (item?.type === 'suggested_products') {
             return (
                 <>
-                    <AvailableProducts data={item?.data} addToCart={addToCart} />
+                    <PandaSuggestions data={item?.data} addToCart={addToCart} />
                 </>
             )
         }
+        // if (item?.type === 'available_products') {
+        //     return (
+        //         <>
+        //             <AvailableProducts data={item?.data} addToCart={addToCart} />
+        //         </>
+        //     )
+        // }
 
+    }
+    const renderProducts = ({ item }) => {
+        return (
+            <CommonItemCard
+                item={item}
+                key={item?._id}
+                width={width / 2.25}
+                height={220}
+                wishlistIcon
+                addToCart={addToCart}
+                mr={8}
+                ml={8}
+                mb={15}
+            />
+        )
     }
 
     return (
@@ -275,10 +285,8 @@ const QBuyFashion = () => {
             <Header onPress={onClickDrawer} />
             <View style={styles.container}>
 
-                <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
-                <SearchBox onPress={onSearch} />
 
-                <FlatList
+                {/*<FlatList
                     data={homeData}
                     keyExtractor={(item, index) => index}
                     renderItem={renderItems}
@@ -287,7 +295,34 @@ const QBuyFashion = () => {
                     mb={170}
                     refreshing={loader}
                     onRefresh={getHomedata}
-                />
+                /> */}
+
+                <ScrollView
+                    removeClippedSubviews
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={loader} onRefresh={getHomedata} />
+                    }
+                >
+                    <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
+                    <SearchBox onPress={onSearch} />
+                    {homeData?.map(home => renderItems(home))}
+                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={10} />}
+                    <FlatList
+                        data={availablePdt}
+                        keyExtractor={(item, index) => index}
+                        renderItem={renderProducts}
+                        showsVerticalScrollIndicator={false}
+                        initialNumToRender={6}
+                        removeClippedSubviews={true}
+                        windowSize={10}
+                        maxToRenderPerBatch={5}
+                        // refreshing={loader}
+                        // onRefresh={getHomedata}
+                        numColumns={2}
+                        style={{ marginLeft: 5 }}
+                    />
+                </ScrollView>
                 {/* <SearchBox onPress={onSearch}/>
                 <ScrollView
                     horizontal
@@ -392,7 +427,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 2,
-        paddingHorizontal:'2%'
+        paddingHorizontal: '2%'
     },
     pickupReferContainer: {
         flexDirection: 'row',

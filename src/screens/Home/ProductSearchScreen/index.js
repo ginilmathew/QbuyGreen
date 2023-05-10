@@ -8,17 +8,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import customAxios from '../../../CustomeAxios'
 import LoaderContext from '../../../contexts/Loader'
-import { IMG_URL } from '../../../config/constants'
+import { IMG_URL, env, location } from '../../../config/constants'
 import SearchResultsCard from './SearchResultsCard'
 import Toast from 'react-native-toast-message';
+import reactotron from '../../../ReactotronConfig'
+import AuthContext from '../../../contexts/Auth'
 
 
 const ProductSearchScreen = ({route}) => {
 
-    const mode = route?.params?.mode
     const contextPanda = useContext(PandaContext)
     const loadingg = useContext(LoaderContext)
+    const userContext = useContext(AuthContext)
     let active = contextPanda.active
+
 
     let loader = loadingg?.loading
 
@@ -39,8 +42,9 @@ const ProductSearchScreen = ({route}) => {
             setFilterResult([])
         }
         let datas = {
-            coordinates: [8.670514, 76.770417],
-            search: value
+            coordinates: env === "dev" ? location : userContext?.location,
+            search: value,
+            type : active
         }
         loadingg.setLoading(true)
 
@@ -51,10 +55,10 @@ const ProductSearchScreen = ({route}) => {
                 loadingg.setLoading(false)
             })
             .catch(async error => {
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
+                // Toast.show({
+                //     type: 'error',
+                //     text1: error
+                // });
                 loadingg.setLoading(false)
             })
     }, [])

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View, ImageBackground, useWindowDimensions, ScrollView } from 'react-native'
-import React, { useRef, useState, useEffect, useContext, useTransition, useCallback, memo, useMemo } from 'react'
+import React, { useRef, useState, useEffect, useContext, startTransition, useCallback, memo, useMemo } from 'react'
 import FastImage from 'react-native-fast-image'
 import CommonAddButton from './CommonAddButton'
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -25,7 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderContext from '../contexts/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 
-const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart }) => {
+const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -42,7 +42,9 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const [heart, setHeart] = useState(item?.is_wishlist)
 
     const handleClick = useCallback(() => {
+        startTransition(() => {
         navigation.navigate('SingleItemScreen', { item: item })
+        })
     }, [])
 
     const openBottomSheet = () => {
@@ -246,7 +248,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         <>
             <TouchableOpacity
                 onPress={getPrice() != 0 ? handleClick : null}
-                style={{ marginHorizontal: marginHorizontal }}
+                style={{ marginHorizontal: marginHorizontal,marginRight:mr, marginLeft:ml, marginBottom:mb }}
             >
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
