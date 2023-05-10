@@ -30,6 +30,7 @@ import AvailableStores from './AvailableStores';
 import RecentlyViewed from './RecentlyViewed';
 import AvailableProducts from './AvailableProducts';
 import PandaSuggestions from './PandaSuggestions';
+import { isEmpty } from 'lodash'
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -141,6 +142,8 @@ const QBuyGreen = ({ navigation }) => {
 
         let cartItems;
         let url;
+        let productDetails;
+        let minimumQty = !isEmpty(item?.minimum_qty) ? item?.minimum_qty : 1
 
         if (item?.variants?.length === 0) {
             loadingg.setLoading(true)
@@ -149,22 +152,55 @@ const QBuyGreen = ({ navigation }) => {
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
                 if (existing >= 0) {
                     let cartProducts = cartContext?.cart?.product_details;
-                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: cartProducts,
-                        user_id: userContext?.userData?._id
+                    let quantity = cartProducts[existing].quantity + 1;
+
+                    if(item?.stock_value >= quantity){
+                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                        cartItems = {
+                            cart_id: cartContext?.cart?._id,
+                            product_details: cartProducts,
+                            user_id: userContext?.userData?._id
+                        }
                     }
+                    else{
+                        Toast.show({
+                            type: 'warning',
+                            text1: 'Required quantity not available'
+                        })
+                    }
+
+                    
                 }
                 else {
-                    let productDetails = {
-                        product_id: item?._id,
-                        name: item?.name,
-                        image: item?.product_image,
-                        type: 'single',
-                        variants: null,
-                        quantity: 1
-                    };
+                    
+                    if(item?.stock === true){
+                        if(item?.stock_value >= minimumQty){
+                            productDetails = {
+                                product_id: item?._id,
+                                name: item?.name,
+                                image: item?.product_image,
+                                type: 'single',
+                                variants: null,
+                                quantity: minimumQty
+                            };
+                        }
+                        else{
+                            Toast.show({
+                                type: 'error',
+                                text1: "Required quantity not available"
+                            });
+                        }
+                    }
+                    else{
+                        productDetails = {
+                            product_id: item?._id,
+                            name: item?.name,
+                            image: item?.product_image,
+                            type: 'single',
+                            variants: null,
+                            quantity: minimumQty
+                        };
+                    }
 
                     cartItems = {
                         cart_id: cartContext?.cart?._id,
