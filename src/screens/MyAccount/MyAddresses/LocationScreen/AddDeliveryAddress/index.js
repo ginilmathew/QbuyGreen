@@ -55,7 +55,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
             address: locationData?.location,
             comments: locationData?.comments,
             default_status: locationData?.default,
-            pincode: locationData?.pincode.toString()
+            pincode: locationData?.pincode?.toString()
         }
     });
 
