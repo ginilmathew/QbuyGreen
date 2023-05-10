@@ -235,20 +235,12 @@ const QBuyGreen = ({ navigation }) => {
                             lottieFlex={0.4}
                         />
                     </View>
-                   
-                </>
-            )
-        }
-
-        if (item?.type === 'offer_array') {
-            return (
-                <>
-                {item?.data?.length > 0 && <View style={styles.offerView}>
-                    <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
-                    <Offer onPress={goToShop} shopName={offer?.hotel} />
-                    {/* <CountDownComponent /> */}
-                    <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-                </View>}
+                    <View style={styles.offerView}>
+                        <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+                         <Offer onPress={goToShop} shopName={offer?.hotel} />
+                        {/* <CountDownComponent /> */}
+                        <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+                    </View>
                 </>
             )
         }
