@@ -56,7 +56,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-
     const item = route?.params?.item
 
     const [singleProduct, setSingleProduct] = useState([])
@@ -164,6 +163,10 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     
 
+<<<<<<< HEAD
+  
+ 
+=======
    
 
     
@@ -173,6 +176,7 @@ const SingleItemScreen = ({ route, navigation }) => {
    
    
 
+>>>>>>> e4156b133b5efe330485a148925ed640fa3456b5
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
@@ -536,7 +540,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     hotelName={singleProduct?.store?.name}
                     views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}
                     sold={singleProduct?.order_count}
-                    minQty={singleProduct?.minimum_qty}
+                    minQty={singleProduct?.minimum_qty === null ? 1 : singleProduct?.minimum_qty}
                     price={price}
                 />  
                {singleProduct?.weight !== ('' || null)  && 

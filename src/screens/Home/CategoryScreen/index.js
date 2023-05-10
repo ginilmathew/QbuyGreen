@@ -354,7 +354,7 @@ const CategoryScreen = ({ route, navigation }) => {
                         style={styles.mainImage}
                         borderRadius={15}
                     />
-                    <Text style={styles.description}>{item?.seo_description ? item?.seo_description : ''}</Text>
+                    <Text style={styles.description}>{item?.seo_description === null  ? '' : item?.seo_description}</Text>
                 </View>
 
 

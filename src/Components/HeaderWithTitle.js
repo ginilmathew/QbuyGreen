@@ -42,6 +42,7 @@ const HeaderWithTitle = ({ title, noBack, onPressBack, mode }) => {
                         color={'#fff'}
                         fontSize={21}
                         mt={Platform.OS === 'android' ? 2 : -2}
+                        numberOfLines={1}
                     />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', position: 'absolute', right: 10, bottom: 10 }}>

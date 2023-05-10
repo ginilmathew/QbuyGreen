@@ -277,7 +277,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={heart ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={16} marginHorizontal={8} />
+                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12}  />
                     </TouchableOpacity>}
 
                 </FastImage>
@@ -397,7 +397,15 @@ const styles = StyleSheet.create({
     hearIcon: {
         position: 'absolute',
         top: 8,
-        right: 3,
+        right: 8,
+        zIndex:1,
+        width:24,
+        height:24,
+        borderRadius:12,
+        backgroundColor:'rgba(0, 0, 0, 0.5)',
+        alignItems:'center',
+        justifyContent:'center'
+        
     },
     RBsheetHeader: {
         alignItems: 'center',
