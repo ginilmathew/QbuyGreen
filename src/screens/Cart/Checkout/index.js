@@ -367,7 +367,7 @@ const Checkout = ({ navigation }) => {
             billing_address: cartContext?.defaultAddress?._id,
             shipping_address: cartContext?.defaultAddress?._id,
             payment_status: "pending",
-            payment_type: "online",
+            payment_type: "cod",
             type: active,
             total_amount: getTotalAmount(),
             delivery_charge: 0,
@@ -395,10 +395,21 @@ const Checkout = ({ navigation }) => {
                 } else {
                     Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                 }
-            }).catch(async error => {
+            }).catch(error => {
                 console.log(error)
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             })
+    }
+
+
+    const hanldeErrorApi = async (dataValue) => {
+        await customAxios.post(`customer/order/payment/status`, dataValue).then(
+            (result) => console.log("result", result)).catch(
+                error => {
+                    console.log(error);
+                })
+
+
     }
 
     const payWithPayTM = async (data) => {
@@ -408,7 +419,7 @@ const Checkout = ({ navigation }) => {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
-        AllInOneSDKManager.startTransaction(
+        await AllInOneSDKManager.startTransaction(
             paymentDetails?.orderId,//orderId
             paymentDetails?.mid,//mid
             paymentDetails?.txnToken,//txnToken
@@ -416,9 +427,14 @@ const Checkout = ({ navigation }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             false,//appInvokeRestricted
-            "ee"//urlScheme
+            `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
             console.log("PAYTM =>", JSON.stringify(result));
+            if (result?.STATUS == "TXN_SUCCESS") {
+                hanldeErrorApi(result)
+            } else {
+                Toast.show({ type: 'error', text1: result?.body?.txnInfo?.RESPMSG || "Something went wrong !!!" })
+            }
         }).catch((err) => {
             console.log("PAYTM ERROR=>", JSON.stringify(err));
         });
