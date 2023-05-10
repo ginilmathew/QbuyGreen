@@ -231,7 +231,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
         }
         else{
             if(data?.variants?.offer_price){
-                if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()){
+                if(moment(data?.variants?.offer_date_from) < moment() && moment(data?.variants?.offer_date_to) > moment()){
                     let finalPrice = parseFloat(data?.variants?.offer_price) * parseFloat(data?.quantity);
                     return `₹${finalPrice.toFixed(2)}`
                 }

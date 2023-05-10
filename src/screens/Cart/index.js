@@ -21,10 +21,11 @@ const Cart = ({ navigation }) => {
 
 
     const contextPanda = useContext(PandaContext)
-    const loadingg = useContext(LoaderContext)
+    
     const { height } = useWindowDimensions();
 
     let active = contextPanda.active
+    const loadingg = useContext(LoaderContext)
     const loader = loadingg?.loading
 
     const user = useContext(AuthContext)

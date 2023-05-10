@@ -35,6 +35,8 @@ import { useFocusEffect } from '@react-navigation/core'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
 import PaymentMethod from './PaymentMethod'
+import { RefreshControl } from 'react-native-gesture-handler'
+import LoaderContext from '../../../contexts/Loader'
 
 
 const Checkout = ({ navigation }) => {
@@ -44,6 +46,9 @@ const Checkout = ({ navigation }) => {
     const cartContext = useContext(CartContext)
     const authContext = useContext(AuthContext)
     let active = contextPanda.active
+
+    const loadingg = useContext(LoaderContext)
+    const loader = loadingg?.loading
 
     const refRBSheet = useRef();
 
@@ -558,7 +563,7 @@ const Checkout = ({ navigation }) => {
 
         let storeId = cartItems?.product_details?.map(prod => {
             //reactotron.log({prod})
-            return prod?.productdata?.store?._id
+            return prod?.productdata?.store?._id ? prod?.productdata?.store?._id : "123"
         })
 
         //reactotron.log({storeId})
@@ -636,6 +641,9 @@ const Checkout = ({ navigation }) => {
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let isStaging = true
+        let userInfo = {
+            name: "Renjith"
+        }
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
@@ -648,12 +656,12 @@ const Checkout = ({ navigation }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             false,//appInvokeRestricted
-            "ee"//urlScheme
+            "ee",//urlScheme
         ).then((result) => {
             updatePaymentResponse(result)
             //console.log("PAYTM =>", JSON.stringify(result));
         }).catch((err) => {
-            //console.log("PAYTM ERROR=>", JSON.stringify(err));
+            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });
 
     }
@@ -692,7 +700,11 @@ const Checkout = ({ navigation }) => {
     return (
         <>
             <HeaderWithTitle title={'Checkout'} />
-            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
+            <ScrollView 
+            refreshControl={
+                <RefreshControl refreshing={loader} onRefresh={getCartItems} />
+            }
+            style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
 
                 {/* products */}
                 <View style={styles.productBox}>
@@ -848,7 +860,7 @@ const Checkout = ({ navigation }) => {
 
                 {/* grand total */}
                 <View style={styles.grandTotalBox}>
-                    <View style={styles.grandTotalTop}>
+                    {/* <View style={styles.grandTotalTop}>
                         <Text style={styles.textMedium}>{'Delivery Tip'}</Text>
                         <Text
                             style={{
@@ -857,7 +869,7 @@ const Checkout = ({ navigation }) => {
                                 color: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'
                             }}
                         >{'Add Tip'}</Text>
-                    </View>
+                    </View> */}
                     {/* <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Govt Taxes & Other Charges'}</Text>
                         <Text style={styles.textMedium}>₹ {'10'}</Text>

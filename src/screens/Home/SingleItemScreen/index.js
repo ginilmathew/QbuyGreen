@@ -348,15 +348,44 @@ const SingleItemScreen = ({ route, navigation }) => {
         }
         else {
             url = "customer/cart/add";
-            if (singleProduct?.variants?.length > 0 && singleProduct?.stock) {
-                if (parseFloat(selectedVariant?.stock_value) === 0) {
-                    Toast.show({
-                        type: 'info',
-                        text1: "Required quantity not available"
-                    });
-                    return false;
+            if (singleProduct?.variants?.length > 0) {
+                if(singleProduct?.stock){
+                    if (parseFloat(selectedVariant?.stock_value) === 0) {
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
+                    else if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'variant',
+                            variants: [
+                                {
+                                    variant_id: selectedVariant?._id,
+                                    attributs: selectedVariant?.attributs
+                                }
+                            ],
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
                 }
-                else if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                else{
                     productDetails = {
                         product_id: singleProduct?._id,
                         name: singleProduct?.name,
@@ -375,13 +404,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                         product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
                         user_id: userData?._id
                     }
-                }
-                else{
-                    Toast.show({
-                        type: 'info',
-                        text1: 'Required quantity not available'
-                    })
-                    return false;
                 }
             }
             else if (singleProduct?.stock) {
@@ -413,6 +435,21 @@ const SingleItemScreen = ({ route, navigation }) => {
                         text1: "Required quantity not available"
                     });
                     return false;
+                }
+            }
+            else{
+                productDetails = {
+                    product_id: singleProduct?._id,
+                    name: singleProduct?.name,
+                    image: singleProduct?.product_image,
+                    type: 'single',
+                    variants: null,
+                    quantity: minimumQty
+                };
+                cartItems = {
+                    cart_id: cart?.cart?._id,
+                    product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                    user_id: userData?._id
                 }
             }
 
