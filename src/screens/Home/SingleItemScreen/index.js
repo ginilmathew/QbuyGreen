@@ -7,7 +7,7 @@ import CustomButton from '../../../Components/CustomButton'
 import OrderWhatsapp from './OrderWhatsapp'
 import VideoPlayer from 'react-native-video-player'
 import FastImage from 'react-native-fast-image'
-
+import { Animated } from 'react-native'
 import ScheduleDeliveryModal from './ScheduleDeliveryModal'
 import CommonSelectDropdown from '../../../Components/CommonSelectDropdown'
 import PandaContext from '../../../contexts/Panda'
@@ -35,7 +35,9 @@ import Toast from 'react-native-toast-message';
 
 const SingleItemScreen = ({ route, navigation }) => {
 
+
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
@@ -44,7 +46,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
 
-
+  const position = new Animated.ValueXY({x:0,y:0})
     // reactotron.log({attributes})
 
 
@@ -68,7 +70,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({ singleProduct })
+    reactotron.log({cartContext:cartContext?.animation })
 
     const { width, height } = useWindowDimensions()
 
@@ -320,6 +322,10 @@ const SingleItemScreen = ({ route, navigation }) => {
     })
 
     const addToCart = useCallback(async () => {
+        Animated.spring(position,{
+            toValue:{x:50,y:-200},
+            useNativeDriver:true,
+        }).start();
         loadingg.setLoading(true)
         let cartItems;
 
@@ -675,6 +681,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     }}>{singleProduct?.weight}</Text>
 
                 </View>}
+
+
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
                         {(attributes?.map((attr, index) =>
@@ -789,6 +797,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                     checkout={proceedCheckout}
                 />
 
+{/* 
+               <Animated.View style={cartContext?.animation.getLayout()}>
+                    <Text>cary</Text>
+                </Animated.View>  */}
 
 
             </ScrollView>
