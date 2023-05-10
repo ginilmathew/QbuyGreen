@@ -99,22 +99,22 @@ const MyAddresses = ({ route, navigation }) => {
         navigation.navigate('LocationScreen')
     }, [])
 
-    const selectAddress = async(id) => {
+    const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
-        reactotron.log({address})
-        if(!address?.default){
-            address.default_status =true;
-            address.id = address?._id
-            loadingContex.setLoading(true)
-            await customAxios.post(`customer/address/update`, address)
+        reactotron.log({ address })
+        // if (!address?.default) {
+        address.default_status = !address?.default;
+        address.id = address?._id
+        loadingContex.setLoading(true)
+        await customAxios.post(`customer/address/update`, address)
             .then(async response => {
                 let address = addrList?.map(add => {
-                    if(add?._id === response?.data?.data?._id){
+                    if (add?._id === response?.data?.data?._id) {
                         return response?.data?.data
                     }
-                    else{
+                    else {
                         return add
                     }
                 })
@@ -130,17 +130,17 @@ const MyAddresses = ({ route, navigation }) => {
                 });
                 loadingContex.setLoading(false)
             })
-        }
+        // }
 
-        if(mode === "home"){
+        if (mode === "home") {
             navigation.goBack()
         }
-        else if(mode === "checkout"){
-            reactotron.log({address : address?.area?.address})
+        else if (mode === "checkout") {
+            reactotron.log({ address: address?.area?.address })
             cartContext.setDefaultAddress(address)
             navigation.navigate("Checkout")
         }
-        
+
     }
 
 
