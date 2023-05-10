@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda,RefreshControl } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -485,7 +485,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false} 
+     
+            >
 
                 <View style={{ height: 200 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
