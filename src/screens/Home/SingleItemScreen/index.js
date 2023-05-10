@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda,RefreshControl } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -7,7 +7,7 @@ import CustomButton from '../../../Components/CustomButton'
 import OrderWhatsapp from './OrderWhatsapp'
 import VideoPlayer from 'react-native-video-player'
 import FastImage from 'react-native-fast-image'
-
+import { Animated } from 'react-native'
 import ScheduleDeliveryModal from './ScheduleDeliveryModal'
 import CommonSelectDropdown from '../../../Components/CommonSelectDropdown'
 import PandaContext from '../../../contexts/Panda'
@@ -37,7 +37,9 @@ const fashionVideo = require('../../../Videos/jeansVideo.mp4')
 
 const SingleItemScreen = ({ route, navigation }) => {
 
+
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
@@ -46,7 +48,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
 
-
+  const position = new Animated.ValueXY({x:0,y:0})
     // reactotron.log({attributes})
 
 
@@ -56,7 +58,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-
     const item = route?.params?.item
 
     const [singleProduct, setSingleProduct] = useState([])
@@ -70,7 +71,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({ singleProduct })
+    reactotron.log({cartContext:cartContext?.animation })
 
     const { width, height } = useWindowDimensions()
 
@@ -164,15 +165,8 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     
 
-   
-
-    
-
-   
-
-   
-   
-
+  
+ 
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
@@ -620,7 +614,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false} 
+     
+            >
 
                 <View style={{ height: 200 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
@@ -666,7 +662,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     hotelName={singleProduct?.store?.name}
                     views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}
                     sold={singleProduct?.order_count}
-                    minQty={singleProduct?.minimum_qty}
+                    minQty={singleProduct?.minimum_qty === null ? 1 : singleProduct?.minimum_qty}
                     price={price}
                 />  
                {singleProduct?.weight !== ('' || null)  && 
@@ -685,6 +681,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     }}>{singleProduct?.weight}</Text>
 
                 </View>}
+
+
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
                         {(attributes?.map((attr, index) =>
@@ -799,6 +797,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                     checkout={proceedCheckout}
                 />
 
+{/* 
+               <Animated.View style={cartContext?.animation.getLayout()}>
+                    <Text>cary</Text>
+                </Animated.View>  */}
 
 
             </ScrollView>

@@ -12,7 +12,6 @@ const AddressCard = memo(({setSelected, selected, item}) => {
     let active = contextPanda.active
 
     const onClick = useCallback(() => {
-        
         setSelected(item?._id)
     },[])
 
@@ -31,7 +30,7 @@ const AddressCard = memo(({setSelected, selected, item}) => {
                 >{item?.area?.address}</Text>
             </View>
 
-            <Text 
+            <Text
                 style={{
                     fontFamily: 'Poppins-Bold',
                     color: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#31AF48',
@@ -40,7 +39,7 @@ const AddressCard = memo(({setSelected, selected, item}) => {
                     position:'absolute',
                     right:10
                 }}
-            >{item?.default === '1' ? 'DEFAULT' : null}</Text>
+            >{item?.default ? 'DEFAULT' : null}</Text>
         </TouchableOpacity>
     )
 })

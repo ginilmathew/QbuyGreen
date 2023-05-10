@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import CommonTexts from '../../../Components/CommonTexts'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
@@ -31,40 +31,62 @@ const CategoryScreen = ({ route, navigation }) => {
 
     const { name, mode, item, storeId } = route?.params
 
-    reactotron.log({item})
+    reactotron.log({ item })
 
     const [availablePdts, setAvailabelPdts] = useState([])
+    const [filterProducts, setFilterProduct] = useState([])
     const [categories, setCategories] = useState([])
-    reactotron.log({mode})
+    const [selected, setSelected] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
 
-    const [selected, setSelected] = useState(false)
+
+    //code for filter by subCategory.......
+
+
+    const filterbySubCategory = () => {
+        let result = filterProducts?.filter((res) => res?.sub_category?._id === selected)
+        setAvailabelPdts(result)
+    }
+
+    useEffect(() => {
+        if (selected) {
+            filterbySubCategory()
+        }
+    }, [selected])
+
+   //****************************************/
+
+
+
+
 
     useEffect(() => {
         getProductBasedCat(auth.location);
     }, [])
 
 
-    
 
-    const getProductBasedCat = async(coords) => {
+
+    const getProductBasedCat = async (coords) => {
         loadingContex.setLoading(true)
-            let datas = {
-                category_id: item?._id ? item?._id : item?.id,
-                coordinates : env === "dev" ? location : coords 
-            }
-            await customAxios.post(`customer/product/category-based`, datas)
+        let datas = {
+            category_id: item?._id ? item?._id : item?.id,
+            coordinates: env === "dev" ? location : coords
+        }
+        await customAxios.post(`customer/product/category-based`, datas)
             .then(async response => {
-                
-                if(storeId){
-                    
+
+                if (storeId) {
+
                     let products = response?.data?.data?.filter(prod => prod?.store?._id === storeId);
                     //reactotron.log({storeId, products})
                     setAvailabelPdts(products)
                 }
-                else{
+                else {
+                    setSelected(null)
                     setAvailabelPdts(response?.data?.data)
+                    setFilterProduct(response?.data?.data)
                 }
-                
                 loadingContex.setLoading(false)
             })
             .catch(async error => {
@@ -74,7 +96,7 @@ const CategoryScreen = ({ route, navigation }) => {
                 });
                 loadingContex.setLoading(false)
             })
-        
+
     }
 
 
@@ -202,7 +224,7 @@ const CategoryScreen = ({ route, navigation }) => {
         },
     ]
 
-   
+
     foodItems = [
         {
             _id: '1',
@@ -245,16 +267,16 @@ const CategoryScreen = ({ route, navigation }) => {
 
 
     const addToCart = async (item) => {
-        
+
         let cartItems;
         let url;
 
-        if(item?.variants?.length === 0){
+        if (item?.variants?.length === 0) {
             loadingContex.setLoading(true)
-            if(cartContext?.cart){
+            if (cartContext?.cart) {
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-                if(existing >= 0){
+                if (existing >= 0) {
                     let cartProducts = cartContext?.cart?.product_details;
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                     cartItems = {
@@ -263,7 +285,7 @@ const CategoryScreen = ({ route, navigation }) => {
                         user_id: auth?.userData?._id
                     }
                 }
-                else{
+                else {
                     let productDetails = {
                         product_id: item?._id,
                         name: item?.name,
@@ -280,14 +302,14 @@ const CategoryScreen = ({ route, navigation }) => {
                     }
                 }
             }
-            else{
+            else {
                 url = "customer/cart/add";
                 let productDetails = {
                     product_id: item?._id,
                     name: item?.name,
                     image: item?.product_image,
                     type: "single",
-                    variants:  null,
+                    variants: null,
                     quantity: 1
                 };
 
@@ -298,16 +320,16 @@ const CategoryScreen = ({ route, navigation }) => {
             }
 
             await customAxios.post(url, cartItems)
-            .then(async response => {
-                cartContext.setCart(response?.data?.data)
-                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                loadingContex.setLoading(false)
-            })
-            .catch(async error => {
-                loadingContex.setLoading(false)
-            })
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                    loadingContex.setLoading(false)
+                })
+                .catch(async error => {
+                    loadingContex.setLoading(false)
+                })
         }
-        else{
+        else {
             navigation.navigate('SingleItemScreen', { item: item })
         }
 
@@ -318,50 +340,54 @@ const CategoryScreen = ({ route, navigation }) => {
     return (
         <>
             <HeaderWithTitle mode={mode} title={name} />
-            <ScrollView 
+            <ScrollView
                 style={{ flex: 1, backgroundColor: contextPanda.active === "green" ? '#F4FFE9' : contextPanda.active === "fashion" ? '#FFF5F7' : '#fff', }}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={loadingContex?.loading} onRefresh={getProductBasedCat} />
+                }
+
             >
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={item?.image  ?  { uri: `${IMG_URL}${item?.image}`} : require('../../../Images/jeans.jpg')} 
+                        source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../../Images/jeans.jpg')}
                         style={styles.mainImage}
                         borderRadius={15}
                     />
-                    <Text style={styles.description}>{item?.seo_description ? item?.seo_description : ''}</Text>
+                    <Text style={styles.description}>{item?.seo_description === null  ? '' : item?.seo_description}</Text>
                 </View>
 
 
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={{ backgroundColor: '#76867314', marginTop: 5 }}
-                    >
-                        {item?.subcategories?.map((item, index) =>
-                        (<CommonItemSelect
-                            item={item} key={index}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />)
-                        )}
-                    </ScrollView>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={{ backgroundColor: '#76867314', marginTop: 5 }}
+                >
+                    {item?.subcategories?.map((item, index) =>
+                    (<CommonItemSelect
+                        item={item} key={index}
+                        selected={selected}
+                        setSelected={setSelected}
+                    />)
+                    )}
+                </ScrollView>
 
 
-                    {availablePdts?.length > 0 && <>                    
-                        <CommonTexts label={'Available Products'} mt={15} ml={10} fontSize={13} mb={5} />
-                        <View style={styles.itemContainer}>
-                            {availablePdts?.map((item) => (
-                                <CommonItemCard
-                                    item={item}
-                                    key={item?._id}
-                                    width={width / 2.2}
-                                    height={250}
-                                    addToCart={addToCart}
-                                    // wishlistIcon={fashion ? true : false}
-                                />
-                            ))}
-                        </View>
-                    </>}
+                {availablePdts?.length > 0 && <>
+                    <CommonTexts label={'Available Products'} mt={15} ml={10} fontSize={13} mb={5} />
+                    <View style={styles.itemContainer}>
+                        {availablePdts?.map((item) => (
+                            <CommonItemCard
+                                item={item}
+                                key={item?._id}
+                                width={width / 2.2}
+                                height={250}
+                                addToCart={addToCart}
+                            // wishlistIcon={fashion ? true : false}
+                            />
+                        ))}
+                    </View>
+                </>}
 
 
 

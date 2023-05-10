@@ -2,31 +2,33 @@ import React, { useState, useEffect, useCallback } from "react";
 import Context from "./index";
 import Geolocation from 'react-native-geolocation-service';
 import reactotron from "reactotron-react-native";
+import { Animated } from 'react-native'
 
 const CartProvider = (props) => {
 
     const [cart, setCart] = useState(null);
     const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(null);
+    const [animation, setAnimation] = useState(new Animated.ValueXY({ x: 0, y: 0 }))
 
     useEffect(() => {
         getDefaultAddress()
     }, [address])
-    
+
 
     const getDefaultAddress = useCallback(() => {
-        if(address){
-            let defau = address?.find(add =>  add.default === 1)
+        if (address) {
+            let defau = address?.find(add => add.default === 1)
 
-            if(defau){
+            if (defau) {
                 setDefaultAddress(defau)
             }
-            else{
+            else {
                 setDefaultAddress(address[0])
             }
         }
-        
-    },[address])
+
+    }, [address])
 
     return (
         <Context.Provider
@@ -38,7 +40,10 @@ const CartProvider = (props) => {
                 setCart,
                 setAddress,
                 getDefaultAddress,
-                setDefaultAddress
+                setDefaultAddress,
+                setAnimation,
+                animation
+
             }}
         >
             {props.children}
