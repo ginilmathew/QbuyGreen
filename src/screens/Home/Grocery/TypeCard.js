@@ -26,7 +26,7 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
         <TouchableOpacity 
             onPress={onClick} 
             key={item?._id} 
-            style={{ alignItems: 'center', width: width / 4 }}
+            style={{ alignItems: 'center', width: width / 4,}}
         >
             <FastImage
                 style={{ width: 60, height: 60, borderRadius: 30,  }}
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     shopName: {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
-        fontSize: 11,
+        fontSize: 10,
         textAlign: 'center',
         marginTop: 5,
         paddingHorizontal: 5,

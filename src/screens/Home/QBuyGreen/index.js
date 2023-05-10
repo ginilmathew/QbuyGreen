@@ -220,7 +220,7 @@ const QBuyGreen = ({ navigation }) => {
         if (item?.type === 'stores') {
             return (
                 <>
-                    <AvailableStores data={item?.data} />
+                    {item?.data?.length > 0 &&<AvailableStores data={item?.data} />}
                     <View style={styles.pickupReferContainer}>
                         <PickDropAndReferCard
                             onPress={ourFarm}
@@ -310,7 +310,7 @@ const QBuyGreen = ({ navigation }) => {
                         <RefreshControl refreshing={loader} onRefresh={getHomedata} />
                     }>
                     {homeData?.map(home => renderItems(home))}
-                    {homeData?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={20} />}
+                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={20} />}
                     <FlatList
                         data={availablePdt}
                         keyExtractor={(item, index) => index}
