@@ -163,20 +163,8 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     
 
-<<<<<<< HEAD
   
  
-=======
-   
-
-    
-
-   
-
-   
-   
-
->>>>>>> e4156b133b5efe330485a148925ed640fa3456b5
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
