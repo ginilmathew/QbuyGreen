@@ -34,6 +34,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/core'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
+import PaymentMethod from './PaymentMethod'
 
 
 const Checkout = ({ navigation }) => {
@@ -56,6 +57,18 @@ const Checkout = ({ navigation }) => {
     const [selectedDelivery, setSelectedDelivery] = useState('1')
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
+    const [payment, setPayment] = useState([
+        {
+            _id: 'online',
+            name: "Online",
+            selected: true
+        },
+        {
+            _id: 'COD',
+            name: "COD",
+            selected: false
+        }
+    ])
 
 
 
@@ -228,6 +241,9 @@ const Checkout = ({ navigation }) => {
         reactotron.log({ amountArray })
         return amount;
     }
+
+
+    
 
 
     datas = [
@@ -552,14 +568,16 @@ const Checkout = ({ navigation }) => {
 
         let delivery = getDeliveryFee();
 
+        let pay = payment.find(pay => pay.selected === true)
+
         //navigation.navigate('Payment')
         const orderDetails = {
             product_details: products,
             user_id: authContext?.userData?._id,
             billing_address: cartContext?.defaultAddress?._id,
             shipping_address: cartContext?.defaultAddress?._id,
-            payment_status: "pending",
-            payment_type: "online",
+            payment_status: pay._id === "online" ? "pending" : "completed",
+            payment_type: pay._id,
             type: active,
             total_amount: amount,
             delivery_charge: delivery,
@@ -569,9 +587,9 @@ const Checkout = ({ navigation }) => {
             store: uniqueStore
         }
 
-        reactotron.log({ orderDetails })
-
-        await customAxios.post(`customer/order/create`, orderDetails)
+        //reactotron.log({ orderDetails })
+        if(products?.length > 0){
+            await customAxios.post(`customer/order/create`, orderDetails)
             .then(async response => {
                 console.log("response ==>", JSON.stringify(response.data), response.status)
                 const { data } = response
@@ -591,6 +609,14 @@ const Checkout = ({ navigation }) => {
                 console.log(error)
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             })
+        }
+        else{
+            Toast.show({
+                type: 'info',
+                text1: 'Please add some products to cart to proceed'
+            })
+        }
+        
     }
 
 
@@ -641,6 +667,26 @@ const Checkout = ({ navigation }) => {
     const navigateToAddress = () => {
         navigation.navigate("account", { screen: "MyAddresses", params: { mode: 'checkout' } })
     }
+
+
+    const setPaymentMethod = useCallback((id) => {
+        let pays = payment?.map(pay => {
+            if(pay?._id === id){
+                return {
+                    ...pay,
+                    selected: true
+                }
+            }
+            else{
+                return {
+                    ...pay,
+                    selected: false
+                }
+            }
+        })
+
+        setPayment(pays)
+    }, [])
 
 
     return (
@@ -696,18 +742,17 @@ const Checkout = ({ navigation }) => {
                     />
                 </View> */}
 
-                {/* Delivery Speed */}
-                {/* <View style={styles.commonContainer}>
-                    <Text style={styles.boldText}>{'Delivery Speed'}</Text>
-                    {datas.map((item, index) =>
-                        <ChooseDeliverySpeed
+                {/*Delivery Speed */}
+                <View style={styles.commonContainer}>
+                    <Text style={styles.boldText}>{'Payment Methods'}</Text>
+                    {payment.map((item, index) =>
+                        <PaymentMethod
                             item={item}
                             key={index}
-                            selected={selected}
-                            setSelected={setSelected}
+                            setSelected={setPaymentMethod}
                         />
                     )}
-                </View> */}
+                </View>
 
                 {/* Add Coupon */}
                 {/* <View style={styles.commonContainer}>
