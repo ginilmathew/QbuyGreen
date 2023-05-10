@@ -29,6 +29,8 @@ import CategoryCard from './CategoryCard';
 import AvailableStores from './AvailableStores';
 import RecentlyViewed from './RecentlyViewed';
 import AvailableProducts from './AvailableProducts';
+import PandaSuggestions from './PandaSuggestions';
+import { isEmpty } from 'lodash'
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -39,12 +41,21 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
-    reactotron.log({ userContext: userContext.userData })
 
     let loader = loadingg?.loading
 
     const [homeData, setHomeData] = useState(null)
+    const [availablePdt, setavailablePdt] = useState(null)
+    const [slider, setSlider] = useState(null)
 
+
+    useEffect(() => {
+        let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
+        setavailablePdt(availPdt?.data)
+
+        let slider = homeData?.find((item, index) => item?.type === 'sliders')
+        setSlider(slider?.data)
+    }, [homeData])
 
 
     const schema = yup.object({
@@ -99,7 +110,7 @@ const QBuyGreen = ({ navigation }) => {
     useEffect(() => {
         getHomedata()
     }, [])
-    
+
 
     const getHomedata = async () => {
 
@@ -131,6 +142,8 @@ const QBuyGreen = ({ navigation }) => {
 
         let cartItems;
         let url;
+        let productDetails;
+        let minimumQty = !isEmpty(item?.minimum_qty) ? item?.minimum_qty : 1
 
         if (item?.variants?.length === 0) {
             loadingg.setLoading(true)
@@ -139,22 +152,55 @@ const QBuyGreen = ({ navigation }) => {
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
                 if (existing >= 0) {
                     let cartProducts = cartContext?.cart?.product_details;
-                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: cartProducts,
-                        user_id: userContext?.userData?._id
+                    let quantity = cartProducts[existing].quantity + 1;
+
+                    if(item?.stock_value >= quantity){
+                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                        cartItems = {
+                            cart_id: cartContext?.cart?._id,
+                            product_details: cartProducts,
+                            user_id: userContext?.userData?._id
+                        }
                     }
+                    else{
+                        Toast.show({
+                            type: 'warning',
+                            text1: 'Required quantity not available'
+                        })
+                    }
+
+                    
                 }
                 else {
-                    let productDetails = {
-                        product_id: item?._id,
-                        name: item?.name,
-                        image: item?.product_image,
-                        type: 'single',
-                        variants: null,
-                        quantity: 1
-                    };
+                    
+                    if(item?.stock === true){
+                        if(item?.stock_value >= minimumQty){
+                            productDetails = {
+                                product_id: item?._id,
+                                name: item?.name,
+                                image: item?.product_image,
+                                type: 'single',
+                                variants: null,
+                                quantity: minimumQty
+                            };
+                        }
+                        else{
+                            Toast.show({
+                                type: 'error',
+                                text1: "Required quantity not available"
+                            });
+                        }
+                    }
+                    else{
+                        productDetails = {
+                            product_id: item?._id,
+                            name: item?.name,
+                            image: item?.product_image,
+                            type: 'single',
+                            variants: null,
+                            quantity: minimumQty
+                        };
+                    }
 
                     cartItems = {
                         cart_id: cartContext?.cart?._id,
@@ -203,7 +249,7 @@ const QBuyGreen = ({ navigation }) => {
                 <>
                     <CategoryCard data={item?.data} />
                     <SearchBox onPress={onSearch} />
-                    <ImageSlider datas={groceImg} mt={20} />
+                    {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />}
                 </>
             )
         }
@@ -225,12 +271,24 @@ const QBuyGreen = ({ navigation }) => {
                             lottieFlex={0.4}
                         />
                     </View>
-                    <View style={styles.offerView}>
+                    {/* <View style={styles.offerView}>
                         <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
                          <Offer onPress={goToShop} shopName={offer?.hotel} />
+                        <CountDownComponent />
+                        <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+                    </View> */}
+                </>
+            )
+        }
+        if (item?.type === 'offer_array') {
+            return (
+                <>
+                    {item?.data?.length > 0 && <View style={styles.offerView}>
+                        <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+                        <Offer onPress={goToShop} shopName={offer?.hotel} />
                         {/* <CountDownComponent /> */}
                         <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-                    </View>
+                    </View>}
                 </>
             )
         }
@@ -241,14 +299,38 @@ const QBuyGreen = ({ navigation }) => {
                 </>
             )
         }
-        if (item?.type === 'available_products') {
+        if (item?.type === 'suggested_products') {
             return (
                 <>
-                    <AvailableProducts data={item?.data} addToCart={addToCart} />
+                    <PandaSuggestions data={item?.data} addToCart={addToCart} />
                 </>
             )
         }
+        // if (item?.type === 'available_products') {
+        //     return (
+        //         <>
+        //             <AvailableProducts data={item?.data} addToCart={addToCart} />
+        //         </>
+        //     )
+        // }
 
+
+    }
+
+    const renderProducts = ({ item }) => {
+        return (
+            <CommonItemCard
+                item={item}
+                key={item?._id}
+                width={width / 2.25}
+                height={220}
+                wishlistIcon
+                addToCart={addToCart}
+                mr={8}
+                ml={8}
+                mb={15}
+            />
+        )
     }
 
     return (
@@ -257,13 +339,31 @@ const QBuyGreen = ({ navigation }) => {
             <View style={styles.container} >
 
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
-                <ScrollView 
+                <ScrollView
                     removeClippedSubviews
+                    showsVerticalScrollIndicator={false}
                     refreshControl={
                         <RefreshControl refreshing={loader} onRefresh={getHomedata} />
                     }>
                     {homeData?.map(home => renderItems(home))}
+                    {homeData?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={20} />}
+                    <FlatList
+                        data={availablePdt}
+                        keyExtractor={(item, index) => index}
+                        renderItem={renderProducts}
+                        showsVerticalScrollIndicator={false}
+                        initialNumToRender={6}
+                        removeClippedSubviews={true}
+                        windowSize={10}
+                        maxToRenderPerBatch={5}
+                        // refreshing={loader}
+                        // onRefresh={getHomedata}
+                        numColumns={2}
+                        style={{marginLeft:5}}
+                    />
                 </ScrollView>
+
+
                 {/* <FlatList
                     data={homeData}
                     keyExtractor={(item, index) => index}

@@ -34,7 +34,8 @@ const CommonCounter = memo(({count, addItem, removeItem}) => {
                     color: '#23233C',
                     fontSize: 12,
                 }}
-            >{count}</Text>
+            >{count}</Text> 
+            
             <TouchableOpacity 
                 onPress={addItem}
                 style={{

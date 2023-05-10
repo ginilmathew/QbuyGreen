@@ -3,12 +3,12 @@ import React, { memo } from 'react'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
-const RecentlyViewed = memo(({data, addToCart}) => {
+const PandaSuggestions = memo(({data, addToCart}) => {
     const {width} = useWindowDimensions()
 
     return (
         <>
-        {data?.length > 0 &&<CommonTexts label={'Recently Viewed'} fontSize={13} ml={15} mb={5} mt={5} />}
+        {data?.length > 0 &&<CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />}
         <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -29,6 +29,6 @@ const RecentlyViewed = memo(({data, addToCart}) => {
     )
 })
 
-export default RecentlyViewed
+export default PandaSuggestions
 
 const styles = StyleSheet.create({})

@@ -162,147 +162,16 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    const data = [
-        { label: 'Full', value: '1' },
-        { label: 'Half', value: '2' },
-        { label: 'Quarter', value: '3' },
-    ];
+    
 
    
 
-    more = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
+    
 
+   
 
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
-
-    basket = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
-
-    trend = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
-    pandaSugg = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
+   
+   
 
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
@@ -541,7 +410,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
-        reactotron.log({value, attributes})
+        //reactotron.log({value, attributes})
         let attri = [];
         let attr = attributes?.map(att => {
             if (att?.optArray.includes(value)) {
@@ -562,42 +431,45 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
+        //reactotron.log({attri})
         //let filtered = 
 
-        
-        reactotron.log({attri})
         singleProduct?.variants?.map(sin => {
             let attributes = []
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            reactotron.log({attributes})
+            //reactotron.log({attributes})
             const containsAll = attri.every(elem => attributes.includes(elem));
-            // const containsAll = attri.every(element => {
-            //     reactotron.log(sin?.attributs?.includes(element), sin?.attributs, element)
-            //     return sin?.attributs?.includes(element);
-            // });
-
-
-            reactotron.log({containsAll})
             
 
+
             if (containsAll) {
-                reactotron.log({containsAll})
+                //reactotron.log({containsAll})
                 setSelectedVariant(sin)
                 if (sin?.offer_price) {
                     if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
                         setPrice(sin?.offer_price)
                         //return singleProduct?.offer_price;
                     }
-                    else {
+                    else if(sin?.regular_price){
                         setPrice(sin?.regular_price)
                         //return singleProduct?.regular_price;
                     }
+                    else{
+                        let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                        let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
+                        setPrice(amount)
+                    }
                 }
-                else {
+                else if(sin?.regular_price){
                     setPrice(sin?.regular_price)
                     //return singleProduct?.regular_price;
+                }
+                else{
+                    let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                    let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
+                    setPrice(amount)
                 }
                 return false;
             }
@@ -690,7 +562,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 key={index}
                                 placeholder={attr?.name}
                                 data={attr.options}
-                                // value={attr.selected}
+                                value={attr.selected ? attr.selected : ''}
                                 setValue={selectAttributes}
                                 height={35}
                                 width={'48%'}
@@ -698,13 +570,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                         ))}
                     </View>
 
-                    {contextPanda?.active === "panda" && <CommonSelectDropdown
+                    {/* {contextPanda?.active === "panda" && <CommonSelectDropdown
                         mb={20}
                         placeholder='Portion Size'
                         data={data}
                         value={value}
                         setValue={setValue}
-                    />}
+                    />} */}
                 </View>
 
                 <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10 }}>

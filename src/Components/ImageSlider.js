@@ -1,6 +1,7 @@
 import { StyleSheet, ImageBackground, useWindowDimensions, FlatList, View } from 'react-native'
 import React from 'react'
 import FastImage from 'react-native-fast-image'
+import { IMG_URL } from '../config/constants'
 
 
 const ImageSlider = ({mt, datas}) => {
@@ -22,7 +23,7 @@ const ImageSlider = ({mt, datas}) => {
             return(
                 <View style={{alignItems:'center', width:width, height:height/5,}} >
                     <FastImage 
-                        source={item.img} 
+                        source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={{height:height/5, width: width-35,  borderRadius:20}}
                         // resizeMode='contain'
                     >

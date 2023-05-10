@@ -20,14 +20,9 @@ const Cart = ({ navigation }) => {
 
 
     const contextPanda = useContext(PandaContext)
-    let grocery = contextPanda.greenPanda
-    let fashion = contextPanda.pinkPanda
-
     const { height } = useWindowDimensions();
 
     let active = contextPanda.active
-
-    //reactotron.log({active})
 
     const user = useContext(AuthContext)
     const cartContext = useContext(CartContext)
@@ -63,7 +58,6 @@ const Cart = ({ navigation }) => {
                 });
             })
         }
-
     }
 
 
@@ -74,101 +68,6 @@ const Cart = ({ navigation }) => {
     );
 
 
-    const { width } = useWindowDimensions()
-
-
-    cartItems = [
-        {
-            _id: '1',
-            name: 'Chicken Biriyani',
-            hotel: 'MRA',
-            rate: 240,
-            count: 1
-        },
-        {
-            _id: '2',
-            name: 'Jeff Biriyani',
-            hotel: 'Zam Zam',
-            rate: 280,
-            count: 1
-        },
-
-    ]
-
-
-    pandaSugg = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
-
-
-
-    trend = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
 
 
 
@@ -193,7 +92,7 @@ const Cart = ({ navigation }) => {
                 {cartItemsList?.length <= 0 ? <View
                     style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
                 >
-                    <View style={{ height: grocery ? 250 : 170 }}>
+                    <View style={{ height: active === 'green' ? 250 : 170 }}>
                         <Lottie
                             source={active === 'green' ? require('../../Lottie/emptyGrocery.json') : active === 'fashion' ? require('../../Lottie/shirtss.json') : require('../../Lottie/empty.json')}
                             autoPlay
@@ -203,7 +102,7 @@ const Cart = ({ navigation }) => {
                         label={'Oh! Your cart is currently empty!'}
                         color='#A9A9A9'
                         textAlign={'center'}
-                        mt={grocery ? -70 : 10}
+                        mt={active === 'green' ? -70 : 10}
                     />
                     <CustomButton
                         onPress={goHome}
