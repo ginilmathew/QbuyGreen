@@ -7,7 +7,7 @@ import CustomButton from '../../../Components/CustomButton'
 import OrderWhatsapp from './OrderWhatsapp'
 import VideoPlayer from 'react-native-video-player'
 import FastImage from 'react-native-fast-image'
-
+import { Animated } from 'react-native'
 import ScheduleDeliveryModal from './ScheduleDeliveryModal'
 import CommonSelectDropdown from '../../../Components/CommonSelectDropdown'
 import PandaContext from '../../../contexts/Panda'
@@ -35,7 +35,9 @@ import Toast from 'react-native-toast-message';
 
 const SingleItemScreen = ({ route, navigation }) => {
 
+
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
@@ -44,7 +46,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
 
-
+  const position = new Animated.ValueXY({x:0,y:0})
     // reactotron.log({attributes})
 
 
@@ -67,7 +69,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({ singleProduct })
+    reactotron.log({cartContext:cartContext?.animation })
 
     const { width, height } = useWindowDimensions()
 
@@ -159,14 +161,22 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    const data = [
-        { label: 'Full', value: '1' },
-        { label: 'Half', value: '2' },
-        { label: 'Quarter', value: '3' },
-    ];
+    
 
+<<<<<<< HEAD
   
  
+=======
+   
+
+    
+
+   
+
+   
+   
+
+>>>>>>> e4156b133b5efe330485a148925ed640fa3456b5
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
@@ -185,6 +195,10 @@ const SingleItemScreen = ({ route, navigation }) => {
     })
 
     const addToCart = useCallback(async () => {
+        Animated.spring(position,{
+            toValue:{x:50,y:-200},
+            useNativeDriver:true,
+        }).start();
         loadingg.setLoading(true)
         let cartItems;
 
@@ -400,7 +414,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
-        reactotron.log({value, attributes})
+        //reactotron.log({value, attributes})
         let attri = [];
         let attr = attributes?.map(att => {
             if (att?.optArray.includes(value)) {
@@ -421,42 +435,45 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
+        //reactotron.log({attri})
         //let filtered = 
 
-        
-        reactotron.log({attri})
         singleProduct?.variants?.map(sin => {
             let attributes = []
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            reactotron.log({attributes})
+            //reactotron.log({attributes})
             const containsAll = attri.every(elem => attributes.includes(elem));
-            // const containsAll = attri.every(element => {
-            //     reactotron.log(sin?.attributs?.includes(element), sin?.attributs, element)
-            //     return sin?.attributs?.includes(element);
-            // });
-
-
-            reactotron.log({containsAll})
             
 
+
             if (containsAll) {
-                reactotron.log({containsAll})
+                //reactotron.log({containsAll})
                 setSelectedVariant(sin)
                 if (sin?.offer_price) {
                     if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
                         setPrice(sin?.offer_price)
                         //return singleProduct?.offer_price;
                     }
-                    else {
+                    else if(sin?.regular_price){
                         setPrice(sin?.regular_price)
                         //return singleProduct?.regular_price;
                     }
+                    else{
+                        let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                        let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
+                        setPrice(amount)
+                    }
                 }
-                else {
+                else if(sin?.regular_price){
                     setPrice(sin?.regular_price)
                     //return singleProduct?.regular_price;
+                }
+                else{
+                    let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                    let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
+                    setPrice(amount)
                 }
                 return false;
             }
@@ -540,6 +557,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     }}>{singleProduct?.weight}</Text>
 
                 </View>}
+
+
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
                         {(attributes?.map((attr, index) =>
@@ -547,7 +566,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 key={index}
                                 placeholder={attr?.name}
                                 data={attr.options}
-                                // value={attr.selected}
+                                value={attr.selected ? attr.selected : ''}
                                 setValue={selectAttributes}
                                 height={35}
                                 width={'48%'}
@@ -555,13 +574,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                         ))}
                     </View>
 
-                    {contextPanda?.active === "panda" && <CommonSelectDropdown
+                    {/* {contextPanda?.active === "panda" && <CommonSelectDropdown
                         mb={20}
                         placeholder='Portion Size'
                         data={data}
                         value={value}
                         setValue={setValue}
-                    />}
+                    />} */}
                 </View>
 
                 <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10 }}>
@@ -654,6 +673,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                     checkout={proceedCheckout}
                 />
 
+{/* 
+               <Animated.View style={cartContext?.animation.getLayout()}>
+                    <Text>cary</Text>
+                </Animated.View>  */}
 
 
             </ScrollView>

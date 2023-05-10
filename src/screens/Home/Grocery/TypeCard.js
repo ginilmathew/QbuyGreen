@@ -10,7 +10,7 @@ import reactotron from 'reactotron-react-native'
 
 const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
 
-    //reactotron.log({selected, id: item})
+    reactotron.log({id: item})
 
     const contextPanda = useContext(PandaContext)
 
