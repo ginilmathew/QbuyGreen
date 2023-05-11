@@ -37,8 +37,6 @@ const Route = () => {
     const loadingContext = useContext(LoaderContext)
     const [location, setLocation] = useState(null) 
 
-
-
     const [initialScreen, setInitialScreen] = useState(null)
     useEffect(() => {
         getCurrentLocation()
@@ -191,8 +189,6 @@ const Route = () => {
                         userContext?.setCurrentAddress(defaultAdd?.area?.address)
                     }
                 }
-                
-                
                 cartContext.setAddress(response?.data?.data)
                 loadingContext.setLoading(false)
             })

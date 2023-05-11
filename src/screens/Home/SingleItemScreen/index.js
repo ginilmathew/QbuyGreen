@@ -71,7 +71,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({cartContext:cartContext?.animation })
+    reactotron.log({singleProduct })
 
     const { width, height } = useWindowDimensions()
 
@@ -161,13 +161,10 @@ const SingleItemScreen = ({ route, navigation }) => {
             })
     }
 
-
-    
-
   
  
-    const gotoHotel = useCallback(() => {
-        navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
+    const gotoStore = useCallback(() => {
+        navigation.navigate('store', {name : singleProduct?.store?.name, mode : 'singleItem', storeId: singleProduct?.store?._id })
     })
 
     const proceedCheckout = useCallback(() => {
@@ -743,7 +740,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 </ScrollView>}
 
                 <ItemDetails
-                    // onPress={gotoHotel}
+                    onPress={gotoStore}
                     itemName={singleProduct?.name}
                     hotelName={singleProduct?.store?.name}
                     views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}

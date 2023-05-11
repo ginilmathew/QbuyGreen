@@ -46,7 +46,7 @@ const Checkout = ({ navigation }) => {
     let active = contextPanda.active
 
     let myLocation = authContext?.userLocation
-    let myCity = authContext?.city
+    // let myCity = authContext?.city
 
 
     const loadingg = useContext(LoaderContext)
@@ -686,10 +686,14 @@ const Checkout = ({ navigation }) => {
         setPayment(pays)
     }, [])
 
+    const backToCart = useCallback(() => {
+        navigation.navigate('Cart')
+    },[])
+
 
     return (
         <>
-            <HeaderWithTitle title={'Checkout'} />
+            <HeaderWithTitle title={'Checkout'} onPressBack={backToCart} />
             <ScrollView 
             refreshControl={
                 <RefreshControl refreshing={loader} onRefresh={getCartItems} />
@@ -884,7 +888,7 @@ const Checkout = ({ navigation }) => {
                         <Foundation name={'target-two'} color='#FF0000' size={20} marginTop={5} />
                     </View>
                     <View style={{ flex: 0.8, marginLeft: 10 }}>
-                        <CommonTexts label={cartContext.defaultAddress?.area?.location ? cartContext.defaultAddress?.area?.location : myCity} fontSize={21} />
+                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={21} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={21} color={'#FF5757'} />}
                         <Text
                             style={styles.address}
                         >{cartContext.defaultAddress?.area?.address ? cartContext.defaultAddress?.area?.address : myLocation}</Text>
