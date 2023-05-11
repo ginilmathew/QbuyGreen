@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda,RefreshControl } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -23,9 +23,16 @@ import CartContext from '../../../contexts/Cart'
 import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
-
 import Toast from 'react-native-toast-message';
+import { isEmpty } from 'lodash'
+
+const fashions = require('../../../Images/jeans.jpg')
+const fashion1 = require('../../../Images/jeans2.jpg')
+const fashion2 = require('../../../Images/jeans3.jpg')
+const thumbnailFashion = require('../../../Images/jeans4.jpg')
+const fashion3 = require('../../../Images/jeans1.jpg')
+const fashionVideo = require('../../../Videos/jeansVideo.mp4')
+
 
 
 const SingleItemScreen = ({ route, navigation }) => {
@@ -157,15 +164,8 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     
 
-   
-
-    
-
-   
-
-   
-   
-
+  
+ 
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
@@ -184,19 +184,22 @@ const SingleItemScreen = ({ route, navigation }) => {
     })
 
     const addToCart = useCallback(async () => {
-        Animated.spring(position,{
-            toValue:{x:50,y:-200},
-            useNativeDriver:true,
-        }).start();
-        loadingg.setLoading(true)
+        
         let cartItems;
+        let productDetails;
+        let minimumQty = singleProduct?.minimum_qty ? parseFloat(singleProduct?.minimum_qty) : 1
+
+        reactotron.log({minimumQty});
+        //return false
 
         if (singleProduct?.variants?.length > 0 && cart?.cart) {
-            if (selectedVariant?.stock) {
+
+            //Check products have no stock
+            if (singleProduct?.stock) {
                 if (parseFloat(selectedVariant?.stock_value) === 0) {
                     Toast.show({
                         type: 'error',
-                        text1: "Out of Stock"
+                        text1: "Required Stock not available"
                     });
                     return false;
                 }
@@ -206,35 +209,75 @@ const SingleItemScreen = ({ route, navigation }) => {
 
             if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
-                cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: cartProducts,
-                    user_id: userData?._id
+                let quantity = cartProducts[existing].quantity + 1;
+                if(parseFloat(selectedVariant?.stock_value) >= quantity){
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userData?._id
+                    }
                 }
-
+                else{
+                    Toast.show({
+                        type: 'info',
+                        text1: 'Required quantity not available'
+                    })
+                    return false;
+                }
 
             }
             else {
-                let productDetails = {
-                    product_id: singleProduct?._id,
-                    name: singleProduct?.name,
-                    image: singleProduct?.product_image,
-                    type: 'variant',
-                    variants: [
-                        {
-                            variant_id: selectedVariant?._id,
-                            attributs: selectedVariant?.attributs
+                if(singleProduct?.stock){
+                    if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'variant',
+                            variants: [
+                                {
+                                    variant_id: selectedVariant?._id,
+                                    attributs: selectedVariant?.attributs
+                                }
+                            ],
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: [...cart?.cart?.product_details, productDetails],
+                            user_id: userData?._id
                         }
-                    ],
-                    quantity: 1
-                };
-
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: [...cart?.cart?.product_details, productDetails],
-                    user_id: userData?._id
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
                 }
+                else{
+                    productDetails = {
+                        product_id: singleProduct?._id,
+                        name: singleProduct?.name,
+                        image: singleProduct?.product_image,
+                        type: 'variant',
+                        variants: [
+                            {
+                                variant_id: selectedVariant?._id,
+                                attributs: selectedVariant?.attributs
+                            }
+                        ],
+                        quantity: minimumQty
+                    };
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: [...cart?.cart?.product_details, productDetails],
+                        user_id: userData?._id
+                    }
+                }
+                
 
             }
         }
@@ -242,8 +285,8 @@ const SingleItemScreen = ({ route, navigation }) => {
             if (singleProduct?.stock) {
                 if (parseFloat(singleProduct?.stock_value) === 0) {
                     Toast.show({
-                        type: 'error',
-                        text1: "Out of Stock"
+                        type: 'info',
+                        text1: "Required quantity not available"
                     });
                     return false;
                 }
@@ -252,72 +295,166 @@ const SingleItemScreen = ({ route, navigation }) => {
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
             if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
-                cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: cartProducts,
-                    user_id: userData?._id
+                let quantity = cartProducts[existing].quantity + 1;
+                if(singleProduct?.stock_value >= quantity){
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userData?._id
+                    }
+                }
+                else{
+                    Toast.show({
+                        type: 'info',
+                        text1: "Required quantity not available"
+                    });
+                    return false;
                 }
             }
             else {
-                let productDetails = {
-                    product_id: singleProduct?._id,
-                    name: singleProduct?.name,
-                    image: singleProduct?.product_image,
-                    type: 'single',
-                    variants: null,
-                    quantity: 1
-                };
 
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: [...cart?.cart?.product_details, productDetails],
-                    user_id: userData?._id
+                if(singleProduct?.stock){
+                    if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'single',
+                            variants: null,
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: [...cart?.cart?.product_details, productDetails],
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
                 }
+
+                
+
+                
             }
         }
         else {
             url = "customer/cart/add";
-            if (singleProduct?.variants?.length > 0 && selectedVariant?.stock) {
-                if (parseFloat(selectedVariant?.stock_value) === 0) {
-                    Toast.show({
-                        type: 'error',
-                        text1: "Out of Stock"
-                    });
-                    return false;
+            if (singleProduct?.variants?.length > 0) {
+                if(singleProduct?.stock){
+                    if (parseFloat(selectedVariant?.stock_value) === 0) {
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
+                    else if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'variant',
+                            variants: [
+                                {
+                                    variant_id: selectedVariant?._id,
+                                    attributs: selectedVariant?.attributs
+                                }
+                            ],
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
+                }
+                else{
+                    productDetails = {
+                        product_id: singleProduct?._id,
+                        name: singleProduct?.name,
+                        image: singleProduct?.product_image,
+                        type: 'variant',
+                        variants: [
+                            {
+                                variant_id: selectedVariant?._id,
+                                attributs: selectedVariant?.attributs
+                            }
+                        ],
+                        quantity: minimumQty
+                    };
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                        user_id: userData?._id
+                    }
                 }
             }
             else if (singleProduct?.stock) {
                 if (parseFloat(singleProduct?.stock_value) === 0) {
                     Toast.show({
-                        type: 'error',
-                        text1: "Out of Stock"
+                        type: 'info',
+                        text1: "Required quantity not available"
+                    });
+                    return false;
+                }
+                else if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                    productDetails = {
+                        product_id: singleProduct?._id,
+                        name: singleProduct?.name,
+                        image: singleProduct?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: minimumQty
+                    };
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                        user_id: userData?._id
+                    }
+                }
+                else{
+                    Toast.show({
+                        type: 'info',
+                        text1: "Required quantity not available"
                     });
                     return false;
                 }
             }
-            let productDetails = {
-                product_id: singleProduct?._id,
-                name: singleProduct?.name,
-                image: singleProduct?.product_image,
-                type: singleProduct?.variants?.length > 0 ? 'variant' : "single",
-                variants: singleProduct?.variants?.length > 0 ? [
-                    {
-                        variant_id: selectedVariant?._id,
-                        attributs: selectedVariant?.attributs
-                    }
-                ] : null,
-                quantity:  1
-            };
-
-            cartItems = {
-                product_details: [productDetails],
-                user_id: userData?._id
+            else{
+                productDetails = {
+                    product_id: singleProduct?._id,
+                    name: singleProduct?.name,
+                    image: singleProduct?.product_image,
+                    type: 'single',
+                    variants: null,
+                    quantity: minimumQty
+                };
+                cartItems = {
+                    cart_id: cart?.cart?._id,
+                    product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                    user_id: userData?._id
+                }
             }
 
         }
 
-
+        loadingg.setLoading(true)
         await customAxios.post(url, cartItems)
             .then(async response => {
                 cart.setCart(response?.data?.data)
@@ -384,8 +521,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                         let price = parseFloat(singleProduct?.seller_price) + commission
                         setPrice(price)
                     }
-                    //setPrice(singleProduct?.regular_price)
-                    //return singleProduct?.regular_price;
                 }
             }
             else {
@@ -474,11 +609,50 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
+    const renderInStock = () => {
+        if(singleProduct?.stock){
+            if(singleProduct?.variant){
+                if(parseFloat(selectedVariant?.stock_value) > 0){
+                    return(
+                        <View
+                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                        >
+                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                        </View>
+                    )
+                }
+            }
+            else{
+                if(parseFloat(singleProduct?.stock_value) > 0){
+                    return(
+                        <View
+                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                        >
+                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                        </View>
+                    )
+                }
+            }
+        }
+        else{
+            return(
+                <View
+                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                >
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                </View>
+            )
+        }
+    }
+
+
 
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false} 
+     
+            >
 
                 <View style={{ height: 200 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
@@ -501,12 +675,9 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                     </View>
+                    {renderInStock()}
 
-                    {singleProduct?.stock && <View
-                        style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                    >
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                    </View>}
+                    
 
                 </View>
                 {singleProduct?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>

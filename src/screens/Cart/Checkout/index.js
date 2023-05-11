@@ -34,6 +34,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/core'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
+import PaymentMethod from './PaymentMethod'
+import { RefreshControl } from 'react-native-gesture-handler'
+import LoaderContext from '../../../contexts/Loader'
 
 
 const Checkout = ({ navigation }) => {
@@ -43,6 +46,9 @@ const Checkout = ({ navigation }) => {
     const cartContext = useContext(CartContext)
     const authContext = useContext(AuthContext)
     let active = contextPanda.active
+
+    const loadingg = useContext(LoaderContext)
+    const loader = loadingg?.loading
 
     const refRBSheet = useRef();
 
@@ -56,6 +62,18 @@ const Checkout = ({ navigation }) => {
     const [selectedDelivery, setSelectedDelivery] = useState('1')
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
+    const [payment, setPayment] = useState([
+        {
+            _id: 'online',
+            name: "Online",
+            selected: true
+        },
+        {
+            _id: 'COD',
+            name: "COD",
+            selected: false
+        }
+    ])
 
 
 
@@ -228,6 +246,9 @@ const Checkout = ({ navigation }) => {
         reactotron.log({ amountArray })
         return amount;
     }
+
+
+    
 
 
     datas = [
@@ -542,7 +563,7 @@ const Checkout = ({ navigation }) => {
 
         let storeId = cartItems?.product_details?.map(prod => {
             //reactotron.log({prod})
-            return prod?.productdata?.store?._id
+            return prod?.productdata?.store?._id ? prod?.productdata?.store?._id : "123"
         })
 
         //reactotron.log({storeId})
@@ -552,14 +573,16 @@ const Checkout = ({ navigation }) => {
 
         let delivery = getDeliveryFee();
 
+        let pay = payment.find(pay => pay.selected === true)
+
         //navigation.navigate('Payment')
         const orderDetails = {
             product_details: products,
             user_id: authContext?.userData?._id,
             billing_address: cartContext?.defaultAddress?._id,
             shipping_address: cartContext?.defaultAddress?._id,
-            payment_status: "pending",
-            payment_type: "online",
+            payment_status: pay._id === "online" ? "pending" : "completed",
+            payment_type: pay._id,
             type: active,
             total_amount: amount,
             delivery_charge: delivery,
@@ -569,9 +592,9 @@ const Checkout = ({ navigation }) => {
             store: uniqueStore
         }
 
-        reactotron.log({ orderDetails })
-
-        await customAxios.post(`customer/order/create`, orderDetails)
+        //reactotron.log({ orderDetails })
+        if(products?.length > 0){
+            await customAxios.post(`customer/order/create`, orderDetails)
             .then(async response => {
                 console.log("response ==>", JSON.stringify(response.data), response.status)
                 const { data } = response
@@ -587,10 +610,18 @@ const Checkout = ({ navigation }) => {
                 } else {
                     Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                 }
-            }).catch(async error => {
+            }).catch(error => {
                 console.log(error)
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             })
+        }
+        else{
+            Toast.show({
+                type: 'info',
+                text1: 'Please add some products to cart to proceed'
+            })
+        }
+        
     }
 
 
@@ -607,14 +638,28 @@ const Checkout = ({ navigation }) => {
         })
     }
 
+
+    const hanldeErrorApi = async (dataValue) => {
+        await customAxios.post(`customer/order/payment/status`, dataValue).then(
+            (result) => console.log("result", result)).catch(
+                error => {
+                    console.log(error);
+                })
+
+
+    }
+
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let isStaging = true
+        let userInfo = {
+            name: "Renjith"
+        }
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
-        AllInOneSDKManager.startTransaction(
+        await AllInOneSDKManager.startTransaction(
             paymentDetails?.orderId,//orderId
             paymentDetails?.mid,//mid
             paymentDetails?.txnToken,//txnToken
@@ -622,12 +667,16 @@ const Checkout = ({ navigation }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             false,//appInvokeRestricted
-            "ee"//urlScheme
-        ).then((result) => {
-            updatePaymentResponse(result)
-            //console.log("PAYTM =>", JSON.stringify(result));
+          `paytm${paymentDetails?.mid}`//urlScheme
+         ).then((result) => {
+            console.log("PAYTM =>", JSON.stringify(result));
+            if (result?.STATUS == "TXN_SUCCESS") {
+                updatePaymentResponse(result)
+            } else {
+                Toast.show({ type: 'error', text1: result?.body?.txnInfo?.RESPMSG || "Something went wrong !!!" })
+            }
         }).catch((err) => {
-            //console.log("PAYTM ERROR=>", JSON.stringify(err));
+            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });
 
     }
@@ -643,10 +692,34 @@ const Checkout = ({ navigation }) => {
     }
 
 
+    const setPaymentMethod = useCallback((id) => {
+        let pays = payment?.map(pay => {
+            if(pay?._id === id){
+                return {
+                    ...pay,
+                    selected: true
+                }
+            }
+            else{
+                return {
+                    ...pay,
+                    selected: false
+                }
+            }
+        })
+
+        setPayment(pays)
+    }, [])
+
+
     return (
         <>
             <HeaderWithTitle title={'Checkout'} />
-            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
+            <ScrollView 
+            refreshControl={
+                <RefreshControl refreshing={loader} onRefresh={getCartItems} />
+            }
+            style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
 
                 {/* products */}
                 <View style={styles.productBox}>
@@ -696,18 +769,17 @@ const Checkout = ({ navigation }) => {
                     />
                 </View> */}
 
-                {/* Delivery Speed */}
-                {/* <View style={styles.commonContainer}>
-                    <Text style={styles.boldText}>{'Delivery Speed'}</Text>
-                    {datas.map((item, index) =>
-                        <ChooseDeliverySpeed
+                {/*Delivery Speed */}
+                <View style={styles.commonContainer}>
+                    <Text style={styles.boldText}>{'Payment Methods'}</Text>
+                    {payment.map((item, index) =>
+                        <PaymentMethod
                             item={item}
                             key={index}
-                            selected={selected}
-                            setSelected={setSelected}
+                            setSelected={setPaymentMethod}
                         />
                     )}
-                </View> */}
+                </View>
 
                 {/* Add Coupon */}
                 {/* <View style={styles.commonContainer}>
@@ -803,7 +875,7 @@ const Checkout = ({ navigation }) => {
 
                 {/* grand total */}
                 <View style={styles.grandTotalBox}>
-                    <View style={styles.grandTotalTop}>
+                    {/* <View style={styles.grandTotalTop}>
                         <Text style={styles.textMedium}>{'Delivery Tip'}</Text>
                         <Text
                             style={{
@@ -812,7 +884,7 @@ const Checkout = ({ navigation }) => {
                                 color: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'
                             }}
                         >{'Add Tip'}</Text>
-                    </View>
+                    </View> */}
                     {/* <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Govt Taxes & Other Charges'}</Text>
                         <Text style={styles.textMedium}>₹ {'10'}</Text>

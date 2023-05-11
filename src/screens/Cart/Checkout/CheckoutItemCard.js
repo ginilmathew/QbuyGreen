@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Alert, StyleSheet, Text, View } from 'react-native'
 import React, { memo, useCallback, useContext, useState } from 'react'
 import CommonCounter from '../../../Components/CommonCounter'
 import moment from 'moment'
@@ -6,9 +6,12 @@ import CartContext from '../../../contexts/Cart'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
 import reactotron from 'reactotron-react-native'
+import { Toast } from 'react-native-toast-message/lib/src/Toast'
+import { useNavigation } from '@react-navigation/native'
 
 const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
 
+    const navigation = useNavigation()
 
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
@@ -17,8 +20,61 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
 
     const [count, setCount] = useState(item?.count)
 
-    const addItem = useCallback(async () => {
+    // const addItem = useCallback(async () => {
+    //     data.quantity = data?.quantity + 1
+    //     let allProducts = cartContext?.cart?.product_details;
+    //     allProducts[index].quantity = allProducts[index].quantity + 1;
+    //     //setCount(count + 1)
+
+    //     let cartItems = {
+    //         cart_id : cartContext?.cart?._id,
+    //         product_details: allProducts,
+    //         user_id: userContext?.userData?._id
+    //     }
+
+
+    //     await customAxios.post(`customer/cart/update`, cartItems)
+    //         .then(async response => {
+    //             cartContext.setCart(response?.data?.data)
+    //             refreshCart()
+    //             //data.quantity = data?.quantity + 1
+    //             //navigation.navigate('CartNav',{screen: 'Cart'})
+    //         })
+    //         .catch(async error => {
+    //             console.log(error)
+    //             Toast.show({
+    //                 type: 'error',
+    //                 text1: error
+    //             });
+    //         })
+    // }, [])
+    const addItem = async () => {
+        if(item?.type === "single"){
+            if(item?.productdata?.stock){
+                if(parseFloat(item?.productdata?.stock_value) < data?.quantity + 1){
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Required quantity not available'
+                    });
+                    return false;
+                }
+            }
+            
+        }
+        else {
+            if(item?.productdata?.stock){
+                if(parseFloat(item?.variants?.stock_value) < data?.quantity + 1){
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Required quantity not available'
+                    });
+                    return false;
+                }
+            }
+        }
         data.quantity = data?.quantity + 1
+        //reactotron.log(data)
+        //setData(data)
         let allProducts = cartContext?.cart?.product_details;
         allProducts[index].quantity = allProducts[index].quantity + 1;
         //setCount(count + 1)
@@ -38,28 +94,84 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                 //navigation.navigate('CartNav',{screen: 'Cart'})
             })
             .catch(async error => {
-                console.log(error)
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
             })
-    }, [])
+    }
 
-    const removeItem = useCallback(async() => {
+    // const removeItem = useCallback(async() => {
+    //     if(data?.quantity > 1){
+    //         data.quantity = data?.quantity - 1
+    //         let allProducts = cartContext?.cart?.product_details;
+    //         allProducts[index].quantity = allProducts[index].quantity - 1;
+    //         //setCount(count + 1)
+    
+    //         let cartItems = {
+    //             cart_id : cartContext?.cart?._id,
+    //             product_details: allProducts,
+    //             user_id: userContext?.userData?._id
+    //         }
+    
+    //         await customAxios.post(`customer/cart/update`, cartItems)
+    //             .then(async response => {
+    //                 cartContext.setCart(response?.data?.data)
+    //                 refreshCart()
+    //                 //data.quantity = data?.quantity - 1
+    //                 //navigation.navigate('CartNav',{screen: 'Cart'})
+    //             })
+    //             .catch(async error => {
+    //                 console.log(error)
+    //                 Toast.show({
+    //                     type: 'error',
+    //                     text1: error
+    //                 });
+    //             })
+    //     }
+    //     else{
+    //         let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
+    //         let cartItems = {
+    //             cart_id : cartContext?.cart?._id,
+    //             product_details: allProducts,
+    //             user_id: userContext?.userData?._id
+    //         }
+
+    //         await customAxios.post(`customer/cart/update`, cartItems)
+    //             .then(async response => {
+    //                 cartContext.setCart(response?.data?.data)
+    //                 refreshCart()
+    //                 //data.quantity = data?.quantity - 1
+    //                 //navigation.navigate('CartNav',{screen: 'Cart'})
+    //             })
+    //             .catch(async error => {
+    //                 console.log(error)
+    //                 Toast.show({
+    //                     type: 'error',
+    //                     text1: error
+    //                 });
+    //             })
+    //     }
+    // }, [])
+
+    const removeItem = async() => {
+        let minimumQty = data?.productdata?.minimum_qty ? data?.productdata?.minimum_qty : 1
+        reactotron.log({minimumQty})
+        //return false
+        let allProducts = cartContext?.cart?.product_details;
+        let cartItems;
         if(data?.quantity > 1){
-            data.quantity = data?.quantity - 1
-            let allProducts = cartContext?.cart?.product_details;
-            allProducts[index].quantity = allProducts[index].quantity - 1;
-            //setCount(count + 1)
-    
-            let cartItems = {
-                cart_id : cartContext?.cart?._id,
-                product_details: allProducts,
-                user_id: userContext?.userData?._id
-            }
-    
-            await customAxios.post(`customer/cart/update`, cartItems)
+            let quantity = data?.quantity 
+            data.quantity = quantity - 1
+            if(data.quantity >= minimumQty){
+                allProducts[index].quantity = allProducts[index].quantity - 1;
+                cartItems = {
+                    cart_id : cartContext?.cart?._id,
+                    product_details: allProducts,
+                    user_id: userContext?.userData?._id
+                }
+
+                await customAxios.post(`customer/cart/update`, cartItems)
                 .then(async response => {
                     cartContext.setCart(response?.data?.data)
                     refreshCart()
@@ -67,12 +179,37 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                     //navigation.navigate('CartNav',{screen: 'Cart'})
                 })
                 .catch(async error => {
-                    console.log(error)
                     Toast.show({
                         type: 'error',
                         text1: error
                     });
+                    console.log(error)
                 })
+            }
+            else{
+                Alert.alert(
+                    'Warning',
+                    'Are you sure want to remove this product',
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => Alert.alert('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        {
+                            text: 'Ok',
+                            onPress: deleteItem,
+                            style: 'cancel',
+                        },
+                    ],
+                    {
+                      cancelable: true
+                    },
+                );
+            }
+            
+    
+           
         }
         else{
             let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
@@ -86,6 +223,9 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                 .then(async response => {
                     cartContext.setCart(response?.data?.data)
                     refreshCart()
+                    if(allProducts?.length === 0){
+                        navigation.goBack()
+                    }
                     //data.quantity = data?.quantity - 1
                     //navigation.navigate('CartNav',{screen: 'Cart'})
                 })
@@ -97,7 +237,34 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                     });
                 })
         }
-    }, [])
+        
+    }
+
+    const deleteItem = async() => {
+        let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
+        let cartItems = {
+            cart_id : cartContext?.cart?._id,
+            product_details: allProducts,
+            user_id: userContext?.userData?._id
+        }
+        await customAxios.post(`customer/cart/update`, cartItems)
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    refreshCart()
+                    //data.quantity = data?.quantity - 1
+                    //navigation.navigate('CartNav',{screen: 'Cart'})
+                    if(allProducts?.length === 0){
+                        navigation.goBack()
+                    }
+                })
+                .catch(async error => {
+                    console.log(error)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
+                })
+    }
 
     // const getPrice = useCallback(() => {
     //     if(data?.type === "single"){

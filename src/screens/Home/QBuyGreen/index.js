@@ -31,6 +31,7 @@ import RecentlyViewed from './RecentlyViewed';
 import AvailableProducts from './AvailableProducts';
 import PandaSuggestions from './PandaSuggestions';
 import { isEmpty } from 'lodash'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -143,10 +144,10 @@ const QBuyGreen = ({ navigation }) => {
         let cartItems;
         let url;
         let productDetails;
-        let minimumQty = !isEmpty(item?.minimum_qty) ? item?.minimum_qty : 1
+        let minimumQty = !isEmpty(item?.minimum_qty) ? parseFloat(item?.minimum_qty) : 1
 
         if (item?.variants?.length === 0) {
-            loadingg.setLoading(true)
+            
             if (cartContext?.cart) {
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
@@ -164,9 +165,10 @@ const QBuyGreen = ({ navigation }) => {
                     }
                     else{
                         Toast.show({
-                            type: 'warning',
+                            type: 'info',
                             text1: 'Required quantity not available'
                         })
+                        return false;
                     }
 
                     
@@ -189,6 +191,7 @@ const QBuyGreen = ({ navigation }) => {
                                 type: 'error',
                                 text1: "Required quantity not available"
                             });
+                            return false;
                         }
                     }
                     else{
@@ -211,21 +214,43 @@ const QBuyGreen = ({ navigation }) => {
             }
             else {
                 url = "customer/cart/add";
-                let productDetails = {
-                    product_id: item?._id,
-                    name: item?.name,
-                    image: item?.product_image,
-                    type: "single",
-                    variants: null,
-                    quantity: 1
-                };
+                if(item?.stock === true){
+                    if(item?.stock_value >= minimumQty){
+                        productDetails = {
+                            product_id: item?._id,
+                            name: item?.name,
+                            image: item?.product_image,
+                            type: 'single',
+                            variants: null,
+                            quantity: minimumQty
+                        };
+                    }
+                    else{
+                        Toast.show({
+                            type: 'error',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
+                }
+                else{
+                    productDetails = {
+                        product_id: item?._id,
+                        name: item?.name,
+                        image: item?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: minimumQty
+                    };
+                }
+
 
                 cartItems = {
                     product_details: [productDetails],
                     user_id: userContext?.userData?._id
                 }
             }
-
+            loadingg.setLoading(true)
             await customAxios.post(url, cartItems)
                 .then(async response => {
                     cartContext.setCart(response?.data?.data)
@@ -234,6 +259,10 @@ const QBuyGreen = ({ navigation }) => {
                 })
                 .catch(async error => {
                     loadingg.setLoading(false)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    })
                 })
         }
         else {

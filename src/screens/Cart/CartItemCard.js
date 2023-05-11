@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
+import { Alert, Image, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import React, { memo, useCallback, useContext, useEffect, useState } from 'react'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FastImage from 'react-native-fast-image'
@@ -35,24 +35,31 @@ const CartItemCard = ({item, index, refreshCart}) => {
 
 
     const addItem = async () => {
-        if(item?.type === "single" && item?.productdata?.stock){
-            if(parseFloat(item?.productdata?.stock_value) < data?.quantity + 1){
-                Toast.show({
-                    type: 'error',
-                    text1: 'Required quantity not available'
-                });
-                return false;
+        if(item?.type === "single"){
+            if(item?.productdata?.stock){
+                if(parseFloat(item?.productdata?.stock_value) < data?.quantity + 1){
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Required quantity not available'
+                    });
+                    return false;
+                }
+            }
+            
+        }
+        else {
+            if(item?.productdata?.stock){
+                if(parseFloat(item?.variants?.stock_value) < data?.quantity + 1){
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Required quantity not available'
+                    });
+                    return false;
+                }
             }
         }
-        else if(item?.variants?.stock_value < data?.quantity + 1){
-            Toast.show({
-                type: 'error',
-                text1: 'Required quantity not available'
-            });
-            return false;
-        }
         data.quantity = data?.quantity + 1
-        reactotron.log(data)
+        //reactotron.log(data)
         //setData(data)
         let allProducts = cartContext?.cart?.product_details;
         allProducts[index].quantity = allProducts[index].quantity + 1;
@@ -81,19 +88,23 @@ const CartItemCard = ({item, index, refreshCart}) => {
     }
 
     const removeItem = async() => {
+        let minimumQty = data?.productdata?.minimum_qty ? data?.productdata?.minimum_qty : 1
+        reactotron.log({minimumQty})
+        //return false
+        let allProducts = cartContext?.cart?.product_details;
+        let cartItems;
         if(data?.quantity > 1){
-            data.quantity = data?.quantity - 1
-            let allProducts = cartContext?.cart?.product_details;
-            allProducts[index].quantity = allProducts[index].quantity - 1;
-            //setCount(count + 1)
-    
-            let cartItems = {
-                cart_id : cartContext?.cart?._id,
-                product_details: allProducts,
-                user_id: userContext?.userData?._id
-            }
-    
-            await customAxios.post(`customer/cart/update`, cartItems)
+            let quantity = data?.quantity 
+            data.quantity = quantity - 1
+            if(data.quantity >= minimumQty){
+                allProducts[index].quantity = allProducts[index].quantity - 1;
+                cartItems = {
+                    cart_id : cartContext?.cart?._id,
+                    product_details: allProducts,
+                    user_id: userContext?.userData?._id
+                }
+
+                await customAxios.post(`customer/cart/update`, cartItems)
                 .then(async response => {
                     cartContext.setCart(response?.data?.data)
                     refreshCart()
@@ -107,6 +118,31 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     });
                     console.log(error)
                 })
+            }
+            else{
+                Alert.alert(
+                    'Warning',
+                    'Are you sure want to remove this product',
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => Alert.alert('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        {
+                            text: 'Ok',
+                            onPress: deleteItem,
+                            style: 'cancel',
+                        },
+                    ],
+                    {
+                      cancelable: true
+                    },
+                );
+            }
+            
+    
+           
         }
         else{
             let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
@@ -132,6 +168,29 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 })
         }
         
+    }
+
+    const deleteItem = async() => {
+        let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
+        let cartItems = {
+            cart_id : cartContext?.cart?._id,
+            product_details: allProducts,
+            user_id: userContext?.userData?._id
+        }
+        await customAxios.post(`customer/cart/update`, cartItems)
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    refreshCart()
+                    //data.quantity = data?.quantity - 1
+                    //navigation.navigate('CartNav',{screen: 'Cart'})
+                })
+                .catch(async error => {
+                    console.log(error)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
+                })
     }
 
     const goToShop = useCallback(() => {
@@ -172,7 +231,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
         }
         else{
             if(data?.variants?.offer_price){
-                if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()){
+                if(moment(data?.variants?.offer_date_from) < moment() && moment(data?.variants?.offer_date_to) > moment()){
                     let finalPrice = parseFloat(data?.variants?.offer_price) * parseFloat(data?.quantity);
                     return `₹${finalPrice.toFixed(2)}`
                 }
@@ -200,6 +259,78 @@ const CartItemCard = ({item, index, refreshCart}) => {
         }
     }, [item])
 
+    const renderPricing = () => {
+        if(item?.productdata?.stock){
+            if(item?.type === "variant"){
+                if(parseFloat(item?.variants?.stock_value) >= item?.quantity){
+                    return(
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Text style={styles.rateText}>{getPrice()}</Text>
+                            <CommonCounter 
+                                count={data.quantity}
+                                addItem={addItem}
+                                removeItem={removeItem}
+                            />
+                        </View>
+                    )
+                }
+                else{
+                    return(
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Text style={styles.rateText}>Out of stock</Text>
+                            <TouchableOpacity 
+                                onPress={deleteItem}
+                                style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
+                            >
+                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+            }
+            else{
+                if(item?.productdata?.stock_value >= item?.quantity){
+                    return(
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Text style={styles.rateText}>{getPrice()}</Text>
+                            <CommonCounter 
+                                count={data.quantity}
+                                addItem={addItem}
+                                removeItem={removeItem}
+                            />
+                        </View>
+                    )
+                }
+                else{
+                    return(
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Text style={styles.rateText}>Out of stock</Text>
+                            <TouchableOpacity 
+                                onPress={deleteItem}
+                                style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
+                            >
+                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+            }
+        }
+        else{
+            return(
+                <View style={{flexDirection:'row', alignItems:'center'}}>
+                    <Text style={styles.rateText}>{getPrice()}</Text>
+                    <CommonCounter 
+                        count={data.quantity}
+                        addItem={addItem}
+                        removeItem={removeItem}
+                    />
+                </View>
+            )
+        }
+        
+    }
+
     
     return (
         <View style={{borderBottomWidth:0.2, borderColor:'#A9A9A9', padding:10, }} >
@@ -215,14 +346,8 @@ const CartItemCard = ({item, index, refreshCart}) => {
                         <Text style={styles.shopText}>{item?.productdata?.store?.name}</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{flexDirection:'row', alignItems:'center'}}>
-                    <Text style={styles.rateText}>{getPrice()}</Text>
-                    <CommonCounter 
-                        count={data.quantity}
-                        addItem={addItem}
-                        removeItem={removeItem}
-                    />
-                </View>
+                {renderPricing()}
+                
             </View>
         
             {/* {fashion&&<View style={{flexDirection:'row', justifyContent:'space-between',}}>
