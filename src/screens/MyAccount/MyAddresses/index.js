@@ -15,6 +15,7 @@ import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
 import AuthContext from '../../../contexts/Auth'
 import axios from 'axios'
+import AddressContext from '../../../contexts/Address'
 
 
 const MyAddresses = ({ route, navigation }) => {
@@ -26,6 +27,7 @@ const MyAddresses = ({ route, navigation }) => {
     const contextPanda = useContext(PandaContext)
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
+    const addressContext = useContext(AddressContext)
     let active = contextPanda.active
 
 
@@ -71,43 +73,79 @@ const MyAddresses = ({ route, navigation }) => {
         navigation.navigate('MyAccountNav')
     }, [])
 
-    const chooseCrntLocation = useCallback(() => {
+    const chooseCrntLocation = () => {
+        addressContext.setCurrentAddress(null)
+        if (addrList?.length >= 1) {
+            let result = addrList?.filter((res) => res?.default === true)
+            reactotron?.log({ result })
+            const Value = {
+                location: result[0]?.area?.address,
+                city: result[0]?.area?.location,
+                latitude: result[0]?.area?.latitude,
+                longitude: result[0]?.area?.longitude
+            }
+            reactotron.log({ Value }, 'VALUE IN LIST PAGE')
+            addressContext.setCurrentAddress(Value)
+            if (addressContext?.CucurrentAddress) {
+                navigation.navigate('LocationScreen')
+            }
+        }
         navigation.navigate('LocationScreen')
-    }, [])
 
+
+    }
+
+    const deleteSelect = async (id) => {
+
+        loadingContex.setLoading(true)
+        await customAxios.delete(`customer/address/delete/${id}`).then((response) => {
+            let result = addrList?.filter((res) => res?._id !== id)
+            setAddrList(result)
+            loadingContex.setLoading(false)
+
+        }).catch((error) => {
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
+            loadingContex.setLoading(false)
+        }
+
+        )
+    }
 
 
 
     const selectAddress = async (id) => {
 
-        reactotron?.log({id})
+        reactotron?.log({ id })
         let address = addrList.find(addr => addr?._id === id);
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
- 
+
         // if (!address?.default) {
         address.default_status = true;
         address.id = address?._id
-   
+
         loadingContex.setLoading(true)
-        await customAxios.post(`customer/address/update`,address).then((response)=> {
+        await customAxios.post(`customer/address/update`, address).then((response) => {
             setAddrList(response?.data?.data)
             loadingContex.setLoading(false)
         }
-       ).catch(async error => {
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-                loadingContex.setLoading(false)
-            })
+        ).catch(async error => {
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
+            loadingContex.setLoading(false)
+        })
         // }
 
         if (mode === "home") {
             navigation.goBack()
         }
         else if (mode === "checkout") {
-            reactotron.log({ address: address?.area?.address })
+            // reactotron.log({ address: address?.area?.address })
             cartContext.setDefaultAddress(address)
             navigation.navigate("Checkout")
         }
@@ -144,6 +182,7 @@ const MyAddresses = ({ route, navigation }) => {
                             key={index}
                             selected={item?.default}
                             setSelected={selectAddress}
+                            deleteSelect={deleteSelect}
                         />
                     )}
                 </ScrollView>

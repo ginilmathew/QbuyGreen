@@ -6,19 +6,30 @@ import PandaContext from '../../../contexts/Panda'
 import AuthContext from '../../../contexts/Auth'
 import { navigate } from '../../../Navigations/RootNavigation'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-const AddressCard = memo(({ setSelected, selected, item }) => {
-
+import { useNavigation } from '@react-navigation/native'
+import reactotron from 'reactotron-react-native'
+const AddressCard = memo(({ setSelected, selected, item, deleteSelect }) => {
+    const navigation = useNavigation()
     const contextPanda = useContext(PandaContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
+
+
 
     const onClick = useCallback((id) => {
         //   navigate("LocationScreen", { editAddress: item })
         setSelected(id)
     }, [])
 
-    const NavigateTo = ()=>{
-        
+    const deleteAddress = (id) => {
+        deleteSelect(id)
+        // const data = {
+        //     location: item?.area?.address,
+        //     city: item?.area?.location,
+        //     latitude: item?.area?.latitude,
+        //     longitude: item?.area?.longitude
+        // }
+        // navigation.navigate('AddDeliveryAddress', { item: { ...data } })
     }
 
     return (
@@ -32,17 +43,13 @@ const AddressCard = memo(({ setSelected, selected, item }) => {
             </View>
             <View style={{ flex: 0.9 }}>
                 <View style={styles.rowStyle}><CommonTexts label={item?.address_type} fontSize={13} textTransform={'uppercase'} />{!selected ? <Pressable style={styles.borderStyle}><Text style={styles.textStyle}>Set Default</Text></Pressable> : ''}</View>
-                <View style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text
-                        style={styles.addressText}
-                    >{item?.area?.address}</Text>
-
-                    <Pressable >
-                        <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
-                    </Pressable>
-
-                </View>
-
+                <Text
+                    style={styles.addressText}
+                >{item?.area?.address}</Text>
+                {!selected &&
+                <Pressable onPress={() => deleteAddress(item?._id)} style={{ alignSelf: 'flex-end' }}>
+                    <MaterialCommunityIcons name={'delete'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
+                </Pressable> }
             </View>
 
             <Text

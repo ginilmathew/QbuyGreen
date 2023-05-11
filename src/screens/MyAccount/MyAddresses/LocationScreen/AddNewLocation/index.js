@@ -37,9 +37,17 @@ const AddNewLocation = ({ route, navigation }) => {
                     }}
                     onPress={(data, details = null) => {
                         // 'details' is provided when fetchDetails = true
-                        // reactotron.log(data, details);
-                        addressContext.setCurrentAddress(data)
-                        addressContext.setLocation(details)
+                        reactotron.log(data, details);
+                        let Value = {
+                            location: data?.description,
+                            city: details?.address_components?.filter(st => st.types?.includes('locality'))[0]?.long_name,
+                            latitude: details?.geometry?.location?.lat,
+                            longitude: details?.geometry?.location?.lng
+                        }
+
+
+                        addressContext.setCurrentAddress(Value)
+                        // addressContext.setLocation(details)
                         navigation.navigate('LocationScreen')
 
                     }}
@@ -106,8 +114,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderWidth: 1,
         zIndex: 999,
-        borderWidth:0,
-    
+        borderWidth: 0,
+
     },
     predefinedPlacesDescription: {
         color: '#1faadb'
