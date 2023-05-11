@@ -22,8 +22,7 @@ const styles = StyleSheet.create({
     grossCatView: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 2,
-        marginLeft: 20,
-        marginRight: 10
+        gap: 7,
+        marginLeft: 4,
     },
 })

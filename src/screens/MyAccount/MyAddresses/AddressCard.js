@@ -13,8 +13,7 @@ const AddressCard = memo(({ setSelected, selected, item }) => {
     let active = contextPanda.active
 
     const onClick = useCallback(() => {
-        navigate("LocationScreen", { editAddress: item })
-        setSelected(item?._id)
+      navigate("LocationScreen", { editAddress: item })
 
     }, [])
 
@@ -43,7 +42,7 @@ const AddressCard = memo(({ setSelected, selected, item }) => {
                     position: 'absolute',
                     right: 10
                 }}
-            >{item?.default === '1' ? 'DEFAULT' : null}</Text>
+            >{item?.default ? 'DEFAULT' : null}</Text>
         </TouchableOpacity>
     )
 })

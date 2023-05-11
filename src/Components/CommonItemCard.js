@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View, ImageBackground, useWindowDimensions, ScrollView } from 'react-native'
-import React, { useRef, useState, useEffect, useContext, useTransition, useCallback, memo, useMemo } from 'react'
+import React, { useRef, useState, useEffect, useContext, startTransition, useCallback, memo, useMemo } from 'react'
 import FastImage from 'react-native-fast-image'
 import CommonAddButton from './CommonAddButton'
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -25,11 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderContext from '../contexts/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 
-const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart }) => {
-
-    //reactotron.log({item})
-
-    let rating = 4.1
+const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -46,7 +42,9 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const [heart, setHeart] = useState(item?.is_wishlist)
 
     const handleClick = useCallback(() => {
+        startTransition(() => {
         navigation.navigate('SingleItemScreen', { item: item })
+        })
     }, [])
 
     const openBottomSheet = () => {
@@ -206,7 +204,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const RemoveAction = useCallback(async () => {
         setHeart(!heart)
         let datas = {
-            type: "fashion",
+            type: active,
             product_id: item?._id
         }
 
@@ -228,7 +226,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         setHeart(!heart)
 
         let datas = {
-            type: "fashion",
+            type: active,
             product_id: item?._id
         }
 
@@ -250,7 +248,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         <>
             <TouchableOpacity
                 onPress={getPrice() != 0 ? handleClick : null}
-                style={{ marginHorizontal: marginHorizontal }}
+                style={{ marginHorizontal: marginHorizontal,marginRight:mr, marginLeft:ml, marginBottom:mb }}
             >
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
@@ -261,7 +259,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         <Text style={styles.textSemi}>{item?.name}</Text>
                          <Text style={styles.textSemi}>{getPrice()}</Text>
                         <Text style={styles.lightText}>{item?.store?.name}</Text> 
-                        {/* <CommonRating rating={3.5} fontSize={9} alignSelf='flex-start'/> */}
                     </LinearGradient>
 
                     {getPrice() != 0 && <View style={styles.addContainer}>
@@ -280,7 +277,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={heart ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={16} marginHorizontal={8} />
+                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12}  />
                     </TouchableOpacity>}
 
                 </FastImage>
@@ -400,7 +397,15 @@ const styles = StyleSheet.create({
     hearIcon: {
         position: 'absolute',
         top: 8,
-        right: 3,
+        right: 8,
+        zIndex:1,
+        width:24,
+        height:24,
+        borderRadius:12,
+        backgroundColor:'rgba(0, 0, 0, 0.5)',
+        alignItems:'center',
+        justifyContent:'center'
+        
     },
     RBsheetHeader: {
         alignItems: 'center',

@@ -1,4 +1,4 @@
-import { FlatList, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
+import { FlatList, Image, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import CustomButton from '../../Components/CustomButton';
 import HeaderWithTitle from '../../Components/HeaderWithTitle';
@@ -14,20 +14,19 @@ import customAxios from '../../CustomeAxios';
 import CartContext from '../../contexts/Cart';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import LoaderContext from '../../contexts/Loader';
 
 
 const Cart = ({ navigation }) => {
 
 
     const contextPanda = useContext(PandaContext)
-    let grocery = contextPanda.greenPanda
-    let fashion = contextPanda.pinkPanda
-
+    
     const { height } = useWindowDimensions();
 
     let active = contextPanda.active
-
-    //reactotron.log({active})
+    const loadingg = useContext(LoaderContext)
+    const loader = loadingg?.loading
 
     const user = useContext(AuthContext)
     const cartContext = useContext(CartContext)
@@ -63,7 +62,6 @@ const Cart = ({ navigation }) => {
                 });
             })
         }
-
     }
 
 
@@ -74,108 +72,40 @@ const Cart = ({ navigation }) => {
     );
 
 
-    const { width } = useWindowDimensions()
-
-
-    cartItems = [
-        {
-            _id: '1',
-            name: 'Chicken Biriyani',
-            hotel: 'MRA',
-            rate: 240,
-            count: 1
-        },
-        {
-            _id: '2',
-            name: 'Jeff Biriyani',
-            hotel: 'Zam Zam',
-            rate: 280,
-            count: 1
-        },
-
-    ]
-
-
-    pandaSugg = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
-
-
-
-    trend = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
 
 
 
     const gotoCheckout = useCallback(async () => {
-        navigation.navigate('Checkout')
+        let cancel = false
+        reactotron.log({cartItemsList})
+        cartItemsList?.map(cart => {
+            if(cart?.productdata?.stock){
+                if(cart?.type === "variant"){
+                    if(parseFloat(cart?.variants?.stock_value) < cart?.quantity){
+                        cancel = true;
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Please remove out of stocks products and continue'
+                        })
+                        return false;
+                    }
+                }
+                else if(parseFloat(cart?.productdata?.stock_value) < cart?.quantity){
+                    cancel = true;
+                    Toast.show({
+                        type: 'info',
+                        text1: 'Please remove out of stocks products and continue'
+                    })
+                    return false;
+                }
+            }
+        })
+        if(!cancel){
+            navigation.navigate('Checkout')
+        }
+        //navigation.navigate('Checkout')
 
-    }, [])
+    }, [cartItemsList])
 
     const goHome = useCallback(() => {
         navigation.navigate('home')
@@ -189,11 +119,15 @@ const Cart = ({ navigation }) => {
         <View style={{ height: height - 50, paddingBottom: 50, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
             <HeaderWithTitle title={'Cart'} noBack />
 
-            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
+            <ScrollView 
+            refreshControl={
+                <RefreshControl refreshing={loader} onRefresh={getCartItems} />
+            }
+            style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
                 {cartItemsList?.length <= 0 ? <View
                     style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
                 >
-                    <View style={{ height: grocery ? 250 : 170 }}>
+                    <View style={{ height: active === 'green' ? 250 : 170 }}>
                         <Lottie
                             source={active === 'green' ? require('../../Lottie/emptyGrocery.json') : active === 'fashion' ? require('../../Lottie/shirtss.json') : require('../../Lottie/empty.json')}
                             autoPlay
@@ -203,7 +137,7 @@ const Cart = ({ navigation }) => {
                         label={'Oh! Your cart is currently empty!'}
                         color='#A9A9A9'
                         textAlign={'center'}
-                        mt={grocery ? -70 : 10}
+                        mt={active === 'green' ? -70 : 10}
                     />
                     <CustomButton
                         onPress={goHome}

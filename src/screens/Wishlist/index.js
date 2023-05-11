@@ -15,21 +15,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Wishlist = ({navigation}) => {
 
+    const { width } = useWindowDimensions()
+
     const loadingContex = useContext(LoaderContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
+    const contextPanda = useContext(PandaContext)
+
 
     let loadingg = loadingContex?.loading
-
-    const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
-
-    const { width } = useWindowDimensions()
-
   
     const [wishlist, setWishlist] = useState([])
-
-    reactotron.log({wishlist})
 
 
     useEffect(() => {
@@ -39,7 +36,7 @@ const Wishlist = ({navigation}) => {
     const getWishlist = async() => {
         loadingContex.setLoading(true)
         let data = {
-            type:'fashion'
+            type: active
         }
         await customAxios.post(`customer/wishlist/list`, data)
       
@@ -62,7 +59,7 @@ const Wishlist = ({navigation}) => {
         let url;
 
         if(item?.variants?.length === 0){
-            // loadingContex.setLoading(true)
+            loadingContex.setLoading(true)
             if(cartContext?.cart){
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
@@ -122,10 +119,7 @@ const Wishlist = ({navigation}) => {
         else{
             navigation.navigate('SingleItemScreen', { item: item })
         }
-        
-
-
-       
+     
 
     }
 
@@ -138,10 +132,10 @@ const Wishlist = ({navigation}) => {
                 style={{ flex: 1,  backgroundColor:  active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' , paddingTop:10}}
             >
                 <View style={styles.container}>
-                    {loadingg ? <ActivityIndicator style={{width:width}}/> : wishlist?.map((item) => (
+                    {loadingg ? <ActivityIndicator style={{width:width}}/> : wishlist?.map((item, index) => (
                         <CommonItemCard
                             item={item}
-                            key={item?._id}
+                            key={index}
                             width={width/2.2}
                             height={250}
                             wishlistIcon

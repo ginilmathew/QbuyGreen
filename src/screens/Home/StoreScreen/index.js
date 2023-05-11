@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator,RefreshControl } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import CommonTexts from '../../../Components/CommonTexts'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
@@ -314,7 +314,10 @@ const StoreScreen = ({ route, navigation }) => {
             <ScrollView
                 style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}
                 showsVerticalScrollIndicator={false}
-            >
+                refreshControl={
+                    <RefreshControl refreshing={ loadingContex.loading} onRefresh={getStoreDetails} />
+                }>
+            
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
                         source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : require('../../../Images/jeans.jpg')}

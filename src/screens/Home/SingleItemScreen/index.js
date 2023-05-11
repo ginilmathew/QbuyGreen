@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda,RefreshControl } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -7,7 +7,7 @@ import CustomButton from '../../../Components/CustomButton'
 import OrderWhatsapp from './OrderWhatsapp'
 import VideoPlayer from 'react-native-video-player'
 import FastImage from 'react-native-fast-image'
-
+import { Animated } from 'react-native'
 import ScheduleDeliveryModal from './ScheduleDeliveryModal'
 import CommonSelectDropdown from '../../../Components/CommonSelectDropdown'
 import PandaContext from '../../../contexts/Panda'
@@ -23,6 +23,8 @@ import CartContext from '../../../contexts/Cart'
 import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Toast from 'react-native-toast-message';
+import { isEmpty } from 'lodash'
 
 const fashions = require('../../../Images/jeans.jpg')
 const fashion1 = require('../../../Images/jeans2.jpg')
@@ -30,12 +32,14 @@ const fashion2 = require('../../../Images/jeans3.jpg')
 const thumbnailFashion = require('../../../Images/jeans4.jpg')
 const fashion3 = require('../../../Images/jeans1.jpg')
 const fashionVideo = require('../../../Videos/jeansVideo.mp4')
-import Toast from 'react-native-toast-message';
+
 
 
 const SingleItemScreen = ({ route, navigation }) => {
 
+
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
@@ -44,7 +48,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
 
-
+  const position = new Animated.ValueXY({x:0,y:0})
     // reactotron.log({attributes})
 
 
@@ -54,7 +58,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-
     const item = route?.params?.item
 
     const [singleProduct, setSingleProduct] = useState([])
@@ -68,7 +71,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({ singleProduct })
+    reactotron.log({cartContext:cartContext?.animation })
 
     const { width, height } = useWindowDimensions()
 
@@ -160,148 +163,10 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    const data = [
-        { label: 'Full', value: '1' },
-        { label: 'Half', value: '2' },
-        { label: 'Quarter', value: '3' },
-    ];
+    
 
-   
-
-    more = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
-
-    basket = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
-
-    trend = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
-    pandaSugg = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
-
+  
+ 
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })
@@ -320,15 +185,22 @@ const SingleItemScreen = ({ route, navigation }) => {
     })
 
     const addToCart = useCallback(async () => {
-        loadingg.setLoading(true)
+        
         let cartItems;
+        let productDetails;
+        let minimumQty = singleProduct?.minimum_qty ? parseFloat(singleProduct?.minimum_qty) : 1
+
+        reactotron.log({minimumQty});
+        //return false
 
         if (singleProduct?.variants?.length > 0 && cart?.cart) {
-            if (selectedVariant?.stock) {
+
+            //Check products have no stock
+            if (singleProduct?.stock) {
                 if (parseFloat(selectedVariant?.stock_value) === 0) {
                     Toast.show({
                         type: 'error',
-                        text1: "Out of Stock"
+                        text1: "Required Stock not available"
                     });
                     return false;
                 }
@@ -338,35 +210,75 @@ const SingleItemScreen = ({ route, navigation }) => {
 
             if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
-                cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: cartProducts,
-                    user_id: userData?._id
+                let quantity = cartProducts[existing].quantity + 1;
+                if(parseFloat(selectedVariant?.stock_value) >= quantity){
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userData?._id
+                    }
                 }
-
+                else{
+                    Toast.show({
+                        type: 'info',
+                        text1: 'Required quantity not available'
+                    })
+                    return false;
+                }
 
             }
             else {
-                let productDetails = {
-                    product_id: singleProduct?._id,
-                    name: singleProduct?.name,
-                    image: singleProduct?.product_image,
-                    type: 'variant',
-                    variants: [
-                        {
-                            variant_id: selectedVariant?._id,
-                            attributs: selectedVariant?.attributs
+                if(singleProduct?.stock){
+                    if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'variant',
+                            variants: [
+                                {
+                                    variant_id: selectedVariant?._id,
+                                    attributs: selectedVariant?.attributs
+                                }
+                            ],
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: [...cart?.cart?.product_details, productDetails],
+                            user_id: userData?._id
                         }
-                    ],
-                    quantity: 1
-                };
-
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: [...cart?.cart?.product_details, productDetails],
-                    user_id: userData?._id
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
                 }
+                else{
+                    productDetails = {
+                        product_id: singleProduct?._id,
+                        name: singleProduct?.name,
+                        image: singleProduct?.product_image,
+                        type: 'variant',
+                        variants: [
+                            {
+                                variant_id: selectedVariant?._id,
+                                attributs: selectedVariant?.attributs
+                            }
+                        ],
+                        quantity: minimumQty
+                    };
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: [...cart?.cart?.product_details, productDetails],
+                        user_id: userData?._id
+                    }
+                }
+                
 
             }
         }
@@ -374,8 +286,8 @@ const SingleItemScreen = ({ route, navigation }) => {
             if (singleProduct?.stock) {
                 if (parseFloat(singleProduct?.stock_value) === 0) {
                     Toast.show({
-                        type: 'error',
-                        text1: "Out of Stock"
+                        type: 'info',
+                        text1: "Required quantity not available"
                     });
                     return false;
                 }
@@ -384,72 +296,166 @@ const SingleItemScreen = ({ route, navigation }) => {
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
             if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
-                cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: cartProducts,
-                    user_id: userData?._id
+                let quantity = cartProducts[existing].quantity + 1;
+                if(singleProduct?.stock_value >= quantity){
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: userData?._id
+                    }
+                }
+                else{
+                    Toast.show({
+                        type: 'info',
+                        text1: "Required quantity not available"
+                    });
+                    return false;
                 }
             }
             else {
-                let productDetails = {
-                    product_id: singleProduct?._id,
-                    name: singleProduct?.name,
-                    image: singleProduct?.product_image,
-                    type: 'single',
-                    variants: null,
-                    quantity: 1
-                };
 
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: [...cart?.cart?.product_details, productDetails],
-                    user_id: userData?._id
+                if(singleProduct?.stock){
+                    if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'single',
+                            variants: null,
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: [...cart?.cart?.product_details, productDetails],
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
                 }
+
+                
+
+                
             }
         }
         else {
             url = "customer/cart/add";
-            if (singleProduct?.variants?.length > 0 && selectedVariant?.stock) {
-                if (parseFloat(selectedVariant?.stock_value) === 0) {
-                    Toast.show({
-                        type: 'error',
-                        text1: "Out of Stock"
-                    });
-                    return false;
+            if (singleProduct?.variants?.length > 0) {
+                if(singleProduct?.stock){
+                    if (parseFloat(selectedVariant?.stock_value) === 0) {
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
+                    else if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'variant',
+                            variants: [
+                                {
+                                    variant_id: selectedVariant?._id,
+                                    attributs: selectedVariant?.attributs
+                                }
+                            ],
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
+                }
+                else{
+                    productDetails = {
+                        product_id: singleProduct?._id,
+                        name: singleProduct?.name,
+                        image: singleProduct?.product_image,
+                        type: 'variant',
+                        variants: [
+                            {
+                                variant_id: selectedVariant?._id,
+                                attributs: selectedVariant?.attributs
+                            }
+                        ],
+                        quantity: minimumQty
+                    };
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                        user_id: userData?._id
+                    }
                 }
             }
             else if (singleProduct?.stock) {
                 if (parseFloat(singleProduct?.stock_value) === 0) {
                     Toast.show({
-                        type: 'error',
-                        text1: "Out of Stock"
+                        type: 'info',
+                        text1: "Required quantity not available"
+                    });
+                    return false;
+                }
+                else if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                    productDetails = {
+                        product_id: singleProduct?._id,
+                        name: singleProduct?.name,
+                        image: singleProduct?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: minimumQty
+                    };
+                    cartItems = {
+                        cart_id: cart?.cart?._id,
+                        product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                        user_id: userData?._id
+                    }
+                }
+                else{
+                    Toast.show({
+                        type: 'info',
+                        text1: "Required quantity not available"
                     });
                     return false;
                 }
             }
-            let productDetails = {
-                product_id: singleProduct?._id,
-                name: singleProduct?.name,
-                image: singleProduct?.product_image,
-                type: singleProduct?.variants?.length > 0 ? 'variant' : "single",
-                variants: singleProduct?.variants?.length > 0 ? [
-                    {
-                        variant_id: selectedVariant?._id,
-                        attributs: selectedVariant?.attributs
-                    }
-                ] : null,
-                quantity:  1
-            };
-
-            cartItems = {
-                product_details: [productDetails],
-                user_id: userData?._id
+            else{
+                productDetails = {
+                    product_id: singleProduct?._id,
+                    name: singleProduct?.name,
+                    image: singleProduct?.product_image,
+                    type: 'single',
+                    variants: null,
+                    quantity: minimumQty
+                };
+                cartItems = {
+                    cart_id: cart?.cart?._id,
+                    product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                    user_id: userData?._id
+                }
             }
 
         }
 
-
+        loadingg.setLoading(true)
         await customAxios.post(url, cartItems)
             .then(async response => {
                 cart.setCart(response?.data?.data)
@@ -516,8 +522,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                         let price = parseFloat(singleProduct?.seller_price) + commission
                         setPrice(price)
                     }
-                    //setPrice(singleProduct?.regular_price)
-                    //return singleProduct?.regular_price;
                 }
             }
             else {
@@ -535,7 +539,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
-        reactotron.log({value, attributes})
+        //reactotron.log({value, attributes})
         let attri = [];
         let attr = attributes?.map(att => {
             if (att?.optArray.includes(value)) {
@@ -556,42 +560,45 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
+        //reactotron.log({attri})
         //let filtered = 
 
-        
-        reactotron.log({attri})
         singleProduct?.variants?.map(sin => {
             let attributes = []
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            reactotron.log({attributes})
+            //reactotron.log({attributes})
             const containsAll = attri.every(elem => attributes.includes(elem));
-            // const containsAll = attri.every(element => {
-            //     reactotron.log(sin?.attributs?.includes(element), sin?.attributs, element)
-            //     return sin?.attributs?.includes(element);
-            // });
-
-
-            reactotron.log({containsAll})
             
 
+
             if (containsAll) {
-                reactotron.log({containsAll})
+                //reactotron.log({containsAll})
                 setSelectedVariant(sin)
                 if (sin?.offer_price) {
                     if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
                         setPrice(sin?.offer_price)
                         //return singleProduct?.offer_price;
                     }
-                    else {
+                    else if(sin?.regular_price){
                         setPrice(sin?.regular_price)
                         //return singleProduct?.regular_price;
                     }
+                    else{
+                        let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                        let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
+                        setPrice(amount)
+                    }
                 }
-                else {
+                else if(sin?.regular_price){
                     setPrice(sin?.regular_price)
                     //return singleProduct?.regular_price;
+                }
+                else{
+                    let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                    let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
+                    setPrice(amount)
                 }
                 return false;
             }
@@ -603,11 +610,50 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
+    const renderInStock = () => {
+        if(singleProduct?.stock){
+            if(singleProduct?.variant){
+                if(parseFloat(selectedVariant?.stock_value) > 0){
+                    return(
+                        <View
+                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                        >
+                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                        </View>
+                    )
+                }
+            }
+            else{
+                if(parseFloat(singleProduct?.stock_value) > 0){
+                    return(
+                        <View
+                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                        >
+                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                        </View>
+                    )
+                }
+            }
+        }
+        else{
+            return(
+                <View
+                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                >
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                </View>
+            )
+        }
+    }
+
+
 
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false} 
+     
+            >
 
                 <View style={{ height: 200 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
@@ -630,12 +676,9 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                     </View>
+                    {renderInStock()}
 
-                    {singleProduct?.stock && <View
-                        style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                    >
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                    </View>}
+                    
 
                 </View>
                 {singleProduct?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -655,10 +698,28 @@ const SingleItemScreen = ({ route, navigation }) => {
                     itemName={singleProduct?.name}
                     hotelName={singleProduct?.store?.name}
                     views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}
-                    sold={5}
-                    minQty={singleProduct?.minimum_qty}
+                    sold={singleProduct?.order_count}
+                    minQty={singleProduct?.minimum_qty === null ? 1 : singleProduct?.minimum_qty}
                     price={price}
-                />
+                />  
+               {singleProduct?.weight !== ('' || null)  && 
+                <View style={{paddingLeft:10,display:'flex',flexDirection:'row',alignItems:'center',gap:2}}>
+                    <Text style={{
+                        fontFamily: 'Poppins',
+                        letterSpacing:1,
+                        fontSize:  10,
+                    
+                    }}>weight :</Text>
+                    <Text style={{
+                        fontFamily: 'Poppins',
+                        letterSpacing:1,
+                        fontSize:  10,
+                    
+                    }}>{singleProduct?.weight}</Text>
+
+                </View>}
+
+
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
                         {(attributes?.map((attr, index) =>
@@ -666,7 +727,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 key={index}
                                 placeholder={attr?.name}
                                 data={attr.options}
-                                // value={attr.selected}
+                                value={attr.selected ? attr.selected : ''}
                                 setValue={selectAttributes}
                                 height={35}
                                 width={'48%'}
@@ -674,13 +735,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                         ))}
                     </View>
 
-                    {contextPanda?.active === "panda" && <CommonSelectDropdown
+                    {/* {contextPanda?.active === "panda" && <CommonSelectDropdown
                         mb={20}
                         placeholder='Portion Size'
                         data={data}
                         value={value}
                         setValue={setValue}
-                    />}
+                    />} */}
                 </View>
 
                 <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10 }}>
@@ -773,6 +834,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                     checkout={proceedCheckout}
                 />
 
+{/* 
+               <Animated.View style={cartContext?.animation.getLayout()}>
+                    <Text>cary</Text>
+                </Animated.View>  */}
 
 
             </ScrollView>

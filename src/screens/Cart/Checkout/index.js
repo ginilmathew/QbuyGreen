@@ -34,6 +34,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/core'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
+import PaymentMethod from './PaymentMethod'
+import { RefreshControl } from 'react-native-gesture-handler'
+import LoaderContext from '../../../contexts/Loader'
 
 
 const Checkout = ({ navigation }) => {
@@ -43,6 +46,9 @@ const Checkout = ({ navigation }) => {
     const cartContext = useContext(CartContext)
     const authContext = useContext(AuthContext)
     let active = contextPanda.active
+
+    const loadingg = useContext(LoaderContext)
+    const loader = loadingg?.loading
 
     const refRBSheet = useRef();
 
@@ -56,6 +62,18 @@ const Checkout = ({ navigation }) => {
     const [selectedDelivery, setSelectedDelivery] = useState('1')
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
+    const [payment, setPayment] = useState([
+        {
+            _id: 'online',
+            name: "Online",
+            selected: true
+        },
+        {
+            _id: 'COD',
+            name: "COD",
+            selected: false
+        }
+    ])
 
 
 
@@ -75,7 +93,10 @@ const Checkout = ({ navigation }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            getCartItems()
+            if(cartContext?.cart?._id){
+                getCartItems()
+            }
+            
         }, [cartContext?.cart?._id])
     );
 
@@ -227,6 +248,9 @@ const Checkout = ({ navigation }) => {
     }
 
 
+    
+
+
     datas = [
         {
             _id: '1',
@@ -341,6 +365,194 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
+        let products = [];
+        let amount = 0;
+
+        cartItems?.product_details?.map(data => {
+            if (data?.type === "single") {
+                if (data?.productdata?.fixed_delivery_price && parseFloat(data?.productdata?.fixed_delivery_price) > 0) {
+                    delivery += parseFloat(data?.productdata?.fixed_delivery_price)
+                }
+                if (parseFloat(data?.productdata?.offer_price) > 0) {
+                    if (moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()) {
+                        let finalPrice = parseFloat(data?.productdata?.offer_price) * parseFloat(data?.quantity);
+                        //amountArray.push(finalPrice)
+                        amount += finalPrice
+
+                        products.push({
+                            product_id: data?.product_id,
+                            name: data?.name,
+                            image: data?.image,
+                            type: data?.type,
+                            variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                            quantity: data?.quantity,
+                            price: finalPrice,
+                            unitPrice: parseFloat(data?.productdata?.offer_price),
+                            deliveryPrice: data?.productdata?.fixed_delivery_price
+                        })
+                    }
+                    else {
+                        if (parseFloat(data?.productdata?.regular_price) > 0) {
+                            let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
+                            //amountArray.push(finalPrice)
+                            //amountArray.push(`${data?.productdata?.regular_price} -${finalPrice}`)
+                            amount += finalPrice
+                            products.push({
+                                product_id: data?.product_id,
+                                name: data?.name,
+                                image: data?.image,
+                                type: data?.type,
+                                variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                                quantity: data?.quantity,
+                                price: finalPrice,
+                                unitPrice: parseFloat(data?.productdata?.regular_price),
+                                deliveryPrice: data?.productdata?.fixed_delivery_price
+                            })
+                        }
+                        else {
+                            let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
+
+                            amount += amounts
+                            products.push({
+                                product_id: data?.product_id,
+                                name: data?.name,
+                                image: data?.image,
+                                type: data?.type,
+                                variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                                quantity: data?.quantity,
+                                price: amounts,
+                                unitPrice: parseFloat(data?.productdata?.seller_price) + parseFloat(commission),
+                                deliveryPrice: data?.productdata?.fixed_delivery_price
+                            })
+                        }
+                    }
+                }
+                else if (parseFloat(data?.productdata?.regular_price) > 0) {
+                    let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
+                    //amountArray.push(finalPrice)
+                    products.push({
+                        product_id: data?.product_id,
+                        name: data?.name,
+                        image: data?.image,
+                        type: data?.type,
+                        variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                        quantity: data?.quantity,
+                        price: finalPrice,
+                        unitPrice: parseFloat(data?.productdata?.regular_price),
+                        deliveryPrice: data?.productdata?.fixed_delivery_price
+                    })
+                    amount += finalPrice
+                }
+                else {
+                    let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
+                    //amountArray.push(`${data?.productdata?.seller_price} ${amounts}`)
+                    products.push({
+                        product_id: data?.product_id,
+                        name: data?.name,
+                        image: data?.image,
+                        type: data?.type,
+                        variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                        quantity: data?.quantity,
+                        price: amounts,
+                        unitPrice: parseFloat(data?.productdata?.seller_price) + parseFloat(commission),
+                        deliveryPrice: data?.productdata?.fixed_delivery_price
+                    })
+                    amount += amounts
+                }
+            }
+            else {
+                if (parseFloat(data?.variants?.offer_price) > 0) {
+                    if (moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()) {
+                        let finalPrice = parseFloat(data?.variants?.offer_price) * parseFloat(data?.quantity);
+                        //amountArray.push(finalPrice)
+                        products.push({
+                            product_id: data?.product_id,
+                            name: data?.name,
+                            image: data?.image,
+                            type: data?.type,
+                            variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                            quantity: data?.quantity,
+                            price: finalPrice,
+                            unitPrice: parseFloat(data?.variants?.offer_price),
+                            deliveryPrice: data?.variants?.fixed_delivery_price
+                        })
+                        amount += finalPrice
+                        
+                    }
+                    else {
+                        if (parseFloat(data?.variants?.regular_price) > 0) {
+                            let finalPrice = parseFloat(data?.variants?.regular_price) * parseFloat(data?.quantity);
+                            //amountArray.push(finalPrice)
+                            amount += finalPrice
+                            products.push({
+                                product_id: data?.product_id,
+                                name: data?.name,
+                                image: data?.image,
+                                type: data?.type,
+                                variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                                quantity: data?.quantity,
+                                price: finalPrice,
+                                unitPrice: parseFloat(data?.variants?.regular_price),
+                                deliveryPrice: data?.variants?.fixed_delivery_price
+                            })
+                        }
+                        else {
+                            let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
+                            //amountArray.push(amounts)
+                            products.push({
+                                product_id: data?.product_id,
+                                name: data?.name,
+                                image: data?.image,
+                                type: data?.type,
+                                variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                                quantity: data?.quantity,
+                                price: amounts,
+                                unitPrice: parseFloat(data?.variants?.seller_price) + parseFloat(commission),
+                                deliveryPrice: data?.variants?.fixed_delivery_price
+                            })
+                            amount += amounts
+                        }
+                    }
+                }
+                else if (parseFloat(data?.variants?.regular_price) > 0) {
+                    let finalPrice = parseFloat(data?.variants?.regular_price) * parseFloat(data?.quantity);
+                    //amountArray.push(finalPrice)
+                    amount += finalPrice
+                    products.push({
+                        product_id: data?.product_id,
+                        name: data?.name,
+                        image: data?.image,
+                        type: data?.type,
+                        variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                        quantity: data?.quantity,
+                        price: finalPrice,
+                        unitPrice: parseFloat(data?.variants?.regular_price),
+                        deliveryPrice: data?.variants?.fixed_delivery_price
+                    })
+                }
+                else {
+                    let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
+                    //amountArray.push(amounts)
+                    amount += amounts
+                    products.push({
+                        product_id: data?.product_id,
+                        name: data?.name,
+                        image: data?.image,
+                        type: data?.type,
+                        variant_id: data?.type === "variant" ?  data?.variants?._id : null,
+                        quantity: data?.quantity,
+                        price: amounts,
+                        unitPrice: parseFloat(data?.variants?.seller_price) + parseFloat(commission),
+                        deliveryPrice: data?.variants?.fixed_delivery_price
+                    })
+                }
+            }
+        })
+
         if (!cartContext.defaultAddress?.area?.location) {
             Toast.show({
                 type: 'error',
@@ -351,7 +563,7 @@ const Checkout = ({ navigation }) => {
 
         let storeId = cartItems?.product_details?.map(prod => {
             //reactotron.log({prod})
-            return prod?.productdata?.store?._id
+            return prod?.productdata?.store?._id ? prod?.productdata?.store?._id : "123"
         })
 
         //reactotron.log({storeId})
@@ -359,27 +571,30 @@ const Checkout = ({ navigation }) => {
         let uniqueStore = uniq(storeId)
 
 
+        let delivery = getDeliveryFee();
+
+        let pay = payment.find(pay => pay.selected === true)
 
         //navigation.navigate('Payment')
         const orderDetails = {
-            product_details: cartContext?.cart?.product_details,
+            product_details: products,
             user_id: authContext?.userData?._id,
             billing_address: cartContext?.defaultAddress?._id,
             shipping_address: cartContext?.defaultAddress?._id,
-            payment_status: "pending",
-            payment_type: "cod",
+            payment_status: pay._id === "online" ? "pending" : "completed",
+            payment_type: pay._id,
             type: active,
-            total_amount: getTotalAmount(),
-            delivery_charge: 0,
+            total_amount: amount,
+            delivery_charge: delivery,
             delivery_type: "Slot based",
             franchise: cartItems?.product_details?.[0]?.productdata?.franchisee?._id,
             cart_id: cartItems?._id,
             store: uniqueStore
         }
 
-        reactotron.log({ orderDetails })
-
-        await customAxios.post(`customer/order/create`, orderDetails)
+        //reactotron.log({ orderDetails })
+        if(products?.length > 0){
+            await customAxios.post(`customer/order/create`, orderDetails)
             .then(async response => {
                 console.log("response ==>", JSON.stringify(response.data), response.status)
                 const { data } = response
@@ -399,6 +614,28 @@ const Checkout = ({ navigation }) => {
                 console.log(error)
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             })
+        }
+        else{
+            Toast.show({
+                type: 'info',
+                text1: 'Please add some products to cart to proceed'
+            })
+        }
+        
+    }
+
+
+    const updatePaymentResponse = async(data) => {
+        await customAxios.post(`customer/order/payment/status`, data)
+        .then(async response => {
+            cartContext?.setCart(null)
+            setCartItems(null)
+            await AsyncStorage.removeItem("cartId");
+            navigation.navigate('OrderPlaced')
+        }).catch(async error => {
+            console.log(error)
+            Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+        })
     }
 
 
@@ -415,6 +652,9 @@ const Checkout = ({ navigation }) => {
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let isStaging = true
+        let userInfo = {
+            name: "Renjith"
+        }
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
@@ -427,16 +667,16 @@ const Checkout = ({ navigation }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             false,//appInvokeRestricted
-            `paytm${paymentDetails?.mid}`//urlScheme
-        ).then((result) => {
+          `paytm${paymentDetails?.mid}`//urlScheme
+         ).then((result) => {
             console.log("PAYTM =>", JSON.stringify(result));
             if (result?.STATUS == "TXN_SUCCESS") {
-                hanldeErrorApi(result)
+                updatePaymentResponse(result)
             } else {
                 Toast.show({ type: 'error', text1: result?.body?.txnInfo?.RESPMSG || "Something went wrong !!!" })
             }
         }).catch((err) => {
-            console.log("PAYTM ERROR=>", JSON.stringify(err));
+            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });
 
     }
@@ -452,10 +692,34 @@ const Checkout = ({ navigation }) => {
     }
 
 
+    const setPaymentMethod = useCallback((id) => {
+        let pays = payment?.map(pay => {
+            if(pay?._id === id){
+                return {
+                    ...pay,
+                    selected: true
+                }
+            }
+            else{
+                return {
+                    ...pay,
+                    selected: false
+                }
+            }
+        })
+
+        setPayment(pays)
+    }, [])
+
+
     return (
         <>
             <HeaderWithTitle title={'Checkout'} />
-            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
+            <ScrollView 
+            refreshControl={
+                <RefreshControl refreshing={loader} onRefresh={getCartItems} />
+            }
+            style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
 
                 {/* products */}
                 <View style={styles.productBox}>
@@ -505,18 +769,17 @@ const Checkout = ({ navigation }) => {
                     />
                 </View> */}
 
-                {/* Delivery Speed */}
-                {/* <View style={styles.commonContainer}>
-                    <Text style={styles.boldText}>{'Delivery Speed'}</Text>
-                    {datas.map((item, index) =>
-                        <ChooseDeliverySpeed
+                {/*Delivery Speed */}
+                <View style={styles.commonContainer}>
+                    <Text style={styles.boldText}>{'Payment Methods'}</Text>
+                    {payment.map((item, index) =>
+                        <PaymentMethod
                             item={item}
                             key={index}
-                            selected={selected}
-                            setSelected={setSelected}
+                            setSelected={setPaymentMethod}
                         />
                     )}
-                </View> */}
+                </View>
 
                 {/* Add Coupon */}
                 {/* <View style={styles.commonContainer}>
@@ -612,7 +875,7 @@ const Checkout = ({ navigation }) => {
 
                 {/* grand total */}
                 <View style={styles.grandTotalBox}>
-                    <View style={styles.grandTotalTop}>
+                    {/* <View style={styles.grandTotalTop}>
                         <Text style={styles.textMedium}>{'Delivery Tip'}</Text>
                         <Text
                             style={{
@@ -621,7 +884,7 @@ const Checkout = ({ navigation }) => {
                                 color: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'
                             }}
                         >{'Add Tip'}</Text>
-                    </View>
+                    </View> */}
                     {/* <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Govt Taxes & Other Charges'}</Text>
                         <Text style={styles.textMedium}>₹ {'10'}</Text>
@@ -633,7 +896,7 @@ const Checkout = ({ navigation }) => {
 
                     <View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
-                        <Text style={styles.boldText}>₹ {getTotalAmount()}</Text>
+                        <Text style={styles.boldText}>₹ {getTotalAmount() + getDeliveryFee()}</Text>
                     </View>
                 </View>
 

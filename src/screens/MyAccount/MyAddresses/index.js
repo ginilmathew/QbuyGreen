@@ -1,5 +1,5 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
+import React, { useCallback, useContext, useState } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -65,31 +65,6 @@ const MyAddresses = ({ route, navigation }) => {
             })
     }
 
-    datas = [
-        {
-            _id: '1',
-            name: 'Home',
-            address: 'Lorem Ipsum, Lorem Street, Lorem,Trivandrum, Kerala, India 953741',
-            default: false
-        },
-        {
-            _id: '2',
-            name: 'Work',
-            address: 'TestHouse, Lorem Street, Lorem,Trivandrum, Kerala, India 953741',
-            default: true
-        },
-        {
-            _id: '3',
-            name: 'Other',
-            address: 'Abc Villa, Lorem Street, Lorem,Trivandrum, Kerala, India 953741',
-            default: false
-        },
-
-    ]
-
-    const clickAddAddress = useCallback(() => {
-        { mode === 'MyAcc' ? navigation.navigate('LocationScreen') : navigation.navigate('AddDeliveryAddress') }
-    }, [mode])
 
     const backAction = useCallback(() => {
         navigation.navigate('MyAccountNav')
@@ -155,6 +130,9 @@ const MyAddresses = ({ route, navigation }) => {
             <View style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', paddingHorizontal: 15, flex: 1 }}>
                 <ScrollView
                     showsHorizontalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={loadingg} onRefresh={getAddressList} />
+                    }
                 >
                     {(mode === 'home' || addrList?.length === 0) && <CustomButton
                         onPress={chooseCrntLocation}
@@ -164,7 +142,7 @@ const MyAddresses = ({ route, navigation }) => {
                         leftIcon={<Foundation name={'target-two'} color='#fff' size={20} marginRight={10} />}
                     />}
 
-                    {loadingg ? <ActivityIndicator style={{ marginTop: 10 }} /> : addrList?.map((item, index) =>
+                    {addrList?.map((item, index) =>
                         <AddressCard
                             item={item}
                             key={index}

@@ -5,10 +5,9 @@ import PandaContext from '../contexts/Panda';
 
 const CountDownComponent = () => {
 
-
     const contextPanda = useContext(PandaContext)
-    let grocery = contextPanda.greenPanda
-    let fashion = contextPanda.pinkPanda
+    let active = contextPanda.active
+
 
 
     return (
@@ -16,10 +15,10 @@ const CountDownComponent = () => {
             size={20}
             until={1000}
             onFinish={() => alert('Finished')}
-            digitStyle={{backgroundColor: 'transparent',}}
-            digitTxtStyle={{color: fashion ? '#FF4646' : '#464CFF'}}
+            digitStyle={{backgroundColor: 'transparent', }}
+            digitTxtStyle={{color: active === 'fashion' ? '#FF4646' : '#464CFF', }}
             timeLabelStyle={{color: 'red', fontWeight: 'bold'}}
-            separatorStyle={{color: fashion ? '#FF4646' : '#464CFF'}}
+            separatorStyle={{color: active === 'fashion' ? '#FF4646' : '#464CFF'}}
             timeToShow={['H', 'M', 'S']}
             timeLabels={{m: null, s: null}}
             showSeparator

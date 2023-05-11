@@ -15,6 +15,7 @@ const CommonTexts = ({ label, mt, textAlign, color, fontSize, my, ml, mb, textTr
                 marginBottom: mb,
                 textTransform
             }}
+            numberOfLines={numberOfLines}
         >{label}</Text>
     )
 }
