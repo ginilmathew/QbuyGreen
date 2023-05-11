@@ -14,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
 import AuthContext from '../../../contexts/Auth'
+import axios from 'axios'
 
 
 const MyAddresses = ({ route, navigation }) => {
@@ -83,6 +84,7 @@ const MyAddresses = ({ route, navigation }) => {
         address.default_status = !address?.default;
         address.id = address?._id
         loadingContex.setLoading(true)
+
         await customAxios.post(`customer/address/update`, address)
             .then(async response => {
                 let address = addrList?.map(add => {

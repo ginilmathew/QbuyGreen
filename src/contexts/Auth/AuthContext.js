@@ -10,6 +10,11 @@ const AuthProvider = (props) => {
     const [location, setLocation] = useState(null)
     const [currentAddress, setCurrentAddress] = useState('')
 
+    const [userLocation, setUserLocation] = useState(null)
+    const [city, setCity] = useState(null)
+
+
+
 
     const [cartId, setCartId] = useState('');
     return (
@@ -20,6 +25,10 @@ const AuthProvider = (props) => {
                 userData, 
                 homeData,
                 cartId,
+                userLocation,
+                city, 
+                setCity,
+                setUserLocation,
                 setUserData,
                 setLogin,
                 setCartId,

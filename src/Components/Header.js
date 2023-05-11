@@ -1,5 +1,5 @@
 import { StyleSheet, View, SafeAreaView, StatusBar, Image, Text, TouchableOpacity } from 'react-native'
-import React, { useCallback, useContext, useEffect } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -11,6 +11,7 @@ import PandaContext from '../contexts/Panda'
 import reactotron from '../ReactotronConfig'
 import CartContext from '../contexts/Cart'
 import AuthContext from '../contexts/Auth'
+import axios from 'axios'
 
 const Header = ({ onPress, openAddress, goCart }) => {
     const contextPanda = useContext(PandaContext)
@@ -18,7 +19,23 @@ const Header = ({ onPress, openAddress, goCart }) => {
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
+    
+    let loc = userContext.location
+
+    let currentAddress = userContext?.currentAddress
+
+
+    let myLocation = userContext?.userLocation
+
+    reactotron.log({currentAddress})
+
+
     const navigation = useNavigation()
+
+
+
+    // reactotron.log({userLocation : userContext?.currentAddress})
+
 
     const changeAddress = useCallback(() => {
         navigation.navigate('account', { screen: 'MyAddresses', params: { mode: 'home' } })
@@ -35,6 +52,24 @@ const Header = ({ onPress, openAddress, goCart }) => {
     const onClickNotificatn = useCallback(() => {
         navigation.navigate('Notifications')
     }, [])
+
+    useEffect(() => {
+        getAddressFromCoordinates()
+    }, [])
+
+
+    function getAddressFromCoordinates() {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${loc[0]},${loc[1]}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+
+            userContext.setUserLocation(response?.data?.results[0]?.formatted_address)
+            let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
+            userContext.setCity(locality?.long_name)
+
+        })
+            .catch(err => {
+                reactotron.log({ err })
+            })
+    }
 
 
     return (
@@ -62,7 +97,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
                         source={active === 'green' ? require('../Images/locationGrocery.png') : active === 'fashion' ? require('../Images/fashionLocation.png') : require('../Images/location.png')}
                     />}
                     <View style={{ marginLeft: 5, flex: 0.98, }}>
-                        <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress}</Text>
+                        <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress ? userContext?.currentAddress : myLocation }</Text>
                     </View>
                 </TouchableOpacity>
                 {active === 'fashion' &&

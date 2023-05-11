@@ -21,7 +21,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress 
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 0.35, overflow: 'hidden' }}>
+            <View style={{ flex: 0.39, }}>
                 <CommonTexts label={itemName} fontSize={13} />
                 <TouchableOpacity
                     onPress={onPress}
@@ -34,7 +34,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress 
                             fontSize: 10,
 
                         }}
-                    >{'Sold by '}</Text>
+                    >{'Sold by : '}</Text>
 
                     <Tooltip
                         isVisible={tooltip}
@@ -52,6 +52,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress 
                                     fontSize: 11,
                                     flexWrap: 'wrap'
                                 }}
+                                numberOfLines={2}
                             >{hotelName}</Text>
                         </TouchableHighlight>
                     </Tooltip>

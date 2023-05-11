@@ -141,9 +141,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     },
                 );
             }
-            
-    
-           
         }
         else{
             let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
@@ -168,7 +165,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     });
                 })
         }
-        
     }
 
     const deleteItem = async() => {
