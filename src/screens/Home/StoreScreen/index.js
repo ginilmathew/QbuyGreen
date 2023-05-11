@@ -36,8 +36,10 @@ const StoreScreen = ({ route, navigation }) => {
     const name = route?.params?.name
     const mode = route?.params?.mode
     const item = route?.params?.item
+    const storeId = route?.params?.storeId
 
-    //reactotron.log({ item })
+
+    reactotron.log({ storeId })
 
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
@@ -52,7 +54,7 @@ const StoreScreen = ({ route, navigation }) => {
         loadingContex.setLoading(true)
 
         let data = {
-            vendor_id: item?._id,
+            vendor_id: item?._id ?  item?._id : storeId,
             coordinates: env === "dev" ? location : userContext?.location
         }
 
@@ -71,170 +73,8 @@ const StoreScreen = ({ route, navigation }) => {
     }
 
 
-    shops = [
-        {
-            _id: '1',
-            name: 'Fresh Vegetables'
-        },
-        {
-            _id: '2',
-            name: 'Trivandrum Farmers'
-        },
-        {
-            _id: '3',
-            name: 'Fertilizers'
-        },
-    ]
 
-    groceryType = [
-        {
-            _id: '1',
-            name: 'Vegetables'
-        },
-        {
-            _id: '2',
-            name: 'Fruits'
-        },
-        {
-            _id: '3',
-            name: 'Seeds'
-        },
-        {
-            _id: '4',
-            name: 'Plants'
-        },
-        {
-            _id: '5',
-            name: 'Fertilizers'
-        },
-    ]
-
-    fooodItems = [
-        {
-            _id: '1',
-            name: 'Omelette'
-        },
-        {
-            _id: '2',
-            name: 'Rice'
-        },
-        {
-            _id: '3',
-            name: 'Steak'
-        },
-        {
-            _id: '4',
-            name: 'Biriyani'
-        },
-        {
-            _id: '5',
-            name: 'fried Rice'
-        },
-        {
-            _id: '6',
-            name: 'Momos'
-        },
-    ]
-
-
-
-    recomment = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-    ]
-
-    stores = [
-        {
-            _id: '1',
-            hotel: 'AJ Lemons',
-            image: require('../../../Images/store1.jpeg')
-        },
-        {
-            _id: '2',
-            hotel: 'Fresh Fruits',
-            image: require('../../../Images/store2.jpeg')
-        },
-        {
-            _id: '3',
-            hotel: 'Green N Fresh',
-            image: require('../../../Images/store2.jpeg')
-        },
-        {
-            _id: '4',
-            hotel: 'Fresh Veggies',
-            image: require('../../../Images/store1.jpeg')
-        },
-    ]
-
-
-    foodItems = [
-        {
-            _id: '1',
-            name: 'Carrot (500gm)',
-            rate: 250,
-            hotel: 'Fresh Vegetables',
-            image: require('../../../Images/carrot.jpeg')
-        },
-        {
-            _id: '2',
-            name: 'Spinach',
-            rate: 90,
-            hotel: 'Fresh Vegetables',
-            image: require('../../../Images/tomato.jpeg')
-        },
-        {
-            _id: '3',
-            name: 'Lemon',
-            rate: 150,
-            hotel: 'Fresh Vegetables',
-            image: require('../../../Images/carrot.jpeg')
-        },
-        {
-            _id: '4',
-            name: 'Potato (1kg)',
-            rate: 180,
-            hotel: 'Fresh Vegetables',
-            image: require('../../../Images/tomato.jpeg')
-        },
-        {
-            _id: '5',
-            name: 'Tomato (500gm)',
-            rate: 130,
-            hotel: 'Fresh Vegetables',
-            image: require('../../../Images/tomato.jpeg')
-        },
-    ]
-
+  
     // const addToCart = async (item) => {
 
     //     let cartItems;
@@ -445,10 +285,18 @@ const StoreScreen = ({ route, navigation }) => {
         }
     }
 
+    const backToCart = () => {
+        navigation.navigate('Cart')
+    }
+
+    const backToCheckout = () => {
+        navigation.navigate('Checkout')
+    }
+
 
     return (
         <>
-            <HeaderWithTitle title={mode === 'store' ? item?.store_name : name} />
+            <HeaderWithTitle title={mode === 'store' ? item?.store_name : name} onPressBack={mode === 'cartItem' ? backToCart : mode === 'checkoutItem' ? backToCheckout : '' } />
             <ScrollView
                 style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}
                 showsVerticalScrollIndicator={false}
@@ -458,12 +306,12 @@ const StoreScreen = ({ route, navigation }) => {
             
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : require('../../../Images/jeans.jpg')}
+                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : storeDetails?.store_logo ?  { uri: `${IMG_URL}${storeDetails?.store_logo}` } : require('../../../Images/storeImage.jpg')}
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}
                     />
-                    <StoreAddressCard address={item?.store_address} />
+                    <StoreAddressCard address={item?.store_address ? item?.store_address : storeDetails?.store_address} />
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
 

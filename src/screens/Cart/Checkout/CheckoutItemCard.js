@@ -385,11 +385,15 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
         }
     }, [data])
 
+    const gotoStore = useCallback(() => {
+        navigation.navigate('home', {screen: 'store', params : {name : item?.productdata?.store?.name, mode : 'checkoutItem', storeId: item?.productdata?.store?._id }})
+    })
+
     return (
         <View style={styles.container}>
             <View style={{ flex: 0.8 }}>
                 <Text style={styles.text1}>{item?.name}</Text>
-                {!view && <Text style={styles.text2}>{item?.productdata?.store?.name}</Text>}
+                {!view && <Text onPress={gotoStore} style={styles.text2}>{item?.productdata?.store?.name}</Text>}
             </View>
             <Text style={styles.text1}>₹ {getPrice()}</Text>
             {!view && <CommonCounter 
