@@ -89,14 +89,15 @@ const CartItemCard = ({item, index, refreshCart}) => {
 
     const removeItem = async() => {
         let minimumQty = data?.productdata?.minimum_qty ? data?.productdata?.minimum_qty : 1
-        reactotron.log({minimumQty})
+        //reactotron.log({minimumQty})
         //return false
         let allProducts = cartContext?.cart?.product_details;
         let cartItems;
         if(data?.quantity > 1){
             let quantity = data?.quantity 
-            data.quantity = quantity - 1
-            if(data.quantity >= minimumQty){
+            
+            if(quantity - 1 >= minimumQty){
+                data.quantity = quantity - 1
                 allProducts[index].quantity = allProducts[index].quantity - 1;
                 cartItems = {
                     cart_id : cartContext?.cart?._id,
@@ -126,7 +127,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     [
                         {
                             text: 'Cancel',
-                            onPress: () => Alert.alert('Cancel Pressed'),
+                            //onPress: () => Alert.alert('Cancel Pressed'),
                             style: 'cancel',
                         },
                         {
@@ -140,9 +141,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     },
                 );
             }
-            
-    
-           
         }
         else{
             let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
@@ -167,7 +165,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     });
                 })
         }
-        
     }
 
     const deleteItem = async() => {
@@ -203,7 +200,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
     const getPrice = useCallback(() => {
         if(data?.type === "single"){
             if(data?.productdata?.offer_price){
-                if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()){
+                if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                     let finalPrice = parseFloat(data?.productdata?.offer_price) * parseFloat(data?.quantity);
                     return `₹${finalPrice.toFixed(2)}`
                 }
@@ -231,7 +228,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
         }
         else{
             if(data?.variants?.offer_price){
-                if(moment(data?.variants?.offer_date_from) < moment() && moment(data?.variants?.offer_date_to) > moment()){
+                if(moment(data?.variants?.offer_date_from) <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.variants?.offer_date_to) >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                     let finalPrice = parseFloat(data?.variants?.offer_price) * parseFloat(data?.quantity);
                     return `₹${finalPrice.toFixed(2)}`
                 }

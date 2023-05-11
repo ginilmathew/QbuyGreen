@@ -106,7 +106,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     let varient = singleProduct?.variants?.map((item, index) => (item))
     selectedVarient = varient?.find((item) => (item?.attributs?.[0] === valueSize && item?.attributs?.[1] === valueColor))
 
-
     useEffect(() => {
         getSingleProduct()
         addViewCount()
@@ -292,9 +291,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                     return false;
                 }
             }
-            url = "customer/cart/update";
+            
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
             if (existing >= 0) {
+                url = "customer/cart/update";
                 let cartProducts = cart?.cart?.product_details;
                 let quantity = cartProducts[existing].quantity + 1;
                 if(singleProduct?.stock_value >= quantity){
@@ -315,7 +315,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                 }
             }
             else {
-
+                url = "customer/cart/add";
+                reactotron.log("in")
                 if(singleProduct?.stock){
                     if(parseFloat(singleProduct?.stock_value) >= minimumQty){
                         productDetails = {
@@ -340,7 +341,48 @@ const SingleItemScreen = ({ route, navigation }) => {
                         return false;
                     }
                 }
-
+                else{
+                    if(singleProduct?.stock){
+                        if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                            productDetails = {
+                                product_id: singleProduct?._id,
+                                name: singleProduct?.name,
+                                image: singleProduct?.product_image,
+                                type: 'single',
+                                variants: null,
+                                quantity: minimumQty
+                            };
+                            cartItems = {
+                                cart_id: cart?.cart?._id,
+                                product_details: [...cart?.cart?.product_details, productDetails],
+                                user_id: userData?._id
+                            }
+                        }
+                        else{
+                            Toast.show({
+                                type: 'info',
+                                text1: "Required quantity not available"
+                            });
+                            return false;
+                        }
+                    }
+                    else{
+                        productDetails = {
+                            product_id: singleProduct?._id,
+                            name: singleProduct?.name,
+                            image: singleProduct?.product_image,
+                            type: 'single',
+                            variants: null,
+                            quantity: minimumQty
+                        };
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: [...cart?.cart?.product_details, productDetails],
+                            user_id: userData?._id
+                        }
+                    }
+                    
+                }
                 
 
                 
@@ -539,12 +581,15 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
-        //reactotron.log({value, attributes})
+        reactotron.log({value, attributes, variant: singleProduct})
         let attri = [];
         let attr = attributes?.map(att => {
             if (att?.optArray.includes(value)) {
                 if(att?.variant){
-                    attri.push(value)
+                    let values = value.split(' ')
+                    values.map(va => {
+                        attri.push(va)
+                    })
                 }
                
                 return {
@@ -554,13 +599,16 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
             else {
                 if(att?.variant){
-                    attri.push(att.selected)
+                    let values = att.selected.split(' ')
+                    values.map(va => {
+                        attri.push(va)
+                    })
                 }
                 return att
             }
         })
 
-        //reactotron.log({attri})
+        reactotron.log({attri})
         //let filtered = 
 
         singleProduct?.variants?.map(sin => {
@@ -568,13 +616,13 @@ const SingleItemScreen = ({ route, navigation }) => {
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            //reactotron.log({attributes})
+            reactotron.log({attributes})
             const containsAll = attri.every(elem => attributes.includes(elem));
             
-
+            reactotron.log({containsAll})
 
             if (containsAll) {
-                //reactotron.log({containsAll})
+                
                 setSelectedVariant(sin)
                 if (sin?.offer_price) {
                     if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
@@ -651,8 +699,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false} 
-     
+            <ScrollView 
+                style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} 
+                showsVerticalScrollIndicator={false} 
             >
 
                 <View style={{ height: 200 }}>
@@ -663,13 +712,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='cover'
+                                resizeMode='contain'
                             >
                             </FastImage> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='cover'
+                                resizeMode='contain'
                             >
                             </FastImage>
                         }
@@ -718,7 +767,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                     }}>{singleProduct?.weight}</Text>
 
                 </View>}
-
 
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>

@@ -14,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
 import AuthContext from '../../../contexts/Auth'
+import axios from 'axios'
 
 
 const MyAddresses = ({ route, navigation }) => {
