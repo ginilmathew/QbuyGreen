@@ -39,7 +39,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const refRBSheet = useRef();
     const navigation = useNavigation()
     const [total, setTotal] = useState('')
-    const [heart, setHeart] = useState(item?.is_wishlist)
+    const [heart, setHeart] = useState(wishlistIcon ? wishlistIcon : item?.is_wishlist )
 
     const handleClick = useCallback(() => {
         startTransition(() => {
@@ -135,7 +135,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         if(item?.variants?.length > 0){
             let variants = [];
             item?.variants?.map(vari => {
-                if(vari?.offer_price && vari?.offer_price > 0 && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment()) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment())){
+                if(vari?.offer_price && vari?.offer_price > 0 && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))){
                     variants.push(vari?.offer_price);
                 }
                 else{
@@ -162,7 +162,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         }
         else{
             if(item?.offer_price && item?.offer_price > 0){
-                if(item?.offer_price && (moment(item?.offer_date_from, "YYYY-MM-DD") <= moment()) && (moment(item?.offer_date_to, "YYYY-MM-DD") >= moment())){
+                if(item?.offer_price && (moment(item?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(item?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))){
                     return `₹${item?.offer_price}`;
                 }
                 else{
