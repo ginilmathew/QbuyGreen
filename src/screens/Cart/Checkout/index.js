@@ -610,7 +610,7 @@ const Checkout = ({ navigation }) => {
                 } else {
                     Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                 }
-            }).catch(async error => {
+            }).catch(error => {
                 console.log(error)
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             })
@@ -638,6 +638,17 @@ const Checkout = ({ navigation }) => {
         })
     }
 
+
+    const hanldeErrorApi = async (dataValue) => {
+        await customAxios.post(`customer/order/payment/status`, dataValue).then(
+            (result) => console.log("result", result)).catch(
+                error => {
+                    console.log(error);
+                })
+
+
+    }
+
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let isStaging = true
@@ -648,7 +659,7 @@ const Checkout = ({ navigation }) => {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
-        AllInOneSDKManager.startTransaction(
+        await AllInOneSDKManager.startTransaction(
             paymentDetails?.orderId,//orderId
             paymentDetails?.mid,//mid
             paymentDetails?.txnToken,//txnToken
@@ -656,10 +667,14 @@ const Checkout = ({ navigation }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             false,//appInvokeRestricted
-            "ee",//urlScheme
-        ).then((result) => {
-            updatePaymentResponse(result)
-            //console.log("PAYTM =>", JSON.stringify(result));
+          `paytm${paymentDetails?.mid}`//urlScheme
+         ).then((result) => {
+            console.log("PAYTM =>", JSON.stringify(result));
+            if (result?.STATUS == "TXN_SUCCESS") {
+                updatePaymentResponse(result)
+            } else {
+                Toast.show({ type: 'error', text1: result?.body?.txnInfo?.RESPMSG || "Something went wrong !!!" })
+            }
         }).catch((err) => {
             reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });

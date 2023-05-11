@@ -15,13 +15,14 @@ const LocationScreen = ({ route, navigation }) => {
 
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
-
+    const { editAddress = {} } = route?.params || {}
     const { width, height } = useWindowDimensions()
 
     const mapRef = useRef()
+    console.log("route", route?.params);
 
-    const [location, setLocation] = useState({ latitude: 0, longitude: 0 })
-    const [address, setAddress] = useState('')
+    const [location, setLocation] = useState({ latitude: editAddress?.area?.latitude || 0, longitude: editAddress?.area?.longitude || 0 })
+    const [address, setAddress] = useState(editAddress?.area?.address || '')
     const [city, setCity] = useState('')
     reactotron.log(location?.latitude)
 
@@ -67,7 +68,7 @@ const LocationScreen = ({ route, navigation }) => {
         fetchData().then(() => {
             Geolocation.getCurrentPosition(
                 position => {
-                    reactotron.log({position})
+                    reactotron.log({ position })
                     getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
                     setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude })
                 },
@@ -92,35 +93,35 @@ const LocationScreen = ({ route, navigation }) => {
             latitude: location.latitude,
             longitude: location.longitude,
         }
-        navigation.navigate('AddDeliveryAddress', { item: locationData })
+        navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
     }, [location, address, city])
 
     const addNewAddress = useCallback(() => {
         navigation.navigate('AddNewLocation')
     }, [])
 
-    const myApiKey="Key Received from Google map"
+    const myApiKey = "Key Received from Google map"
 
-function getAddressFromCoordinates(latitude, longitude) {
-    axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
-        setAddress(response?.data?.results[0]?.formatted_address)
-        let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
-        setCity(locality?.long_name)
-    })
-    .catch(err => {
-        reactotron.log({err})
-    })
-  
-}
+    function getAddressFromCoordinates(latitude, longitude) {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+            setAddress(response?.data?.results[0]?.formatted_address)
+            let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
+            setCity(locality?.long_name)
+        })
+            .catch(err => {
+                reactotron.log({ err })
+            })
+
+    }
 
 
     const RegionChange = (e) => {
-        reactotron.log({coordinates: e.nativeEvent.coordinate})
-        let coordinates= e.nativeEvent.coordinate;
+        reactotron.log({ coordinates: e.nativeEvent.coordinate })
+        let coordinates = e.nativeEvent.coordinate;
         getAddressFromCoordinates(coordinates?.latitude, coordinates?.longitude)
-        setLocation({ latitude: coordinates?.latitude, longitude:  coordinates?.longitude })
+        setLocation({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
         //setLocation(region)
-        reactotron.log({location})
+        reactotron.log({ location })
     }
 
     return (
@@ -141,9 +142,9 @@ function getAddressFromCoordinates(latitude, longitude) {
                 ref={mapRef}
                 //onRegionChangeComplete={RegionChange}
                 showsUserLocation={true}
-                // onUserLocationChange={(e)=>{
-                //     console.log("onUserLocationChange", e.nativeEvent)
-                // }}
+            // onUserLocationChange={(e)=>{
+            //     console.log("onUserLocationChange", e.nativeEvent)
+            // }}
             >
                 {location && <Marker
                     coordinate={{
@@ -155,14 +156,14 @@ function getAddressFromCoordinates(latitude, longitude) {
             <View style={styles.selectedLocationView}>
                 <View style={{ flexDirection: 'row', }}>
                     <Foundation name={'target-two'} color='#FF0000' size={23} marginTop={7} />
-                    <View style={{ flex: 0.9, marginLeft: 7,   }}>
+                    <View style={{ flex: 0.9, marginLeft: 7, }}>
                         <CommonTexts label={city} fontSize={22} />
                         <Text
                             style={{
                                 fontFamily: 'Poppins-Regular',
                                 color: '#23233C',
                                 fontSize: 11,
-                                marginTop:-5
+                                marginTop: -5
                             }}
                         >{address}</Text>
                     </View>
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
         color: '#23233C',
         fontSize: 11,
         marginTop: 5,
-        
-        
+
+
     }
 })
