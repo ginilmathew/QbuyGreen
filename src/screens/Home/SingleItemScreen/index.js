@@ -71,7 +71,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({cartContext:cartContext?.animation })
+    reactotron.log({singleProduct })
 
     const { width, height } = useWindowDimensions()
 
