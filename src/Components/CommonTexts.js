@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const CommonTexts = ({ label, mt, textAlign, color, fontSize, my, ml, mb, textTransform = "none" }) => {
+const CommonTexts = ({ label, mt, textAlign, color, fontSize, my, ml, mb, textTransform = "none", numberOfLines }) => {
     return (
         <Text
             style={{
