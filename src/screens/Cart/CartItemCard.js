@@ -190,9 +190,9 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 })
     }
 
-    const goToShop = useCallback(() => {
-        navigation.navigate('SingleHotel',{item : data, mode:'cartItem'})
-    }, [])
+    const gotoStore = useCallback(() => {
+        navigation.navigate('home', {screen: 'store', params : {name : item?.productdata?.store?.name, mode : 'cartItem', storeId: item?.productdata?.store?._id }})
+    })
 
    
 
@@ -343,7 +343,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 />
                 <View style={{marginLeft:5, flex:0.95}}>
                     {item?.variants?.title ? <Text style={styles.nameText}>{`${item?.name}${'('}${item?.variants?.title}${')'} `}</Text> : <Text style={styles.nameText}>{item?.name}</Text>}
-                    <TouchableOpacity onPress={goToShop}>
+                    <TouchableOpacity onPress={gotoStore}>
                         <Text style={styles.shopText}>{item?.productdata?.store?.name}</Text>
                     </TouchableOpacity>
                 </View>

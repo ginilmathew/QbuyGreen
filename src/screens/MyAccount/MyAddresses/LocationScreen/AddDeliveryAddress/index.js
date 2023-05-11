@@ -18,16 +18,22 @@ import LoaderContext from '../../../../../contexts/Loader'
 import CommonSwitch from '../../../../../Components/CommonSwitch'
 import Toast from 'react-native-toast-message';
 import has from "lodash"
+import AddressContext from '../../../../../contexts/Address'
+import CartContext from '../../../../../contexts/Cart'
 
 
 const AddDeliveryAddress = ({ route, navigation }) => {
 
     let locationData = route?.params?.item
-
+    const addressContext = useContext(AddressContext)
+    const cartContext = useContext(CartContext)
     reactotron.log({ locationData })
 
-    const loadingContex = useContext(LoaderContext)
-    let loadingg = loadingContex?.loading
+
+
+
+    const loadingContext = useContext(LoaderContext)
+
 
     const [addr, setAddr] = useState([])
 
@@ -40,7 +46,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const [isEnabled, setIsEnabled] = useState(locationData?.default_status || false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-    // console.log({isEnabled})
+    reactotron.log({ isEnabled })
 
     const schema = yup.object({
         location: yup.string().required('Area is required'),
@@ -51,8 +57,8 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            location: locationData?.city,
-            address: locationData?.location,
+            location:  addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
+            address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : locationData?.location,
             comments: locationData?.comments,
             default_status: locationData?.default,
             pincode: locationData?.pincode?.toString()
@@ -77,16 +83,16 @@ const AddDeliveryAddress = ({ route, navigation }) => {
 
     const onSave = useCallback(async (data) => {
 
-        loadingContex.setLoading(true)
+        loadingContext.setLoading(true)
         let datas = {
             address_type: selected.toLocaleLowerCase(),
             area: {
-                latitude: locationData?.latitude,
-                longitude: locationData?.longitude,
-                address: data?.address,
-                location: locationData?.city,
+                latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : locationData?.latitude,
+                longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : locationData?.longitude,
+                address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : data?.address,
+                location: addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
             },
-            default_status: isEnabled ? true : false,
+            default_status: !cartContext?.address ? true : isEnabled,
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,
@@ -100,7 +106,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         await customAxios.post(`customer/address/${datas.id ? "update" : "create"}`, datas)
             .then(async response => {
                 setAddr(response?.data)
-                loadingContex.setLoading(false)
+                loadingContext.setLoading(false)
                 navigation.navigate('MyAddresses', { mode: 'MyAcc' })
             })
             .catch(async error => {
@@ -108,7 +114,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                     type: 'error',
                     text1: error
                 });
-                loadingContex.setLoading(false)
+                loadingContext.setLoading(false)
             })
     })
 
@@ -189,13 +195,10 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     label='Save'
                     mt={20}
-                    loading={loadingg}
+                    loading={loadingContext?.loading}
                 />
 
-
-
             </ScrollView>
-
         </>
 
     )

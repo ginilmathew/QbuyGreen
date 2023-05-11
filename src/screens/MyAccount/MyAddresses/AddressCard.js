@@ -5,22 +5,37 @@ import CommonTexts from '../../../Components/CommonTexts'
 import PandaContext from '../../../contexts/Panda'
 import AuthContext from '../../../contexts/Auth'
 import { navigate } from '../../../Navigations/RootNavigation'
-
-const AddressCard = memo(({ setSelected, selected, item }) => {
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { useNavigation } from '@react-navigation/native'
+import reactotron from 'reactotron-react-native'
+const AddressCard = memo(({ setSelected, selected, item, deleteSelect }) => {
+    const navigation = useNavigation()
     const contextPanda = useContext(PandaContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
-    const onClick = useCallback(() => {
-      navigate("LocationScreen", { editAddress: item })
 
+
+    const onClick = useCallback((id) => {
+        //   navigate("LocationScreen", { editAddress: item })
+        setSelected(id)
     }, [])
+
+    const deleteAddress = (id) => {
+        deleteSelect(id)
+        // const data = {
+        //     location: item?.area?.address,
+        //     city: item?.area?.location,
+        //     latitude: item?.area?.latitude,
+        //     longitude: item?.area?.longitude
+        // }
+        // navigation.navigate('AddDeliveryAddress', { item: { ...data } })
+    }
 
     return (
         <TouchableOpacity
             // disabled={selected}
-            onPress={onClick}
+            onPress={() => onClick(item?._id)}
             style={styles.container}
         >
             <View style={{ marginHorizontal: 5 }}>
@@ -31,6 +46,10 @@ const AddressCard = memo(({ setSelected, selected, item }) => {
                 <Text
                     style={styles.addressText}
                 >{item?.area?.address}</Text>
+                {!selected &&
+                <Pressable onPress={() => deleteAddress(item?._id)} style={{ alignSelf: 'flex-end' }}>
+                    <MaterialCommunityIcons name={'delete'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
+                </Pressable> }
             </View>
 
             <Text

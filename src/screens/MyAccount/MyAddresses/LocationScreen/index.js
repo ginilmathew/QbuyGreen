@@ -10,21 +10,31 @@ import PandaContext from '../../../../contexts/Panda'
 import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
 import reactotron from '../../../../ReactotronConfig'
 import axios from 'axios'
+import AddressContext from '../../../../contexts/Address'
 
 const LocationScreen = ({ route, navigation }) => {
 
     const contextPanda = useContext(PandaContext)
+    // const loadingContex = useContext(LoaderContext);
+    const addressContext = useContext(AddressContext)
+
+
     let active = contextPanda.active
     const { editAddress = {} } = route?.params || {}
     const { width, height } = useWindowDimensions()
+
+    reactotron.log({ editAddress })
 
     const mapRef = useRef()
     console.log("route", route?.params);
 
     const [location, setLocation] = useState({ latitude: editAddress?.area?.latitude || 0, longitude: editAddress?.area?.longitude || 0 })
+
     const [address, setAddress] = useState(editAddress?.area?.address || '')
     const [city, setCity] = useState('')
-    reactotron.log(location?.latitude)
+
+    reactotron.log({ address })
+    reactotron.log({ location })
 
     async function fetchData() {
         if (Platform.OS === 'android') {
@@ -90,11 +100,13 @@ const LocationScreen = ({ route, navigation }) => {
         let locationData = {
             location: address,
             city: city,
-            latitude: location.latitude,
-            longitude: location.longitude,
+            latitude: location?.latitude,
+            longitude: location?.longitude,
         }
+
+        reactotron.log({ ...locationData, ...editAddress })
         navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
-    }, [location, address, city])
+    }, [location, address, city, addressContext?.currentAddress, addressContext?.location])
 
     const addNewAddress = useCallback(() => {
         navigation.navigate('AddNewLocation')
@@ -107,6 +119,8 @@ const LocationScreen = ({ route, navigation }) => {
             setAddress(response?.data?.results[0]?.formatted_address)
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             setCity(locality?.long_name)
+            // addressContext?.setCurrentAddress(null)
+            // addressContext?.setLocation(null)
         })
             .catch(err => {
                 reactotron.log({ err })
@@ -116,8 +130,9 @@ const LocationScreen = ({ route, navigation }) => {
 
 
     const RegionChange = (e) => {
-        reactotron.log({ coordinates: e.nativeEvent.coordinate })
+        // reactotron.log({ coordinates: e.nativeEvent.coordinate })
         let coordinates = e.nativeEvent.coordinate;
+
         getAddressFromCoordinates(coordinates?.latitude, coordinates?.longitude)
         setLocation({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
         //setLocation(region)
@@ -133,8 +148,8 @@ const LocationScreen = ({ route, navigation }) => {
             <MapView
                 style={{ flex: 1 }}
                 region={{
-                    latitude: location?.latitude,
-                    longitude: location?.longitude,
+                    latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : location?.latitude,
+                    longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : location?.longitude,
                     latitudeDelta: 0.015,
                     longitudeDelta: 0.0121,
                 }}
@@ -148,8 +163,8 @@ const LocationScreen = ({ route, navigation }) => {
             >
                 {location && <Marker
                     coordinate={{
-                        latitude: location?.latitude,
-                        longitude: location?.longitude,
+                        latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : location?.latitude,
+                        longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : location?.longitude,
                     }}
                 />}
             </MapView>
@@ -157,7 +172,7 @@ const LocationScreen = ({ route, navigation }) => {
                 <View style={{ flexDirection: 'row', }}>
                     <Foundation name={'target-two'} color='#FF0000' size={23} marginTop={7} />
                     <View style={{ flex: 0.9, marginLeft: 7, }}>
-                        <CommonTexts label={city} fontSize={22} />
+                        <CommonTexts label={addressContext?.currentAddress ? addressContext?.currentAddress?.city : city} fontSize={22} />
                         <Text
                             style={{
                                 fontFamily: 'Poppins-Regular',
@@ -165,7 +180,7 @@ const LocationScreen = ({ route, navigation }) => {
                                 fontSize: 11,
                                 marginTop: -5
                             }}
-                        >{address}</Text>
+                        >{addressContext?.currentAddress ? addressContext?.currentAddress?.location : address}</Text>
                     </View>
                     <TouchableOpacity
                         onPress={addNewAddress}
