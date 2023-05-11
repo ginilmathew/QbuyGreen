@@ -24,8 +24,11 @@ import AuthContext from '../contexts/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderContext from '../contexts/Loader';
 import LinearGradient from 'react-native-linear-gradient';
+import { has } from 'lodash'
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
+
+    //reactotron.log({item})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -40,6 +43,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const navigation = useNavigation()
     const [total, setTotal] = useState('')
     const [heart, setHeart] = useState(wishlistIcon ? wishlistIcon : item?.is_wishlist )
+
+
 
     const handleClick = useCallback(() => {
         startTransition(() => {
@@ -202,7 +207,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     }
 
     const RemoveAction = useCallback(async () => {
-        setHeart(!heart)
+        
         let datas = {
             type: active,
             product_id: item?._id
@@ -210,6 +215,16 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
         await customAxios.post(`customer/wishlist/delete`, datas)
             .then(async response => {
+                setHeart(!heart)
+                // if(has(response?.data, 'data')){
+                    
+                // }
+                // else if(has(response?.data, 'message')){
+                //     Toast.show({
+                //         type: 'info',
+                //         text1: response?.data?.message
+                //     })
+                // }
                 // reactotron.log({response})
                 // setAvailabelPdts(response?.data?.data)
             })
@@ -220,10 +235,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 });
             })
 
-    })
+    }, [heart])
 
     const AddAction = useCallback(async () => {
-        setHeart(!heart)
+        //setHeart(!heart)
 
         let datas = {
             type: active,
@@ -232,7 +247,16 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
         await customAxios.post(`customer/wishlist/create`, datas)
             .then(async response => {
-                // reactotron.log({response})
+                setHeart(!heart)
+                // if(has(response?.data, 'data')){
+                //     setHeart(!heart)
+                // }
+                // else if(has(response?.data, 'message')){
+                //     Toast.show({
+                //         type: 'info',
+                //         text1: response?.data?.message
+                //     })
+                // }
             })
             .catch(async error => {
                 Toast.show({
@@ -241,7 +265,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 });
             })
 
-    })
+    }, [heart])
 
 
     return (

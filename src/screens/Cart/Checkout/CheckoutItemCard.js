@@ -339,7 +339,8 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                         return finalPrice
                     }
                     else{
-                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                        let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(comm)
                         let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission));
                         return amount
                     }
@@ -350,7 +351,8 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                 return finalPrice
             }
             else{
-                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(comm)
                 let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission));
                 return amount
             }
@@ -367,7 +369,8 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                         return finalPrice
                     }
                     else{
-                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                        let comm = data?.variants?.commission ? data?.variants?.commission : 0
+                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(comm)
                         let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission));
                         return amount
                     }
@@ -378,7 +381,8 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                 return finalPrice
             }
             else{
-                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                let comm = data?.variants?.commission ? data?.variants?.commission : 0
+                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(comm)
                 let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission));
                 return amount
             }

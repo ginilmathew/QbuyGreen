@@ -12,7 +12,7 @@ import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { isEmpty } from 'lodash'
+import { isEmpty, isArray } from 'lodash'
 
 const Wishlist = ({navigation}) => {
 
@@ -42,7 +42,13 @@ const Wishlist = ({navigation}) => {
         await customAxios.post(`customer/wishlist/list`, data)
       
         .then(async response => {
-            setWishlist(response?.data?.data?.product_details)
+            let datas = response?.data?.data?.product_details;
+            setWishlist(datas)
+            if(isArray(datas)){
+                reactotron.log("in")
+                setWishlist(datas)
+            }
+            
             loadingContex.setLoading(false)
         })
         .catch(async error => {

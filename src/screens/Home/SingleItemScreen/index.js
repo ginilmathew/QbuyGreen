@@ -189,7 +189,7 @@ const SingleItemScreen = ({ route, navigation }) => {
         let productDetails;
         let minimumQty = singleProduct?.minimum_qty ? parseFloat(singleProduct?.minimum_qty) : 1
 
-        reactotron.log({minimumQty});
+        reactotron.log({selectedVariant});
         //return false
 
         if (singleProduct?.variants?.length > 0 && cart?.cart) {
@@ -210,20 +210,30 @@ const SingleItemScreen = ({ route, navigation }) => {
             if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
                 let quantity = cartProducts[existing].quantity + 1;
-                if(parseFloat(selectedVariant?.stock_value) >= quantity){
+                if(singleProduct?.stock){
+                    if(parseFloat(selectedVariant?.stock_value) >= quantity){
+                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cartProducts,
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
+                }
+                else{
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                     cartItems = {
                         cart_id: cart?.cart?._id,
                         product_details: cartProducts,
                         user_id: userData?._id
                     }
-                }
-                else{
-                    Toast.show({
-                        type: 'info',
-                        text1: 'Required quantity not available'
-                    })
-                    return false;
                 }
 
             }
@@ -297,21 +307,32 @@ const SingleItemScreen = ({ route, navigation }) => {
                 url = "customer/cart/update";
                 let cartProducts = cart?.cart?.product_details;
                 let quantity = cartProducts[existing].quantity + 1;
-                if(singleProduct?.stock_value >= quantity){
+                if(singleProduct?.stock){
+                    if(singleProduct?.stock_value >= quantity){
+                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+    
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cartProducts,
+                            user_id: userData?._id
+                        }
+                    }
+                    else{
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
+                }
+                else{
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-
+    
                     cartItems = {
                         cart_id: cart?.cart?._id,
                         product_details: cartProducts,
                         user_id: userData?._id
                     }
-                }
-                else{
-                    Toast.show({
-                        type: 'info',
-                        text1: "Required quantity not available"
-                    });
-                    return false;
                 }
             }
             else {
@@ -531,7 +552,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                         setPrice(singleProduct?.variants?.[0]?.regular_price)
                     }
                     else {
-                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                        let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
+                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
                         let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
                         setPrice(price)
                     }
@@ -543,7 +565,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     setPrice(singleProduct?.variants?.[0]?.regular_price)
                 }
                 else {
-                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                    let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
+                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
                     let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
                     setPrice(price)
                 }
@@ -560,7 +583,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                         setPrice(singleProduct?.regular_price)
                     }
                     else {
-                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(singleProduct?.commission)
+                        let comm = singleProduct?.commission ? singleProduct?.commission : 0
+                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
                         let price = parseFloat(singleProduct?.seller_price) + commission
                         setPrice(price)
                     }
@@ -571,7 +595,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     setPrice(singleProduct?.regular_price)
                 }
                 else {
-                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(singleProduct?.commission)
+                    let comm = singleProduct?.commission ? singleProduct?.commission : 0
+                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
                     let price = parseFloat(singleProduct?.seller_price) + commission
                     setPrice(price)
                 }
@@ -634,7 +659,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                         //return singleProduct?.regular_price;
                     }
                     else{
-                        let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                        let comm = sin?.commission ? sin?.commission : 0
+                        let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(comm)
                         let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
                         setPrice(amount)
                     }
@@ -644,7 +670,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     //return singleProduct?.regular_price;
                 }
                 else{
-                    let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                    let comm = sin?.commission ? sin?.commission : 0
+                    let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(comm)
                     let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
                     setPrice(amount)
                 }

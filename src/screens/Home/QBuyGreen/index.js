@@ -353,7 +353,6 @@ const QBuyGreen = ({ navigation }) => {
                 key={item?._id}
                 width={width / 2.25}
                 height={220}
-                wishlistIcon
                 addToCart={addToCart}
                 mr={8}
                 ml={8}
