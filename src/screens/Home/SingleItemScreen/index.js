@@ -24,12 +24,7 @@ import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const fashions = require('../../../Images/jeans.jpg')
-const fashion1 = require('../../../Images/jeans2.jpg')
-const fashion2 = require('../../../Images/jeans3.jpg')
-const thumbnailFashion = require('../../../Images/jeans4.jpg')
-const fashion3 = require('../../../Images/jeans1.jpg')
-const fashionVideo = require('../../../Videos/jeansVideo.mp4')
+
 import Toast from 'react-native-toast-message';
 
 
@@ -104,7 +99,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     let varient = singleProduct?.variants?.map((item, index) => (item))
     selectedVarient = varient?.find((item) => (item?.attributs?.[0] === valueSize && item?.attributs?.[1] === valueColor))
 
-
     useEffect(() => {
         getSingleProduct()
         addViewCount()
@@ -163,10 +157,6 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     
 
-<<<<<<< HEAD
-  
- 
-=======
    
 
     
@@ -176,7 +166,6 @@ const SingleItemScreen = ({ route, navigation }) => {
    
    
 
->>>>>>> e4156b133b5efe330485a148925ed640fa3456b5
     const gotoHotel = useCallback(() => {
         navigation.navigate('SingleHotel', { storeName: singleProduct?.store?.name, item: singleProduct })
     })

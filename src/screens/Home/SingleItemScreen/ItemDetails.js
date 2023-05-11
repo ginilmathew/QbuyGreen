@@ -21,20 +21,20 @@ const ItemDetails = ({itemName, hotelName, views, sold, minQty, price, onPress})
 
     return (
         <View style={styles.container}>
-            <View style={{flex:0.35, overflow: 'hidden'}}>
+            <View style={{flex:0.4, }}>
                 <CommonTexts label={itemName} fontSize={13}/>
                 <TouchableOpacity 
                     onPress={onPress}
-                    style={{flexDirection:'row', alignItems:'center'}}
+                    style={{flexDirection:'row', width:'70%'}}
                 >
                     <Text
                         style={{
                             fontFamily: 'Poppins-LightItalic',
                             color: '#23233C',
                             fontSize:  10,
-                        
+                            marginTop:1
                         }}
-                    >{'Sold by '}</Text>
+                    >{'Sold by : '}</Text>
 
                     <Tooltip
                         isVisible={tooltip}
@@ -44,14 +44,14 @@ const ItemDetails = ({itemName, hotelName, views, sold, minQty, price, onPress})
                         backgroundColor = 'transparent'
                         contentStyle={{backgroundColor:'#000', width:width/3, height:30, alignItems:'center', justifyContent:'center', borderRadius:12, flexWrap: 'wrap'}}
                         >
-                        <TouchableHighlight style={styles.touchable } onPress={onPress}>
+                        <TouchableHighlight  onPress={onPress}>
                             <Text
                                 style={{
                                     fontFamily: 'Poppins-BoldItalic',
                                     color: '#1185E0',
                                     fontSize:  11,
-                                    flexWrap: 'wrap'
                                 }}
+                                numberOfLines={2}
                             >{hotelName}</Text>
                         </TouchableHighlight>
                     </Tooltip>
@@ -158,7 +158,8 @@ const styles = StyleSheet.create({
         marginTop:10, 
         alignItems:'center', 
         paddingHorizontal:10, 
-        justifyContent:'space-between'
+        justifyContent:'space-between',
+        flex:1
     },
     numbersBox : {
         borderWidth:0.5, 
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
         alignItems:'center', 
         justifyContent:"space-between", 
         padding:5, 
-        flex:0.4,
+        flex:0.35,
     },
    
 })
