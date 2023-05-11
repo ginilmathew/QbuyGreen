@@ -162,8 +162,9 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
         let cartItems;
         if(data?.quantity > 1){
             let quantity = data?.quantity 
-            data.quantity = quantity - 1
-            if(data.quantity >= minimumQty){
+            
+            if(quantity - 1 >= minimumQty){
+                data.quantity = quantity - 1
                 allProducts[index].quantity = allProducts[index].quantity - 1;
                 cartItems = {
                     cart_id : cartContext?.cart?._id,
@@ -193,7 +194,7 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
                     [
                         {
                             text: 'Cancel',
-                            onPress: () => Alert.alert('Cancel Pressed'),
+                            //onPress: () => Alert.alert('Cancel Pressed'),
                             style: 'cancel',
                         },
                         {
@@ -328,7 +329,7 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
     const getPrice = useCallback(() => {
         if(data?.type === "single"){
             if(data?.productdata?.offer_price){
-                if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") > moment()){
+                if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                     let finalPrice = parseFloat(data?.productdata?.offer_price);
                     return finalPrice
                 }
@@ -356,7 +357,7 @@ const CheckoutItemCard = memo(({item, index, refreshCart, view}) => {
         }
         else{
             if(data?.variants?.offer_price){
-                if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") < moment() && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") > moment()){
+                if(moment(data?.variants?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.variants?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                     let finalPrice = parseFloat(data?.variants?.offer_price);
                     return finalPrice
                 }

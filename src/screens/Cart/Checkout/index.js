@@ -606,7 +606,13 @@ const Checkout = ({ navigation }) => {
             cartContext?.setCart(null)
             setCartItems(null)
             await AsyncStorage.removeItem("cartId");
-            navigation.navigate('OrderPlaced')
+            if (data?.STATUS == "TXN_SUCCESS") {
+                navigation.navigate('OrderPlaced')
+            } else {
+                Toast.show({ type: 'error', text1: result?.RESPMSG || "Something went wrong !!!" })
+                navigation.navigate("order")
+            }
+            
         }).catch(async error => {
             console.log(error)
             Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
@@ -627,9 +633,6 @@ const Checkout = ({ navigation }) => {
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let isStaging = true
-        let userInfo = {
-            name: "Renjith"
-        }
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
@@ -645,11 +648,8 @@ const Checkout = ({ navigation }) => {
           `paytm${paymentDetails?.mid}`//urlScheme
          ).then((result) => {
             console.log("PAYTM =>", JSON.stringify(result));
-            if (result?.STATUS == "TXN_SUCCESS") {
-                updatePaymentResponse(result)
-            } else {
-                Toast.show({ type: 'error', text1: result?.body?.txnInfo?.RESPMSG || "Something went wrong !!!" })
-            }
+            updatePaymentResponse(result)
+            
         }).catch((err) => {
             reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });

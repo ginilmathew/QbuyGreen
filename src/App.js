@@ -9,27 +9,30 @@ import LoadProvider from './contexts/Loader/loaderContext'
 import Route from './Route'
 import CartProvider from './contexts/Cart/CartContext'
 import Toast from 'react-native-toast-message';
+import AddressProvider from './contexts/Address/AddressContext'
 
 
 const App = () => {
 
-    
-    
-   
+
+
+
 
     return (
         <Provider store={store}>
             <LoadProvider>
                 <AuthProvider>
-                    <CartProvider>
-                        <PandaProvider>
-                            <Route />
-                            <Toast 
-                                position='bottom'
-                                bottomOffset={20}
-                            />
-                        </PandaProvider>
-                    </CartProvider>
+                    <AddressProvider>
+                        <CartProvider>
+                            <PandaProvider>
+                                <Route />
+                                <Toast
+                                    position='bottom'
+                                    bottomOffset={20}
+                                />
+                            </PandaProvider>
+                        </CartProvider>
+                    </AddressProvider>
                 </AuthProvider>
             </LoadProvider>
         </Provider>
