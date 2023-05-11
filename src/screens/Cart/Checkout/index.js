@@ -686,9 +686,9 @@ const Checkout = ({ navigation }) => {
         setPayment(pays)
     }, [])
 
-    const backToCart = () => {
+    const backToCart = useCallback(() => {
         navigation.navigate('Cart')
-    }
+    },[])
 
 
     return (

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator,RefreshControl } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import CommonTexts from '../../../Components/CommonTexts'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import FastImage from 'react-native-fast-image'
@@ -285,13 +285,13 @@ const StoreScreen = ({ route, navigation }) => {
         }
     }
 
-    const backToCart = () => {
+    const backToCart = useCallback(() => {
         navigation.navigate('Cart')
-    }
+    },[])
 
-    const backToCheckout = () => {
+    const backToCheckout = useCallback(() => {
         navigation.navigate('Checkout')
-    }
+    },[])
 
 
     return (
