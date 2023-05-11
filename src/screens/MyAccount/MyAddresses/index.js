@@ -33,7 +33,7 @@ const MyAddresses = ({ route, navigation }) => {
     const [selected, setSelected] = useState(null)
     const [addrList, setAddrList] = useState([])
 
-    reactotron.log({ mode })
+    reactotron.log({ addrList })
 
 
 
@@ -74,31 +74,26 @@ const MyAddresses = ({ route, navigation }) => {
         navigation.navigate('LocationScreen')
     }, [])
 
+
+
+
     const selectAddress = async (id) => {
+
+        reactotron?.log({id})
         let address = addrList.find(addr => addr?._id === id);
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
-        reactotron.log({ address })
+ 
         // if (!address?.default) {
-        address.default_status = !address?.default;
+        address.default_status = true;
         address.id = address?._id
+   
         loadingContex.setLoading(true)
-        await customAxios.post(`customer/address/update`, address)
-            .then(async response => {
-                let address = addrList?.map(add => {
-                    if (add?._id === response?.data?.data?._id) {
-                        return response?.data?.data
-                    }
-                    else {
-                        return add
-                    }
-                })
-                setAddrList(address)
-                // cartContext.setAddress(response?.data?.data)
-                // setAddrList(response?.data?.data)
-                loadingContex.setLoading(false)
-            })
-            .catch(async error => {
+        await customAxios.post(`customer/address/update`,address).then((response)=> {
+            setAddrList(response?.data?.data)
+            loadingContex.setLoading(false)
+        }
+       ).catch(async error => {
                 Toast.show({
                     type: 'error',
                     text1: error

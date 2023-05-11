@@ -5,22 +5,26 @@ import CommonTexts from '../../../Components/CommonTexts'
 import PandaContext from '../../../contexts/Panda'
 import AuthContext from '../../../contexts/Auth'
 import { navigate } from '../../../Navigations/RootNavigation'
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 const AddressCard = memo(({ setSelected, selected, item }) => {
 
     const contextPanda = useContext(PandaContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
-    const onClick = useCallback(() => {
-      navigate("LocationScreen", { editAddress: item })
-
+    const onClick = useCallback((id) => {
+        //   navigate("LocationScreen", { editAddress: item })
+        setSelected(id)
     }, [])
+
+    const NavigateTo = ()=>{
+        
+    }
 
     return (
         <TouchableOpacity
             // disabled={selected}
-            onPress={onClick}
+            onPress={() => onClick(item?._id)}
             style={styles.container}
         >
             <View style={{ marginHorizontal: 5 }}>
@@ -28,9 +32,17 @@ const AddressCard = memo(({ setSelected, selected, item }) => {
             </View>
             <View style={{ flex: 0.9 }}>
                 <View style={styles.rowStyle}><CommonTexts label={item?.address_type} fontSize={13} textTransform={'uppercase'} />{!selected ? <Pressable style={styles.borderStyle}><Text style={styles.textStyle}>Set Default</Text></Pressable> : ''}</View>
-                <Text
-                    style={styles.addressText}
-                >{item?.area?.address}</Text>
+                <View style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Text
+                        style={styles.addressText}
+                    >{item?.area?.address}</Text>
+
+                    <Pressable >
+                        <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
+                    </Pressable>
+
+                </View>
+
             </View>
 
             <Text
