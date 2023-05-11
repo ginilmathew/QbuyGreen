@@ -25,7 +25,6 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
 
-
 // import Menu from './Menu';
 
 
@@ -37,6 +36,7 @@ const Route = () => {
     const cartContext = useContext(CartContext)
     const loadingContext = useContext(LoaderContext)
     const [location, setLocation] = useState(null) 
+
 
 
     const [initialScreen, setInitialScreen] = useState(null)
@@ -96,12 +96,12 @@ const Route = () => {
         .catch(err => {
             reactotron.log({err})
         })
-      
     }
 
     const getPosition = async () => {
         await Geolocation.getCurrentPosition(
             position => {
+
                 //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
                 setLocation(position?.coords)
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])

@@ -650,8 +650,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} showsVerticalScrollIndicator={false} 
-     
+            <ScrollView 
+                style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} 
+                showsVerticalScrollIndicator={false} 
             >
 
                 <View style={{ height: 200 }}>
@@ -662,13 +663,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='cover'
+                                resizeMode='contain'
                             >
                             </FastImage> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='cover'
+                                resizeMode='contain'
                             >
                             </FastImage>
                         }
@@ -717,7 +718,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                     }}>{singleProduct?.weight}</Text>
 
                 </View>}
-
 
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>

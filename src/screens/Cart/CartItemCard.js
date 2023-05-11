@@ -89,7 +89,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
 
     const removeItem = async() => {
         let minimumQty = data?.productdata?.minimum_qty ? data?.productdata?.minimum_qty : 1
-        reactotron.log({minimumQty})
+        // reactotron.log({minimumQty})
         //return false
         let allProducts = cartContext?.cart?.product_details;
         let cartItems;
@@ -140,9 +140,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     },
                 );
             }
-            
-    
-           
         }
         else{
             let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
@@ -167,7 +164,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     });
                 })
         }
-        
     }
 
     const deleteItem = async() => {
