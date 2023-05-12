@@ -630,7 +630,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
-        reactotron.log({attri})
+        //reactotron.log({attri})
         //let filtered = 
 
         singleProduct?.variants?.map(sin => {

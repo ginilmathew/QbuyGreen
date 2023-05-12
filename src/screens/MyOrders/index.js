@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useState, useEffect} from 'react'
 import CommonTexts from '../../Components/CommonTexts'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -137,6 +137,9 @@ const MyOrders = () => {
                 style={{flex:1, paddingBottom:60, backgroundColor: active === 'green' ? '#F4FFE9' :  active === 'fashion' ? '#FFF5F7' : '#fff'}}
             >
             <ScrollView 
+                refreshControl={
+                    <RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />
+                }
                 style={{  paddingHorizontal: 10 , paddingTop:10}}
             >
                 {orderList.map((ord, index)=><OrderCard key={index} item = {ord} />)}

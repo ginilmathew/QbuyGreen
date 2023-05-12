@@ -3,7 +3,7 @@ import React, { memo, useContext, useState } from 'react'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import PandaContext from '../contexts/Panda'
 
-const CommonCounter = memo(({count, addItem, removeItem}) => {
+const CommonCounter = memo(({count, addItem, removeItem, disabled}) => {
 
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
@@ -37,7 +37,7 @@ const CommonCounter = memo(({count, addItem, removeItem}) => {
             >{count}</Text> 
             
             <TouchableOpacity 
-                onPress={addItem}
+                onPress={disabled ? null : addItem}
                 style={{
                     width:22, 
                     height:22, 

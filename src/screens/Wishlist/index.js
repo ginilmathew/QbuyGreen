@@ -43,12 +43,16 @@ const Wishlist = ({navigation}) => {
       
         .then(async response => {
             let datas = response?.data?.data?.product_details;
-            setWishlist(datas)
+            //setWishlist(datas)
             if(isArray(datas)){
-                reactotron.log("in")
                 setWishlist(datas)
             }
-            
+            else{
+                Toast.show({
+                    type: 'info',
+                    text1: "Something went wrong!"
+                })
+            }
             loadingContex.setLoading(false)
         })
         .catch(async error => {

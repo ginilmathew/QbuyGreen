@@ -191,13 +191,13 @@ const CartItemCard = ({item, index, refreshCart}) => {
     }
 
     const gotoStore = useCallback(() => {
-        navigation.navigate('home', {screen: 'store', params : {name : item?.productdata?.store?.name, mode : 'cartItem', storeId: item?.productdata?.store?._id }})
+        navigation.navigate('home', {screen: 'store', params : {name : item?.store?.name, mode : 'cartItem', storeId: item?.store?._id }})
     })
 
    
 
 
-    const getPrice = useCallback(() => {
+    const getPrice = () => {
         if(data?.type === "single"){
             if(data?.productdata?.offer_price){
                 if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
@@ -258,79 +258,79 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 return `₹${amount.toFixed(2)}`
             }
         }
-    }, [item])
-
-    const renderPricing = () => {
-        if(item?.productdata?.stock){
-            if(item?.type === "variant"){
-                if(parseFloat(item?.variants?.stock_value) >= item?.quantity){
-                    return(
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Text style={styles.rateText}>{getPrice()}</Text>
-                            <CommonCounter 
-                                count={data.quantity}
-                                addItem={addItem}
-                                removeItem={removeItem}
-                            />
-                        </View>
-                    )
-                }
-                else{
-                    return(
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Text style={styles.rateText}>Out of stock</Text>
-                            <TouchableOpacity 
-                                onPress={deleteItem}
-                                style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )
-                }
-            }
-            else{
-                if(item?.productdata?.stock_value >= item?.quantity){
-                    return(
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Text style={styles.rateText}>{getPrice()}</Text>
-                            <CommonCounter 
-                                count={data.quantity}
-                                addItem={addItem}
-                                removeItem={removeItem}
-                            />
-                        </View>
-                    )
-                }
-                else{
-                    return(
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Text style={styles.rateText}>Out of stock</Text>
-                            <TouchableOpacity 
-                                onPress={deleteItem}
-                                style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )
-                }
-            }
-        }
-        else{
-            return(
-                <View style={{flexDirection:'row', alignItems:'center'}}>
-                    <Text style={styles.rateText}>{getPrice()}</Text>
-                    <CommonCounter 
-                        count={data.quantity}
-                        addItem={addItem}
-                        removeItem={removeItem}
-                    />
-                </View>
-            )
-        }
-        
     }
+
+    // const renderPricing = () => {
+    //     if(item?.productdata?.stock){
+    //         if(item?.type === "variant"){
+    //             if(parseFloat(item?.variants?.stock_value) >= item?.quantity){
+    //                 return(
+    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
+    //                         <Text style={styles.rateText}>{getPrice()}</Text>
+    //                         <CommonCounter 
+    //                             count={data.quantity}
+    //                             addItem={addItem}
+    //                             removeItem={removeItem}
+    //                         />
+    //                     </View>
+    //                 )
+    //             }
+    //             else{
+    //                 return(
+    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
+    //                         <Text style={styles.rateText}>Out of stock</Text>
+    //                         <TouchableOpacity 
+    //                             onPress={deleteItem}
+    //                             style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
+    //                         >
+    //                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
+    //                         </TouchableOpacity>
+    //                     </View>
+    //                 )
+    //             }
+    //         }
+    //         else{
+    //             if(item?.productdata?.stock_value >= item?.quantity){
+    //                 return(
+    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
+    //                         <Text style={styles.rateText}>{getPrice()}</Text>
+    //                         <CommonCounter 
+    //                             count={data.quantity}
+    //                             addItem={addItem}
+    //                             removeItem={removeItem}
+    //                         />
+    //                     </View>
+    //                 )
+    //             }
+    //             else{
+    //                 return(
+    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
+    //                         <Text style={styles.rateText}>Out of stock</Text>
+    //                         <TouchableOpacity 
+    //                             onPress={deleteItem}
+    //                             style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
+    //                         >
+    //                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
+    //                         </TouchableOpacity>
+    //                     </View>
+    //                 )
+    //             }
+    //         }
+    //     }
+    //     else{
+    //         return(
+    //             <View style={{flexDirection:'row', alignItems:'center'}}>
+    //                 <Text style={styles.rateText}>{getPrice()}</Text>
+    //                 <CommonCounter 
+    //                     count={data.quantity}
+    //                     addItem={addItem}
+    //                     removeItem={removeItem}
+    //                 />
+    //             </View>
+    //         )
+    //     }
+        
+    // }
 
     
     return (
@@ -339,36 +339,27 @@ const CartItemCard = ({item, index, refreshCart}) => {
             <View style={styles.container}>
                 <FastImage
                     style={{width:70, height:70, borderRadius:10}}
-                    source={{ uri: `${IMG_URL}${item?.productdata?.product_image}` }}
+                    source={{ uri: `${IMG_URL}${item?.image}` }}
                 />
                 <View style={{marginLeft:5, flex:0.95}}>
                     {item?.variants?.title ? <Text style={styles.nameText}>{`${item?.name}${'('}${item?.variants?.title}${')'} `}</Text> : <Text style={styles.nameText}>{item?.name}</Text>}
                     <TouchableOpacity onPress={gotoStore}>
-                        <Text style={styles.shopText}>{item?.productdata?.store?.name}</Text>
+                        <Text style={styles.shopText}>{item?.store?.name}</Text>
                     </TouchableOpacity>
                 </View>
-                {renderPricing()}
+                {/* {renderPricing()} */}
+                <View style={{flexDirection:'row', alignItems:'center'}}>
+                    <Text style={styles.rateText}>{item?.available ?  `₹ ${item?.price}` : ""}</Text>
+                    <CommonCounter 
+                        count={data.quantity}
+                        addItem={addItem}
+                        removeItem={removeItem}
+                        disabled={!item?.available}
+                    />
+                </View>
                 
             </View>
-        
-            {/* {fashion&&<View style={{flexDirection:'row', justifyContent:'space-between',}}>
-                <CommonSelectDropdown
-                    placeholder='Color'
-                    data={color}
-                    value={valueColor}
-                    setValue={setValueColor}
-                    height={35}
-                    width={'45%'}
-                />
-                <CommonSelectDropdown
-                    placeholder='Size'
-                    data={size}
-                    value={valueSize}
-                    setValue={setValueSize}
-                    height={35}
-                    width={'45%'}
-                />
-            </View>} */}
+            {!item?.available && <Text style={styles.outofStock}>{"Out of Stock"}</Text>}
         </View>
       
     )
@@ -398,5 +389,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-ExtraBold',
         color: '#089321',
         fontSize: 18,
+    },
+    outofStock: {
+        position: 'absolute',
+        right: 15,
+        bottom: 5,
+        color: 'red',
+        fontSize: 10,
+        fontWeight: 'bold'
     }
 })
