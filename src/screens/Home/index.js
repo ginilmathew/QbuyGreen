@@ -418,9 +418,7 @@ const QbuyPanda = ({ navigation }) => {
                         />
                     )}
                 </ScrollView>
-
             </ScrollView>
-
             <CommonSquareButton
                 onPress={gotoChat}
                 position='absolute'

@@ -611,18 +611,23 @@ const Checkout = ({ navigation }) => {
     const updatePaymentResponse = async(data) => {
         await customAxios.post(`customer/order/payment/status`, data)
         .then(async response => {
+         
             cartContext?.setCart(null)
             setCartItems(null)
             await AsyncStorage.removeItem("cartId");
+            
             if (data?.STATUS == "TXN_SUCCESS") {
                 navigation.navigate('OrderPlaced')
-            } else {
-                Toast.show({ type: 'error', text1: result?.RESPMSG || "Something went wrong !!!" })
+            } else if(data?.STATUS == "TXN_FAILURE") {
+                Toast.show({ type: 'error', text1: data?.RESPMSG || "Something went wrong !!!" })
                 navigation.navigate("order")
+         
             }
             
         }).catch(async error => {
-            console.log(error)
+            cartContext?.setCart(null)
+            setCartItems(null)
+            navigation.navigate("order")
             Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
         })
     }
@@ -655,7 +660,7 @@ const Checkout = ({ navigation }) => {
             false,//appInvokeRestricted
           `paytm${paymentDetails?.mid}`//urlScheme
          ).then((result) => {
-            console.log("PAYTM =>", JSON.stringify(result));
+            reactotron.log("PAYTM =>", JSON.stringify(result));
             updatePaymentResponse(result)
             
         }).catch((err) => {

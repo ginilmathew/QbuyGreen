@@ -32,6 +32,8 @@ const Cart = ({ navigation }) => {
     const cartContext = useContext(CartContext)
 
 
+reactotron?.log({cartContext:cartContext?.cart})
+
     //let cartId = user?.cartId
 
     // reactotron.log({ cartId })

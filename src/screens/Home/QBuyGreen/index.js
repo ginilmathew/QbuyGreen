@@ -53,7 +53,7 @@ const QBuyGreen = ({ navigation }) => {
     useEffect(() => {
         let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
         setavailablePdt(availPdt?.data)
-
+        reactotron.log('FOCUS EFFECT')
         let slider = homeData?.find((item, index) => item?.type === 'sliders')
         setSlider(slider?.data)
     }, [homeData])
@@ -135,6 +135,7 @@ const QBuyGreen = ({ navigation }) => {
                 loadingg.setLoading(false)
             })
     }
+    
     const onSearch = useCallback(() => {
         navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
