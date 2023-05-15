@@ -435,7 +435,7 @@ const Checkout = ({ navigation }) => {
             payment_type: pay._id,
             type: active,
             total_amount: cartItems.reduce(function(previousVal, currentVal) {
-                return previousVal + currentVal?.delivery + currentVal?.price;
+                return previousVal + currentVal?.price;
             }, 0),
             delivery_charge: cartItems.reduce(function(previousVal, currentVal) {
                 return previousVal + currentVal?.delivery;
