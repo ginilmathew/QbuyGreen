@@ -119,7 +119,7 @@ reactotron?.log({cartContext:cartContext?.cart})
 
     return (
         <View style={{ height: height - 50, paddingBottom: 50, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
-            <HeaderWithTitle title={'Cart'} noBack />
+            <HeaderWithTitle title={'Cart'}  />
 
             <ScrollView 
             refreshControl={

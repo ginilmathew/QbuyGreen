@@ -50,6 +50,8 @@ const QBuyGreen = ({ navigation }) => {
     const [slider, setSlider] = useState(null)
 
 
+    reactotron?.log({availablePdt})
+
     useEffect(() => {
         let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
         setavailablePdt(availPdt?.data)

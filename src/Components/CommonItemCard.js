@@ -28,7 +28,6 @@ import { has } from 'lodash'
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
 
-    //reactotron.log({item})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -36,19 +35,28 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
-    
+
 
 
     const refRBSheet = useRef();
     const navigation = useNavigation()
     const [total, setTotal] = useState('')
-    const [heart, setHeart] = useState(wishlistIcon ? wishlistIcon : item?.is_wishlist )
+    const [heart, setHeart] = useState(wishlistIcon ? wishlistIcon : item?.is_wishlist)
 
 
 
     const handleClick = useCallback(() => {
+        
         startTransition(() => {
-        navigation.navigate('SingleItemScreen', { item: item })
+            // if(item?.stock === true){
+            //     navigation.navigate('SingleItemScreen', { item: item })
+            // }else{
+            //     Toast.show({
+            //         type: 'error',
+            //         text1: 'Item is out of stock'
+            //     })
+            // }
+            navigation.navigate('SingleItemScreen', { item: item })
         })
     }, [])
 
@@ -123,10 +131,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     //     else{
     //         navigation.navigate('SingleItemScreen', { item: item })
     //     }
-        
 
 
-       
+
+
 
     // }, [cartContext?.cart])
 
@@ -137,69 +145,69 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
     const getPrice = () => {
-        if(item?.variants?.length > 0){
+        if (item?.variants?.length > 0) {
             let variants = [];
             item?.variants?.map(vari => {
-                if(vari?.offer_price && vari?.offer_price > 0 && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))){
+                if (vari?.offer_price && vari?.offer_price > 0 && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))) {
                     variants.push(vari?.offer_price);
                 }
-                else{
-                    if(vari?.regular_price > 0){
+                else {
+                    if (vari?.regular_price > 0) {
                         variants.push(vari?.regular_price);
                     }
-                    else if(vari?.seller_price > 0){
+                    else if (vari?.seller_price > 0) {
                         let commission = 0;
-                        if(vari?.commission){
-                            commission = (parseFloat(vari?.seller_price)/100) * parseFloat(vari?.commission)
+                        if (vari?.commission) {
+                            commission = (parseFloat(vari?.seller_price) / 100) * parseFloat(vari?.commission)
                         }
-                        
+
                         let price = parseFloat(vari?.seller_price) + commission;
                         variants.push(price)
                     }
                 }
             })
-            if(variants && variants?.length > 0){
+            if (variants && variants?.length > 0) {
                 return `₹${min(variants)} - ₹${max(variants)}`
             }
-            else{
+            else {
                 return 0;
             }
         }
-        else{
-            if(item?.offer_price && item?.offer_price > 0){
-                if(item?.offer_price && (moment(item?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(item?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))){
+        else {
+            if (item?.offer_price && item?.offer_price > 0) {
+                if (item?.offer_price && (moment(item?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(item?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))) {
                     return `₹${item?.offer_price}`;
                 }
-                else{
-                    if(item?.regular_price && item?.regular_price > 0){
+                else {
+                    if (item?.regular_price && item?.regular_price > 0) {
                         return `₹${item?.regular_price}`;
                     }
-                    else if(item?.seller_price && item?.seller_price > 0){
+                    else if (item?.seller_price && item?.seller_price > 0) {
                         let commission = 0;
-                        if(item?.commission){
-                            commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                        if (item?.commission) {
+                            commission = (parseFloat(item?.seller_price) / 100) * parseFloat(item?.commission)
                         }
                         let price = parseFloat(item?.seller_price) + commission;
                         return `₹${price}`
                     }
-                    else{
+                    else {
                         return 0;
                     }
                 }
             }
-            else{
-                if(parseFloat(item?.regular_price) > 0){
+            else {
+                if (parseFloat(item?.regular_price) > 0) {
                     return `₹${item?.regular_price}`;
                 }
-                else if(item?.seller_price > 0){
+                else if (item?.seller_price > 0) {
                     let commission = 0;
-                    if(item?.commission){
-                        commission = (parseFloat(item?.seller_price)/100) * parseFloat(item?.commission)
+                    if (item?.commission) {
+                        commission = (parseFloat(item?.seller_price) / 100) * parseFloat(item?.commission)
                     }
                     let price = parseFloat(item?.seller_price) + commission;
                     return `₹${price}`;
                 }
-                else{
+                else {
                     return 0;
                 }
             }
@@ -207,7 +215,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     }
 
     const RemoveAction = useCallback(async () => {
-        
+
         let datas = {
             type: active,
             product_id: item?._id
@@ -217,7 +225,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
             .then(async response => {
                 setHeart(!heart)
                 // if(has(response?.data, 'data')){
-                    
+
                 // }
                 // else if(has(response?.data, 'message')){
                 //     Toast.show({
@@ -272,7 +280,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         <>
             <TouchableOpacity
                 onPress={getPrice() != 0 ? handleClick : null}
-                style={{ marginHorizontal: marginHorizontal,marginRight:mr, marginLeft:ml, marginBottom:mb }}
+                style={{ marginHorizontal: marginHorizontal, marginRight: mr, marginLeft: ml, marginBottom: mb }}
             >
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
@@ -280,9 +288,11 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                 >
                     <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
+                        {(item?.stock === (true || false) && parseFloat(item?.stock_value) >= 1)  &&
+                        <Text style={{color:'red'}}>OUT OF STOCK{item?.stock_value}</Text>}
                         <Text style={styles.textSemi}>{item?.name}</Text>
-                         <Text style={styles.textSemi}>{getPrice()}</Text>
-                        <Text style={styles.lightText}>{item?.store?.name}</Text> 
+                        <Text style={styles.textSemi}>{getPrice()}</Text>
+                        <Text style={styles.lightText}>{item?.store?.name}</Text>
                     </LinearGradient>
 
                     {getPrice() != 0 && <View style={styles.addContainer}>
@@ -301,14 +311,14 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={heart ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12}  />
+                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12} />
                     </TouchableOpacity>}
 
                 </FastImage>
 
             </TouchableOpacity>
 
-             <RBSheet
+            <RBSheet
                 ref={refRBSheet}
                 closeOnDragDown={false}
                 closeOnPressMask={true}
@@ -335,7 +345,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     <View style={{ paddingHorizontal: 15, flex: 1 }}>
                         <View style={styles.RBsheetHeader}>
                             <CommonTexts label={active === 'fashion' || active === 'green' ? "Similar Products" : 'More items you may like...'} />
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 onPress={closeRbSheet}
                             >
                                 <Ionicons name='close-circle' color='#000' size={25} />
@@ -353,29 +363,30 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         </ScrollView> */}
                     </View>
                 </BlurView>
-                <View 
+                <View
                     style={{
                         backgroundColor: active === 'fashion' ? '#FF7190' : active === 'green' ? '#8ED053' : '#58D36E',
                         height: 60,
-                        flexDirection: 'row',
+                        flexDirection: 'row',   
                         alignItems: 'center',
                         paddingHorizontal: 40,
                         width: '100%',
                     }}
                 >
+                   
                     <View style={styles.totalCount}>
                         {/* <Text style={styles.bottomCountText}>{addedList.length} item</Text> */}
                         <Text style={styles.bottomRateText}>₹ {total}</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.viewCartBox}
-                        // onPress={viewCart}
+                    // onPress={viewCart}
                     >
                         <CommonTexts label={'View Cart'} color='#fff' fontSize={23} />
                     </TouchableOpacity>
 
                 </View>
-            </RBSheet> 
+            </RBSheet>
         </>
     )
 })
@@ -422,14 +433,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 8,
         right: 8,
-        zIndex:1,
-        width:24,
-        height:24,
-        borderRadius:12,
-        backgroundColor:'rgba(0, 0, 0, 0.5)',
-        alignItems:'center',
-        justifyContent:'center'
-        
+        zIndex: 1,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        alignItems: 'center',
+        justifyContent: 'center'
+
     },
     RBsheetHeader: {
         alignItems: 'center',
@@ -438,6 +449,11 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     totalCount: {
+        borderRightWidth: 3,
+        borderColor: '#fff',
+        flex: 0.4
+    },
+    outofstock: {
         borderRightWidth: 3,
         borderColor: '#fff',
         flex: 0.4
