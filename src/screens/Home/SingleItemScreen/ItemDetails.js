@@ -6,7 +6,7 @@ import CommonTexts from '../../../Components/CommonTexts'
 import Tooltip from 'react-native-walkthrough-tooltip';
 
 
-const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress }) => {
+const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress, available }) => {
 
     const [tooltip, setTooltip] = useState(true)
 
@@ -129,7 +129,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress 
                     >{minQty}</Text>
                 </View>
             </View>
-            <View style={{ flex: 0.15 }}>
+            {available && <View style={{ flex: 0.15 }}>
                 <Text
                     style={{
                         fontFamily: 'Poppins-Regular',
@@ -146,7 +146,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress 
 
                     }}
                 >₹{price}</Text>
-            </View>
+            </View>}
         </View>
     )
 }

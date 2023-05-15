@@ -47,6 +47,17 @@ const SingleItemScreen = ({ route, navigation }) => {
     let userData = user?.userData
     const item = route?.params?.item
 
+    useEffect(() => {
+        if(item){
+            if(item?.variant){
+                let selectedVariant = item?.variants?.find(vari => vari?.available === true)
+                reactotron.log({selectedVariant})
+                setSelectedVariant(selectedVariant)
+            }
+        }
+    }, [item])
+    
+
     const [singleProduct, setSingleProduct] = useState([])
     const [selectedImage, setSelectedImage] = useState(0)
     const [showModal, setShowModal] = useState(false);
@@ -745,7 +756,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     views={item?.viewCount ? item?.viewCount : 0}
                     sold={item?.order_count}
                     minQty={item?.minQty}
-                    price={item?.price}
+                    price={ item?.variant ? selectedVariant?.price :  item?.price}
+                    available={item?.available}
                 />  
                {item?.weight   && 
                 <View style={{paddingLeft:10,display:'flex',flexDirection:'row',alignItems:'center',gap:2}}>
@@ -792,11 +804,17 @@ const SingleItemScreen = ({ route, navigation }) => {
                     {contextPanda?.active === "panda" && <CustomButton
                         label={'Pre-Order'} bg='#D3D358' width={width / 2.2} onPress={showModals}
                     />}
-                    <CustomButton
+                    {item?.available ? <CustomButton
                         onPress={addToCart}
                         label={'Add to Cart'} bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} width={width / 2.2}
                         loading={loader}
-                    />
+                    /> : <Text style={{
+                        fontFamily: 'Poppins',
+                        letterSpacing:1,
+                        fontSize:  10,
+                        color: 'red',
+                        fontWeight: 'bold'
+                    }}>Out of stock</Text>}
 
                 </View>
                 <View style={{ backgroundColor: '#0C256C0D', height: 1, marginVertical: 20 }} />

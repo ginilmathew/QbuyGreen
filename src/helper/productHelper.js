@@ -3,7 +3,7 @@ import reactotron from "reactotron-react-native";
 import { min, max } from 'lodash'
 
 export function getProduct(product){
-    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist  } = product
+    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributs  } = product
 
     let variant = product?.variants?.length > 0 ? true : false
     let minQty = minimum_qty ? parseFloat(minimum_qty) : 1
@@ -24,7 +24,9 @@ export function getProduct(product){
         product_image, 
         order_count, 
         is_wishlist,
-        variant
+        variant,
+        viewCount,
+        attributs
     }
 
     
@@ -272,7 +274,7 @@ export function getProduct(product){
         newProduct['delivery'] = delivery;
     }
     
-    reactotron.log({newProduct})
+    //reactotron.log({newProduct})
     return newProduct;
     
 }

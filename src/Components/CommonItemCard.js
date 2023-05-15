@@ -68,7 +68,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
             //         text1: 'Item is out of stock'
             //     })
             // }
-            navigation.navigate('SingleItemScreen', { item: item })
+            navigation.navigate('SingleItemScreen', { item: data })
         })
     }, [])
 
@@ -160,7 +160,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     source={data?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${data?.product_image}` }}
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                 >
-                    <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
+                    <LinearGradient colors={ data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(255, 255, 255, 0.2)', 'rgba(0, 0, 0, 0.4)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{data?.name}</Text>
                         <Text style={!data?.available ? styles.textSemiError :  styles.textSemi}>{data?.available ? `₹ ${data?.price}` : 'Out off stock'}</Text>
                         <Text style={styles.lightText}>{data?.store?.name}</Text> 
