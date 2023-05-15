@@ -164,7 +164,8 @@ const Checkout = ({ navigation }) => {
                             amount += finalPrice
                         }
                         else {
-                            let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                            let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(comm)
                             let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
 
                             amount += amounts
@@ -178,7 +179,8 @@ const Checkout = ({ navigation }) => {
                     amount += finalPrice
                 }
                 else {
-                    let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                    let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(comm)
                     let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                     //amountArray.push(`${data?.productdata?.seller_price} ${amounts}`)
                     amount += amounts
@@ -198,7 +200,8 @@ const Checkout = ({ navigation }) => {
                             amount += finalPrice
                         }
                         else {
-                            let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                            let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(comm)
                             let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                             //amountArray.push(amounts)
                             amount += amounts
@@ -211,7 +214,8 @@ const Checkout = ({ navigation }) => {
                     amount += finalPrice
                 }
                 else {
-                    let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                    let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(comm)
                     let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                     //amountArray.push(amounts)
                     amount += amounts
@@ -385,7 +389,8 @@ const Checkout = ({ navigation }) => {
                             })
                         }
                         else {
-                            let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                            let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(comm)
                             let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
 
                             amount += amounts
@@ -420,7 +425,8 @@ const Checkout = ({ navigation }) => {
                     amount += finalPrice
                 }
                 else {
-                    let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                    let commission = (parseFloat(data?.productdata?.seller_price) / 100) * parseFloat(comm)
                     let amounts = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                     //amountArray.push(`${data?.productdata?.seller_price} ${amounts}`)
                     products.push({
@@ -474,7 +480,8 @@ const Checkout = ({ navigation }) => {
                             })
                         }
                         else {
-                            let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                            let comm = data?.variants?.commission ? data?.variants?.commission : 0
+                            let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(comm)
                             let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                             //amountArray.push(amounts)
                             products.push({
@@ -509,7 +516,8 @@ const Checkout = ({ navigation }) => {
                     })
                 }
                 else {
-                    let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(data?.productdata?.commission)
+                    let comm = data?.variants?.commission ? data?.variants?.commission : 0
+                    let commission = (parseFloat(data?.variants?.seller_price) / 100) * parseFloat(comm)
                     let amounts = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                     //amountArray.push(amounts)
                     amount += amounts
@@ -606,15 +614,18 @@ const Checkout = ({ navigation }) => {
             cartContext?.setCart(null)
             setCartItems(null)
             await AsyncStorage.removeItem("cartId");
+            
             if (data?.STATUS == "TXN_SUCCESS") {
                 navigation.navigate('OrderPlaced')
-            } else {
-                Toast.show({ type: 'error', text1: result?.RESPMSG || "Something went wrong !!!" })
+            } else if(data?.STATUS == "TXN_FAILURE") {
+                Toast.show({ type: 'error', text1: data?.RESPMSG || "Something went wrong !!!" })
                 navigation.navigate("order")
             }
             
         }).catch(async error => {
-            console.log(error)
+            cartContext?.setCart(null)
+            setCartItems(null)
+            navigation.navigate("order")
             Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
         })
     }
@@ -647,7 +658,7 @@ const Checkout = ({ navigation }) => {
             false,//appInvokeRestricted
           `paytm${paymentDetails?.mid}`//urlScheme
          ).then((result) => {
-            console.log("PAYTM =>", JSON.stringify(result));
+            reactotron.log("PAYTM =>", JSON.stringify(result));
             updatePaymentResponse(result)
             
         }).catch((err) => {

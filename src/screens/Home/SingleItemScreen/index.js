@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda,RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -13,7 +13,7 @@ import CommonSelectDropdown from '../../../Components/CommonSelectDropdown'
 import PandaContext from '../../../contexts/Panda'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import ImageVideoBox from './ImageVideoBox'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import CommonRating from '../../../Components/CommonRating'
 import customAxios from '../../../CustomeAxios'
 import reactotron from '../../../ReactotronConfig'
@@ -26,17 +26,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message';
 import { isEmpty } from 'lodash'
 
-const fashions = require('../../../Images/jeans.jpg')
-const fashion1 = require('../../../Images/jeans2.jpg')
-const fashion2 = require('../../../Images/jeans3.jpg')
-const thumbnailFashion = require('../../../Images/jeans4.jpg')
-const fashion3 = require('../../../Images/jeans1.jpg')
-const fashionVideo = require('../../../Videos/jeansVideo.mp4')
 
+let link = '../../../Videos/farming.mp4'
 
 
 const SingleItemScreen = ({ route, navigation }) => {
-
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -48,9 +42,10 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
 
-  const position = new Animated.ValueXY({x:0,y:0})
-    // reactotron.log({attributes})
+    const [showSingleImg, setShowSingleImg] = useState(false)
 
+
+    const position = new Animated.ValueXY({ x: 0, y: 0 })
 
     let loader = loadingg?.loading
 
@@ -71,7 +66,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({singleProduct })
+    reactotron.log({ singleProduct })
 
     const { width, height } = useWindowDimensions()
 
@@ -80,7 +75,11 @@ const SingleItemScreen = ({ route, navigation }) => {
         singleProduct?.image?.splice(0, 0, singleProduct?.product_image)
         // reactotron.log({newArray: singleProduct?.image})
     }, [singleProduct?.product_image, singleProduct?.image])
-    
+
+    // useEffect(() => {
+    //     singleProduct?.image?.push(link)
+    // }, [singleProduct?.image])
+
     let colors = singleProduct?.variants?.map((item, index) => {
         return (
             {
@@ -161,10 +160,10 @@ const SingleItemScreen = ({ route, navigation }) => {
             })
     }
 
-  
- 
+
+
     const gotoStore = useCallback(() => {
-        navigation.navigate('store', {name : singleProduct?.store?.name, mode : 'singleItem', storeId: singleProduct?.store?._id })
+        navigation.navigate('store', { name: singleProduct?.store?.name, mode: 'singleItem', storeId: singleProduct?.store?._id })
     })
 
     const proceedCheckout = useCallback(() => {
@@ -181,12 +180,12 @@ const SingleItemScreen = ({ route, navigation }) => {
     })
 
     const addToCart = useCallback(async () => {
-        
+
         let cartItems;
         let productDetails;
         let minimumQty = singleProduct?.minimum_qty ? parseFloat(singleProduct?.minimum_qty) : 1
 
-        reactotron.log({minimumQty});
+        reactotron.log({ selectedVariant });
         //return false
 
         if (singleProduct?.variants?.length > 0 && cart?.cart) {
@@ -207,7 +206,24 @@ const SingleItemScreen = ({ route, navigation }) => {
             if (existing >= 0) {
                 let cartProducts = cart?.cart?.product_details;
                 let quantity = cartProducts[existing].quantity + 1;
-                if(parseFloat(selectedVariant?.stock_value) >= quantity){
+                if (singleProduct?.stock) {
+                    if (parseFloat(selectedVariant?.stock_value) >= quantity) {
+                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cartProducts,
+                            user_id: userData?._id
+                        }
+                    }
+                    else {
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Required quantity not available'
+                        })
+                        return false;
+                    }
+                }
+                else {
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                     cartItems = {
                         cart_id: cart?.cart?._id,
@@ -215,18 +231,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                         user_id: userData?._id
                     }
                 }
-                else{
-                    Toast.show({
-                        type: 'info',
-                        text1: 'Required quantity not available'
-                    })
-                    return false;
-                }
 
             }
             else {
-                if(singleProduct?.stock){
-                    if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                if (singleProduct?.stock) {
+                    if (parseFloat(selectedVariant?.stock_value) >= minimumQty) {
                         productDetails = {
                             product_id: singleProduct?._id,
                             name: singleProduct?.name,
@@ -246,7 +255,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             user_id: userData?._id
                         }
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'info',
                             text1: 'Required quantity not available'
@@ -254,7 +263,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         return false;
                     }
                 }
-                else{
+                else {
                     productDetails = {
                         product_id: singleProduct?._id,
                         name: singleProduct?.name,
@@ -274,7 +283,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         user_id: userData?._id
                     }
                 }
-                
+
 
             }
         }
@@ -288,13 +297,31 @@ const SingleItemScreen = ({ route, navigation }) => {
                     return false;
                 }
             }
-            
+
             let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
             if (existing >= 0) {
                 url = "customer/cart/update";
                 let cartProducts = cart?.cart?.product_details;
                 let quantity = cartProducts[existing].quantity + 1;
-                if(singleProduct?.stock_value >= quantity){
+                if (singleProduct?.stock) {
+                    if (singleProduct?.stock_value >= quantity) {
+                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+
+                        cartItems = {
+                            cart_id: cart?.cart?._id,
+                            product_details: cartProducts,
+                            user_id: userData?._id
+                        }
+                    }
+                    else {
+                        Toast.show({
+                            type: 'info',
+                            text1: "Required quantity not available"
+                        });
+                        return false;
+                    }
+                }
+                else {
                     cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
 
                     cartItems = {
@@ -303,19 +330,12 @@ const SingleItemScreen = ({ route, navigation }) => {
                         user_id: userData?._id
                     }
                 }
-                else{
-                    Toast.show({
-                        type: 'info',
-                        text1: "Required quantity not available"
-                    });
-                    return false;
-                }
             }
             else {
                 url = "customer/cart/add";
                 reactotron.log("in")
-                if(singleProduct?.stock){
-                    if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                if (singleProduct?.stock) {
+                    if (parseFloat(singleProduct?.stock_value) >= minimumQty) {
                         productDetails = {
                             product_id: singleProduct?._id,
                             name: singleProduct?.name,
@@ -330,7 +350,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             user_id: userData?._id
                         }
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'info',
                             text1: "Required quantity not available"
@@ -338,9 +358,9 @@ const SingleItemScreen = ({ route, navigation }) => {
                         return false;
                     }
                 }
-                else{
-                    if(singleProduct?.stock){
-                        if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                else {
+                    if (singleProduct?.stock) {
+                        if (parseFloat(singleProduct?.stock_value) >= minimumQty) {
                             productDetails = {
                                 product_id: singleProduct?._id,
                                 name: singleProduct?.name,
@@ -355,7 +375,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 user_id: userData?._id
                             }
                         }
-                        else{
+                        else {
                             Toast.show({
                                 type: 'info',
                                 text1: "Required quantity not available"
@@ -363,7 +383,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             return false;
                         }
                     }
-                    else{
+                    else {
                         productDetails = {
                             product_id: singleProduct?._id,
                             name: singleProduct?.name,
@@ -378,17 +398,17 @@ const SingleItemScreen = ({ route, navigation }) => {
                             user_id: userData?._id
                         }
                     }
-                    
-                }
-                
 
-                
+                }
+
+
+
             }
         }
         else {
             url = "customer/cart/add";
             if (singleProduct?.variants?.length > 0) {
-                if(singleProduct?.stock){
+                if (singleProduct?.stock) {
                     if (parseFloat(selectedVariant?.stock_value) === 0) {
                         Toast.show({
                             type: 'info',
@@ -396,7 +416,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         });
                         return false;
                     }
-                    else if(parseFloat(selectedVariant?.stock_value) >= minimumQty){
+                    else if (parseFloat(selectedVariant?.stock_value) >= minimumQty) {
                         productDetails = {
                             product_id: singleProduct?._id,
                             name: singleProduct?.name,
@@ -412,11 +432,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                         };
                         cartItems = {
                             cart_id: cart?.cart?._id,
-                            product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                            product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
                             user_id: userData?._id
                         }
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'info',
                             text1: 'Required quantity not available'
@@ -424,7 +444,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         return false;
                     }
                 }
-                else{
+                else {
                     productDetails = {
                         product_id: singleProduct?._id,
                         name: singleProduct?.name,
@@ -440,7 +460,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     };
                     cartItems = {
                         cart_id: cart?.cart?._id,
-                        product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                        product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
                         user_id: userData?._id
                     }
                 }
@@ -453,7 +473,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     });
                     return false;
                 }
-                else if(parseFloat(singleProduct?.stock_value) >= minimumQty){
+                else if (parseFloat(singleProduct?.stock_value) >= minimumQty) {
                     productDetails = {
                         product_id: singleProduct?._id,
                         name: singleProduct?.name,
@@ -464,11 +484,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                     };
                     cartItems = {
                         cart_id: cart?.cart?._id,
-                        product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                        product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
                         user_id: userData?._id
                     }
                 }
-                else{
+                else {
                     Toast.show({
                         type: 'info',
                         text1: "Required quantity not available"
@@ -476,7 +496,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     return false;
                 }
             }
-            else{
+            else {
                 productDetails = {
                     product_id: singleProduct?._id,
                     name: singleProduct?.name,
@@ -487,7 +507,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 };
                 cartItems = {
                     cart_id: cart?.cart?._id,
-                    product_details: cart?.cart?.product_details ?  [...cart?.cart?.product_details, productDetails] : [productDetails],
+                    product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
                     user_id: userData?._id
                 }
             }
@@ -528,7 +548,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                         setPrice(singleProduct?.variants?.[0]?.regular_price)
                     }
                     else {
-                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                        let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
+                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
                         let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
                         setPrice(price)
                     }
@@ -540,7 +561,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     setPrice(singleProduct?.variants?.[0]?.regular_price)
                 }
                 else {
-                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(singleProduct?.variants?.[0]?.commission)
+                    let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
+                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
                     let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
                     setPrice(price)
                 }
@@ -557,7 +579,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                         setPrice(singleProduct?.regular_price)
                     }
                     else {
-                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(singleProduct?.commission)
+                        let comm = singleProduct?.commission ? singleProduct?.commission : 0
+                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
                         let price = parseFloat(singleProduct?.seller_price) + commission
                         setPrice(price)
                     }
@@ -568,7 +591,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     setPrice(singleProduct?.regular_price)
                 }
                 else {
-                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(singleProduct?.commission)
+                    let comm = singleProduct?.commission ? singleProduct?.commission : 0
+                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
                     let price = parseFloat(singleProduct?.seller_price) + commission
                     setPrice(price)
                 }
@@ -578,24 +602,24 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
-        reactotron.log({value, attributes, variant: singleProduct})
+        reactotron.log({ value, attributes, variant: singleProduct })
         let attri = [];
         let attr = attributes?.map(att => {
             if (att?.optArray.includes(value)) {
-                if(att?.variant){
+                if (att?.variant) {
                     let values = value.split(' ')
                     values.map(va => {
                         attri.push(va)
                     })
                 }
-               
+
                 return {
                     ...att,
                     selected: value
                 }
             }
             else {
-                if(att?.variant){
+                if (att?.variant) {
                     let values = att.selected.split(' ')
                     values.map(va => {
                         attri.push(va)
@@ -605,7 +629,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
-        reactotron.log({attri})
+        reactotron.log({ attri })
         //let filtered = 
 
         singleProduct?.variants?.map(sin => {
@@ -613,35 +637,37 @@ const SingleItemScreen = ({ route, navigation }) => {
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            reactotron.log({attributes})
+            reactotron.log({ attributes })
             const containsAll = attri.every(elem => attributes.includes(elem));
-            
-            reactotron.log({containsAll})
+
+            reactotron.log({ containsAll })
 
             if (containsAll) {
-                
+
                 setSelectedVariant(sin)
                 if (sin?.offer_price) {
                     if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
                         setPrice(sin?.offer_price)
                         //return singleProduct?.offer_price;
                     }
-                    else if(sin?.regular_price){
+                    else if (sin?.regular_price) {
                         setPrice(sin?.regular_price)
                         //return singleProduct?.regular_price;
                     }
-                    else{
-                        let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                    else {
+                        let comm = sin?.commission ? sin?.commission : 0
+                        let commission = (parseFloat(sin?.seller_price) / 100) * parseFloat(comm)
                         let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
                         setPrice(amount)
                     }
                 }
-                else if(sin?.regular_price){
+                else if (sin?.regular_price) {
                     setPrice(sin?.regular_price)
                     //return singleProduct?.regular_price;
                 }
-                else{
-                    let commission = (parseFloat(sin?.seller_price)/100) * parseFloat(sin?.commission)
+                else {
+                    let comm = sin?.commission ? sin?.commission : 0
+                    let commission = (parseFloat(sin?.seller_price) / 100) * parseFloat(comm)
                     let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
                     setPrice(amount)
                 }
@@ -656,10 +682,10 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const renderInStock = () => {
-        if(singleProduct?.stock){
-            if(singleProduct?.variant){
-                if(parseFloat(selectedVariant?.stock_value) > 0){
-                    return(
+        if (singleProduct?.stock) {
+            if (singleProduct?.variant) {
+                if (parseFloat(selectedVariant?.stock_value) > 0) {
+                    return (
                         <View
                             style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
                         >
@@ -668,9 +694,9 @@ const SingleItemScreen = ({ route, navigation }) => {
                     )
                 }
             }
-            else{
-                if(parseFloat(singleProduct?.stock_value) > 0){
-                    return(
+            else {
+                if (parseFloat(singleProduct?.stock_value) > 0) {
+                    return (
                         <View
                             style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
                         >
@@ -680,8 +706,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                 }
             }
         }
-        else{
-            return(
+        else {
+            return (
                 <View
                     style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
                 >
@@ -690,19 +716,30 @@ const SingleItemScreen = ({ route, navigation }) => {
             )
         }
     }
+ 
+    const openSingleImg = useCallback(() => {
+        setShowSingleImg(true)
+    },[])
+
+    const closeSingleImg = useCallback(() => {
+        setShowSingleImg(false)
+    },[])
 
 
 
     return (
         <>
             <HeaderWithTitle title={item?.name} />
-            <ScrollView 
-                style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }} 
-                showsVerticalScrollIndicator={false} 
+            <ScrollView
+                style={{ flex: 1, backgroundColor: contextPanda?.active === "green" ? '#F4FFE9' : contextPanda?.active === "fashion" ? '#FFF5F7' : '#fff', }}
+                showsVerticalScrollIndicator={false}
             >
 
                 <View style={{ height: 200 }}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
+                    <TouchableOpacity 
+                        onPress={openSingleImg}
+                        style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}
+                    >
 
                         {singleProduct?.image && singleProduct?.image?.length > 0 ?
                             <FastImage
@@ -721,10 +758,16 @@ const SingleItemScreen = ({ route, navigation }) => {
                         }
 
 
-                    </View>
-                    {renderInStock()}
+                    </TouchableOpacity>
+                    {renderInStock()} 
+                    {/* <VideoPlayer
+                        video={ require('../../../Videos/farming.mp4') }
+                        videoWidth={1600}
+                        videoHeight={900}
+                        // thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
+                    /> */}
 
-                    
+
 
                 </View>
                 {singleProduct?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -747,23 +790,23 @@ const SingleItemScreen = ({ route, navigation }) => {
                     sold={singleProduct?.order_count}
                     minQty={singleProduct?.minimum_qty === null ? 1 : singleProduct?.minimum_qty}
                     price={price}
-                />  
-               {singleProduct?.weight !== ('' || null)  && 
-                <View style={{paddingLeft:10,display:'flex',flexDirection:'row',alignItems:'center',gap:2}}>
-                    <Text style={{
-                        fontFamily: 'Poppins',
-                        letterSpacing:1,
-                        fontSize:  10,
-                    
-                    }}>weight :</Text>
-                    <Text style={{
-                        fontFamily: 'Poppins',
-                        letterSpacing:1,
-                        fontSize:  10,
-                    
-                    }}>{singleProduct?.weight}</Text>
+                />
+                {singleProduct?.weight !== ('' || null) &&
+                    <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
 
-                </View>}
+                        }}>weight :</Text>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>{singleProduct?.weight}</Text>
+
+                    </View>}
 
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
@@ -879,10 +922,30 @@ const SingleItemScreen = ({ route, navigation }) => {
                     checkout={proceedCheckout}
                 />
 
-{/* 
+                {/* 
                <Animated.View style={cartContext?.animation.getLayout()}>
                     <Text>cary</Text>
                 </Animated.View>  */}
+
+                <Modal
+                    // animationType="slide"
+                    transparent={true}
+                    visible={showSingleImg}
+                >
+                    <View
+                        style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
+                    >
+                        {singleProduct?.image&&<FastImage
+                            source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
+                            style={{ width: width-15, height: 400, borderRadius:10, padding:10 }}
+                            resizeMode='cover'
+                        >
+                            <TouchableOpacity onPress={closeSingleImg} style={{alignSelf:'flex-end', backgroundColor:'#000', borderRadius:10, width:20, height:20, alignItems:'center', justifyContent:'center'}}>
+                                <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
+                            </TouchableOpacity>
+                        </FastImage>}
+                    </View>
+                </Modal>
 
 
             </ScrollView>

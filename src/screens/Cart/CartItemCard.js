@@ -210,7 +210,8 @@ const CartItemCard = ({item, index, refreshCart}) => {
                         return `₹${finalPrice.toFixed(2)}`
                     }
                     else{
-                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                        let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(comm)
                         let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                         return `₹${amount.toFixed(2)}`
                     }
@@ -221,7 +222,8 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 return `₹${finalPrice.toFixed(2)}`
             }
             else{
-                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
+                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(comm)
                 let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                 return `₹${amount.toFixed(2)}`
             }
@@ -238,7 +240,8 @@ const CartItemCard = ({item, index, refreshCart}) => {
                         return `₹${finalPrice.toFixed(2)}`
                     }
                     else{
-                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                        let comm = data?.variants?.commission ? data?.variants?.commission : 0
+                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(comm)
                         let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                         return `₹${amount.toFixed(2)}`
                     }
@@ -249,7 +252,8 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 return `₹${finalPrice.toFixed(2)}`
             }
             else{
-                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(data?.productdata?.commission)
+                let comm = data?.variants?.commission ? data?.variants?.commission : 0
+                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(comm)
                 let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
                 return `₹${amount.toFixed(2)}`
             }

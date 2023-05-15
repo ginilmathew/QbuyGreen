@@ -32,6 +32,8 @@ const Cart = ({ navigation }) => {
     const cartContext = useContext(CartContext)
 
 
+reactotron?.log({cartContext:cartContext?.cart})
+
     //let cartId = user?.cartId
 
     // reactotron.log({ cartId })
@@ -117,7 +119,7 @@ const Cart = ({ navigation }) => {
 
     return (
         <View style={{ height: height - 50, paddingBottom: 50, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
-            <HeaderWithTitle title={'Cart'} noBack />
+            <HeaderWithTitle title={'Cart'}  />
 
             <ScrollView 
             refreshControl={

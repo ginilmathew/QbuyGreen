@@ -19,7 +19,7 @@ import CountDownComponent from '../../../Components/CountDown';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
 import reactotron from '../../../ReactotronConfig';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import AuthContext from '../../../contexts/Auth';
 import SearchBox from '../../../Components/SearchBox';
 import Toast from 'react-native-toast-message'
@@ -53,10 +53,12 @@ const QBuyFashion = () => {
     const [slider, setSlider] = useState(null)
 
 
+
+    
     useEffect(() => {
         let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
         setavailablePdt(availPdt?.data)
-
+       
         let slider = homeData?.find((item, index) => item?.type === 'sliders')
         setSlider(slider?.data)
     }, [homeData])
@@ -98,6 +100,8 @@ const QBuyFashion = () => {
     useEffect(() => {
         getHomedata(coord)
     }, [])
+
+
 
 
     // const addToCart = async (item) => {
@@ -180,7 +184,7 @@ const QBuyFashion = () => {
         let minimumQty = !isEmpty(item?.minimum_qty) ? parseFloat(item?.minimum_qty) : 1
 
         if (item?.variants?.length === 0) {
-            
+
             if (cartContext?.cart) {
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
@@ -188,7 +192,7 @@ const QBuyFashion = () => {
                     let cartProducts = cartContext?.cart?.product_details;
                     let quantity = cartProducts[existing].quantity + 1;
 
-                    if(item?.stock_value >= quantity){
+                    if (item?.stock_value >= quantity) {
                         cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                         cartItems = {
                             cart_id: cartContext?.cart?._id,
@@ -196,7 +200,7 @@ const QBuyFashion = () => {
                             user_id: userContext?.userData?._id
                         }
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'info',
                             text1: 'Required quantity not available'
@@ -204,12 +208,12 @@ const QBuyFashion = () => {
                         return false;
                     }
 
-                    
+
                 }
                 else {
-                    
-                    if(item?.stock === true){
-                        if(item?.stock_value >= minimumQty){
+
+                    if (item?.stock === true) {
+                        if (item?.stock_value >= minimumQty) {
                             productDetails = {
                                 product_id: item?._id,
                                 name: item?.name,
@@ -219,7 +223,7 @@ const QBuyFashion = () => {
                                 quantity: minimumQty
                             };
                         }
-                        else{
+                        else {
                             Toast.show({
                                 type: 'error',
                                 text1: "Required quantity not available"
@@ -227,7 +231,7 @@ const QBuyFashion = () => {
                             return false;
                         }
                     }
-                    else{
+                    else {
                         productDetails = {
                             product_id: item?._id,
                             name: item?.name,
@@ -247,8 +251,8 @@ const QBuyFashion = () => {
             }
             else {
                 url = "customer/cart/add";
-                if(item?.stock === true){
-                    if(item?.stock_value >= minimumQty){
+                if (item?.stock === true) {
+                    if (item?.stock_value >= minimumQty) {
                         productDetails = {
                             product_id: item?._id,
                             name: item?.name,
@@ -258,7 +262,7 @@ const QBuyFashion = () => {
                             quantity: minimumQty
                         };
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'error',
                             text1: "Required quantity not available"
@@ -266,7 +270,7 @@ const QBuyFashion = () => {
                         return false;
                     }
                 }
-                else{
+                else {
                     productDetails = {
                         product_id: item?._id,
                         name: item?.name,
@@ -433,6 +437,7 @@ const QBuyFashion = () => {
                 /> */}
 
                 <ScrollView
+                    scrollEnabled={false}
                     removeClippedSubviews
                     showsVerticalScrollIndicator={false}
                     refreshControl={

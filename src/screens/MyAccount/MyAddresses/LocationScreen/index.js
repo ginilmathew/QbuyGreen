@@ -19,12 +19,11 @@ const LocationScreen = ({ route, navigation }) => {
     const addressContext = useContext(AddressContext)
 
 
-     reactotron.log({Address:addressContext?.currentAddress})
-     reactotron.log({location:addressContext?.location?.geometry?.location?.lat})
-     reactotron.log({locationFull:addressContext?.location})
     let active = contextPanda.active
     const { editAddress = {} } = route?.params || {}
     const { width, height } = useWindowDimensions()
+
+    reactotron.log({ editAddress })
 
     const mapRef = useRef()
     console.log("route", route?.params);
@@ -34,8 +33,8 @@ const LocationScreen = ({ route, navigation }) => {
     const [address, setAddress] = useState(editAddress?.area?.address || '')
     const [city, setCity] = useState('')
 
-    reactotron.log({address})
-    reactotron.log({location})
+    reactotron.log({ address })
+    reactotron.log({ location })
 
     async function fetchData() {
         if (Platform.OS === 'android') {
@@ -99,15 +98,15 @@ const LocationScreen = ({ route, navigation }) => {
     const onConfirm = useCallback(() => {
 
         let locationData = {
-            location:address,
-            city:city,
-            latitude:location?.latitude,
-            longitude:location?.longitude,
+            location: address,
+            city: city,
+            latitude: location?.latitude,
+            longitude: location?.longitude,
         }
 
-        reactotron.log({...locationData,...editAddress})
-        navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData} })
-    }, [location, address, city,addressContext?.currentAddress,addressContext?.location ])
+        reactotron.log({ ...locationData, ...editAddress })
+        navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
+    }, [location, address, city, addressContext?.currentAddress, addressContext?.location])
 
     const addNewAddress = useCallback(() => {
         navigation.navigate('AddNewLocation')
@@ -149,8 +148,8 @@ const LocationScreen = ({ route, navigation }) => {
             <MapView
                 style={{ flex: 1 }}
                 region={{
-                    latitude:addressContext?.location ? addressContext?.location?.geometry?.location?.lat : location?.latitude,
-                    longitude:addressContext?.location ? addressContext?.location?.geometry?.location?.lng : location?.longitude,
+                    latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : location?.latitude,
+                    longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : location?.longitude,
                     latitudeDelta: 0.015,
                     longitudeDelta: 0.0121,
                 }}
@@ -164,8 +163,8 @@ const LocationScreen = ({ route, navigation }) => {
             >
                 {location && <Marker
                     coordinate={{
-                        latitude:addressContext?.location ? addressContext?.location?.geometry?.location?.lat : location?.latitude,
-                        longitude:addressContext?.location ? addressContext?.location?.geometry?.location?.lng : location?.longitude,
+                        latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : location?.latitude,
+                        longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : location?.longitude,
                     }}
                 />}
             </MapView>
@@ -173,7 +172,7 @@ const LocationScreen = ({ route, navigation }) => {
                 <View style={{ flexDirection: 'row', }}>
                     <Foundation name={'target-two'} color='#FF0000' size={23} marginTop={7} />
                     <View style={{ flex: 0.9, marginLeft: 7, }}>
-                        <CommonTexts label={addressContext?.location?.address_components?.length > 0 ? addressContext?.location?.address_components?.filter(st =>st.types?.includes('locality'))[0]?.long_name : city} fontSize={22} />
+                        <CommonTexts label={addressContext?.currentAddress ? addressContext?.currentAddress?.city : city} fontSize={22} />
                         <Text
                             style={{
                                 fontFamily: 'Poppins-Regular',
@@ -181,7 +180,7 @@ const LocationScreen = ({ route, navigation }) => {
                                 fontSize: 11,
                                 marginTop: -5
                             }}
-                        >{addressContext?.currentAddress ? addressContext?.currentAddress?.description : address}</Text>
+                        >{addressContext?.currentAddress ? addressContext?.currentAddress?.location : address}</Text>
                     </View>
                     <TouchableOpacity
                         onPress={addNewAddress}

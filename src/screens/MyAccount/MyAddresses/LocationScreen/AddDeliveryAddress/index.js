@@ -27,10 +27,10 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     let locationData = route?.params?.item
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
-    reactotron.log({ locationData})
+    reactotron.log({ locationData })
 
 
-   
+
 
     const loadingContext = useContext(LoaderContext)
 
@@ -46,7 +46,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const [isEnabled, setIsEnabled] = useState(locationData?.default_status || false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-    reactotron.log({isEnabled})
+    reactotron.log({ isEnabled })
 
     const schema = yup.object({
         location: yup.string().required('Area is required'),
@@ -57,8 +57,8 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            location:addressContext?.location?.address_components?.length > 0 ? addressContext?.location?.address_components?.filter(st =>st.types?.includes('locality'))[0]?.long_name : locationData?.city,
-            address:addressContext?.currentAddress ? addressContext?.currentAddress?.description : locationData?.location,
+            location:  addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
+            address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : locationData?.location,
             comments: locationData?.comments,
             default_status: locationData?.default,
             pincode: locationData?.pincode?.toString()
@@ -87,12 +87,12 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         let datas = {
             address_type: selected.toLocaleLowerCase(),
             area: {
-                latitude:addressContext?.location ? addressContext?.location?.geometry?.location?.lat : locationData?.latitude,
-                longitude:addressContext?.location ? addressContext?.location?.geometry?.location?.lng : locationData?.longitude,
-                 address:addressContext?.currentAddress ? addressContext?.currentAddress?.description : data?.address,
-                location:addressContext?.location?.address_components?.length > 0 ? addressContext?.location?.address_components?.filter(st =>st.types?.includes('locality'))[0]?.long_name : locationData?.city,
+                latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : locationData?.latitude,
+                longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : locationData?.longitude,
+                address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : data?.address,
+                location: addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
             },
-            default_status:!cartContext?.address ? true : isEnabled,
+            default_status: !cartContext?.address ? true : isEnabled,
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,

@@ -2,8 +2,11 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import React, { useCallback } from 'react'
 import { IMG_URL } from '../../../config/constants'
 import { useNavigation } from '@react-navigation/native'
+import reactotron from '../../../ReactotronConfig'
 
 const SearchResultsCard = ({item}) => {
+
+    reactotron.log({item})
 
     const navigation = useNavigation()
 
