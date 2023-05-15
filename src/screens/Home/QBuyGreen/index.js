@@ -8,6 +8,7 @@ import * as yup from "yup";
 import OfferText from '../OfferText';
 import PickDropAndReferCard from '../PickDropAndReferCard';
 import Header from '../../../Components/Header';
+import Carousel from 'react-native-reanimated-carousel';
 import CommonSquareButton from '../../../Components/CommonSquareButton';
 import CommonTexts from '../../../Components/CommonTexts';
 import TypeCard from '../Grocery/TypeCard';
@@ -23,7 +24,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AuthContext from '../../../contexts/Auth';
 import reactotron from 'reactotron-react-native';
-import { env, location } from '../../../config/constants';
+import { IMG_URL, env, location } from '../../../config/constants';
 import CartContext from '../../../contexts/Cart';
 import CategoryCard from './CategoryCard';
 import AvailableStores from './AvailableStores';
@@ -33,11 +34,12 @@ import PandaSuggestions from './PandaSuggestions';
 import { isEmpty } from 'lodash'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProduct } from '../../../helper/productHelper';
+import FastImage from 'react-native-fast-image';
 
 
 const QBuyGreen = ({ navigation }) => {
 
-    const { width } = useWindowDimensions()
+    const { width,height } = useWindowDimensions()
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
@@ -51,7 +53,9 @@ const QBuyGreen = ({ navigation }) => {
     const [slider, setSlider] = useState(null)
 
 
-    reactotron?.log({availablePdt})
+    reactotron?.log({ slider })
+
+    reactotron?.log({ availablePdt })
 
     useEffect(() => {
         let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
@@ -59,6 +63,7 @@ const QBuyGreen = ({ navigation }) => {
         reactotron.log('FOCUS EFFECT')
         let slider = homeData?.find((item, index) => item?.type === 'sliders')
         setSlider(slider?.data)
+
     }, [homeData])
 
 
@@ -143,7 +148,7 @@ const QBuyGreen = ({ navigation }) => {
                 loadingg.setLoading(false)
             })
     }
-    
+
     const onSearch = useCallback(() => {
         navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
@@ -156,7 +161,7 @@ const QBuyGreen = ({ navigation }) => {
         let minimumQty = !isEmpty(item?.minimum_qty) ? parseFloat(item?.minimum_qty) : 1
 
         if (item?.variants?.length === 0) {
-            
+
             if (cartContext?.cart) {
                 url = "customer/cart/update";
                 let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
@@ -164,7 +169,7 @@ const QBuyGreen = ({ navigation }) => {
                     let cartProducts = cartContext?.cart?.product_details;
                     let quantity = cartProducts[existing].quantity + 1;
 
-                    if(item?.stock_value >= quantity){
+                    if (item?.stock_value >= quantity) {
                         cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
                         cartItems = {
                             cart_id: cartContext?.cart?._id,
@@ -172,7 +177,7 @@ const QBuyGreen = ({ navigation }) => {
                             user_id: userContext?.userData?._id
                         }
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'info',
                             text1: 'Required quantity not available'
@@ -180,12 +185,12 @@ const QBuyGreen = ({ navigation }) => {
                         return false;
                     }
 
-                    
+
                 }
                 else {
-                    
-                    if(item?.stock === true){
-                        if(item?.stock_value >= minimumQty){
+
+                    if (item?.stock === true) {
+                        if (item?.stock_value >= minimumQty) {
                             productDetails = {
                                 product_id: item?._id,
                                 name: item?.name,
@@ -195,7 +200,7 @@ const QBuyGreen = ({ navigation }) => {
                                 quantity: minimumQty
                             };
                         }
-                        else{
+                        else {
                             Toast.show({
                                 type: 'error',
                                 text1: "Required quantity not available"
@@ -203,7 +208,7 @@ const QBuyGreen = ({ navigation }) => {
                             return false;
                         }
                     }
-                    else{
+                    else {
                         productDetails = {
                             product_id: item?._id,
                             name: item?.name,
@@ -223,8 +228,8 @@ const QBuyGreen = ({ navigation }) => {
             }
             else {
                 url = "customer/cart/add";
-                if(item?.stock === true){
-                    if(item?.stock_value >= minimumQty){
+                if (item?.stock === true) {
+                    if (item?.stock_value >= minimumQty) {
                         productDetails = {
                             product_id: item?._id,
                             name: item?.name,
@@ -234,7 +239,7 @@ const QBuyGreen = ({ navigation }) => {
                             quantity: minimumQty
                         };
                     }
-                    else{
+                    else {
                         Toast.show({
                             type: 'error',
                             text1: "Required quantity not available"
@@ -242,7 +247,7 @@ const QBuyGreen = ({ navigation }) => {
                         return false;
                     }
                 }
-                else{
+                else {
                     productDetails = {
                         product_id: item?._id,
                         name: item?.name,
@@ -279,22 +284,51 @@ const QBuyGreen = ({ navigation }) => {
         }
     }
 
+    const CarouselCardItem = ({ item, index }) => {
+        return (
+            <View style={{ alignItems: 'center',marginTop:20 }} >
+                <FastImage
+                    source={{ uri: `${IMG_URL}${item?.image}` }}
+                    style={{height:height/5, width: width-35,  borderRadius:20}}
+                // resizeMode='contain'
+                >
+                </FastImage>
+            </View>
+        )
+    }
+
+
 
 
     const renderItems = (item) => {
+
+        reactotron?.log({ item }, 'item in Carasel')
         if (item?.type === 'categories') {
             return (
                 <>
                     <CategoryCard data={item?.data} />
                     <SearchBox onPress={onSearch} />
-                    {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />}
+                    <View style={{ flex: 1 }}>
+                        <Carousel
+                            loop
+                            width={width}
+                            height={width / 2}
+                            autoPlay={true}
+                            data={slider}
+                            scrollAnimationDuration={1000}
+                            // onSnapToItem={(index, image) => console.log('current index:', image?.image)}
+                            renderItem={CarouselCardItem}
+                        />
+                    </View>
+
+                    {/* {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />} */}
                 </>
             )
         }
         if (item?.type === 'stores') {
             return (
                 <>
-                    {item?.data?.length > 0 &&<AvailableStores data={item?.data} />}
+                    {item?.data?.length > 0 && <AvailableStores data={item?.data} />}
                     <View style={styles.pickupReferContainer}>
                         <PickDropAndReferCard
                             onPress={ourFarm}
@@ -374,7 +408,6 @@ const QBuyGreen = ({ navigation }) => {
         <>
             <Header onPress={onClickDrawer} />
             <View style={styles.container} >
-
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
                 <ScrollView
                     removeClippedSubviews
@@ -396,7 +429,7 @@ const QBuyGreen = ({ navigation }) => {
                         // refreshing={loader}
                         // onRefresh={getHomedata}
                         numColumns={2}
-                        style={{marginLeft:5}}
+                        style={{ marginLeft: 5 }}
                     />
                 </ScrollView>
 
