@@ -288,8 +288,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                 >
                     <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
-                        {(item?.stock === (true || false) && parseFloat(item?.stock_value) >= 1)  &&
-                        <Text style={{color:'red'}}>OUT OF STOCK{item?.stock_value}</Text>}
+                        {/* {(item?.stock === (true || false) && parseFloat(item?.stock_value) >= 1)  &&
+                        <Text style={{color:'red'}}>OUT OF STOCK{item?.stock_value}</Text>} */}
                         <Text style={styles.textSemi}>{item?.name}</Text>
                         <Text style={styles.textSemi}>{getPrice()}</Text>
                         <Text style={styles.lightText}>{item?.store?.name}</Text>
