@@ -23,7 +23,6 @@ import SearchBox from '../../../Components/SearchBox';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AuthContext from '../../../contexts/Auth';
-import reactotron from 'reactotron-react-native';
 import { IMG_URL, env, location } from '../../../config/constants';
 import CartContext from '../../../contexts/Cart';
 import CategoryCard from './CategoryCard';
@@ -53,14 +52,9 @@ const QBuyGreen = ({ navigation }) => {
     const [slider, setSlider] = useState(null)
 
 
-    reactotron?.log({ slider })
-
-    reactotron?.log({ availablePdt })
-
     useEffect(() => {
         let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
         setavailablePdt(availPdt?.data)
-        reactotron.log('FOCUS EFFECT')
         let slider = homeData?.find((item, index) => item?.type === 'sliders')
         setSlider(slider?.data)
 
@@ -132,11 +126,6 @@ const QBuyGreen = ({ navigation }) => {
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 setHomeData(response?.data?.data)
-                // let results = response?.data?.data;
-                // results[3]?.data?.map(pr => {
-                //     let prod = getProduct(pr);
-                //     reactotron.log({prod})
-                // })
                 loadingg.setLoading(false)
             })
             .catch(async error => {
@@ -302,7 +291,6 @@ const QBuyGreen = ({ navigation }) => {
 
     const renderItems = (item) => {
 
-        reactotron?.log({ item }, 'item in Carasel')
         if (item?.type === 'categories') {
             return (
                 <>

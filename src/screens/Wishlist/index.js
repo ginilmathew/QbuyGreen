@@ -5,7 +5,6 @@ import HeaderWithTitle from '../../Components/HeaderWithTitle'
 import CommonItemMenuList from '../../Components/CommonItemMenuList'
 import CommonItemCard from '../../Components/CommonItemCard'
 import LoaderContext from '../../contexts/Loader'
-import reactotron from '../../ReactotronConfig'
 import customAxios from '../../CustomeAxios'
 import PandaContext from '../../contexts/Panda'
 import Toast from 'react-native-toast-message';

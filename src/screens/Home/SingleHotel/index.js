@@ -11,7 +11,6 @@ import CommonTexts from '../../../Components/CommonTexts'
 import CommonRating from '../../../Components/CommonRating'
 import StoreAddressCard from '../Category/StoreAddressCard'
 import CommonItemCard from '../../../Components/CommonItemCard'
-import reactotron from '../../../ReactotronConfig'
 import customAxios from '../../../CustomeAxios'
 import LoaderContext from '../../../contexts/Loader'
 import Toast from 'react-native-toast-message'
@@ -22,8 +21,6 @@ const SingleHotel = ({ route, navigation }) => {
     const storeName = route?.params?.storeName
 
     const item = route?.params?.item
-
-    reactotron.log({item})
 
 
     const contextPanda = useContext(PandaContext)

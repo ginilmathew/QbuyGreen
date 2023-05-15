@@ -9,7 +9,6 @@ import Foundation from 'react-native-vector-icons/Foundation'
 import PandaContext from '../../../contexts/Panda'
 import customAxios from '../../../CustomeAxios'
 import LoaderContext from '../../../contexts/Loader'
-import reactotron from '../../../ReactotronConfig'
 import { useFocusEffect } from '@react-navigation/native'
 import CartContext from '../../../contexts/Cart'
 import Toast from 'react-native-toast-message'
@@ -36,7 +35,6 @@ const MyAddresses = ({ route, navigation }) => {
     const [selected, setSelected] = useState(null)
     const [addrList, setAddrList] = useState([])
 
-    reactotron.log({ addrList })
 
 
 
@@ -77,14 +75,12 @@ const MyAddresses = ({ route, navigation }) => {
         addressContext.setCurrentAddress(null)
         if (addrList?.length >= 1) {
             let result = addrList?.filter((res) => res?.default === true)
-            reactotron?.log({ result })
             const Value = {
                 location: result[0]?.area?.address,
                 city: result[0]?.area?.location,
                 latitude: result[0]?.area?.latitude,
                 longitude: result[0]?.area?.longitude
             }
-            reactotron.log({ Value }, 'VALUE IN LIST PAGE')
             addressContext.setCurrentAddress(Value)
             if (addressContext?.CucurrentAddress) {
                 navigation.navigate('LocationScreen')
@@ -117,8 +113,6 @@ const MyAddresses = ({ route, navigation }) => {
 
 
     const selectAddress = async (id) => {
-
-        reactotron?.log({ id })
         let address = addrList.find(addr => addr?._id === id);
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
@@ -145,7 +139,6 @@ const MyAddresses = ({ route, navigation }) => {
             navigation.goBack()
         }
         else if (mode === "checkout") {
-            // reactotron.log({ address: address?.area?.address })
             cartContext.setDefaultAddress(address)
             navigation.navigate("Checkout")
         }

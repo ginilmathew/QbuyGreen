@@ -24,7 +24,6 @@ import ChooseTip from './ChooseTip'
 import ChooseDeliveryType from './ChooseDeliveryType'
 import CommonTexts from '../../../Components/CommonTexts'
 import PandaContext from '../../../contexts/Panda'
-import reactotron from '../../../ReactotronConfig'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
 import moment from 'moment'
@@ -35,6 +34,7 @@ import Toast from 'react-native-toast-message'
 import PaymentMethod from './PaymentMethod'
 import { RefreshControl } from 'react-native-gesture-handler'
 import LoaderContext from '../../../contexts/Loader'
+import { max } from 'lodash'
 
 
 const Checkout = ({ navigation }) => {
@@ -91,7 +91,6 @@ const Checkout = ({ navigation }) => {
 
 
 
-    reactotron.log({ cartItems })
 
     useFocusEffect(
         React.useCallback(() => {
@@ -146,7 +145,7 @@ const Checkout = ({ navigation }) => {
                         comm = pro?.variants?.commission ? pro?.variants?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
-                        minQty= pro?.variants?.minimum_qty ? parseFloat(pro?.variants?.minimum_qty) : 0
+                        minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock;
                         fromDate = pro?.variants?.offer_date_from
                         toDate = pro?.variants?.offer_date_to
@@ -257,7 +256,6 @@ const Checkout = ({ navigation }) => {
                         }
                     }
                 })
-                reactotron.log({finalProducts})
                 setCartItems(finalProducts)
                 //getTotalAmount()
             })
@@ -437,9 +435,7 @@ const Checkout = ({ navigation }) => {
             total_amount: cartItems.reduce(function(previousVal, currentVal) {
                 return previousVal + currentVal?.price;
             }, 0),
-            delivery_charge: cartItems.reduce(function(previousVal, currentVal) {
-                return previousVal + currentVal?.delivery;
-            }, 0),
+            delivery_charge: cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery,
             delivery_type: "Slot based",
             franchise: cartItems?.[0]?.franchisee?._id,
             cart_id: cartItems?.[0]?.cartId,
@@ -447,7 +443,6 @@ const Checkout = ({ navigation }) => {
         }
 
 
-        //reactotron.log({orderDetails})
        
 
         
@@ -455,7 +450,6 @@ const Checkout = ({ navigation }) => {
        
 
 
-        //reactotron.log({ orderDetails })
         if(products?.length > 0){
             await customAxios.post(`customer/order/create`, orderDetails)
             .then(async response => {
@@ -551,7 +545,6 @@ const Checkout = ({ navigation }) => {
             
             
         }).catch((err) => {
-            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });
 
     }
@@ -770,16 +763,14 @@ const Checkout = ({ navigation }) => {
                     </View> */}
                     <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
-                        <Text style={styles.textMedium}>₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal.delivery;
-                        }, 0)} </Text>
+                        <Text style={styles.textMedium}>₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery} </Text>
                     </View>
 
                     <View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
                         <Text style={styles.boldText}>₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal?.delivery + currentVal?.price;
-                        }, 0)}</Text>
+                            return previousVal + currentVal?.price;
+                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
                     </View>
                 </View>
 
@@ -809,8 +800,8 @@ const Checkout = ({ navigation }) => {
                     <Text
                         style={styles.boldText}
                     >₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                        return previousVal + currentVal?.delivery + currentVal?.price;
-                    }, 0)}</Text>
+                        return previousVal + currentVal?.price;
+                    }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
                 </View>}
 
                 {showList && <>
@@ -842,9 +833,7 @@ const Checkout = ({ navigation }) => {
                         </View>
                         <Text
                             style={styles.textMedium}
-                        >₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal?.delivery;
-                        }, 0)}</Text>
+                        >₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
 
                     </View>
                     {/* {charges.map(item => 
@@ -867,9 +856,9 @@ const Checkout = ({ navigation }) => {
                         >{'Grand Total  '}</Text>
                         <Text
                             style={styles.boldText}
-                        >₹ {cartItems.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal?.delivery + currentVal?.price;
-                        }, 0)}</Text>
+                        >₹ {cartItems?.reduce(function(previousVal, currentVal) {
+                            return previousVal + currentVal?.price;
+                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
                     </View>
                 </>}
 

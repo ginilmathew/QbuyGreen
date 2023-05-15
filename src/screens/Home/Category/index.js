@@ -14,7 +14,6 @@ import HotelItemList from './HotelItemList'
 import TypeCard from '../Grocery/TypeCard'
 import CommonRating from '../../../Components/CommonRating'
 import { IMG_URL } from '../../../config/constants'
-import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
 import Toast from 'react-native-toast-message'
@@ -36,7 +35,6 @@ const Category = ({ route }) => {
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [categories, setCategories] = useState([])
-    reactotron.log({categories})
 
     const [selected, setSelected] = useState(false)
 

@@ -5,7 +5,6 @@ import PandaContext from '../../contexts/Panda'
 import FastImage from 'react-native-fast-image'
 import LoaderContext from '../../contexts/Loader'
 import customAxios from '../../CustomeAxios'
-import reactotron from '../../ReactotronConfig'
 import { useNavigation } from '@react-navigation/native'
 import FashionCatCard from './FashionCatCard'
 import Toast from 'react-native-toast-message'
@@ -29,7 +28,6 @@ const FashionCategory = ({route}) => {
 
     const [catList, setCatList] = useState([])
 
-    reactotron.log({catList})
 
 
 

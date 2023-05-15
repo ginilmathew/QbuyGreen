@@ -12,7 +12,6 @@ import HelpAndSupportText from './HelpAndSupportText';
 import CommonTexts from '../../../Components/CommonTexts';
 import FastImage from 'react-native-fast-image'
 import AuthContext from '../../../contexts/Auth';
-import reactotron from '../../../ReactotronConfig';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
 import Toast from 'react-native-toast-message'
@@ -25,7 +24,6 @@ const Login = ({ navigation }) => {
 
 	const [data, setData] = useState('')
 
-	reactotron.log({data})
 
 	let loader = loadingg?.loading
 

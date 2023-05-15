@@ -7,7 +7,6 @@ import PandaContext from '../../../contexts/Panda'
 import CommonItemSelect from '../../../Components/CommonItemSelect'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import { IMG_URL, env, location } from '../../../config/constants'
-import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
@@ -30,8 +29,6 @@ const CategoryScreen = ({ route, navigation }) => {
     let loadingg = loadingContex?.loading
 
     const { name, mode, item, storeId } = route?.params
-
-    reactotron.log({ item })
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [filterProducts, setFilterProduct] = useState([])
@@ -79,7 +76,6 @@ const CategoryScreen = ({ route, navigation }) => {
                 if (storeId) {
 
                     let products = response?.data?.data?.filter(prod => prod?.store?._id === storeId);
-                    //reactotron.log({storeId, products})
                     setAvailabelPdts(products)
                 }
                 else {

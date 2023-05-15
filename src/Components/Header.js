@@ -8,7 +8,6 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import PandaContext from '../contexts/Panda'
-import reactotron from '../ReactotronConfig'
 import CartContext from '../contexts/Cart'
 import AuthContext from '../contexts/Auth'
 import axios from 'axios'
@@ -27,14 +26,11 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
     let myLocation = userContext?.userLocation
 
-    reactotron.log({currentAddress})
 
 
     const navigation = useNavigation()
 
 
-
-    // reactotron.log({userLocation : userContext?.currentAddress})
 
 
     const changeAddress = useCallback(() => {
@@ -67,7 +63,6 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
         })
             .catch(err => {
-                reactotron.log({ err })
             })
     }
 

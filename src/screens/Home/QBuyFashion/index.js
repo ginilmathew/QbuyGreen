@@ -18,7 +18,6 @@ import Offer from './Offer';
 import CountDownComponent from '../../../Components/CountDown';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
-import reactotron from '../../../ReactotronConfig';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import AuthContext from '../../../contexts/Auth';
 import SearchBox from '../../../Components/SearchBox';
@@ -328,8 +327,6 @@ const QBuyFashion = () => {
                 loadingg.setLoading(false)
             })
     }
-
-    // reactotron.log({category: homeData?.category_list})
 
     const onSearch = useCallback(() => {
         navigation.navigate('ProductSearchScreen')

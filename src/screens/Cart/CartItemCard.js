@@ -11,7 +11,6 @@ import customAxios from '../../CustomeAxios'
 import moment from 'moment'
 import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
-import reactotron from 'reactotron-react-native'
 import Toast from 'react-native-toast-message';
 
 
@@ -59,7 +58,6 @@ const CartItemCard = ({item, index, refreshCart}) => {
             }
         }
         data.quantity = data?.quantity + 1
-        //reactotron.log(data)
         //setData(data)
         let allProducts = cartContext?.cart?.product_details;
         allProducts[index].quantity = allProducts[index].quantity + 1;
@@ -88,8 +86,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
     }
 
     const removeItem = async() => {
-        let minimumQty = data?.productdata?.minimum_qty ? data?.productdata?.minimum_qty : 1
-        //reactotron.log({minimumQty})
+        let minimumQty = data?.minimum_qty ? data?.minimum_qty : 1
         //return false
         let allProducts = cartContext?.cart?.product_details;
         let cartItems;
@@ -197,140 +194,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
    
 
 
-    const getPrice = () => {
-        if(data?.type === "single"){
-            if(data?.productdata?.offer_price){
-                if(moment(data?.productdata?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.productdata?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
-                    let finalPrice = parseFloat(data?.productdata?.offer_price) * parseFloat(data?.quantity);
-                    return `₹${finalPrice.toFixed(2)}`
-                }
-                else{
-                    if(data?.productdata?.regular_price){
-                        let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
-                        return `₹${finalPrice.toFixed(2)}`
-                    }
-                    else{
-                        let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
-                        let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(comm)
-                        let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
-                        return `₹${amount.toFixed(2)}`
-                    }
-                }
-            }
-            else if(parseFloat(data?.productdata?.regular_price) > 0){
-                let finalPrice = parseFloat(data?.productdata?.regular_price) * parseFloat(data?.quantity);
-                return `₹${finalPrice.toFixed(2)}`
-            }
-            else{
-                let comm = data?.productdata?.commission ? data?.productdata?.commission : 0
-                let commission = (parseFloat(data?.productdata?.seller_price)/100) * parseFloat(comm)
-                let amount = (parseFloat(data?.productdata?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
-                return `₹${amount.toFixed(2)}`
-            }
-        }
-        else{
-            if(data?.variants?.offer_price){
-                if(moment(data?.variants?.offer_date_from) <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(data?.variants?.offer_date_to) >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
-                    let finalPrice = parseFloat(data?.variants?.offer_price) * parseFloat(data?.quantity);
-                    return `₹${finalPrice.toFixed(2)}`
-                }
-                else{
-                    if(data?.variants?.regular_price){
-                        let finalPrice = parseFloat(data?.variants?.regular_price) * parseFloat(data?.quantity);
-                        return `₹${finalPrice.toFixed(2)}`
-                    }
-                    else{
-                        let comm = data?.variants?.commission ? data?.variants?.commission : 0
-                        let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(comm)
-                        let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
-                        return `₹${amount.toFixed(2)}`
-                    }
-                }
-            }
-            else if(data?.variants?.regular_price){
-                let finalPrice = parseFloat(data?.variants?.regular_price) * parseFloat(data?.quantity);
-                return `₹${finalPrice.toFixed(2)}`
-            }
-            else{
-                let comm = data?.variants?.commission ? data?.variants?.commission : 0
-                let commission = (parseFloat(data?.variants?.seller_price)/100) * parseFloat(comm)
-                let amount = (parseFloat(data?.variants?.seller_price) + parseFloat(commission)) * parseFloat(data?.quantity);
-                return `₹${amount.toFixed(2)}`
-            }
-        }
-    }
-
-    // const renderPricing = () => {
-    //     if(item?.productdata?.stock){
-    //         if(item?.type === "variant"){
-    //             if(parseFloat(item?.variants?.stock_value) >= item?.quantity){
-    //                 return(
-    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
-    //                         <Text style={styles.rateText}>{getPrice()}</Text>
-    //                         <CommonCounter 
-    //                             count={data.quantity}
-    //                             addItem={addItem}
-    //                             removeItem={removeItem}
-    //                         />
-    //                     </View>
-    //                 )
-    //             }
-    //             else{
-    //                 return(
-    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
-    //                         <Text style={styles.rateText}>Out of stock</Text>
-    //                         <TouchableOpacity 
-    //                             onPress={deleteItem}
-    //                             style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
-    //                         >
-    //                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
-    //                         </TouchableOpacity>
-    //                     </View>
-    //                 )
-    //             }
-    //         }
-    //         else{
-    //             if(item?.productdata?.stock_value >= item?.quantity){
-    //                 return(
-    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
-    //                         <Text style={styles.rateText}>{getPrice()}</Text>
-    //                         <CommonCounter 
-    //                             count={data.quantity}
-    //                             addItem={addItem}
-    //                             removeItem={removeItem}
-    //                         />
-    //                     </View>
-    //                 )
-    //             }
-    //             else{
-    //                 return(
-    //                     <View style={{flexDirection:'row', alignItems:'center'}}>
-    //                         <Text style={styles.rateText}>Out of stock</Text>
-    //                         <TouchableOpacity 
-    //                             onPress={deleteItem}
-    //                             style={{ height: 20, width: 20, backgroundColor: 'red', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
-    //                         >
-    //                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
-    //                         </TouchableOpacity>
-    //                     </View>
-    //                 )
-    //             }
-    //         }
-    //     }
-    //     else{
-    //         return(
-    //             <View style={{flexDirection:'row', alignItems:'center'}}>
-    //                 <Text style={styles.rateText}>{getPrice()}</Text>
-    //                 <CommonCounter 
-    //                     count={data.quantity}
-    //                     addItem={addItem}
-    //                     removeItem={removeItem}
-    //                 />
-    //             </View>
-    //         )
-    //     }
-        
-    // }
+    
 
     
     return (
@@ -342,7 +206,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                     source={{ uri: `${IMG_URL}${item?.image}` }}
                 />
                 <View style={{marginLeft:5, flex:0.95}}>
-                    {item?.variants?.title ? <Text style={styles.nameText}>{`${item?.name}${'('}${item?.variants?.title}${')'} `}</Text> : <Text style={styles.nameText}>{item?.name}</Text>}
+                    {item?.attributes?.length > 0 ? <Text style={styles.nameText}>{`${item?.name}${'('}${item?.attributes.join(', ')}${')'} `}</Text> : <Text style={styles.nameText}>{item?.name}</Text>}
                     <TouchableOpacity onPress={gotoStore}>
                         <Text style={styles.shopText}>{item?.store?.name}</Text>
                     </TouchableOpacity>

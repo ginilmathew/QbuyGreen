@@ -8,7 +8,6 @@ import CommonItemSelect from '../../../Components/CommonItemSelect'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import TypeCard from '../Grocery/TypeCard'
 import { IMG_URL, env, location } from '../../../config/constants'
-import reactotron from '../../../ReactotronConfig'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
 import HotelCard from '../Category/HotelCard'
@@ -38,8 +37,6 @@ const StoreScreen = ({ route, navigation }) => {
     const item = route?.params?.item
     const storeId = route?.params?.storeId
 
-
-    reactotron.log({ storeId })
 
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
@@ -264,7 +261,6 @@ const StoreScreen = ({ route, navigation }) => {
                     user_id: userContext?.userData?._id
                 }
             }
-            //reactotron.log({cartItems})
             loadingContex.setLoading(true)
             await customAxios.post(url, cartItems)
                 .then(async response => {

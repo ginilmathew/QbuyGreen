@@ -5,12 +5,10 @@ import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import { IMG_URL } from '../../../config/constants'
 import PandaContext from '../../../contexts/Panda'
-import reactotron from 'reactotron-react-native'
 
 
 const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
 
-    reactotron.log({id: item})
 
     const contextPanda = useContext(PandaContext)
 

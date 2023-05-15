@@ -8,7 +8,6 @@ import CustomButton from '../../../../Components/CustomButton'
 import MapView, { Marker } from 'react-native-maps';
 import PandaContext from '../../../../contexts/Panda'
 import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
-import reactotron from '../../../../ReactotronConfig'
 import axios from 'axios'
 import AddressContext from '../../../../contexts/Address'
 
@@ -23,8 +22,6 @@ const LocationScreen = ({ route, navigation }) => {
     const { editAddress = {} } = route?.params || {}
     const { width, height } = useWindowDimensions()
 
-    reactotron.log({ editAddress })
-
     const mapRef = useRef()
     console.log("route", route?.params);
 
@@ -32,9 +29,6 @@ const LocationScreen = ({ route, navigation }) => {
 
     const [address, setAddress] = useState(editAddress?.area?.address || '')
     const [city, setCity] = useState('')
-
-    reactotron.log({ address })
-    reactotron.log({ location })
 
     async function fetchData() {
         if (Platform.OS === 'android') {
@@ -78,7 +72,6 @@ const LocationScreen = ({ route, navigation }) => {
         fetchData().then(() => {
             Geolocation.getCurrentPosition(
                 position => {
-                    reactotron.log({ position })
                     getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
                     setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude })
                 },
@@ -104,7 +97,6 @@ const LocationScreen = ({ route, navigation }) => {
             longitude: location?.longitude,
         }
 
-        reactotron.log({ ...locationData, ...editAddress })
         navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
     }, [location, address, city, addressContext?.currentAddress, addressContext?.location])
 
@@ -123,20 +115,17 @@ const LocationScreen = ({ route, navigation }) => {
             // addressContext?.setLocation(null)
         })
             .catch(err => {
-                reactotron.log({ err })
             })
 
     }
 
 
     const RegionChange = (e) => {
-        // reactotron.log({ coordinates: e.nativeEvent.coordinate })
         let coordinates = e.nativeEvent.coordinate;
 
         getAddressFromCoordinates(coordinates?.latitude, coordinates?.longitude)
         setLocation({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
         //setLocation(region)
-        reactotron.log({ location })
     }
 
     return (

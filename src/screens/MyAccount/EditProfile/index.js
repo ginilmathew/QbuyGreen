@@ -13,7 +13,6 @@ import CustomButton from '../../../Components/CustomButton'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import PandaContext from '../../../contexts/Panda'
 import { launchImageLibrary } from 'react-native-image-picker';
-import reactotron from '../../../ReactotronConfig';
 import CartContext from '../../../contexts/Cart';
 import customAxios from '../../../CustomeAxios';
 
@@ -30,9 +29,6 @@ const EditProfile = ({ navigation }) => {
     let userdata = user?.userData
 
     const [filePath, setFilePath] = useState(null);
-
-    // reactotron.log({addr: cartContext?.defaultAddress?.area?.address})
-
 
     // const [isEnabled, setIsEnabled] = useState(false);
     // const toggleSwitch = () => setIsEnabled(previousState => !previousState);

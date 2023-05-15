@@ -9,7 +9,6 @@ import Otp from '../screens/auth/Otp';
 import Menu from './Menu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from '../screens/SplashScreen';
-import reactotron from '../ReactotronConfig';
 import AuthContext from '../contexts/Auth';
 import customAxios from '../CustomeAxios';
 import LoaderContext from '../contexts/Loader';
@@ -38,7 +37,6 @@ const Navigation = () => {
             const user = await AsyncStorage.getItem("user");
             if (user) {
                 let userdata = JSON.parse(user)
-                reactotron.log({ userdata })
                 await customAxios.get(`customer/customer-profile`)
                 .then(async response => {
                     // setData(response?.data?.data)

@@ -8,6 +8,7 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 
 const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress, available }) => {
 
+
     const [tooltip, setTooltip] = useState(true)
 
     useEffect(() => {

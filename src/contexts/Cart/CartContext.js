@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Context from "./index";
-import Geolocation from 'react-native-geolocation-service';
-import reactotron from "reactotron-react-native";
 import { Animated } from 'react-native'
 
 const CartProvider = (props) => {

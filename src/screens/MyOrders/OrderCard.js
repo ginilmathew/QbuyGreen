@@ -6,7 +6,6 @@ import CustomButton from '../../Components/CustomButton'
 import { useNavigation } from '@react-navigation/native'
 import ItemsCard from './ItemsCard'
 import PandaContext from '../../contexts/Panda'
-import reactotron from '../../ReactotronConfig'
 import moment from 'moment'
 import customAxios from '../../CustomeAxios'
 import AllInOneSDKManager from 'paytm_allinone_react-native';
@@ -89,7 +88,6 @@ const OrderCard = memo(({ item }) => {
             
         }).catch((err) => {
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
-            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });
 
     }

@@ -12,7 +12,6 @@ import PandaContext from '../../contexts/Panda'
 import LogoutModal from './LogoutModal'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import AuthContext from '../../contexts/Auth'
-import reactotron from '../../ReactotronConfig'
 import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
@@ -26,7 +25,6 @@ const MyAccount = ({ navigation }) => {
     let active = contextPanda.active
     const user = useContext(AuthContext)
     let userData = user?.userData
-	// reactotron.log({userData})
 
     const [showModal, setShowModal] = useState(false)
 

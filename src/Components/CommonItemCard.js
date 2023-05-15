@@ -14,7 +14,6 @@ import { useNavigation } from '@react-navigation/native'
 import ItemAddedFromSuggtnCard from './ItemAddedFromSuggtnCard'
 import PandaContext from '../contexts/Panda'
 import CommonRating from './CommonRating';
-import reactotron from '../ReactotronConfig';
 import { IMG_URL } from '../config/constants';
 import moment from 'moment';
 import { min, max } from 'lodash'
@@ -26,6 +25,7 @@ import LoaderContext from '../contexts/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 import { has } from 'lodash'
 import { getProduct } from '../helper/productHelper';
+import reactotron from 'reactotron-react-native';
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
 
@@ -39,7 +39,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     
 
 
-    reactotron.log({data})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -60,17 +59,9 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const handleClick = useCallback(() => {
         
         startTransition(() => {
-            // if(item?.stock === true){
-            //     navigation.navigate('SingleItemScreen', { item: item })
-            // }else{
-            //     Toast.show({
-            //         type: 'error',
-            //         text1: 'Item is out of stock'
-            //     })
-            // }
             navigation.navigate('SingleItemScreen', { item: data })
         })
-    }, [])
+    }, [data])
 
     const openBottomSheet = () => {
         addToCart(item)
@@ -106,7 +97,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 //         text1: response?.data?.message
                 //     })
                 // }
-                // reactotron.log({response})
                 // setAvailabelPdts(response?.data?.data)
             })
             .catch(async error => {
