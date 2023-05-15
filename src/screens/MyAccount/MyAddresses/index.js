@@ -76,32 +76,29 @@ const MyAddresses = ({ route, navigation }) => {
     }, [])
 
 
-
-
     const selectAddress = async (id) => {
 
-        reactotron?.log({id})
+        reactotron?.log({ id })
         let address = addrList.find(addr => addr?._id === id);
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
- 
-        // if (!address?.default) {
+
         address.default_status = true;
         address.id = address?._id
-   
+
         loadingContex.setLoading(true)
-        await customAxios.post(`customer/address/update`,address).then((response)=> {
+
+        await customAxios.post(`customer/address/update`, address).then((response) => {
             setAddrList(response?.data?.data)
             loadingContex.setLoading(false)
         }
-       ).catch(async error => {
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-                loadingContex.setLoading(false)
-            })
-        // }
+        ).catch(async error => {
+            Toast.show({
+                type: 'error',
+                text1: error
+            });
+            loadingContex.setLoading(false)
+        })
 
         if (mode === "home") {
             navigation.goBack()

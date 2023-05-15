@@ -277,7 +277,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={heart ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12}  />
+                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12}  marginLeft={1.5}/>
                     </TouchableOpacity>}
 
                 </FastImage>
