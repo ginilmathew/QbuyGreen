@@ -408,6 +408,7 @@ const QBuyGreen = ({ navigation }) => {
         <>
             <Header onPress={onClickDrawer} />
             <View style={styles.container} >
+
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
                 <ScrollView
                     removeClippedSubviews

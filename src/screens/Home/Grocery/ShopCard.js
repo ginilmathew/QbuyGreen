@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         textAlign:'center', 
         fontSize:11, 
         marginTop:5, 
-        fontFamily:'Poppins-Medium', 
+        fontFamily:'Poppins-SemiBold', 
         color:'#23233C' 
     }
 })
