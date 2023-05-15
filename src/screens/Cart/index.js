@@ -15,6 +15,7 @@ import CartContext from '../../contexts/Cart';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import LoaderContext from '../../contexts/Loader';
+import moment from 'moment';
 
 
 const Cart = ({ navigation }) => {
@@ -51,7 +52,156 @@ reactotron?.log({cartContext:cartContext?.cart})
         if (cartContext?.cart?._id) {
             await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
             .then(async response => {
-                setCartItemsList([...response?.data?.data?.product_details])
+
+                reactotron.log({response})
+                let products = response?.data?.data?.product_details;
+                let finalProducts = [];
+                //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
+                products?.map((pro) => {
+                    let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
+                    let type = pro?.type;
+                    let offer, regular, comm, seller, delivery, minQty, stock, fromDate, toDate, stock_value, product;
+                    if(type === "single"){
+                        offer = pro?.productdata?.offer_price ? parseFloat(pro?.productdata?.offer_price) : 0
+                        regular = pro?.productdata?.regular_price ? parseFloat(pro?.productdata?.regular_price) : 0
+                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : 0
+                        seller = pro?.productdata?.seller_price ? parseFloat(pro?.productdata?.seller_price) : 0
+                        delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
+                        minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
+                        stock = pro?.productdata?.stock
+                        fromDate = pro?.productdata?.offer_date_from
+                        toDate = pro?.productdata?.offer_date_to
+                        stock_value = pro?.productdata?.stock_value ? parseFloat(pro?.productdata?.stock_value) : 0
+                        product = {
+                            product_id: pro?.product_id,
+                            name: pro?.name,
+                            image: pro?.image,
+                            type: pro?.type,
+                            quantity: quantity,
+                            stock: stock,
+                            delivery,
+                            commission: comm,
+                            minimum_qty: minQty,
+                            stock_value,
+                            store: pro?.productdata?.store
+                        }
+                    }
+                    else{
+                        offer = pro?.variants?.offer_price ? parseFloat(pro?.variants?.offer_price) : 0
+                        regular = pro?.variants?.regular_price ? parseFloat(pro?.variants?.regular_price) : 0
+                        comm = pro?.variants?.commission ? pro?.variants?.commission : 0
+                        seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
+                        delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
+                        minQty= pro?.variants?.minimum_qty ? parseFloat(pro?.variants?.minimum_qty) : 0
+                        stock = pro?.productdata?.stock;
+                        fromDate = pro?.variants?.offer_date_from
+                        toDate = pro?.variants?.offer_date_to
+                        stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
+                        product = {
+                            product_id: pro?.product_id,
+                            name: pro?.name,
+                            image: pro?.image,
+                            type: pro?.type,
+                            quantity: quantity,
+                            stock: stock,
+                            delivery,
+                            commission: comm,
+                            minimum_qty: minQty,
+                            attributes: pro?.variants?.attributs,
+                            stock_value,
+                            store: pro?.productdata?.store
+                        }
+                    }
+
+                    
+                    if(stock){
+                        //products have stock
+                        if(quantity <= stock_value){
+                            //required quantity available
+                            product['available'] = true
+                            if(offer > 0){
+                                if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                                    let finalPrice = offer * quantity;
+                                    product['price'] = finalPrice;
+                                    finalProducts.push(product)
+                                }
+                                else{
+                                    if(regular > 0){
+                                        let finalPrice = regular * quantity;
+                                        product['price'] = finalPrice;
+                                        finalProducts.push(product)
+                                    }
+                                    else{
+                                        let commission = (seller/100) * comm
+                                        let amount = (seller + commission) * quantity;
+                                        product['price'] = amount;
+                                        finalProducts.push(product)
+                                    }
+                                }
+                            }
+                            else if(regular > 0){
+                                let finalPrice = regular * quantity;
+                                product['price'] = finalPrice;
+                                finalProducts.push(product)
+                            }
+                            else{
+                               let commission = (seller/100) * comm
+                                let amount = (seller + commission) * quantity;
+                                product['price'] = amount;
+                                finalProducts.push(product)
+                            }
+                        }
+                        else{
+                            product['available'] = false;
+                            finalProducts.push(product)
+                        }
+                    }
+                    else{
+                        product['available'] = true
+                        reactotron.log({offer, regular, seller, fromDate, toDate})
+                        if(offer > 0){
+                            if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                                
+                                let finalPrice = offer * quantity;
+                                product['price'] = finalPrice;
+                                finalProducts.push(product)
+                            }
+                            else{
+                                
+                                if(regular > 0){
+                                    let finalPrice = regular * quantity;
+                                    product['price'] = finalPrice;
+                                    finalProducts.push(product)
+                                }
+                                else{
+                                    
+                                    let commission = (seller/100) * comm
+                                    let amount = (seller + commission) * quantity;
+                                    product['price'] = amount;
+                                    finalProducts.push(product)
+                                }
+                            }
+                        }
+                        else if(regular > 0){
+                            
+                            let finalPrice = regular * quantity;
+                            product['price'] = finalPrice;
+                            finalProducts.push(product)
+                        }
+                        else{
+                            
+                            let commission = (seller/100) * comm
+                            let amount = (seller + commission) * quantity;
+                            product['price'] = amount;
+                            finalProducts.push(product)
+                        }
+                        reactotron.log({product})
+                    }
+                    reactotron.log({product})
+                   
+                })
+                reactotron.log({finalProducts})
+                setCartItemsList(finalProducts)
                 // reactotron.log({ response })
                 // setSingleProduct(response?.data?.data)
                 // loadingg.setLoading(false)

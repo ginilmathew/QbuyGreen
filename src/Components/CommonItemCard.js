@@ -25,9 +25,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoaderContext from '../contexts/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 import { has } from 'lodash'
+import { getProduct } from '../helper/productHelper';
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
 
+    const [data, setData] = useState([])
+    
+    useEffect(() => {
+        if(item){
+            setData(getProduct(item))
+        }
+    }, [item])
+    
+
+
+    reactotron.log({data})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -35,7 +47,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
-
 
 
     const refRBSheet = useRef();
@@ -56,9 +67,9 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
             //         text1: 'Item is out of stock'
             //     })
             // }
-            navigation.navigate('SingleItemScreen', { item: item })
+            navigation.navigate('SingleItemScreen', { item: data })
         })
-    }, [])
+        })
 
     const openBottomSheet = () => {
         addToCart(item)
@@ -66,77 +77,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         //navigation.navigate('SingleItemScreen', { item: item })
     }
 
-    // const addToCart = useCallback(async () => {
-    //     loadingg.setLoading(true)
-    //     let cartItems;
-    //     let url;
-
-    //     if(item?.variants?.length === 0){
-    //         if(cartContext?.cart){
-    //             url = "customer/cart/update";
-    //             let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-    //             if(existing >= 0){
-    //                 let cartProducts = cartContext?.cart?.product_details;
-    //                 cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-    //                 cartItems = {
-    //                     cart_id: cartContext?.cart?._id,
-    //                     product_details: cartProducts,
-    //                     user_id: userContext?.userData?._id
-    //                 }
-    //             }
-    //             else{
-    //                 let productDetails = {
-    //                     product_id: item?._id,
-    //                     name: item?.name,
-    //                     image: item?.product_image,
-    //                     type: 'single',
-    //                     variants: null,
-    //                     quantity: 1
-    //                 };
-
-    //                 cartItems = {
-    //                     cart_id: cartContext?.cart?._id,
-    //                     product_details: [...cartContext?.cart?.product_details, productDetails],
-    //                     user_id: userContext?.userData?._id
-    //                 }
-    //             }
-    //         }
-    //         else{
-    //             url = "customer/cart/add";
-    //             let productDetails = {
-    //                 product_id: item?._id,
-    //                 name: item?.name,
-    //                 image: item?.product_image,
-    //                 type: "single",
-    //                 variants:  null,
-    //                 quantity: 1
-    //             };
-
-    //             cartItems = {
-    //                 product_details: [productDetails],
-    //                 user_id: userContext?.userData?._id
-    //             }
-    //         }
-
-    //         await customAxios.post(url, cartItems)
-    //         .then(async response => {
-    //             cartContext.setCart(response?.data?.data)
-    //             await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-    //             loadingg.setLoading(false)
-    //         })
-    //         .catch(async error => {
-    //             loadingg.setLoading(false)
-    //         })
-    //     }
-    //     else{
-    //         navigation.navigate('SingleItemScreen', { item: item })
-    //     }
-
-
-
-
-
-    // }, [cartContext?.cart])
+    
 
     const closeRbSheet = useCallback(() => {
         refRBSheet.current.close()
@@ -144,75 +85,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
 
-    const getPrice = () => {
-        if (item?.variants?.length > 0) {
-            let variants = [];
-            item?.variants?.map(vari => {
-                if (vari?.offer_price && vari?.offer_price > 0 && (moment(vari?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(vari?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))) {
-                    variants.push(vari?.offer_price);
-                }
-                else {
-                    if (vari?.regular_price > 0) {
-                        variants.push(vari?.regular_price);
-                    }
-                    else if (vari?.seller_price > 0) {
-                        let commission = 0;
-                        if (vari?.commission) {
-                            commission = (parseFloat(vari?.seller_price) / 100) * parseFloat(vari?.commission)
-                        }
-
-                        let price = parseFloat(vari?.seller_price) + commission;
-                        variants.push(price)
-                    }
-                }
-            })
-            if (variants && variants?.length > 0) {
-                return `₹${min(variants)} - ₹${max(variants)}`
-            }
-            else {
-                return 0;
-            }
-        }
-        else {
-            if (item?.offer_price && item?.offer_price > 0) {
-                if (item?.offer_price && (moment(item?.offer_date_from, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) && (moment(item?.offer_date_to, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD"))) {
-                    return `₹${item?.offer_price}`;
-                }
-                else {
-                    if (item?.regular_price && item?.regular_price > 0) {
-                        return `₹${item?.regular_price}`;
-                    }
-                    else if (item?.seller_price && item?.seller_price > 0) {
-                        let commission = 0;
-                        if (item?.commission) {
-                            commission = (parseFloat(item?.seller_price) / 100) * parseFloat(item?.commission)
-                        }
-                        let price = parseFloat(item?.seller_price) + commission;
-                        return `₹${price}`
-                    }
-                    else {
-                        return 0;
-                    }
-                }
-            }
-            else {
-                if (parseFloat(item?.regular_price) > 0) {
-                    return `₹${item?.regular_price}`;
-                }
-                else if (item?.seller_price > 0) {
-                    let commission = 0;
-                    if (item?.commission) {
-                        commission = (parseFloat(item?.seller_price) / 100) * parseFloat(item?.commission)
-                    }
-                    let price = parseFloat(item?.seller_price) + commission;
-                    return `₹${price}`;
-                }
-                else {
-                    return 0;
-                }
-            }
-        }
-    }
 
     const RemoveAction = useCallback(async () => {
 
@@ -279,23 +151,21 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     return (
         <>
             <TouchableOpacity
-                onPress={getPrice() != 0 ? handleClick : null}
-                style={{ marginHorizontal: marginHorizontal, marginRight: mr, marginLeft: ml, marginBottom: mb }}
+                onPress={handleClick}
+                style={{ marginHorizontal: marginHorizontal,marginRight:mr, marginLeft:ml, marginBottom:mb }}
             >
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
-                    source={item?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${item?.product_image}` }}
+                    source={data?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${data?.product_image}` }}
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                 >
-                    <LinearGradient colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
-                        {/* {(item?.stock === (true || false) && parseFloat(item?.stock_value) >= 1)  &&
-                        <Text style={{color:'red'}}>OUT OF STOCK{item?.stock_value}</Text>} */}
-                        <Text style={styles.textSemi}>{item?.name}</Text>
-                        <Text style={styles.textSemi}>{getPrice()}</Text>
-                        <Text style={styles.lightText}>{item?.store?.name}</Text>
+                    <LinearGradient colors={ data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(255, 255, 255, 0.2)', 'rgba(0, 0, 0, 0.4)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
+                        <Text style={styles.textSemi}>{data?.name}</Text>
+                        <Text style={!data?.available ? styles.textSemiError :  styles.textSemi}>{data?.available ? `₹ ${data?.price}` : 'Out off stock'}</Text>
+                        <Text style={styles.lightText}>{data?.store?.name}</Text> 
                     </LinearGradient>
 
-                    {getPrice() != 0 && <View style={styles.addContainer}>
+                    {data?.available && <View style={styles.addContainer}>
                         <CommonAddButton
                             onPress={openBottomSheet}
                         />
@@ -308,10 +178,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     </View>} */}
 
                     {active === 'fashion' || active === 'green' && <TouchableOpacity
-                        onPress={heart ? RemoveAction : AddAction}
+                        onPress={data?.is_wishlist ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={heart ? "#FF6464" : '#EDEDED'} size={12} />
+                        <Fontisto name={"heart"} color={data?.is_wishlist ? "#FF6464" : '#EDEDED'} size={12}  />
                     </TouchableOpacity>}
 
                 </FastImage>
@@ -409,6 +279,12 @@ const styles = StyleSheet.create({
     textSemi: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
+        fontSize: 10,
+        paddingBottom: 2
+    },
+    textSemiError: {
+        fontFamily: 'Poppins-SemiBold',
+        color: 'red',
         fontSize: 10,
         paddingBottom: 2
     },

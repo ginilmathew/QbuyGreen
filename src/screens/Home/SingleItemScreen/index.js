@@ -55,6 +55,8 @@ const SingleItemScreen = ({ route, navigation }) => {
     let userData = user?.userData
     const item = route?.params?.item
 
+    reactotron.log({item})
+
     const [singleProduct, setSingleProduct] = useState([])
     const [selectedImage, setSelectedImage] = useState(0)
     const [showModal, setShowModal] = useState(false);
@@ -935,7 +937,9 @@ const SingleItemScreen = ({ route, navigation }) => {
                     <View
                         style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
                     >
-                        {singleProduct?.image&&<FastImage
+                        {singleProduct?.image&&
+                      
+                        <FastImage
                             source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
                             style={{ width: width-15, height: 400, borderRadius:10, padding:10 }}
                             resizeMode='cover'
@@ -943,7 +947,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                             <TouchableOpacity onPress={closeSingleImg} style={{alignSelf:'flex-end', backgroundColor:'#000', borderRadius:10, width:20, height:20, alignItems:'center', justifyContent:'center'}}>
                                 <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
                             </TouchableOpacity>
-                        </FastImage>}
+                        </FastImage>
+                        }
                     </View>
                 </Modal>
 

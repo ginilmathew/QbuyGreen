@@ -8,13 +8,18 @@ import ItemsCard from './ItemsCard'
 import PandaContext from '../../contexts/Panda'
 import reactotron from '../../ReactotronConfig'
 import moment from 'moment'
+import customAxios from '../../CustomeAxios'
+import AllInOneSDKManager from 'paytm_allinone_react-native';
+import CartContext from '../../contexts/Cart'
+import LoaderContext from '../../contexts/Loader'
+import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
 const OrderCard = memo(({ item }) => {
 
     const contextPanda = useContext(PandaContext)
+    const cartContext = useContext(CartContext)
+    const loadingg = useContext(LoaderContext)
     let active = contextPanda.active
-
-    reactotron.log({active})
 
 
     const [showItems, setShowItems] = useState(false)
@@ -49,6 +54,90 @@ const OrderCard = memo(({ item }) => {
 
     const clickRateOrder = useCallback(() => {
         navigation.navigate('RateOrder', { item: item})
+    }, [])
+
+    const payWithPayTM = async (data) => {
+        const { paymentDetails } = data
+        let isStaging = true
+        const callbackUrl = {
+            true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
+            false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
+        }
+        await AllInOneSDKManager.startTransaction(
+            paymentDetails?.orderId,//orderId
+            paymentDetails?.mid,//mid
+            paymentDetails?.txnToken,//txnToken
+            paymentDetails?.amount.toFixed(2),//amount
+            `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
+            isStaging,//isStaging
+            false,//appInvokeRestricted
+          `paytm${paymentDetails?.mid}`//urlScheme
+         ).then((result) => {
+            if(has(result, "STATUS")){
+                updatePaymentResponse(result)
+            }
+            else{
+                let data = {
+                    STATUS: 'TXN_FAILURE',
+                    RESPMSG: 'User Cancelled transaction',
+                    ORDERID: paymentDetails?.orderId
+                }
+                updatePaymentResponse(data)
+            }
+            console.log("PAYTM =>", JSON.stringify(result));
+            
+            
+        }).catch((err) => {
+            Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
+            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
+        });
+
+    }
+
+    const updatePaymentResponse = async(data) => {
+        let details = data
+        await customAxios.post(`customer/order/payment/status`, data)
+        .then(async response => {
+            cartContext?.setCart(null)
+            setCartItems(null)
+            if (details?.STATUS == "TXN_SUCCESS") {
+                Toast.show({ type: 'success', text1: 'Payment Success' })
+                navigation.navigate("order")
+            } else {
+                Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
+                navigation.navigate("order")
+            }
+            
+        }).catch(async error => {
+            console.log(error)
+            Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+            navigation.navigate("order")
+        })
+    }
+
+    const payAmount = useCallback(async() => {
+        loadingg.setLoading(true)
+        let data = {
+            id: item?._id
+        }
+        await customAxios.post(`customer/order/paynow`, data)
+            .then(async response => {
+                const { data } = response
+                if (data?.status) {
+                    payWithPayTM(data?.data)
+                } else {
+                    Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
+                }
+                loadingg.setLoading(false)
+            })
+            .catch(async error => {
+                console.log(error)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+                loadingg.setLoading(false)
+            })
     }, [])
 
 
@@ -159,6 +248,7 @@ const OrderCard = memo(({ item }) => {
                 }
 
                 {item?.payment_status === 'pending' && <CustomButton
+                    onPress={payAmount}
                     label={'Pay Now'}
                     bg={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}
