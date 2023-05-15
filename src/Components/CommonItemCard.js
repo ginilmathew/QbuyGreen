@@ -47,19 +47,28 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     let active = contextPanda.active
 
     const loadingg = useContext(LoaderContext)
-    
+
 
 
     const refRBSheet = useRef();
     const navigation = useNavigation()
     const [total, setTotal] = useState('')
-    const [heart, setHeart] = useState(wishlistIcon ? wishlistIcon : item?.is_wishlist )
+    const [heart, setHeart] = useState(wishlistIcon ? wishlistIcon : item?.is_wishlist)
 
 
 
     const handleClick = useCallback(() => {
+        
         startTransition(() => {
-        navigation.navigate('SingleItemScreen', { item: item })
+            // if(item?.stock === true){
+            //     navigation.navigate('SingleItemScreen', { item: item })
+            // }else{
+            //     Toast.show({
+            //         type: 'error',
+            //         text1: 'Item is out of stock'
+            //     })
+            // }
+            navigation.navigate('SingleItemScreen', { item: item })
         })
     }, [])
 
@@ -79,7 +88,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
     const RemoveAction = useCallback(async () => {
-        
+
         let datas = {
             type: active,
             product_id: item?._id
@@ -89,7 +98,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
             .then(async response => {
                 setHeart(!heart)
                 // if(has(response?.data, 'data')){
-                    
+
                 // }
                 // else if(has(response?.data, 'message')){
                 //     Toast.show({
@@ -180,7 +189,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
             </TouchableOpacity>
 
-             <RBSheet
+            <RBSheet
                 ref={refRBSheet}
                 closeOnDragDown={false}
                 closeOnPressMask={true}
@@ -207,7 +216,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     <View style={{ paddingHorizontal: 15, flex: 1 }}>
                         <View style={styles.RBsheetHeader}>
                             <CommonTexts label={active === 'fashion' || active === 'green' ? "Similar Products" : 'More items you may like...'} />
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 onPress={closeRbSheet}
                             >
                                 <Ionicons name='close-circle' color='#000' size={25} />
@@ -225,29 +234,30 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         </ScrollView> */}
                     </View>
                 </BlurView>
-                <View 
+                <View
                     style={{
                         backgroundColor: active === 'fashion' ? '#FF7190' : active === 'green' ? '#8ED053' : '#58D36E',
                         height: 60,
-                        flexDirection: 'row',
+                        flexDirection: 'row',   
                         alignItems: 'center',
                         paddingHorizontal: 40,
                         width: '100%',
                     }}
                 >
+                   
                     <View style={styles.totalCount}>
                         {/* <Text style={styles.bottomCountText}>{addedList.length} item</Text> */}
                         <Text style={styles.bottomRateText}>₹ {total}</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.viewCartBox}
-                        // onPress={viewCart}
+                    // onPress={viewCart}
                     >
                         <CommonTexts label={'View Cart'} color='#fff' fontSize={23} />
                     </TouchableOpacity>
 
                 </View>
-            </RBSheet> 
+            </RBSheet>
         </>
     )
 })
@@ -300,14 +310,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 8,
         right: 8,
-        zIndex:1,
-        width:24,
-        height:24,
-        borderRadius:12,
-        backgroundColor:'rgba(0, 0, 0, 0.5)',
-        alignItems:'center',
-        justifyContent:'center'
-        
+        zIndex: 1,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        alignItems: 'center',
+        justifyContent: 'center'
+
     },
     RBsheetHeader: {
         alignItems: 'center',
@@ -316,6 +326,11 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     totalCount: {
+        borderRightWidth: 3,
+        borderColor: '#fff',
+        flex: 0.4
+    },
+    outofstock: {
         borderRightWidth: 3,
         borderColor: '#fff',
         flex: 0.4

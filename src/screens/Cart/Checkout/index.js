@@ -492,6 +492,7 @@ const Checkout = ({ navigation }) => {
         let details = data
         await customAxios.post(`customer/order/payment/status`, data)
         .then(async response => {
+         
             cartContext?.setCart(null)
             setCartItems(null)
             await AsyncStorage.removeItem("cartId");
@@ -500,10 +501,13 @@ const Checkout = ({ navigation }) => {
             } else {
                 Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
                 navigation.navigate("order")
+         
             }
             
         }).catch(async error => {
-            console.log(error)
+            cartContext?.setCart(null)
+            setCartItems(null)
+            navigation.navigate("order")
             Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             cartContext?.setCart(null)
             setCartItems(null)
