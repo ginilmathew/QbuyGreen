@@ -32,6 +32,7 @@ import AvailableProducts from './AvailableProducts';
 import PandaSuggestions from './PandaSuggestions';
 import { isEmpty } from 'lodash'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getProduct } from '../../../helper/productHelper';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -124,6 +125,11 @@ const QBuyGreen = ({ navigation }) => {
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 setHomeData(response?.data?.data)
+                // let results = response?.data?.data;
+                // results[3]?.data?.map(pr => {
+                //     let prod = getProduct(pr);
+                //     reactotron.log({prod})
+                // })
                 loadingg.setLoading(false)
             })
             .catch(async error => {

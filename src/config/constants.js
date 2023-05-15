@@ -1,13 +1,13 @@
 export const env = "dev"
 
 const URLS = {
-    live: "https://api.qbuygreen.com/public/api/",
+    live: "https://apiqbuygreen.diginestsolutions.in/public/api/",
     testing: "https://qbuygreenapi.diginestsolutions.in/public/api/",
     dev: "https://apiqbuypanda.diginestsolutions.in/public/api/"
 }
 
 const IMG_BASEPATH = {
-    live: "https://api.qbuygreen.com/public/",
+    live: "https://apiqbuygreen.diginestsolutions.in/public/",
     testing: "https://qbuygreenapi.diginestsolutions.in/public/",
     dev: "https://apiqbuypanda.diginestsolutions.in/public/"
 }

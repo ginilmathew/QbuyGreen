@@ -1,20 +1,15 @@
 import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda,RefreshControl } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
-import CommonTexts from '../../../Components/CommonTexts'
 import ItemDetails from './ItemDetails'
 import CustomButton from '../../../Components/CustomButton'
 import OrderWhatsapp from './OrderWhatsapp'
-import VideoPlayer from 'react-native-video-player'
 import FastImage from 'react-native-fast-image'
 import { Animated } from 'react-native'
 import ScheduleDeliveryModal from './ScheduleDeliveryModal'
 import CommonSelectDropdown from '../../../Components/CommonSelectDropdown'
 import PandaContext from '../../../contexts/Panda'
-import CommonItemCard from '../../../Components/CommonItemCard'
 import ImageVideoBox from './ImageVideoBox'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import CommonRating from '../../../Components/CommonRating'
 import customAxios from '../../../CustomeAxios'
 import reactotron from '../../../ReactotronConfig'
 import { IMG_URL, mode } from '../../../config/constants'
@@ -24,14 +19,6 @@ import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message';
-import { isEmpty } from 'lodash'
-
-const fashions = require('../../../Images/jeans.jpg')
-const fashion1 = require('../../../Images/jeans2.jpg')
-const fashion2 = require('../../../Images/jeans3.jpg')
-const thumbnailFashion = require('../../../Images/jeans4.jpg')
-const fashion3 = require('../../../Images/jeans1.jpg')
-const fashionVideo = require('../../../Videos/jeansVideo.mp4')
 
 
 
@@ -683,28 +670,14 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const renderInStock = () => {
-        if(singleProduct?.stock){
-            if(singleProduct?.variant){
-                if(parseFloat(selectedVariant?.stock_value) > 0){
-                    return(
-                        <View
-                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                        </View>
-                    )
-                }
-            }
-            else{
-                if(parseFloat(singleProduct?.stock_value) > 0){
-                    return(
-                        <View
-                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                        </View>
-                    )
-                }
+        if(item?.stock){
+            if(item?.available){
+                return(
+                <View
+                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                >
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                </View>)
             }
         }
         else{
@@ -713,8 +686,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
                 >
                     <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                </View>
-            )
+                </View>)
         }
     }
 
@@ -731,16 +703,16 @@ const SingleItemScreen = ({ route, navigation }) => {
                 <View style={{ height: 200 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}>
 
-                        {singleProduct?.image && singleProduct?.image?.length > 0 ?
+                        {item?.image && item?.image?.length > 0 ?
                             <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
+                                source={{ uri: `${IMG_URL}${item?.image[selectedImage]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                 resizeMode='contain'
                             >
                             </FastImage> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
+                                source={{ uri: `${IMG_URL}${item?.product_image}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                 resizeMode='contain'
                             >
@@ -754,8 +726,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                     
 
                 </View>
-                {singleProduct?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {singleProduct?.image?.map((item, index) =>
+                {item?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {item?.image?.map((item, index) =>
                         <ImageVideoBox
                             key={index}
                             setSelectedImage={setSelectedImage}
@@ -768,14 +740,14 @@ const SingleItemScreen = ({ route, navigation }) => {
 
                 <ItemDetails
                     onPress={gotoStore}
-                    itemName={singleProduct?.name}
-                    hotelName={singleProduct?.store?.name}
-                    views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}
-                    sold={singleProduct?.order_count}
-                    minQty={singleProduct?.minimum_qty === null ? 1 : singleProduct?.minimum_qty}
-                    price={price}
+                    itemName={item?.name}
+                    hotelName={item?.store?.name}
+                    views={item?.viewCount ? item?.viewCount : 0}
+                    sold={item?.order_count}
+                    minQty={item?.minQty}
+                    price={item?.price}
                 />  
-               {singleProduct?.weight !== ('' || null)  && 
+               {item?.weight   && 
                 <View style={{paddingLeft:10,display:'flex',flexDirection:'row',alignItems:'center',gap:2}}>
                     <Text style={{
                         fontFamily: 'Poppins',
@@ -788,7 +760,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         letterSpacing:1,
                         fontSize:  10,
                     
-                    }}>{singleProduct?.weight}</Text>
+                    }}>{item?.weight}</Text>
 
                 </View>}
 
