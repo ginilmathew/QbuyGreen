@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal } from 'react-native'
-import React, { useState, useEffect, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
 import ItemDetails from './ItemDetails'
@@ -24,13 +24,14 @@ import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message';
 import reactotron from 'reactotron-react-native'
-
+import RBSheet from "react-native-raw-bottom-sheet";
+import PreOrder from './preOrder'
 
 let link = '../../../Videos/farming.mp4'
 
 
 const SingleItemScreen = ({ route, navigation }) => {
-
+    const refRBSheet = useRef();
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const [showSingleImg, setShowSingleImg] = useState(false)
@@ -38,7 +39,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const item = route?.params?.item
 
-    const [images, setImages] = useState( item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
+    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
 
     const loadingg = useContext(LoaderContext)
 
@@ -46,7 +47,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
 
-    const position = new Animated.ValueXY({x:0,y:0})
+    const position = new Animated.ValueXY({ x: 0, y: 0 })
 
     let loader = loadingg?.loading
 
@@ -54,13 +55,13 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-    
 
-    reactotron.log({item})
+
+    reactotron.log({ item })
 
     useEffect(() => {
-        if(item){
-            if(item?.variant){
+        if (item) {
+            if (item?.variant) {
                 let selectedVariant = item?.variants?.find(vari => vari?.available === true)
                 setSelectedVariant(selectedVariant)
 
@@ -69,13 +70,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                     let selected;
                     att?.options?.map(opt => {
                         let values = opt.split(" ");
-                        if(values && names){
+                        if (values && names) {
                             const containsAll = values?.every(elem => names.includes(elem));
-                            if(containsAll){
+                            if (containsAll) {
                                 selected = opt
                             }
                         }
-                        
+
                     })
                     return {
                         ...att,
@@ -87,7 +88,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         }
     }, [item])
-    
+
 
     const [singleProduct, setSingleProduct] = useState([])
     const [selectedImage, setSelectedImage] = useState(0)
@@ -106,8 +107,8 @@ const SingleItemScreen = ({ route, navigation }) => {
     // useEffect(() => {
     //     item?.image?.splice(0, 0, item?.product_image)
     // }, [item?.product_image, item?.image])
-    
-    
+
+
 
 
     useEffect(() => {
@@ -168,7 +169,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const gotoStore = useCallback(() => {
-        navigation.navigate('store', {name : item?.store?.name, mode : 'singleItem', storeId: item?.store?._id })
+        navigation.navigate('store', { name: item?.store?.name, mode: 'singleItem', storeId: item?.store?._id })
     })
 
     const proceedCheckout = useCallback(() => {
@@ -187,8 +188,8 @@ const SingleItemScreen = ({ route, navigation }) => {
     const addToCart = useCallback(async () => {
 
         cartContext.addToCart(item, selectedVariant)
-        
-       
+
+
     }, [selectedVariant, cart?.cart])
 
 
@@ -264,7 +265,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
         let attr = attributes?.map(att => {
             if (att?.options.includes(value)) {
-                if(att?.variant){
+                if (att?.variant) {
                     let values = value.split(' ')
                     values.map(va => {
                         attri.push(va)
@@ -343,15 +344,19 @@ const SingleItemScreen = ({ route, navigation }) => {
             )
         }
     }
- 
+
     const openSingleImg = useCallback(() => {
         setShowSingleImg(true)
-    },[])
+    }, [])
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
-    },[])
+    }, [])
 
+
+    const PreOrderMOdal = useCallback(() => {
+        refRBSheet.current.open()
+    }, [])
 
 
     return (
@@ -363,7 +368,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             >
 
                 <View style={{ height: 200 }}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={openSingleImg}
                         style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}
                     >
@@ -386,7 +391,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                     </TouchableOpacity>
-                    {renderInStock()} 
+                    {renderInStock()}
                     {/* <VideoPlayer
                         video={ require('../../../Videos/farming.mp4') }
                         videoWidth={1600}
@@ -460,15 +465,22 @@ const SingleItemScreen = ({ route, navigation }) => {
                     />} */}
                 </View>
 
-                <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10 }}>
+                <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10, gap: 5 }}>
                     {contextPanda?.active === "panda" && <CustomButton
                         label={'Pre-Order'} bg='#D3D358' width={width / 2.2} onPress={showModals}
                     />}
+                    <CustomButton
+                        onPress={PreOrderMOdal}
+                        label={'Pre Order'} bg={active === 'green' ? '#D3D358' : active === 'fashion' ? '#D3D358' : '#D3D358'} width={width / 2.2}
+                        loading={loader}
+                    />
                     <CustomButton
                         onPress={addToCart}
                         label={'Add to Cart'} bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} width={width / 2.2}
                         loading={loader}
                     />
+
+
 
                 </View>
                 <View style={{ backgroundColor: '#0C256C0D', height: 1, marginVertical: 20 }} />
@@ -561,23 +573,37 @@ const SingleItemScreen = ({ route, navigation }) => {
                     visible={showSingleImg}
                 >
                     <View
-                        style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
+                        style={{ alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
                     >
                         {images &&
-                      
-                        <FastImage
-                            source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
-                            style={{ width: width-15, height: 400, borderRadius:10, padding:10 }}
-                            resizeMode='cover'
-                        >
-                            <TouchableOpacity onPress={closeSingleImg} style={{alignSelf:'flex-end', backgroundColor:'#000', borderRadius:10, width:20, height:20, alignItems:'center', justifyContent:'center'}}>
-                                <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
-                            </TouchableOpacity>
-                        </FastImage>
+
+                            <FastImage
+                                source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                style={{ width: width - 15, height: 400, borderRadius: 10, padding: 10 }}
+                                resizeMode='cover'
+                            >
+                                <TouchableOpacity onPress={closeSingleImg} style={{ alignSelf: 'flex-end', backgroundColor: '#000', borderRadius: 10, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' }}>
+                                    <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
+                                </TouchableOpacity>
+                            </FastImage>
                         }
                     </View>
                 </Modal>
-
+                <RBSheet
+                    ref={refRBSheet}
+                    closeOnDragDown={true}
+                    closeOnPressMask={false}
+                    customStyles={{
+                        wrapper: {
+                            backgroundColor: "transparent"
+                        },
+                        draggableIcon: {
+                            backgroundColor: "#000"
+                        }
+                    }}
+                >
+                    <PreOrder />
+                </RBSheet>
 
             </ScrollView>
         </>
