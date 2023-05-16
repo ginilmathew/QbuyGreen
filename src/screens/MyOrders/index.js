@@ -139,7 +139,7 @@ const MyOrders = () => {
                 }
                 style={{  paddingHorizontal: 10 , paddingTop:10}}
             >
-                {orderList.map((ord, index)=><OrderCard key={index} item = {ord} />)}
+                {orderList.map((ord, index)=><OrderCard key={index} item = {ord} refreshOrder={getOrderList}  />)}
             </ScrollView>
             </View>
         </>

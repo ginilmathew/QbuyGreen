@@ -223,7 +223,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 </View>
                 
             </View>
-            {!item?.available && <Text style={styles.outofStock}>{"Out of Stock"}</Text>}
+            {!item?.available && <Text style={styles.outofStock}>{"Out off Stock"}</Text>}
         </View>
       
     )

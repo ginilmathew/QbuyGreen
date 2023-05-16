@@ -112,7 +112,7 @@ const CartProvider = (props) => {
 
     const getDefaultAddress = useCallback(() => {
         if (address) {
-            let defau = address?.find(add => add.default === 1)
+            let defau = address?.find(add => add.default === true)
 
             if (defau) {
                 setDefaultAddress(defau)

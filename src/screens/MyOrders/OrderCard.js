@@ -12,8 +12,10 @@ import AllInOneSDKManager from 'paytm_allinone_react-native';
 import CartContext from '../../contexts/Cart'
 import LoaderContext from '../../contexts/Loader'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
+import reactotron from 'reactotron-react-native'
+import { has } from 'lodash'
 
-const OrderCard = memo(({ item }) => {
+const OrderCard = memo(({ item, refreshOrder }) => {
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -72,7 +74,9 @@ const OrderCard = memo(({ item }) => {
             false,//appInvokeRestricted
           `paytm${paymentDetails?.mid}`//urlScheme
          ).then((result) => {
+            reactotron.log({result})
             if(has(result, "STATUS")){
+                
                 updatePaymentResponse(result)
             }
             else{
@@ -83,7 +87,7 @@ const OrderCard = memo(({ item }) => {
                 }
                 updatePaymentResponse(data)
             }
-            console.log("PAYTM =>", JSON.stringify(result));
+            //console.log("PAYTM =>", JSON.stringify(result));
             
             
         }).catch((err) => {
@@ -96,20 +100,18 @@ const OrderCard = memo(({ item }) => {
         let details = data
         await customAxios.post(`customer/order/payment/status`, data)
         .then(async response => {
-            cartContext?.setCart(null)
-            setCartItems(null)
             if (details?.STATUS == "TXN_SUCCESS") {
                 Toast.show({ type: 'success', text1: 'Payment Success' })
-                navigation.navigate("order")
+                refreshOrder()
             } else {
                 Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
-                navigation.navigate("order")
+                refreshOrder()
             }
             
         }).catch(async error => {
             console.log(error)
             Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
-            navigation.navigate("order")
+            refreshOrder()
         })
     }
 

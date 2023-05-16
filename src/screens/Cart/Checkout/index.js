@@ -35,6 +35,7 @@ import PaymentMethod from './PaymentMethod'
 import { RefreshControl } from 'react-native-gesture-handler'
 import LoaderContext from '../../../contexts/Loader'
 import { max } from 'lodash'
+import reactotron from 'reactotron-react-native'
 
 
 const Checkout = ({ navigation }) => {
@@ -513,6 +514,7 @@ const Checkout = ({ navigation }) => {
 
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
+        let orderId = paymentDetails?.orderId
         let isStaging = true
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
@@ -535,7 +537,7 @@ const Checkout = ({ navigation }) => {
                 let data = {
                     STATUS: 'TXN_FAILURE',
                     RESPMSG: 'User Cancelled transaction',
-                    ORDERID: paymentDetails?.orderId
+                    ORDERID: orderId
                 }
                 updatePaymentResponse(data)
             }
@@ -759,17 +761,17 @@ const Checkout = ({ navigation }) => {
                         <Text style={styles.textMedium}>{'Govt Taxes & Other Charges'}</Text>
                         <Text style={styles.textMedium}>₹ {'10'}</Text>
                     </View> */}
-                    <View style={styles.grandTotalMid}>
+                    {cartItems?.length > 0 && <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
                         <Text style={styles.textMedium}>₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery} </Text>
-                    </View>
+                    </View>}
 
-                    <View style={styles.grandTotalBottom}>
+                    {cartItems?.length > 0 &&<View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
                         <Text style={styles.boldText}>₹ {cartItems?.reduce(function(previousVal, currentVal) {
                             return previousVal + currentVal?.price;
                         }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
-                    </View>
+                    </View>}
                 </View>
 
             </ScrollView>
@@ -781,17 +783,17 @@ const Checkout = ({ navigation }) => {
                         <Foundation name={'target-two'} color='#FF0000' size={20} marginTop={5} />
                     </View>
                     <View style={{ flex: 0.8, marginLeft: 10 }}>
-                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={21} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={21} color={'#FF5757'} />}
+                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={21} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={14} color={'#FF5757'} />}
                         <Text
                             style={styles.address}
-                        >{cartContext.defaultAddress?.area?.address ? cartContext.defaultAddress?.area?.address : myLocation}</Text>
+                        >{cartContext.defaultAddress?.area?.address && cartContext.defaultAddress?.area?.address}</Text>
                     </View>
 
                     <TouchableOpacity style={{ position: 'absolute', right: 20, top: 10 }} onPress={navigateToAddress}>
                         <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
                     </TouchableOpacity>
                 </View>
-                {!showList && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
+                {(!showList  && cartItems?.length > 0) && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
                     <Text
                         style={styles.textMedium}
                     >{'Grand Total  '}</Text>
@@ -802,7 +804,7 @@ const Checkout = ({ navigation }) => {
                     }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
                 </View>}
 
-                {showList && <>
+                {(showList && cartItems?.length > 0) && <>
                     <View style={styles.totalBill}>
                         <Text
                             style={styles.boldText}
