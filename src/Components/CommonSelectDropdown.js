@@ -11,6 +11,13 @@ const CommonSelectDropdown = ({topLabel, mb, placeholder, data, value, setValue,
 
     const [isFocus, setIsFocus] = useState(false);
 
+    const datas = data?.map(opt => {
+        return {
+            label: opt,
+            value: opt
+        }
+    }) 
+
     // const renderLabel = () => {
     //     if (values || isFocus) {
     //       return (
@@ -68,7 +75,7 @@ const CommonSelectDropdown = ({topLabel, mb, placeholder, data, value, setValue,
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
-            data={data}
+            data={datas}
             search = {search ? search : null} 
             maxHeight={300}
             labelField="label"

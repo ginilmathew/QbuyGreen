@@ -9,7 +9,6 @@ import PandaContext from '../../contexts/Panda'
 import LoaderContext from '../../contexts/Loader'
 import AuthContext from '../../contexts/Auth'
 import customAxios from '../../CustomeAxios'
-import reactotron from '../../ReactotronConfig'
 import Toast from 'react-native-toast-message';
 
 
@@ -22,8 +21,6 @@ const MyOrders = () => {
     let loader = loadingg?.loading
 
     const [orderList,setOrderList] = useState([])
-
-    reactotron.log({orderList})
 
 
     useEffect(() => {
@@ -142,7 +139,7 @@ const MyOrders = () => {
                 }
                 style={{  paddingHorizontal: 10 , paddingTop:10}}
             >
-                {orderList.map((ord, index)=><OrderCard key={index} item = {ord} />)}
+                {orderList.map((ord, index)=><OrderCard key={index} item = {ord} refreshOrder={getOrderList}  />)}
             </ScrollView>
             </View>
         </>

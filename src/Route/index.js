@@ -9,7 +9,6 @@ import Otp from '../screens/auth/Otp';
 //import Menu from './Menu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from '../screens/SplashScreen';
-//import reactotron from '../ReactotronConfig';
 import AuthContext from '../contexts/Auth';
 import CartContext from '../contexts/Cart';
 import Panda from './panda';
@@ -17,7 +16,6 @@ import Fashion from './fashion';
 import { mode } from '../config/constants';
 import Green from './green';
 import Geolocation from 'react-native-geolocation-service';
-import reactotron from 'reactotron-react-native';
 import customAxios from '../CustomeAxios';
 import LoaderContext from '../contexts/Loader';
 import { isObject } from 'lodash'
@@ -92,7 +90,6 @@ const Route = () => {
             setLocation
         })
         .catch(err => {
-            reactotron.log({err})
         })
     }
 
@@ -198,7 +195,6 @@ const Route = () => {
                     type: 'error',
                     text1: error
                 });
-                reactotron.log({error})
                 loadingContext.setLoading(false)
             })
         }

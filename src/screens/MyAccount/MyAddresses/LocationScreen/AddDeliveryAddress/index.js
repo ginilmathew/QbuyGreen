@@ -12,7 +12,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import CustomButton from '../../../../../Components/CustomButton'
 import PandaContext from '../../../../../contexts/Panda'
-import reactotron from '../../../../../ReactotronConfig'
 import customAxios from '../../../../../CustomeAxios'
 import LoaderContext from '../../../../../contexts/Loader'
 import CommonSwitch from '../../../../../Components/CommonSwitch'
@@ -27,7 +26,6 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     let locationData = route?.params?.item
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
-    reactotron.log({ locationData })
 
 
 
@@ -46,7 +44,6 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const [isEnabled, setIsEnabled] = useState(locationData?.default_status || false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-    reactotron.log({ isEnabled })
 
     const schema = yup.object({
         location: yup.string().required('Area is required'),
@@ -101,7 +98,6 @@ const AddDeliveryAddress = ({ route, navigation }) => {
             datas.id = locationData._id
         }
 
-        reactotron.log({ datas })
 
         await customAxios.post(`customer/address/${datas.id ? "update" : "create"}`, datas)
             .then(async response => {

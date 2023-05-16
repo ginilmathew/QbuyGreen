@@ -13,11 +13,14 @@ import StoreAddressCard from './StoreAddressCard'
 import HotelItemList from './HotelItemList'
 import TypeCard from '../Grocery/TypeCard'
 import CommonRating from '../../../Components/CommonRating'
-import { IMG_URL } from '../../../config/constants'
-import reactotron from '../../../ReactotronConfig'
+import { IMG_URL, env, location } from '../../../config/constants'
 import LoaderContext from '../../../contexts/Loader'
 import customAxios from '../../../CustomeAxios'
 import Toast from 'react-native-toast-message'
+import CartContext from '../../../contexts/Cart'
+import AuthContext from '../../../contexts/Auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import reactotron from 'reactotron-react-native'
 
 
 const Category = ({ route }) => {
@@ -26,17 +29,19 @@ const Category = ({ route }) => {
 
 
     const contextPanda = useContext(PandaContext)
+    const userContext = useContext(AuthContext)
+    const cartContext = useContext(CartContext)
     let grocery = contextPanda.greenPanda
     let fashion = contextPanda.pinkPanda
 
     const loadingContex = useContext(LoaderContext)
     let loadingg = loadingContex?.loading
+    let userData = userContext?.userData
 
     const { name, mode, item } = route?.params;
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [categories, setCategories] = useState([])
-    reactotron.log({categories})
 
     const [selected, setSelected] = useState(false)
 
@@ -49,14 +54,7 @@ const Category = ({ route }) => {
 
         let datas = {
             category_id:  item?._id,
-            coordinates :  [
-                [8.670514, 76.770417],
-                [8.770963, 77.179658],
-                [8.464103, 77.333466],
-                [8.347269, 77.185151],
-                [8.31194, 77.064301],
-                [8.670514, 76.770417]
-            ]
+            coordinates :  env === "dev" ? location : userContext?.location
         }
     
         await customAxios.post(`customer/product/category-based`, datas)
@@ -98,23 +96,12 @@ const Category = ({ route }) => {
         })
     }
 
+   
 
 
 
-    shops = [
-        {
-            _id: '1',
-            name: 'Fresh Vegetables'
-        },
-        {
-            _id: '2',
-            name: 'Trivandrum Farmers'
-        },
-        {
-            _id: '3',
-            name: 'Fertilizers'
-        },
-    ]
+
+    
 
     groceryType = [
         {

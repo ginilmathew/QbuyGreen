@@ -22,7 +22,6 @@ import * as Animatable from 'react-native-animatable';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import HomeNav from './Home';
 import CartContext from '../../contexts/Cart';
-import reactotron from '../../ReactotronConfig';
 import PandaContext from '../../contexts/Panda';
 
 

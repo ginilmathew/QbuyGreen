@@ -3,7 +3,7 @@ import React, { memo } from 'react'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
-const AvailableProducts = memo(({ data, addToCart }) => {
+const AvailableProducts = memo(({ data }) => {
 
     const { width } = useWindowDimensions()
     return (
@@ -17,7 +17,6 @@ const AvailableProducts = memo(({ data, addToCart }) => {
                         width={width / 2.25}
                         height={220}
                         wishlistIcon
-                        addToCart={addToCart}
                     />
                 ))}
             </View>

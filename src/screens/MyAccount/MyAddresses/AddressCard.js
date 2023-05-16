@@ -7,7 +7,6 @@ import AuthContext from '../../../contexts/Auth'
 import { navigate } from '../../../Navigations/RootNavigation'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useNavigation } from '@react-navigation/native'
-import reactotron from 'reactotron-react-native'
 const AddressCard = memo(({ setSelected, selected, item, deleteSelect }) => {
     const navigation = useNavigation()
     const contextPanda = useContext(PandaContext)

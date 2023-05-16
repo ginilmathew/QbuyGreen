@@ -15,7 +15,6 @@ import SingleItemScreen from '../../screens/Home/SingleItemScreen';
 import OurFarms from '../../screens/Home/OurFarms';
 import Wishlist from '../../screens/Wishlist';
 import FashionCategory from '../../screens/FashionCategory';
-import reactotron from 'reactotron-react-native';
 import QBuyFashion from '../../screens/Home/QBuyFashion';
 import CategoryScreen from '../../screens/Home/CategoryScreen';
 import StoreScreen from '../../screens/Home/StoreScreen';

@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
         fontSize:11, 
         marginTop:5, 
         fontFamily:'Poppins-SemiBold', 
-        color:'#23233C' 
+        color:'#23233C' ,
+        fontWeight: 'bold'
     }
 })

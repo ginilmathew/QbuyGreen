@@ -8,12 +8,12 @@ import Login from '../screens/auth/Login';
 import Otp from '../screens/auth/Otp';
 import Menu from './Menu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SplashScreen from '../screens/SplashScreen';
-import reactotron from '../ReactotronConfig';
+//import SplashScreen from '../screens/SplashScreen';
 import AuthContext from '../contexts/Auth';
 import customAxios from '../CustomeAxios';
 import LoaderContext from '../contexts/Loader';
 import Toast from 'react-native-toast-message'
+import SplashScreen from 'react-native-splash-screen'
 
 
 // import Menu from './Menu';
@@ -38,7 +38,6 @@ const Navigation = () => {
             const user = await AsyncStorage.getItem("user");
             if (user) {
                 let userdata = JSON.parse(user)
-                reactotron.log({ userdata })
                 await customAxios.get(`customer/customer-profile`)
                 .then(async response => {
                     // setData(response?.data?.data)
@@ -57,18 +56,18 @@ const Navigation = () => {
                 setInitialScreen('Menu');
             }
             else {
+                SplashScreen?.hide()
                 setInitialScreen('Login');
+                
             }
         }
         else {
+            SplashScreen?.hide()
             setInitialScreen('Login');
+            
         }
     }
-    if (!initialScreen) {
-        return (
-            <SplashScreen />
-        )
-    }
+    
 
     return (
         <NavigationContainer ref={navigationRef}>

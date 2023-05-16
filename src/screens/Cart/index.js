@@ -8,7 +8,6 @@ import PandaContext from '../../contexts/Panda';
 import Lottie from 'lottie-react-native';
 import CommonTexts from '../../Components/CommonTexts';
 import CommonItemCard from '../../Components/CommonItemCard';
-import reactotron from '../../ReactotronConfig';
 import AuthContext from '../../contexts/Auth';
 import customAxios from '../../CustomeAxios';
 import CartContext from '../../contexts/Cart';
@@ -16,6 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import LoaderContext from '../../contexts/Loader';
 import moment from 'moment';
+import reactotron from 'reactotron-react-native';
 
 
 const Cart = ({ navigation }) => {
@@ -33,27 +33,18 @@ const Cart = ({ navigation }) => {
     const cartContext = useContext(CartContext)
 
 
-reactotron?.log({cartContext:cartContext?.cart})
 
     //let cartId = user?.cartId
 
-    // reactotron.log({ cartId })
 
     const [cartItemsList, setCartItemsList] = useState([])
 
-    // reactotron.log({ cartItemsList })
-
-    // useEffect(() => {
-    //     getCartItems()
-    //     //reactotron.log({active})
-    // }, [])
 
     const getCartItems = async () => {
         if (cartContext?.cart?._id) {
             await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
             .then(async response => {
 
-                reactotron.log({response})
                 let products = response?.data?.data?.product_details;
                 let finalProducts = [];
                 //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
@@ -92,7 +83,7 @@ reactotron?.log({cartContext:cartContext?.cart})
                         comm = pro?.variants?.commission ? pro?.variants?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
-                        minQty= pro?.variants?.minimum_qty ? parseFloat(pro?.variants?.minimum_qty) : 0
+                        minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock;
                         fromDate = pro?.variants?.offer_date_from
                         toDate = pro?.variants?.offer_date_to
@@ -158,7 +149,6 @@ reactotron?.log({cartContext:cartContext?.cart})
                     }
                     else{
                         product['available'] = true
-                        reactotron.log({offer, regular, seller, fromDate, toDate})
                         if(offer > 0){
                             if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                                 
@@ -195,14 +185,12 @@ reactotron?.log({cartContext:cartContext?.cart})
                             product['price'] = amount;
                             finalProducts.push(product)
                         }
-                        reactotron.log({product})
                     }
-                    reactotron.log({product})
                    
                 })
-                reactotron.log({finalProducts})
                 setCartItemsList(finalProducts)
-                // reactotron.log({ response })
+
+                reactotron.log({finalProducts})
                 // setSingleProduct(response?.data?.data)
                 // loadingg.setLoading(false)
             })
@@ -229,7 +217,6 @@ reactotron?.log({cartContext:cartContext?.cart})
 
     const gotoCheckout = useCallback(async () => {
         let cancel = false
-        reactotron.log({cartItemsList})
         cartItemsList?.map(cart => {
             if(cart?.productdata?.stock){
                 if(cart?.type === "variant"){

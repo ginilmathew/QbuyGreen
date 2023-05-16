@@ -2,7 +2,6 @@ import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-n
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import HeaderWithTitle from '../../../../../Components/HeaderWithTitle'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import reactotron from 'reactotron-react-native';
 import AddressContext from '../../../../../contexts/Address';
 
 const AddNewLocation = ({ route, navigation }) => {
@@ -13,14 +12,6 @@ const AddNewLocation = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
 
     const mapRef = useRef()
-
-    // const renderRow = (data, index) => {
-
-    //     reactotron.log({ data })
-    //     return (
-    //         <Text key={index} color={'#000'}>{data?.description}</Text>
-    //     )
-    // }
 
 
     return (
@@ -37,7 +28,6 @@ const AddNewLocation = ({ route, navigation }) => {
                     }}
                     onPress={(data, details = null) => {
                         // 'details' is provided when fetchDetails = true
-                        reactotron.log(data, details);
                         let Value = {
                             location: data?.description,
                             city: details?.address_components?.filter(st => st.types?.includes('locality'))[0]?.long_name,

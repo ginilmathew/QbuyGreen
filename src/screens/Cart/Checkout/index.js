@@ -24,7 +24,6 @@ import ChooseTip from './ChooseTip'
 import ChooseDeliveryType from './ChooseDeliveryType'
 import CommonTexts from '../../../Components/CommonTexts'
 import PandaContext from '../../../contexts/Panda'
-import reactotron from '../../../ReactotronConfig'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
 import moment from 'moment'
@@ -35,6 +34,8 @@ import Toast from 'react-native-toast-message'
 import PaymentMethod from './PaymentMethod'
 import { RefreshControl } from 'react-native-gesture-handler'
 import LoaderContext from '../../../contexts/Loader'
+import { max } from 'lodash'
+import reactotron from 'reactotron-react-native'
 
 
 const Checkout = ({ navigation }) => {
@@ -91,7 +92,6 @@ const Checkout = ({ navigation }) => {
 
 
 
-    reactotron.log({ cartItems })
 
     useFocusEffect(
         React.useCallback(() => {
@@ -146,7 +146,7 @@ const Checkout = ({ navigation }) => {
                         comm = pro?.variants?.commission ? pro?.variants?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
-                        minQty= pro?.variants?.minimum_qty ? parseFloat(pro?.variants?.minimum_qty) : 0
+                        minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock;
                         fromDate = pro?.variants?.offer_date_from
                         toDate = pro?.variants?.offer_date_to
@@ -257,7 +257,6 @@ const Checkout = ({ navigation }) => {
                         }
                     }
                 })
-                reactotron.log({finalProducts})
                 setCartItems(finalProducts)
                 //getTotalAmount()
             })
@@ -437,9 +436,7 @@ const Checkout = ({ navigation }) => {
             total_amount: cartItems.reduce(function(previousVal, currentVal) {
                 return previousVal + currentVal?.price;
             }, 0),
-            delivery_charge: cartItems.reduce(function(previousVal, currentVal) {
-                return previousVal + currentVal?.delivery;
-            }, 0),
+            delivery_charge: cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery,
             delivery_type: "Slot based",
             franchise: cartItems?.[0]?.franchisee?._id,
             cart_id: cartItems?.[0]?.cartId,
@@ -447,7 +444,6 @@ const Checkout = ({ navigation }) => {
         }
 
 
-        //reactotron.log({orderDetails})
        
 
         
@@ -455,7 +451,6 @@ const Checkout = ({ navigation }) => {
        
 
 
-        //reactotron.log({ orderDetails })
         if(products?.length > 0){
             await customAxios.post(`customer/order/create`, orderDetails)
             .then(async response => {
@@ -519,6 +514,7 @@ const Checkout = ({ navigation }) => {
 
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
+        let orderId = paymentDetails?.orderId
         let isStaging = true
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
@@ -541,7 +537,7 @@ const Checkout = ({ navigation }) => {
                 let data = {
                     STATUS: 'TXN_FAILURE',
                     RESPMSG: 'User Cancelled transaction',
-                    ORDERID: paymentDetails?.orderId
+                    ORDERID: orderId
                 }
                 updatePaymentResponse(data)
             }
@@ -549,7 +545,6 @@ const Checkout = ({ navigation }) => {
             
             
         }).catch((err) => {
-            reactotron.log("PAYTM ERROR=>", JSON.stringify(err));
         });
 
     }
@@ -766,19 +761,17 @@ const Checkout = ({ navigation }) => {
                         <Text style={styles.textMedium}>{'Govt Taxes & Other Charges'}</Text>
                         <Text style={styles.textMedium}>₹ {'10'}</Text>
                     </View> */}
-                    <View style={styles.grandTotalMid}>
+                    {cartItems?.length > 0 && <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
-                        <Text style={styles.textMedium}>₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal.delivery;
-                        }, 0)} </Text>
-                    </View>
+                        <Text style={styles.textMedium}>₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery} </Text>
+                    </View>}
 
-                    <View style={styles.grandTotalBottom}>
+                    {cartItems?.length > 0 &&<View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
                         <Text style={styles.boldText}>₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal?.delivery + currentVal?.price;
-                        }, 0)}</Text>
-                    </View>
+                            return previousVal + currentVal?.price;
+                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
+                    </View>}
                 </View>
 
             </ScrollView>
@@ -790,28 +783,28 @@ const Checkout = ({ navigation }) => {
                         <Foundation name={'target-two'} color='#FF0000' size={20} marginTop={5} />
                     </View>
                     <View style={{ flex: 0.8, marginLeft: 10 }}>
-                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={21} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={21} color={'#FF5757'} />}
+                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={21} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={14} color={'#FF5757'} />}
                         <Text
                             style={styles.address}
-                        >{cartContext.defaultAddress?.area?.address ? cartContext.defaultAddress?.area?.address : myLocation}</Text>
+                        >{cartContext.defaultAddress?.area?.address && cartContext.defaultAddress?.area?.address}</Text>
                     </View>
 
                     <TouchableOpacity style={{ position: 'absolute', right: 20, top: 10 }} onPress={navigateToAddress}>
                         <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
                     </TouchableOpacity>
                 </View>
-                {!showList && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
+                {(!showList  && cartItems?.length > 0) && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
                     <Text
                         style={styles.textMedium}
                     >{'Grand Total  '}</Text>
                     <Text
                         style={styles.boldText}
                     >₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                        return previousVal + currentVal?.delivery + currentVal?.price;
-                    }, 0)}</Text>
+                        return previousVal + currentVal?.price;
+                    }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
                 </View>}
 
-                {showList && <>
+                {(showList && cartItems?.length > 0) && <>
                     <View style={styles.totalBill}>
                         <Text
                             style={styles.boldText}
@@ -840,9 +833,7 @@ const Checkout = ({ navigation }) => {
                         </View>
                         <Text
                             style={styles.textMedium}
-                        >₹ {cartItems?.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal?.delivery;
-                        }, 0)}</Text>
+                        >₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
 
                     </View>
                     {/* {charges.map(item => 
@@ -865,9 +856,9 @@ const Checkout = ({ navigation }) => {
                         >{'Grand Total  '}</Text>
                         <Text
                             style={styles.boldText}
-                        >₹ {cartItems.reduce(function(previousVal, currentVal) {
-                            return previousVal + currentVal?.delivery + currentVal?.price;
-                        }, 0)}</Text>
+                        >₹ {cartItems?.reduce(function(previousVal, currentVal) {
+                            return previousVal + currentVal?.price;
+                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
                     </View>
                 </>}
 

@@ -23,7 +23,6 @@ import SearchBox from '../../../Components/SearchBox';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AuthContext from '../../../contexts/Auth';
-import reactotron from 'reactotron-react-native';
 import { IMG_URL, env, location } from '../../../config/constants';
 import CartContext from '../../../contexts/Cart';
 import CategoryCard from './CategoryCard';
@@ -35,6 +34,8 @@ import { isEmpty } from 'lodash'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProduct } from '../../../helper/productHelper';
 import FastImage from 'react-native-fast-image';
+import reactotron from 'reactotron-react-native';
+import SplashScreen from 'react-native-splash-screen'
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -45,6 +46,8 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
+    let userData = userContext?.userData
+
 
     let loader = loadingg?.loading
 
@@ -53,14 +56,9 @@ const QBuyGreen = ({ navigation }) => {
     const [slider, setSlider] = useState(null)
 
 
-    reactotron?.log({ slider })
-
-    reactotron?.log({ availablePdt })
-
     useEffect(() => {
         let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
         setavailablePdt(availPdt?.data)
-        reactotron.log('FOCUS EFFECT')
         let slider = homeData?.find((item, index) => item?.type === 'sliders')
         setSlider(slider?.data)
 
@@ -132,12 +130,10 @@ const QBuyGreen = ({ navigation }) => {
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 setHomeData(response?.data?.data)
-                // let results = response?.data?.data;
-                // results[3]?.data?.map(pr => {
-                //     let prod = getProduct(pr);
-                //     reactotron.log({prod})
-                // })
                 loadingg.setLoading(false)
+                setTimeout(() => {
+                    SplashScreen?.hide()
+                }, 1000);
             })
             .catch(async error => {
                 console.log(error)
@@ -153,136 +149,9 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
 
-    const addToCart = async (item) => {
+    
 
-        let cartItems;
-        let url;
-        let productDetails;
-        let minimumQty = !isEmpty(item?.minimum_qty) ? parseFloat(item?.minimum_qty) : 1
-
-        if (item?.variants?.length === 0) {
-
-            if (cartContext?.cart) {
-                url = "customer/cart/update";
-                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-                if (existing >= 0) {
-                    let cartProducts = cartContext?.cart?.product_details;
-                    let quantity = cartProducts[existing].quantity + 1;
-
-                    if (item?.stock_value >= quantity) {
-                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                        cartItems = {
-                            cart_id: cartContext?.cart?._id,
-                            product_details: cartProducts,
-                            user_id: userContext?.userData?._id
-                        }
-                    }
-                    else {
-                        Toast.show({
-                            type: 'info',
-                            text1: 'Required quantity not available'
-                        })
-                        return false;
-                    }
-
-
-                }
-                else {
-
-                    if (item?.stock === true) {
-                        if (item?.stock_value >= minimumQty) {
-                            productDetails = {
-                                product_id: item?._id,
-                                name: item?.name,
-                                image: item?.product_image,
-                                type: 'single',
-                                variants: null,
-                                quantity: minimumQty
-                            };
-                        }
-                        else {
-                            Toast.show({
-                                type: 'error',
-                                text1: "Required quantity not available"
-                            });
-                            return false;
-                        }
-                    }
-                    else {
-                        productDetails = {
-                            product_id: item?._id,
-                            name: item?.name,
-                            image: item?.product_image,
-                            type: 'single',
-                            variants: null,
-                            quantity: minimumQty
-                        };
-                    }
-
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: [...cartContext?.cart?.product_details, productDetails],
-                        user_id: userContext?.userData?._id
-                    }
-                }
-            }
-            else {
-                url = "customer/cart/add";
-                if (item?.stock === true) {
-                    if (item?.stock_value >= minimumQty) {
-                        productDetails = {
-                            product_id: item?._id,
-                            name: item?.name,
-                            image: item?.product_image,
-                            type: 'single',
-                            variants: null,
-                            quantity: minimumQty
-                        };
-                    }
-                    else {
-                        Toast.show({
-                            type: 'error',
-                            text1: "Required quantity not available"
-                        });
-                        return false;
-                    }
-                }
-                else {
-                    productDetails = {
-                        product_id: item?._id,
-                        name: item?.name,
-                        image: item?.product_image,
-                        type: 'single',
-                        variants: null,
-                        quantity: minimumQty
-                    };
-                }
-
-
-                cartItems = {
-                    product_details: [productDetails],
-                    user_id: userContext?.userData?._id
-                }
-            }
-            loadingg.setLoading(true)
-            await customAxios.post(url, cartItems)
-                .then(async response => {
-                    cartContext.setCart(response?.data?.data)
-                    await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                    loadingg.setLoading(false)
-                })
-                .catch(async error => {
-                    loadingg.setLoading(false)
-                    Toast.show({
-                        type: 'error',
-                        text1: error
-                    })
-                })
-        }
-        else {
-            navigation.navigate('SingleItemScreen', { item: item })
-        }
-    }
+    
 
     const CarouselCardItem = ({ item, index }) => {
         return (
@@ -302,7 +171,6 @@ const QBuyGreen = ({ navigation }) => {
 
     const renderItems = (item) => {
 
-        reactotron?.log({ item }, 'item in Carasel')
         if (item?.type === 'categories') {
             return (
                 <>
@@ -366,27 +234,29 @@ const QBuyGreen = ({ navigation }) => {
         if (item?.type === 'recentlyviewed') {
             return (
                 <>
-                    <RecentlyViewed data={item?.data} addToCart={addToCart} />
+                    <RecentlyViewed data={item?.data}  />
                 </>
             )
         }
         if (item?.type === 'suggested_products') {
             return (
                 <>
-                    <PandaSuggestions data={item?.data} addToCart={addToCart} />
+                    <PandaSuggestions data={item?.data}  />
                 </>
             )
         }
         // if (item?.type === 'available_products') {
         //     return (
         //         <>
-        //             <AvailableProducts data={item?.data} addToCart={addToCart} />
+        //             <AvailableProducts data={item?.data}  />
         //         </>
         //     )
         // }
 
 
     }
+
+    
 
     const renderProducts = ({ item }) => {
         return (
@@ -395,7 +265,6 @@ const QBuyGreen = ({ navigation }) => {
                 key={item?._id}
                 width={width / 2.25}
                 height={220}
-                addToCart={addToCart}
                 mr={8}
                 ml={8}
                 mb={15}
@@ -503,7 +372,6 @@ const QBuyGreen = ({ navigation }) => {
                                 item={item}
                                 width={width / 2.5}
                                 marginHorizontal={5}
-                                addToCart={addToCart}
                             />
                         )}
                     </ScrollView>
@@ -541,7 +409,6 @@ const QBuyGreen = ({ navigation }) => {
                                 width={width / 2.25}
                                 height={220}
                                 wishlistIcon
-                                addToCart={addToCart}
                             />
                         ))}
                     </View>

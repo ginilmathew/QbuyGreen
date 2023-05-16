@@ -9,7 +9,6 @@ import CommonTitle from '../../../Components/CommonTitle';
 import OtpInput from '../../../Components/OtpInput';
 import CommonTexts from '../../../Components/CommonTexts';
 import AuthContext from '../../../contexts/Auth';
-import reactotron from '../../../ReactotronConfig';
 import LoaderContext from '../../../contexts/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import customAxios from '../../../CustomeAxios';
@@ -25,8 +24,6 @@ const Otp = ({ navigation }) => {
 
 	let mobileNo = user?.login?.mobile
 	let userData = user?.userData
-
-	reactotron.log({mode})
 
 
 	const schema = yup.object({

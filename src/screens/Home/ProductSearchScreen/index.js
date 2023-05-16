@@ -11,7 +11,6 @@ import LoaderContext from '../../../contexts/Loader'
 import { IMG_URL, env, location } from '../../../config/constants'
 import SearchResultsCard from './SearchResultsCard'
 import Toast from 'react-native-toast-message';
-import reactotron from '../../../ReactotronConfig'
 import AuthContext from '../../../contexts/Auth'
 
 

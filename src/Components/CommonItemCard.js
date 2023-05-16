@@ -14,7 +14,6 @@ import { useNavigation } from '@react-navigation/native'
 import ItemAddedFromSuggtnCard from './ItemAddedFromSuggtnCard'
 import PandaContext from '../contexts/Panda'
 import CommonRating from './CommonRating';
-import reactotron from '../ReactotronConfig';
 import { IMG_URL } from '../config/constants';
 import moment from 'moment';
 import { min, max } from 'lodash'
@@ -26,8 +25,9 @@ import LoaderContext from '../contexts/Loader';
 import LinearGradient from 'react-native-linear-gradient';
 import { has } from 'lodash'
 import { getProduct } from '../helper/productHelper';
+import reactotron from 'reactotron-react-native';
 
-const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
+const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, mr, ml, mb, getWishlist }) => {
 
     const [data, setData] = useState([])
 
@@ -39,12 +39,11 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
 
-    reactotron.log({ data })
-
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
+    
 
     const loadingg = useContext(LoaderContext)
 
@@ -59,20 +58,18 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const handleClick = useCallback(() => {
 
         startTransition(() => {
-            // if(item?.stock === true){
-            //     navigation.navigate('SingleItemScreen', { item: item })
-            // }else{
-            //     Toast.show({
-            //         type: 'error',
-            //         text1: 'Item is out of stock'
-            //     })
-            // }
+            reactotron.log({data})
             navigation.navigate('SingleItemScreen', { item: data })
         })
-        })
+    }, [data])
 
     const openBottomSheet = () => {
-        addToCart(item)
+        if(!data?.variant){
+            cartContext?.addToCart(data)
+        }
+        else{
+            navigation.navigate('SingleItemScreen', { item: data })
+        }
         //refRBSheet.current.open()
         //navigation.navigate('SingleItemScreen', { item: item })
     }
@@ -96,6 +93,14 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         await customAxios.post(`customer/wishlist/delete`, datas)
             .then(async response => {
                 setHeart(!heart)
+                if(wishlistIcon){
+                    getWishlist()
+                }
+                else{
+                    data.is_wishlist = false
+                    setData({...data})
+                }
+                
                 // if(has(response?.data, 'data')){
 
                 // }
@@ -105,7 +110,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 //         text1: response?.data?.message
                 //     })
                 // }
-                // reactotron.log({response})
                 // setAvailabelPdts(response?.data?.data)
             })
             .catch(async error => {
@@ -115,7 +119,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 });
             })
 
-    }, [heart])
+    }, [data?.is_wishlist])
 
     const AddAction = useCallback(async () => {
         //setHeart(!heart)
@@ -127,6 +131,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
         await customAxios.post(`customer/wishlist/create`, datas)
             .then(async response => {
+                data.is_wishlist = true
+                setData({...data})
                 setHeart(!heart)
                 // if(has(response?.data, 'data')){
                 //     setHeart(!heart)
@@ -145,7 +151,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 });
             })
 
-    }, [heart])
+    }, [data?.is_wishlist])
 
 
     return (
@@ -178,10 +184,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     </View>} */}
 
                     {active === 'fashion' || active === 'green' && <TouchableOpacity
-                        onPress={data?.is_wishlist ? RemoveAction : AddAction}
+                        onPress={(data?.is_wishlist || wishlistIcon) ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={data?.is_wishlist ? "#FF6464" : '#EDEDED'} size={12} />
+                        <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12} />
                     </TouchableOpacity>}
 
                 </FastImage>

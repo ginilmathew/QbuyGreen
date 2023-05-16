@@ -24,8 +24,6 @@ import StoreScreen from '../screens/Home/StoreScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeNav = ({mode, route}) => {
-    //const { mode } = route.params
-    reactotron.log({params: route})
     return (
         <>
         <Stack.Navigator initialRouteName='Home'  screenOptions={{ headerShown: false }}> 

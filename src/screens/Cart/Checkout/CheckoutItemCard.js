@@ -5,7 +5,6 @@ import moment from 'moment'
 import CartContext from '../../../contexts/Cart'
 import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
-import reactotron from 'reactotron-react-native'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 import { useNavigation } from '@react-navigation/native'
 
@@ -147,9 +146,6 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
     // }, [])
 
     const removeItem = async() => {
-        //let minimumQty = item?.productdata?.minimum_qty ? data?.productdata?.minimum_qty : 1
-        //reactotron.log({minimumQty})
-        //return false
         let allProducts = cartContext?.cart?.product_details;
         let cartItems;
         if(data?.quantity > 1){
@@ -269,7 +265,7 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
     return (
         <View style={styles.container}>
             <View style={{ flex: 0.8 }}>
-                <Text style={styles.text1}>{item?.name}</Text>
+            {item?.attributes?.length > 0 ? <Text style={styles.text1}>{`${item?.name}${'('}${item?.attributes.join(', ')}${')'} `}</Text> : <Text style={styles.text1}>{item?.name}</Text>}
                 {!view && <Text onPress={gotoStore} style={styles.text2}>{item?.store?.name}</Text>}
             </View>
             <Text style={styles.text1}>₹ {item?.unitPrice}</Text>
