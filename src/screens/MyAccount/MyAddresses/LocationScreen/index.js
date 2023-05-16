@@ -172,7 +172,7 @@ const LocationScreen = ({ route, navigation }) => {
                 <View style={{ flexDirection: 'row', }}>
                     <Foundation name={'target-two'} color='#FF0000' size={23} marginTop={7} />
                     <View style={{ flex: 0.9, marginLeft: 7, }}>
-                        <CommonTexts label={addressContext?.currentAddress ? addressContext?.currentAddress?.city : city} fontSize={22} />
+                        <CommonTexts label={addressContext?.currentAddress ? addressContext?.currentAddress?.city : city} fontSize={20} numberOfLines={1}/>
                         <Text
                             style={{
                                 fontFamily: 'Poppins-Regular',
@@ -180,6 +180,7 @@ const LocationScreen = ({ route, navigation }) => {
                                 fontSize: 11,
                                 marginTop: -5
                             }}
+                            numberOfLines={2}
                         >{addressContext?.currentAddress ? addressContext?.currentAddress?.location : address}</Text>
                     </View>
                     <TouchableOpacity

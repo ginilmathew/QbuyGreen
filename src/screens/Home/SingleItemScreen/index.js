@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal, SafeAreaView, Dimensions } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -25,7 +25,8 @@ import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message';
 import { isEmpty } from 'lodash'
-
+import Carousel from 'react-native-reanimated-carousel';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 let link = '../../../Videos/farming.mp4'
 
@@ -55,7 +56,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     let userData = user?.userData
     const item = route?.params?.item
 
-    reactotron.log({item})
+    reactotron.log({ item })
 
     const [singleProduct, setSingleProduct] = useState([])
     const [selectedImage, setSelectedImage] = useState(0)
@@ -718,15 +719,23 @@ const SingleItemScreen = ({ route, navigation }) => {
             )
         }
     }
- 
+
     const openSingleImg = useCallback(() => {
         setShowSingleImg(true)
-    },[])
+    }, [])
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
-    },[])
+    }, [])
 
+    let imageArray = singleProduct?.image?.filter((data, index)=> index !== selectedImage)
+    imageArray?.unshift(singleProduct?.image[selectedImage])
+
+    let imagesss = imageArray?.map((items, index) => {
+        return {url : `${IMG_URL}${items}`}
+    })
+
+    reactotron.log({imagesss})
 
 
     return (
@@ -738,19 +747,30 @@ const SingleItemScreen = ({ route, navigation }) => {
             >
 
                 <View style={{ height: 200 }}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={openSingleImg}
                         style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}
                     >
 
                         {singleProduct?.image && singleProduct?.image?.length > 0 ?
-                            <FastImage
-                                // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
-                                style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='contain'
-                            >
-                            </FastImage> : <FastImage
+
+                            <Carousel
+                                // autoPlay={true}
+                                width={width}
+                                data={singleProduct?.image}
+                                renderItem={({ index }) => (
+                                    <FastImage
+                                        source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
+                                        style={{ height: 180, borderRadius: 15, }}
+                                        resizeMode='contain'
+                                    >
+                                    </FastImage>
+                                )}
+                                onSnapToItem={(index) => setSelectedImage(index)}
+                                scrollAnimationDuration={10}
+                            />
+
+                            : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
@@ -761,7 +781,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                     </TouchableOpacity>
-                    {renderInStock()} 
+                    {renderInStock()}
                     {/* <VideoPlayer
                         video={ require('../../../Videos/farming.mp4') }
                         videoWidth={1600}
@@ -929,28 +949,46 @@ const SingleItemScreen = ({ route, navigation }) => {
                     <Text>cary</Text>
                 </Animated.View>  */}
 
-                <Modal
+                {/* <Modal
                     // animationType="slide"
-                    transparent={true}
+                    // transparent={true}
                     visible={showSingleImg}
                 >
-                    <View
-                        style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
-                    >
-                        {singleProduct?.image&&
-                      
-                        <FastImage
-                            source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
-                            style={{ width: width-15, height: 400, borderRadius:10, padding:10 }}
-                            resizeMode='cover'
+                    
+                    <SafeAreaView>
+                        <View 
+                            style={{ alignSelf: 'center', shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, elevation: 5, width: width - 10, marginTop:5 }}
                         >
-                            <TouchableOpacity onPress={closeSingleImg} style={{alignSelf:'flex-end', backgroundColor:'#000', borderRadius:10, width:20, height:20, alignItems:'center', justifyContent:'center'}}>
-                                <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
-                            </TouchableOpacity>
-                        </FastImage>
+                        {singleProduct?.image &&
+                            <FastImage
+                                source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
+                                style={{  height: height-100, borderRadius: 10, padding: 10 }}
+                            >
+                                <TouchableOpacity onPress={closeSingleImg} style={{ alignSelf: 'flex-end', backgroundColor: '#000', borderRadius: 10, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' }}>
+                                    <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
+                                </TouchableOpacity>
+                            </FastImage>
                         }
+                        </View>
+                    </SafeAreaView>
+                </Modal> */}
+
+                {imagesss && <Modal visible={showSingleImg} >
+                    <View style={{ flex: 1 }}>
+                        <ImageViewer
+                            imageUrls={imagesss}
+                            renderHeader={() => 
+                                <TouchableOpacity 
+                                    onPress={closeSingleImg} 
+                                    style={{alignSelf:'flex-end', position:'absolute', zIndex:100, top:40, right:20}}
+                                >
+                                    <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} /> 
+                                </TouchableOpacity>
+                            }
+                        />
                     </View>
-                </Modal>
+
+                </Modal>}
 
 
             </ScrollView>

@@ -38,11 +38,10 @@ const QBuyFashion = () => {
 
     const navigation = useNavigation()
 
-
-    const auth = useContext(AuthContext)
+    const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
-    let coord = auth.location
+    let coord = userContext.location
 
     const loadingg = useContext(LoaderContext)
     let loader = loadingg?.loading
@@ -311,7 +310,7 @@ const QBuyFashion = () => {
         loadingg.setLoading(true)
         let datas = {
             type: "fashion",
-            coordinates: env === "dev" ? location : auth.location
+            coordinates: env === "dev" ? location : userContext.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
@@ -364,7 +363,6 @@ const QBuyFashion = () => {
                             ml={8}
                         />
                     </View>
-
                 </>
             )
         }
@@ -394,14 +392,7 @@ const QBuyFashion = () => {
                 </>
             )
         }
-        // if (item?.type === 'available_products') {
-        //     return (
-        //         <>
-        //             <AvailableProducts data={item?.data} addToCart={addToCart} />
-        //         </>
-        //     )
-        // }
-
+     
     }
     const renderProducts = ({ item }) => {
         return (
@@ -424,18 +415,6 @@ const QBuyFashion = () => {
             <Header onPress={onClickDrawer} />
             <View style={styles.container}>
 
-
-                {/*<FlatList
-                    data={homeData}
-                    keyExtractor={(item, index) => index}
-                    renderItem={renderItems}
-                    showsVerticalScrollIndicator={false}
-                    pt={2}
-                    mb={170}
-                    refreshing={loader}
-                    onRefresh={getHomedata}
-                /> */}
-
                 <ScrollView
                     scrollEnabled={false}
                     removeClippedSubviews
@@ -444,7 +423,7 @@ const QBuyFashion = () => {
                         <RefreshControl refreshing={loader} onRefresh={getHomedata} />
                     }
                 >
-                    <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
+                    <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
                     <SearchBox onPress={onSearch} />
                     {homeData?.map(home => renderItems(home))}
                     {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={10} />}
@@ -457,8 +436,6 @@ const QBuyFashion = () => {
                         removeClippedSubviews={true}
                         windowSize={10}
                         maxToRenderPerBatch={5}
-                        // refreshing={loader}
-                        // onRefresh={getHomedata}
                         numColumns={2}
                         style={{ marginLeft: 5 }}
                     />
