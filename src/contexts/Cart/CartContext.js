@@ -68,7 +68,6 @@ const CartProvider = (props) => {
             }
         }
         else{
-            reactotron.log("in")
             url = "customer/cart/add";
             productDetails = {
                 product_id: item?._id,
@@ -83,7 +82,6 @@ const CartProvider = (props) => {
                 ] : null,
                 quantity: minimumQty
             };
-            //reactotron.log({productDetails})
             cartItems = {
                 product_details: [productDetails],
                 user_id: userData?._id

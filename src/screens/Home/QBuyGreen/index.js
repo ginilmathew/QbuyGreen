@@ -35,6 +35,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProduct } from '../../../helper/productHelper';
 import FastImage from 'react-native-fast-image';
 import reactotron from 'reactotron-react-native';
+import SplashScreen from 'react-native-splash-screen'
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -130,6 +131,9 @@ const QBuyGreen = ({ navigation }) => {
             .then(async response => {
                 setHomeData(response?.data?.data)
                 loadingg.setLoading(false)
+                setTimeout(() => {
+                    SplashScreen.hide()
+                }, 1000);
             })
             .catch(async error => {
                 console.log(error)

@@ -15,9 +15,15 @@ import AuthContext from '../../../contexts/Auth';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
 import Toast from 'react-native-toast-message'
+import SplashScreen from 'react-native-splash-screen'
 
 
 const Login = ({ navigation }) => {
+
+	useEffect(() => {
+	   SplashScreen.hide()
+	}, [])
+	
 
 	const loginUser = useContext(AuthContext)
 	const loadingg = useContext(LoaderContext)

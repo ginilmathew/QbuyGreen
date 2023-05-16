@@ -33,8 +33,8 @@ export function getProduct(product){
     if(variant){
         product?.variants?.map(vari => {
             let offer = vari?.offer_price ? parseFloat(vari?.offer_price) : 0;
-            let offerFromDate = vari?.offer_date_from ? moment(vari?.offer_date_from).format("YYYY-MM-DD") : null
-            let offerToDate = vari?.offer_date_to ? moment(vari?.offer_date_to).format("YYYY-MM-DD") : null
+            let offerFromDate = vari?.offer_date_from ? moment(vari?.offer_date_from, "YYYY-MM-DD") : null
+            let offerToDate = vari?.offer_date_to ? moment(vari?.offer_date_to, "YYYY-MM-DD") : null
             let regular = vari?.regular_price ? parseFloat(vari?.regular_price) : 0
             let seller = vari?.seller_price ? parseFloat(vari?.seller_price) : 0
             let commission = vari?.commission ? parseFloat(vari?.commission) : 0
@@ -175,8 +175,8 @@ export function getProduct(product){
     }
     else{
         let offer = product?.offer_price ? parseFloat(product?.offer_price) : 0;
-        let offerFromDate = product?.offer_date_from ? moment(product?.offer_date_from).format("YYYY-MM-DD") : null
-        let offerToDate = product?.offer_date_to ? moment(product?.offer_date_to).format("YYYY-MM-DD") : null
+        let offerFromDate = product?.offer_date_from ? moment(product?.offer_date_from, "YYYY-MM-DD") : null
+        let offerToDate = product?.offer_date_to ? moment(product?.offer_date_to, "YYYY-MM-DD") : null
         let regular = product?.regular_price ? parseFloat(product?.regular_price) : 0
         let seller = product?.seller_price ? parseFloat(product?.seller_price) : 0
         let commission = product?.commission ? parseFloat(product?.commission) : 0
