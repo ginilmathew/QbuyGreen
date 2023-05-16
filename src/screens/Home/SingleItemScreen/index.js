@@ -464,11 +464,11 @@ const SingleItemScreen = ({ route, navigation }) => {
                     {contextPanda?.active === "panda" && <CustomButton
                         label={'Pre-Order'} bg='#D3D358' width={width / 2.2} onPress={showModals}
                     />}
-                    <CustomButton
+                    {item?.available && <CustomButton
                         onPress={addToCart}
                         label={'Add to Cart'} bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} width={width / 2.2}
                         loading={loader}
-                    />
+                    />}
 
                 </View>
                 <View style={{ backgroundColor: '#0C256C0D', height: 1, marginVertical: 20 }} />
