@@ -6282,11 +6282,6 @@ react-native-animatable@^1.3.3:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-auto-carousel@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-auto-carousel/-/react-native-auto-carousel-1.0.8.tgz#c619284b376d4518b3979afdc4eb4e9c50816252"
-  integrity sha512-ySa9j/qoO4HLNygVRGTqxSJm6SAk3V1bmutIRIiyIf2aPxEFJERpaFcEtqFc1KhL+stmtDDL21uqSvI31j9pFg==
-
 react-native-codegen@^0.71.3:
   version "0.71.5"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.71.5.tgz#454a42a891cd4ca5fc436440d301044dc1349c14"
