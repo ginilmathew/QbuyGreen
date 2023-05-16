@@ -87,8 +87,6 @@ const MyAddresses = ({ route, navigation }) => {
             }
         }
         navigation.navigate('LocationScreen')
-
-
     }
 
     const deleteSelect = async (id) => {
@@ -106,11 +104,8 @@ const MyAddresses = ({ route, navigation }) => {
             });
             loadingContex.setLoading(false)
         }
-
         )
     }
-
-
 
     const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
@@ -142,10 +137,7 @@ const MyAddresses = ({ route, navigation }) => {
             cartContext.setDefaultAddress(address)
             navigation.navigate("Checkout")
         }
-
     }
-
-
 
     return (
         <>

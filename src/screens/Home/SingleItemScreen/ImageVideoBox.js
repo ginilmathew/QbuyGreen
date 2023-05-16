@@ -4,6 +4,7 @@ import FastImage from 'react-native-fast-image'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import PandaContext from '../../../contexts/Panda'
 import { IMG_URL } from '../../../config/constants'
+import reactotron from '../../../ReactotronConfig'
 
 const ImageVideoBox = memo(({selectedImage, setSelectedImage, onPress, item, index}) => {
 
@@ -29,7 +30,7 @@ const ImageVideoBox = memo(({selectedImage, setSelectedImage, onPress, item, ind
                 style={{ width: '100%', height: '100%', borderRadius: 12, borderWidth: 2, borderColor: selectedImage === index ? active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E' : "transparent", alignItems: 'center', justifyContent: 'center' }}
                 borderRadius={10}
             >
-                {item?.file_type === 'video' && <View style={{ backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 20, alignItems: 'center', justifyContent: 'center', width: 20, height: 20 }}><Ionicons name='ios-play' color='#fff' size={13} marginLeft={2.5} /></View>}
+                {/* {item.includes('Videos') && <View style={{ backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 20, alignItems: 'center', justifyContent: 'center', width: 20, height: 20 }}><Ionicons name='ios-play' color='#fff' size={13} marginLeft={2.5} /></View>} */}
             </FastImage>
 
         </TouchableOpacity>

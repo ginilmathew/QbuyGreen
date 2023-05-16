@@ -27,16 +27,15 @@ import { has } from 'lodash'
 import { getProduct } from '../helper/productHelper';
 import reactotron from 'reactotron-react-native';
 
-const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, addToCart, mr, ml, mb }) => {
+const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, mr, ml, mb, getWishlist }) => {
 
     const [data, setData] = useState([])
-    
+
     useEffect(() => {
-        if(item){
+        if (item) {
             setData(getProduct(item))
         }
     }, [item])
-    
 
 
 
@@ -44,9 +43,9 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
+    
 
     const loadingg = useContext(LoaderContext)
-
 
 
     const refRBSheet = useRef();
@@ -57,19 +56,25 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
     const handleClick = useCallback(() => {
-        
+
         startTransition(() => {
+            reactotron.log({data})
             navigation.navigate('SingleItemScreen', { item: data })
         })
     }, [data])
 
     const openBottomSheet = () => {
-        addToCart(item)
+        if(!data?.variant){
+            cartContext?.addToCart(data)
+        }
+        else{
+            navigation.navigate('SingleItemScreen', { item: data })
+        }
         //refRBSheet.current.open()
         //navigation.navigate('SingleItemScreen', { item: item })
     }
 
-    
+
 
     const closeRbSheet = useCallback(() => {
         refRBSheet.current.close()
@@ -88,6 +93,14 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         await customAxios.post(`customer/wishlist/delete`, datas)
             .then(async response => {
                 setHeart(!heart)
+                if(wishlistIcon){
+                    getWishlist()
+                }
+                else{
+                    data.is_wishlist = false
+                    setData({...data})
+                }
+                
                 // if(has(response?.data, 'data')){
 
                 // }
@@ -106,7 +119,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 });
             })
 
-    }, [heart])
+    }, [data?.is_wishlist])
 
     const AddAction = useCallback(async () => {
         //setHeart(!heart)
@@ -118,6 +131,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
         await customAxios.post(`customer/wishlist/create`, datas)
             .then(async response => {
+                data.is_wishlist = true
+                setData({...data})
                 setHeart(!heart)
                 // if(has(response?.data, 'data')){
                 //     setHeart(!heart)
@@ -136,24 +151,24 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 });
             })
 
-    }, [heart])
+    }, [data?.is_wishlist])
 
 
     return (
         <>
             <TouchableOpacity
                 onPress={handleClick}
-                style={{ marginHorizontal: marginHorizontal,marginRight:mr, marginLeft:ml, marginBottom:mb }}
+                style={{ marginHorizontal: marginHorizontal, marginRight: mr, marginLeft: ml, marginBottom: mb }}
             >
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
                     source={data?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${data?.product_image}` }}
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                 >
-                    <LinearGradient colors={ data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(255, 255, 255, 0.2)', 'rgba(0, 0, 0, 0.4)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
+                    <LinearGradient colors={data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(255, 255, 255, 0.2)', 'rgba(0, 0, 0, 0.4)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{data?.name}</Text>
-                        <Text style={!data?.available ? styles.textSemiError :  styles.textSemi}>{data?.available ? `₹ ${data?.price}` : 'Out off stock'}</Text>
-                        <Text style={styles.lightText}>{data?.store?.name}</Text> 
+                        <Text style={!data?.available ? styles.textSemiError : styles.textSemi}>{data?.available ? `₹ ${data?.price}` : 'Out off stock'}</Text>
+                        <Text style={styles.lightText}>{data?.store?.name}</Text>
                     </LinearGradient>
 
                     {data?.available && <View style={styles.addContainer}>
@@ -169,10 +184,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     </View>} */}
 
                     {active === 'fashion' || active === 'green' && <TouchableOpacity
-                        onPress={data?.is_wishlist ? RemoveAction : AddAction}
+                        onPress={(data?.is_wishlist || wishlistIcon) ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={data?.is_wishlist ? "#FF6464" : '#EDEDED'} size={12}  />
+                        <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12} />
                     </TouchableOpacity>}
 
                 </FastImage>
@@ -228,13 +243,13 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     style={{
                         backgroundColor: active === 'fashion' ? '#FF7190' : active === 'green' ? '#8ED053' : '#58D36E',
                         height: 60,
-                        flexDirection: 'row',   
+                        flexDirection: 'row',
                         alignItems: 'center',
                         paddingHorizontal: 40,
                         width: '100%',
                     }}
                 >
-                   
+
                     <View style={styles.totalCount}>
                         {/* <Text style={styles.bottomCountText}>{addedList.length} item</Text> */}
                         <Text style={styles.bottomRateText}>₹ {total}</Text>
@@ -280,7 +295,7 @@ const styles = StyleSheet.create({
         paddingBottom: 2
     },
     lightText: {
-        fontFamily: 'Poppins-Light',
+        fontFamily: 'Poppins-SemiBold',
         color: '#fff',
         fontSize: 7,
         marginBottom: 3

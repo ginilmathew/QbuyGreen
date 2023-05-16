@@ -44,11 +44,12 @@ export default TypeCard
 
 const styles = StyleSheet.create({
     shopName: {
-        fontFamily: 'Poppins-Medium',
+        fontFamily: 'Poppins-SemiBold',
         color: '#23233C',
         fontSize: 10,
         textAlign: 'center',
         marginTop: 5,
         paddingHorizontal: 5,
+        fontWeight: 'bold'
     },
 })

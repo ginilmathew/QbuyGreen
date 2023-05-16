@@ -13,6 +13,7 @@ import AuthContext from '../../../contexts/Auth'
 import Toast from 'react-native-toast-message'
 import CartContext from '../../../contexts/Cart'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import reactotron from 'reactotron-react-native'
 
 
 const CategoryScreen = ({ route, navigation }) => {
@@ -27,6 +28,8 @@ const CategoryScreen = ({ route, navigation }) => {
     const loadingContex = useContext(LoaderContext)
     const cartContext = useContext(CartContext)
     let loadingg = loadingContex?.loading
+
+    let userData = auth?.userData
 
     const { name, mode, item, storeId } = route?.params
 
@@ -262,74 +265,7 @@ const CategoryScreen = ({ route, navigation }) => {
 
 
 
-    const addToCart = async (item) => {
-
-        let cartItems;
-        let url;
-
-        if (item?.variants?.length === 0) {
-            loadingContex.setLoading(true)
-            if (cartContext?.cart) {
-                url = "customer/cart/update";
-                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
-                if (existing >= 0) {
-                    let cartProducts = cartContext?.cart?.product_details;
-                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: cartProducts,
-                        user_id: auth?.userData?._id
-                    }
-                }
-                else {
-                    let productDetails = {
-                        product_id: item?._id,
-                        name: item?.name,
-                        image: item?.product_image,
-                        type: 'single',
-                        variants: null,
-                        quantity: 1
-                    };
-
-                    cartItems = {
-                        cart_id: cartContext?.cart?._id,
-                        product_details: [...cartContext?.cart?.product_details, productDetails],
-                        user_id: auth?.userData?._id
-                    }
-                }
-            }
-            else {
-                url = "customer/cart/add";
-                let productDetails = {
-                    product_id: item?._id,
-                    name: item?.name,
-                    image: item?.product_image,
-                    type: "single",
-                    variants: null,
-                    quantity: 1
-                };
-
-                cartItems = {
-                    product_details: [productDetails],
-                    user_id: auth?.userData?._id
-                }
-            }
-
-            await customAxios.post(url, cartItems)
-                .then(async response => {
-                    cartContext.setCart(response?.data?.data)
-                    await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                    loadingContex.setLoading(false)
-                })
-                .catch(async error => {
-                    loadingContex.setLoading(false)
-                })
-        }
-        else {
-            navigation.navigate('SingleItemScreen', { item: item })
-        }
-
-    }
+    
 
 
 
@@ -378,7 +314,6 @@ const CategoryScreen = ({ route, navigation }) => {
                                 key={item?._id}
                                 width={width / 2.2}
                                 height={250}
-                                addToCart={addToCart}
                             // wishlistIcon={fashion ? true : false}
                             />
                         ))}

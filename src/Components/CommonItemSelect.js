@@ -19,7 +19,7 @@ const CommonItemSelect = memo(({item, setSelected, selected}) => {
         <TouchableOpacity
             key={item?._id}
             onPress={onClick}
-            style={{ width: 80, backgroundColor: selected === item?._id ? grocery ? '#8ED053' : fashion ?  '#FF7190' : '#58D36E' : '#fff', borderRadius: 10, elevation: 10, alignItems: 'center', justifyContent: "center", marginLeft: 10, marginVertical: 10, shadowOpacity: 0.1, shadowRadius: 1, }}
+            style={{ backgroundColor: selected === item?._id ? grocery ? '#8ED053' : fashion ?  '#FF7190' : '#58D36E' : '#fff', borderRadius: 10, elevation: 10, alignItems: 'center', justifyContent: "center", marginLeft: 10, marginVertical: 10, shadowOpacity: 0.1, shadowRadius: 1, }}
         >
             <Text 
                 numberOfLines={1}

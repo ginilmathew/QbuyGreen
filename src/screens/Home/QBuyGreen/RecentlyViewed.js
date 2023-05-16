@@ -3,7 +3,7 @@ import React, { memo } from 'react'
 import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
-const RecentlyViewed = memo(({data, addToCart}) => {
+const RecentlyViewed = memo(({data}) => {
     const {width} = useWindowDimensions()
 
     return (
@@ -20,7 +20,6 @@ const RecentlyViewed = memo(({data, addToCart}) => {
                     item={item}
                     width={width / 2.5}
                     marginHorizontal={5}
-                    addToCart={addToCart}
                 />
             )}
         </ScrollView>

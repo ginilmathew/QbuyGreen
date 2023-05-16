@@ -9,11 +9,14 @@ const CommonTexts = ({ label, mt, textAlign, color, fontSize, my, ml, mb, textTr
                 color: color ? color : '#23233C',
                 fontSize: fontSize ? fontSize : 11,
                 marginTop: mt,
+               
                 textAlign: textAlign,
                 marginVertical: my,
                 marginLeft: ml,
                 marginBottom: mb,
-                textTransform
+                textTransform,
+                
+            
             }}
             numberOfLines={numberOfLines}
         >{label}</Text>
