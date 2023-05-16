@@ -24,6 +24,9 @@ import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message';
 import reactotron from 'reactotron-react-native'
+import Carousel from 'react-native-reanimated-carousel';
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 
 
 let link = '../../../Videos/farming.mp4'
@@ -45,6 +48,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [attributes, setAttributes] = useState([])
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
+    
 
     const position = new Animated.ValueXY({x:0,y:0})
 
@@ -352,6 +356,15 @@ const SingleItemScreen = ({ route, navigation }) => {
         setShowSingleImg(false)
     },[])
 
+    let image = [item?.product_image, ...item?.image];
+
+    let imageArray = image?.filter((data, index)=> index !== selectedImage)
+    imageArray?.unshift(item?.image[selectedImage])
+
+    let imagesss = imageArray?.map((items, index) => {
+        return {url : `${IMG_URL}${items}`}
+    })
+
 
 
     return (
@@ -369,13 +382,22 @@ const SingleItemScreen = ({ route, navigation }) => {
                     >
 
                         {images && images?.length > 0 ?
+                        <Carousel
+                        // autoPlay={true}
+                        width={width}
+                        data={images}
+                        renderItem={({ index }) => (
                             <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                 resizeMode='contain'
                             >
-                            </FastImage> : <FastImage
+                            </FastImage> 
+                            )}
+                            onSnapToItem={(index) => setSelectedImage(index)}
+                            scrollAnimationDuration={10}
+                        />: <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${images[0]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
@@ -563,6 +585,22 @@ const SingleItemScreen = ({ route, navigation }) => {
                     <View
                         style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
                     >
+                        {imagesss && <Modal visible={showSingleImg} >
+                            <View style={{ flex: 1 }}>
+                                <ImageViewer
+                                    imageUrls={imagesss}
+                                    renderHeader={() => 
+                                        <TouchableOpacity 
+                                            onPress={closeSingleImg} 
+                                            style={{alignSelf:'flex-end', position:'absolute', zIndex:100, top:40, right:20}}
+                                        >
+                                            <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} /> 
+                                        </TouchableOpacity>
+                                    }
+                                />
+                            </View>
+
+                        </Modal>}
                         {images &&
                       
                         <FastImage
