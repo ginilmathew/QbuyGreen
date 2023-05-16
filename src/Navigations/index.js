@@ -56,13 +56,13 @@ const Navigation = () => {
                 setInitialScreen('Menu');
             }
             else {
-                SplashScreen.hide()
+                SplashScreen?.hide()
                 setInitialScreen('Login');
                 
             }
         }
         else {
-            SplashScreen.hide()
+            SplashScreen?.hide()
             setInitialScreen('Login');
             
         }
