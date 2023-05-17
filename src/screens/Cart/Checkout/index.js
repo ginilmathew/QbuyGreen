@@ -182,8 +182,14 @@ const Checkout = ({ navigation }) => {
                                     product['unitPrice'] = offer;
                                     finalProducts.push(product)
                                 }
-                                else{
-                                    if(regular > 0){
+                                else if(fromDate){
+                                    if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                                        let finalPrice = offer * quantity;
+                                        product['price'] = finalPrice;
+                                        product['unitPrice'] = offer;
+                                        finalProducts.push(product)
+                                    }
+                                    else if(regular > 0){
                                         let finalPrice = regular * quantity;
                                         product['price'] = finalPrice;
                                         product['unitPrice'] = regular;
@@ -196,6 +202,12 @@ const Checkout = ({ navigation }) => {
                                         product['price'] = amount;
                                         finalProducts.push(product)
                                     }
+                                }
+                                else{
+                                    let finalPrice = offer * quantity;
+                                    product['price'] = finalPrice;
+                                    product['unitPrice'] = offer;
+                                    finalProducts.push(product)
                                 }
                             }
                             else if(regular > 0){
@@ -226,8 +238,14 @@ const Checkout = ({ navigation }) => {
                                 product['unitPrice'] = offer;
                                 finalProducts.push(product)
                             }
-                            else{
-                                if(regular > 0){
+                            else if(fromDate){
+                                if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                                    let finalPrice = offer * quantity;
+                                    product['price'] = finalPrice;
+                                    product['unitPrice'] = offer;
+                                    finalProducts.push(product)
+                                }
+                                else if(regular > 0){
                                     let finalPrice = regular * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = regular;
@@ -240,6 +258,12 @@ const Checkout = ({ navigation }) => {
                                     product['price'] = amount;
                                     finalProducts.push(product)
                                 }
+                            }
+                            else{
+                                let finalPrice = offer * quantity;
+                                product['price'] = finalPrice;
+                                product['unitPrice'] = offer;
+                                finalProducts.push(product)
                             }
                         }
                         else if(regular > 0){

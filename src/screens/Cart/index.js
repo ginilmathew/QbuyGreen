@@ -116,8 +116,13 @@ const Cart = ({ navigation }) => {
                                     product['price'] = finalPrice;
                                     finalProducts.push(product)
                                 }
-                                else{
-                                    if(regular > 0){
+                                else if(fromDate){
+                                    if(moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= fromDate){
+                                        let finalPrice = offer * quantity;
+                                        product['price'] = finalPrice;
+                                        finalProducts.push(product)
+                                    }
+                                    else if(regular > 0){
                                         let finalPrice = regular * quantity;
                                         product['price'] = finalPrice;
                                         finalProducts.push(product)
@@ -128,6 +133,11 @@ const Cart = ({ navigation }) => {
                                         product['price'] = amount;
                                         finalProducts.push(product)
                                     }
+                                }
+                                else{
+                                    let finalPrice = offer * quantity;
+                                    product['price'] = finalPrice;
+                                    finalProducts.push(product)
                                 }
                             }
                             else if(regular > 0){
@@ -156,20 +166,28 @@ const Cart = ({ navigation }) => {
                                 product['price'] = finalPrice;
                                 finalProducts.push(product)
                             }
-                            else{
-                                
-                                if(regular > 0){
+                            else if(fromDate){
+                                if(moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= fromDate){
+                                    let finalPrice = offer * quantity;
+                                    product['price'] = finalPrice;
+                                    finalProducts.push(product)
+                                }
+                                else if(regular > 0){
                                     let finalPrice = regular * quantity;
                                     product['price'] = finalPrice;
                                     finalProducts.push(product)
                                 }
                                 else{
-                                    
                                     let commission = (seller/100) * comm
                                     let amount = (seller + commission) * quantity;
                                     product['price'] = amount;
                                     finalProducts.push(product)
                                 }
+                            }
+                            else{
+                                let finalPrice = offer * quantity;
+                                product['price'] = finalPrice;
+                                finalProducts.push(product)
                             }
                         }
                         else if(regular > 0){

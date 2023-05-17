@@ -61,13 +61,21 @@ export function getProduct(product){
                                 price = amount
                             }
                         }
-                        else if(regular > 0){
-                            price = regular
+                        else if(offerFromDate){
+                            if(moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= offerFromDate){
+                                price = offer
+                            }
+                            else if(regular > 0){
+                                price = regular
+                            }
+                            else{
+                                let comm = (seller/100) * commission
+                                let amount = seller + comm;
+                                price = amount
+                            }
                         }
                         else{
-                            let comm = (seller/100) * commission
-                            let amount = seller + comm;
-                            price = amount
+                            price = offer
                         }
                     }
                     else if(regular > 0){
@@ -120,13 +128,21 @@ export function getProduct(product){
                             price = amount
                         }
                     }
-                    else if(regular > 0){
-                        price = regular
+                    else if(offerFromDate){
+                        if(moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= offerFromDate){
+                            price = offer
+                        }
+                        else if(regular > 0){
+                            price = regular
+                        }
+                        else{
+                            let comm = (seller/100) * commission
+                            let amount = seller + comm;
+                            price = amount
+                        }
                     }
                     else{
-                        let comm = (seller/100) * commission
-                        let amount = seller + comm;
-                        price = amount
+                        price = offer
                     }
                 }
                 else if(regular > 0){
@@ -201,13 +217,21 @@ export function getProduct(product){
                             price = amount
                         }
                     }
-                    else if(regular > 0){
-                        price = regular
+                    else if(offerFromDate){
+                        if(moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= offerFromDate){
+                            price = offer
+                        }
+                        else if(regular > 0){
+                            price = regular
+                        }
+                        else{
+                            let comm = (seller/100) * commission
+                            let amount = seller + comm;
+                            price = amount
+                        }
                     }
                     else{
-                        let comm = (seller/100) * commission
-                        let amount = seller + comm;
-                        price = amount
+                        price = offer
                     }
                 }
                 else if(regular > 0){
@@ -243,13 +267,21 @@ export function getProduct(product){
                         price = amount
                     }
                 }
-                else if(regular > 0){
-                    price = regular
+                else if(offerFromDate){
+                    if(moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= offerFromDate){
+                        price = offer
+                    }
+                    else if(regular > 0){
+                        price = regular
+                    }
+                    else{
+                        let comm = (seller/100) * commission
+                        let amount = seller + comm;
+                        price = amount
+                    }
                 }
                 else{
-                    let comm = (seller/100) * commission
-                    let amount = seller + comm;
-                    price = amount
+                    price = offer
                 }
                
             }

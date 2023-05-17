@@ -39,12 +39,28 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [showSingleImg, setShowSingleImg] = useState(false)
     let active = contextPanda.active
 
-    const item = route?.params?.item
+
+    const [item, setItem] = useState(null)
+
+    useEffect(() => {
+      if(route?.params?.item){
+        setItem(route?.params?.item)
+        setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image, route?.params?.item?.video_link] : [route?.params?.item?.product_image, route?.params?.item?.video_link])
+        addViewCount(route?.params?.item)
+        
+      }
+    
+      return () => {
+        setItem(null)
+        setImages([])
+      }
+    }, [route?.params?.item])
+    
 
 
     reactotron.log({item})
 
-    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link])
+    const [images, setImages] = useState(null)
     const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
@@ -121,7 +137,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         //getSingleProduct()
-        addViewCount()
+       // addViewCount()
     }, [])
 
     const getSingleProduct = async () => {
@@ -156,7 +172,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             })
     }
 
-    const addViewCount = async () => {
+    const addViewCount = async (item) => {
         let datas = {
             type: mode,
             product_id: item?._id,
@@ -401,23 +417,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 data={images}
                                 renderItem={({ index }) => (
                                     <>
-                                    {images?.length !== images?.lenth && <FastImage
+                                    {images?.length > 0 && <FastImage
                                         // source={singleProduct?.image[selectedImage]?.name} 
                                         source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
                                         style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                         resizeMode='contain'
                                     >
                                     </FastImage> }
-                                
-                                    {/* {images?.length === images?.lenth &&<VideoPlayer
-                                        video={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-
-                                        // showDuration={true}
-                                        controlsTimeout={2000}
-                                        pauseOnPress={true}
-                                        resizeMode='contain'
-                                
-                                    />} */}
                                     </>
                                    
 
@@ -426,7 +432,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 scrollAnimationDuration={10}
                             /> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${images[0]}` }}
+                                source={{ uri: `${IMG_URL}${images?.[0]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                 resizeMode='contain'
                             >
@@ -446,7 +452,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                 </View>
-                {images.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {images?.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {images?.map((item, index) =>
                         <ImageVideoBox
                             key={index}
@@ -617,6 +623,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                         {imagesArray && <Modal visible={showSingleImg} >
                             <View style={{ flex: 1 }}>
                                 <ImageViewer
+                                    enableSwipeDown
+                                    onSwipeDown={closeSingleImg}
                                     imageUrls={imagesArray}
                                     renderHeader={() =>
                                         <TouchableOpacity
