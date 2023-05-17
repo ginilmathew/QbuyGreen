@@ -97,6 +97,10 @@ const CartProvider = (props) => {
             //user?.setCartId(response?.data?.data?._id)
             await AsyncStorage.setItem("cartId", response?.data?.data?._id)
             loadingContext.setLoading(false)
+            Toast.show({
+                type: 'success',
+                text1: 'Product added to cart'
+            })
             //navigation.navigate('cart')
         })
         .catch(async error => {

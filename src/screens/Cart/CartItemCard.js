@@ -213,7 +213,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 </View>
                 {/* {renderPricing()} */}
                 <View style={{flexDirection:'row', alignItems:'center'}}>
-                    <Text style={styles.rateText}>{item?.available ?  `₹ ${item?.price}` : ""}</Text>
+                    <Text style={styles.rateText}>{item?.available ?  `₹ ${parseFloat(item?.price).toFixed(2)}` : ""}</Text>
                     <CommonCounter 
                         count={data.quantity}
                         addItem={addItem}
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     rateText : {
         fontFamily: 'Poppins-ExtraBold',
         color: '#089321',
-        fontSize: 18,
+        fontSize: 16,
     },
     outofStock: {
         position: 'absolute',

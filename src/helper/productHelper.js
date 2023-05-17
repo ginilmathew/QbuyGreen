@@ -81,7 +81,7 @@ export function getProduct(product){
                         id: vari?._id,
                         title: vari?.title,
                         attributs: vari?.attributs,
-                        price,
+                        price: parseFloat(price).toFixed(2),
                         minQty,
                         stockValue,
                         delivery,
@@ -140,7 +140,7 @@ export function getProduct(product){
                     id: vari?._id,
                     title: vari?.title,
                     attributs: vari?.attributs,
-                    price,
+                    price: parseFloat(price).toFixed(2),
                     minQty,
                     stockValue,
                     delivery,
@@ -160,11 +160,11 @@ export function getProduct(product){
             }
         })
         if(priceList?.length > 1){
-            newProduct['price'] = `${min(priceList)}-${max(priceList)}`
+            newProduct['price'] = `${parseFloat(min(priceList)).toFixed(2)}-${parseFloat(max(priceList)).toFixed(2)}`
             newProduct['available'] = true
         }
         else if(priceList?.length === 1){
-            newProduct['price'] = priceList[0]
+            newProduct['price'] = parseFloat(priceList[0]).toFixed(2)
             newProduct['available'] = true
         }
         else{
@@ -218,7 +218,7 @@ export function getProduct(product){
                     price = amount
                 }
                 newProduct['available'] = true
-                newProduct['price'] = price;
+                newProduct['price'] = parseFloat(price).toFixed(2);
             }
             else{
                 //OUT OF STOCK
@@ -261,7 +261,7 @@ export function getProduct(product){
                 price = amount
             }
 
-            newProduct['price'] = price;
+            newProduct['price'] = parseFloat(price).toFixed(2);
             newProduct['available'] = true;
         }
         newProduct['stockValue'] = stockValue;

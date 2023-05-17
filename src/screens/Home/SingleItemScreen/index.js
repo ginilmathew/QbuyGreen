@@ -606,7 +606,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             </View>
 
                         </Modal>}
-                        {images &&
+                        {/* {images &&
                       
                         <FastImage
                             source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
@@ -617,7 +617,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
                             </TouchableOpacity>
                         </FastImage>
-                        }
+                        } */}
                     </View>
                 </Modal>
 

@@ -264,18 +264,19 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 0.8 }}>
+            <View style={{ flex: 0.45 }}>
             {item?.attributes?.length > 0 ? <Text style={styles.text1}>{`${item?.name}${'('}${item?.attributes.join(', ')}${')'} `}</Text> : <Text style={styles.text1}>{item?.name}</Text>}
                 {!view && <Text onPress={gotoStore} style={styles.text2}>{item?.store?.name}</Text>}
             </View>
-            <Text style={styles.text1}>₹ {item?.unitPrice}</Text>
-            {!view && <CommonCounter 
+            <Text style={styles.text1}>₹ {parseFloat(item?.unitPrice).toFixed(2)}</Text>
+            <Text style={[styles.quantity, { textAlign: 'right' }]}>{item?.quantity}</Text>
+            {/* {!view && <CommonCounter 
                 count={item?.quantity}
                 addItem={addItem}
                 removeItem={removeItem}
-            />}
+            />} */}
 
-            <Text style={styles.text1}>₹ {item?.price}</Text>
+            <Text style={[styles.text1, { textAlign: 'right' }]}>₹ {parseFloat(item?.price).toFixed(2)}</Text>
         </View>
     )
 }
@@ -297,6 +298,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
+        flex: 0.2
+    },
+    quantity : {
+        fontFamily: 'Poppins-Medium',
+        color: '#23233C',
+        fontSize: 12,
+        flex: 0.05
     },
     text2 : {
         fontFamily: 'Poppins-BoldItalic',

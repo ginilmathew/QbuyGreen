@@ -22,7 +22,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress,
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 0.39, }}>
+            <View style={{ flex: 0.4, }}>
                 <CommonTexts label={itemName} fontSize={13} />
                 <TouchableOpacity
                     onPress={onPress}
@@ -130,7 +130,7 @@ const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress,
                     >{minQty}</Text>
                 </View>
             </View>
-            {available && <View style={{ flex: 0.15 }}>
+            {available && <View style={{ flex: 0.20 }}>
                 <Text
                     style={{
                         fontFamily: 'Poppins-Regular',
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: "space-between",
         padding: 5,
-        flex: 0.4,
+        flex: 0.38,
     },
 
 })
