@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal, Pressable } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -45,7 +45,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     useEffect(() => {
       if(route?.params?.item){
         setItem(route?.params?.item)
-        setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image, route?.params?.item?.video_link] : [route?.params?.item?.product_image, route?.params?.item?.video_link])
+        setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image] : [route?.params?.item?.product_image])
         addViewCount(route?.params?.item)
         
       }
@@ -58,7 +58,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     
 
 
-    reactotron.log({item})
+    // reactotron.log({ item })
 
     const [images, setImages] = useState(null)
     const [imagesArray, setImagesArray] = useState([])
@@ -133,7 +133,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
-    reactotron.log({singleProduct})
+    reactotron.log({ singleProduct })
 
     useEffect(() => {
         //getSingleProduct()
@@ -378,11 +378,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
-    }, [])
+    }, [showSingleImg])
 
-    let image = item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link];
+    let image = item?.image ? [item?.product_image, ...item?.image] : [item?.product_image];
 
-    reactotron?.log({image})
+    reactotron?.log({ image })
 
     let imageArray = image?.filter((data, index) => index !== selectedImage)
 
@@ -425,7 +425,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                     >
                                     </FastImage> }
                                     </>
-                                   
+
 
                                 )}
                                 onSnapToItem={(index) => setSelectedImage(index)}
@@ -621,21 +621,20 @@ const SingleItemScreen = ({ route, navigation }) => {
                         style={{ alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
                     >
                         {imagesArray && <Modal visible={showSingleImg} >
-                            <View style={{ flex: 1 }}>
                                 <ImageViewer
+                                    style={{ flex: 1 }}
                                     enableSwipeDown
                                     onSwipeDown={closeSingleImg}
+                                    onCancel={closeSingleImg}
                                     imageUrls={imagesArray}
-                                    renderHeader={() =>
-                                        <TouchableOpacity
-                                            onPress={closeSingleImg}
-                                            style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 100, top: 40, right: 20 }}
-                                        >
-                                            <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} />
-                                        </TouchableOpacity>
-                                    }
+                                    onClick={closeSingleImg}
+                                    renderFooter={() => <TouchableOpacity
+                                        onPress={closeSingleImg}
+                                        style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 150, bottom: 50, left: width/2, elevation: 5 }}
+                                    >
+                                        <AntDesign name='closecircle' onPress={closeSingleImg} color='#fff' size={25} alignSelf={'flex-end'} />
+                                    </TouchableOpacity>}
                                 />
-                            </View>
 
                         </Modal>}
                         {/* {images &&
