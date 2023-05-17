@@ -217,32 +217,46 @@ const Cart = ({ navigation }) => {
 
     const gotoCheckout = useCallback(async () => {
         let cancel = false
-        cartItemsList?.map(cart => {
-            if(cart?.productdata?.stock){
-                if(cart?.type === "variant"){
-                    if(parseFloat(cart?.variants?.stock_value) < cart?.quantity){
-                        cancel = true;
-                        Toast.show({
-                            type: 'info',
-                            text1: 'Please remove out of stocks products and continue'
-                        })
-                        return false;
-                    }
-                }
-                else if(parseFloat(cart?.productdata?.stock_value) < cart?.quantity){
-                    cancel = true;
-                    Toast.show({
-                        type: 'info',
-                        text1: 'Please remove out of stocks products and continue'
-                    })
-                    return false;
-                }
-            }
-        })
-        if(!cancel){
+        let quantity = cartItemsList?.find(cart => cart?.stock && cart?.quantity > cart?.stock_value);
+        reactotron.log({quantity, cartItemsList})
+        if(quantity){
+            Toast.show({
+                type: 'info',
+                text1: 'Please remove out of stocks products and continue'
+            })
+            return false;
+        }
+        else{
             navigation.navigate('Checkout')
         }
-        //navigation.navigate('Checkout')
+        // reactotron.log({cartItemsList})
+        // return false;
+        // cartItemsList?.map(cart => {
+        //     if(cart?.productdata?.stock){
+        //         if(cart?.type === "variant"){
+        //             if(parseFloat(cart?.variants?.stock_value) < cart?.quantity){
+        //                 cancel = true;
+        //                 Toast.show({
+        //                     type: 'info',
+        //                     text1: 'Please remove out of stocks products and continue'
+        //                 })
+        //                 return false;
+        //             }
+        //         }
+        //         else if(parseFloat(cart?.productdata?.stock_value) < cart?.quantity){
+        //             cancel = true;
+        //             Toast.show({
+        //                 type: 'info',
+        //                 text1: 'Please remove out of stocks products and continue'
+        //             })
+        //             return false;
+        //         }
+        //     }
+        // })
+        // if(!cancel){
+        //     navigation.navigate('Checkout')
+        // }
+        // //navigation.navigate('Checkout')
 
     }, [cartItemsList])
 

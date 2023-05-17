@@ -769,14 +769,14 @@ const Checkout = ({ navigation }) => {
                     </View> */}
                     {cartItems?.length > 0 && <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
-                        <Text style={styles.textMedium}>₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery} </Text>
+                        <Text style={styles.textMedium}>₹ {cartItems?.length > 0 ? parseFloat(cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2) : null} </Text>
                     </View>}
 
                     {cartItems?.length > 0 &&<View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
-                        <Text style={styles.boldText}>₹ {cartItems?.reduce(function(previousVal, currentVal) {
+                        <Text style={styles.boldText}>₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
+                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
                     </View>}
                 </View>
 
@@ -789,7 +789,7 @@ const Checkout = ({ navigation }) => {
                         <Foundation name={'target-two'} color='#FF0000' size={20} marginTop={5} />
                     </View>
                     <View style={{ flex: 0.8, marginLeft: 10 }}>
-                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={21} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={14} color={'#FF5757'} />}
+                        {cartContext.defaultAddress?.area?.location ? <CommonTexts label={cartContext.defaultAddress?.area?.location} fontSize={16} /> : <CommonTexts label={'Please Add Address !!!'} fontSize={14} color={'#FF5757'} />}
                         <Text
                             style={styles.address}
                         >{cartContext.defaultAddress?.area?.address && cartContext.defaultAddress?.area?.address}</Text>
@@ -805,9 +805,9 @@ const Checkout = ({ navigation }) => {
                     >{'Grand Total  '}</Text>
                     <Text
                         style={styles.boldText}
-                    >₹ {cartItems?.reduce(function(previousVal, currentVal) {
+                    >₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
                         return previousVal + currentVal?.price;
-                    }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
+                    }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
                 </View>}
 
                 {(showList && cartItems?.length > 0) && <>
@@ -825,9 +825,9 @@ const Checkout = ({ navigation }) => {
                         </View>
                         <Text
                             style={styles.textMedium}
-                        >₹ {cartItems?.reduce(function(previousVal, currentVal) {
+                        >₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0)}</Text>
+                        }, 0)).toFixed(2)}</Text>
 
                     </View>
                     <View style={styles.charges}>
@@ -839,7 +839,7 @@ const Checkout = ({ navigation }) => {
                         </View>
                         <Text
                             style={styles.textMedium}
-                        >₹ {cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
+                        >₹ {parseFloat(cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
 
                     </View>
                     {/* {charges.map(item => 
@@ -862,9 +862,9 @@ const Checkout = ({ navigation }) => {
                         >{'Grand Total  '}</Text>
                         <Text
                             style={styles.boldText}
-                        >₹ {cartItems?.reduce(function(previousVal, currentVal) {
+                        >₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery}</Text>
+                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
                     </View>
                 </>}
 
