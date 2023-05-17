@@ -95,10 +95,10 @@ const Checkout = ({ navigation }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            if(cartContext?.cart?._id){
+            if (cartContext?.cart?._id) {
                 getCartItems()
             }
-            
+
         }, [cartContext?.cart?._id])
     );
 
@@ -112,13 +112,13 @@ const Checkout = ({ navigation }) => {
                     let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
                     let type = pro?.type;
                     let offer, regular, comm, seller, delivery, minQty, stock, fromDate, toDate, stock_value, product;
-                    if(type === "single"){
+                    if (type === "single") {
                         offer = pro?.productdata?.offer_price ? parseFloat(pro?.productdata?.offer_price) : 0
                         regular = pro?.productdata?.regular_price ? parseFloat(pro?.productdata?.regular_price) : 0
                         comm = pro?.productdata?.commission ? pro?.productdata?.commission : 0
                         seller = pro?.productdata?.seller_price ? parseFloat(pro?.productdata?.seller_price) : 0
                         delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
-                        minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
+                        minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock
                         fromDate = pro?.productdata?.offer_date_from
                         toDate = pro?.productdata?.offer_date_to
@@ -135,18 +135,18 @@ const Checkout = ({ navigation }) => {
                             minimum_qty: minQty,
                             stock_value,
                             store: pro?.productdata?.store,
-                            variant_id : null,
+                            variant_id: null,
                             franchisee: pro?.productdata?.franchisee,
                             cartId: response?.data?.data?._id
                         }
                     }
-                    else{
+                    else {
                         offer = pro?.variants?.offer_price ? parseFloat(pro?.variants?.offer_price) : 0
                         regular = pro?.variants?.regular_price ? parseFloat(pro?.variants?.regular_price) : 0
                         comm = pro?.variants?.commission ? pro?.variants?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
-                        minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
+                        minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock;
                         fromDate = pro?.variants?.offer_date_from
                         toDate = pro?.variants?.offer_date_to
@@ -164,19 +164,19 @@ const Checkout = ({ navigation }) => {
                             attributes: pro?.variants?.attributs,
                             stock_value,
                             store: pro?.productdata?.store,
-                            variant_id : pro?.variants?._id,
+                            variant_id: pro?.variants?._id,
                             franchisee: pro?.productdata?.franchisee,
                             cartId: response?.data?.data?._id
                         }
                     }
 
-                    if(stock){
+                    if (stock) {
                         //products have stock
-                        if(quantity <= stock_value){
+                        if (quantity <= stock_value) {
                             //required quantity available
                             product['available'] = true
-                            if(offer > 0){
-                                if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                            if (offer > 0) {
+                                if (moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) {
                                     let finalPrice = offer * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = offer;
@@ -189,14 +189,14 @@ const Checkout = ({ navigation }) => {
                                         product['unitPrice'] = offer;
                                         finalProducts.push(product)
                                     }
-                                    else if(regular > 0){
+                                    else if (regular > 0) {
                                         let finalPrice = regular * quantity;
                                         product['price'] = finalPrice;
                                         product['unitPrice'] = regular;
                                         finalProducts.push(product)
                                     }
-                                    else{
-                                        let commission = (seller/100) * comm
+                                    else {
+                                        let commission = (seller / 100) * comm
                                         let amount = (seller + commission) * quantity;
                                         product['unitPrice'] = seller + commission;
                                         product['price'] = amount;
@@ -225,29 +225,29 @@ const Checkout = ({ navigation }) => {
                                     }
                                 }
                             }
-                            else if(regular > 0){
+                            else if (regular > 0) {
                                 let finalPrice = regular * quantity;
                                 product['price'] = finalPrice;
                                 product['unitPrice'] = regular;
                                 finalProducts.push(product)
                             }
-                            else{
-                               let commission = (seller/100) * comm
+                            else {
+                                let commission = (seller / 100) * comm
                                 let amount = (seller + commission) * quantity;
                                 product['unitPrice'] = seller + commission;
                                 product['price'] = amount;
                                 finalProducts.push(product)
                             }
                         }
-                        else{
+                        else {
                             product['available'] = false;
                             finalProducts.push(product)
                         }
                     }
-                    else{
+                    else {
                         product['available'] = true
-                        if(offer > 0){
-                            if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                        if (offer > 0) {
+                            if (moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) {
                                 let finalPrice = offer * quantity;
                                 product['price'] = finalPrice;
                                 product['unitPrice'] = offer;
@@ -260,14 +260,14 @@ const Checkout = ({ navigation }) => {
                                     product['unitPrice'] = offer;
                                     finalProducts.push(product)
                                 }
-                                else if(regular > 0){
+                                else if (regular > 0) {
                                     let finalPrice = regular * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = regular;
                                     finalProducts.push(product)
                                 }
-                                else{
-                                    let commission = (seller/100) * comm
+                                else {
+                                    let commission = (seller / 100) * comm
                                     let amount = (seller + commission) * quantity;
                                     product['unitPrice'] = seller + commission;
                                     product['price'] = amount;
@@ -296,14 +296,14 @@ const Checkout = ({ navigation }) => {
                                 }
                             }
                         }
-                        else if(regular > 0){
+                        else if (regular > 0) {
                             let finalPrice = regular * quantity;
                             product['price'] = finalPrice;
                             product['unitPrice'] = regular;
                             finalProducts.push(product)
                         }
-                        else{
-                            let commission = (seller/100) * comm
+                        else {
+                            let commission = (seller / 100) * comm
                             let amount = (seller + commission) * quantity;
                             product['price'] = amount;
                             product['unitPrice'] = seller + commission;
@@ -324,15 +324,15 @@ const Checkout = ({ navigation }) => {
     }
 
 
-    
 
 
-    
-
-    
 
 
-    
+
+
+
+
+
 
 
     datas = [
@@ -487,10 +487,10 @@ const Checkout = ({ navigation }) => {
             payment_status: pay._id === "online" ? "pending" : "completed",
             payment_type: pay._id,
             type: active,
-            total_amount: cartItems.reduce(function(previousVal, currentVal) {
+            total_amount: cartItems.reduce(function (previousVal, currentVal) {
                 return previousVal + currentVal?.price;
             }, 0),
-            delivery_charge: cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery,
+            delivery_charge: cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery,
             delivery_type: "Slot based",
             franchise: cartItems?.[0]?.franchisee?._id,
             cart_id: cartItems?.[0]?.cartId,
@@ -498,73 +498,74 @@ const Checkout = ({ navigation }) => {
         }
 
 
-       
-
-        
-
-       
 
 
-        if(products?.length > 0){
+
+
+
+
+
+        if (products?.length > 0) {
             await customAxios.post(`customer/order/create`, orderDetails)
-            .then(async response => {
-                console.log("response ==>", JSON.stringify(response.data), response.status)
-                const { data } = response
-                if (data?.status) {
-                    if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
-                        payWithPayTM(data?.data)
+                .then(async response => {
+                    // console.log("response ==>", JSON.stringify(response.data), response.status)
+                    const { data } = response
+                   
+                    if (data?.status) {
+                        if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
+                            payWithPayTM(data?.data)
+                        } else {
+                            cartContext?.setCart(null)
+                            setCartItems(null)
+                            await AsyncStorage.removeItem("cartId");
+                            navigation.navigate('OrderPlaced', { item: response.data })
+                        }
                     } else {
-                        cartContext?.setCart(null)
-                        setCartItems(null)
-                        await AsyncStorage.removeItem("cartId");
-                        navigation.navigate('OrderPlaced')
+                        Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                     }
-                } else {
-                    Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
-                }
-            }).catch(error => {
-                console.log(error)
-                Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
-            })
+                }).catch(error => {
+                    console.log(error)
+                    Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                })
         }
-        else{
+        else {
             Toast.show({
                 type: 'info',
                 text1: 'Please add some products to cart to proceed'
             })
         }
-        
+
     }
 
 
-    const updatePaymentResponse = async(data) => {
+    const updatePaymentResponse = async (data) => {
         let details = data
         await customAxios.post(`customer/order/payment/status`, data)
-        .then(async response => {
-            cartContext?.setCart(null)
-            setCartItems(null)
-            await AsyncStorage.removeItem("cartId");
-            if (details?.STATUS == "TXN_SUCCESS") {
-                navigation.navigate('OrderPlaced')
-            } else {
-                Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
+            .then(async response => {
+                cartContext?.setCart(null)
+                setCartItems(null)
+                await AsyncStorage.removeItem("cartId");
+                if (details?.STATUS == "TXN_SUCCESS") {
+                    navigation.navigate('OrderPlaced')
+                } else {
+                    Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
+                    navigation.navigate("order")
+                }
+
+            }).catch(async error => {
+                cartContext?.setCart(null)
+                setCartItems(null)
                 navigation.navigate("order")
-            }
-            
-        }).catch(async error => {
-            cartContext?.setCart(null)
-            setCartItems(null)
-            navigation.navigate("order")
-            Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
-            cartContext?.setCart(null)
-            setCartItems(null)
-            await AsyncStorage.removeItem("cartId");
-            navigation.navigate("order")
-        })
+                Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                cartContext?.setCart(null)
+                setCartItems(null)
+                await AsyncStorage.removeItem("cartId");
+                navigation.navigate("order")
+            })
     }
 
 
-   
+
 
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
@@ -582,12 +583,12 @@ const Checkout = ({ navigation }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             false,//appInvokeRestricted
-          `paytm${paymentDetails?.mid}`//urlScheme
-         ).then((result) => {
-            if(has(result, "STATUS")){
+            `paytm${paymentDetails?.mid}`//urlScheme
+        ).then((result) => {
+            if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
             }
-            else{
+            else {
                 let data = {
                     STATUS: 'TXN_FAILURE',
                     RESPMSG: 'User Cancelled transaction',
@@ -596,8 +597,8 @@ const Checkout = ({ navigation }) => {
                 updatePaymentResponse(data)
             }
             console.log("PAYTM =>", JSON.stringify(result));
-            
-            
+
+
         }).catch((err) => {
             let data = {
                 STATUS: 'TXN_FAILURE',
@@ -622,13 +623,13 @@ const Checkout = ({ navigation }) => {
 
     const setPaymentMethod = useCallback((id) => {
         let pays = payment?.map(pay => {
-            if(pay?._id === id){
+            if (pay?._id === id) {
                 return {
                     ...pay,
                     selected: true
                 }
             }
-            else{
+            else {
                 return {
                     ...pay,
                     selected: false
@@ -641,17 +642,17 @@ const Checkout = ({ navigation }) => {
 
     const backToCart = useCallback(() => {
         navigation.navigate('Cart')
-    },[])
+    }, [])
 
 
     return (
         <>
             <HeaderWithTitle title={'Checkout'} onPressBack={backToCart} />
-            <ScrollView 
-            refreshControl={
-                <RefreshControl refreshing={loader} onRefresh={getCartItems} />
-            }
-            style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={loader} onRefresh={getCartItems} />
+                }
+                style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#F3F3F3', }}>
 
                 {/* products */}
                 <View style={styles.productBox}>
@@ -823,14 +824,14 @@ const Checkout = ({ navigation }) => {
                     </View> */}
                     {cartItems?.length > 0 && <View style={styles.grandTotalMid}>
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
-                        <Text style={styles.textMedium}>₹ {cartItems?.length > 0 ? parseFloat(cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2) : null} </Text>
+                        <Text style={styles.textMedium}>₹ {cartItems?.length > 0 ? parseFloat(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2) : null} </Text>
                     </View>}
 
-                    {cartItems?.length > 0 &&<View style={styles.grandTotalBottom}>
+                    {cartItems?.length > 0 && <View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
-                        <Text style={styles.boldText}>₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
+                        <Text style={styles.boldText}>₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                        }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
                     </View>}
                 </View>
 
@@ -853,15 +854,15 @@ const Checkout = ({ navigation }) => {
                         <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
                     </TouchableOpacity>
                 </View>
-                {(!showList  && cartItems?.length > 0) && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
+                {(!showList && cartItems?.length > 0) && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
                     <Text
                         style={styles.textMedium}
                     >{'Grand Total  '}</Text>
                     <Text
                         style={styles.boldText}
-                    >₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
+                    >₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                         return previousVal + currentVal?.price;
-                    }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                    }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
                 </View>}
 
                 {(showList && cartItems?.length > 0) && <>
@@ -879,7 +880,7 @@ const Checkout = ({ navigation }) => {
                         </View>
                         <Text
                             style={styles.textMedium}
-                        >₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
+                        >₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                             return previousVal + currentVal?.price;
                         }, 0)).toFixed(2)}</Text>
 
@@ -893,7 +894,7 @@ const Checkout = ({ navigation }) => {
                         </View>
                         <Text
                             style={styles.textMedium}
-                        >₹ {parseFloat(cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                        >₹ {parseFloat(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
 
                     </View>
                     {/* {charges.map(item => 
@@ -916,9 +917,9 @@ const Checkout = ({ navigation }) => {
                         >{'Grand Total  '}</Text>
                         <Text
                             style={styles.boldText}
-                        >₹ {parseFloat(cartItems?.reduce(function(previousVal, currentVal) {
+                        >₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0) + cartItems?.reduce((a,b)=>a.delivery>b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                        }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
                     </View>
                 </>}
 
@@ -928,7 +929,7 @@ const Checkout = ({ navigation }) => {
                         height: 60,
                         flexDirection: 'row',
                         alignItems: 'center',
-                        paddingHorizontal: 40,
+                        paddingHorizontal: 20,
                         position: 'absolute',
                         width: '100%',
                         bottom: 0
@@ -939,7 +940,7 @@ const Checkout = ({ navigation }) => {
                         style={styles.viewDetails}
                     >
                         <CommonTexts label={'View Detailed Bill'} color='#fff' fontSize={12} />
-                        <Ionicons name={showList ? 'chevron-down' : 'chevron-up'} size={20} color='#fff' marginLeft={5} />
+                        <Ionicons name={showList ? 'chevron-down' : 'chevron-up'} size={20} color='#fff' marginLeft={2} />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={{ alignItems: 'flex-end', flex: 0.5 }}
@@ -972,21 +973,21 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         padding: 10
     },
-    unitPrice : {
+    unitPrice: {
         fontFamily: 'Poppins-Bold',
         color: '#23233C',
         fontSize: 12,
         flex: 0.2,
         textAlign: 'center'
     },
-    quantity : {
+    quantity: {
         fontFamily: 'Poppins-Bold',
         color: '#23233C',
         fontSize: 12,
         flex: 0.15,
         textAlign: 'center'
     },
-    total : {
+    total: {
         fontFamily: 'Poppins-Bold',
         color: '#23233C',
         fontSize: 12,
@@ -1141,7 +1142,7 @@ const styles = StyleSheet.create({
         borderColor: '#fff',
         flex: 0.5,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'flex-start'
     }
 
 
