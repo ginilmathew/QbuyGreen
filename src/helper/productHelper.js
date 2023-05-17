@@ -2,7 +2,7 @@ import moment from "moment";
 import { min, max } from 'lodash'
 
 export function getProduct(product){
-    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes  } = product
+    let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes, video_link  } = product
 
     let variant = product?.variants?.length > 0 ? true : false
     let minQty = minimum_qty ? parseFloat(minimum_qty) : 1
@@ -25,7 +25,8 @@ export function getProduct(product){
         is_wishlist,
         variant,
         viewCount,
-        attributes: attributes
+        attributes: attributes,
+        video_link
     }
 
     
