@@ -264,19 +264,19 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 0.45 }}>
+            <View style={{ flex: 0.42 }}>
             {item?.attributes?.length > 0 ? <Text style={styles.text1}>{`${item?.name}${'('}${item?.attributes.join(', ')}${')'} `}</Text> : <Text style={styles.text1}>{item?.name}</Text>}
-                {!view && <Text onPress={gotoStore} style={styles.text2}>{item?.store?.name}</Text>}
+                {!view && <Text onPress={gotoStore} style={[styles.text2]}>{item?.store?.name}</Text>}
             </View>
-            <Text style={styles.text1}>₹ {parseFloat(item?.unitPrice).toFixed(2)}</Text>
-            <Text style={[styles.quantity, { textAlign: 'right' }]}>{item?.quantity}</Text>
+            <Text style={styles.unitPrice}>₹ {parseFloat(item?.unitPrice).toFixed(2)}</Text>
+            <Text style={[styles.quantity]}>{item?.quantity}</Text>
             {/* {!view && <CommonCounter 
                 count={item?.quantity}
                 addItem={addItem}
                 removeItem={removeItem}
             />} */}
 
-            <Text style={[styles.text1, { textAlign: 'right' }]}>₹ {parseFloat(item?.price).toFixed(2)}</Text>
+            <Text style={[styles.total]}>₹ {parseFloat(item?.price).toFixed(2)}</Text>
         </View>
     )
 }
@@ -294,17 +294,26 @@ const styles = StyleSheet.create({
         borderColor: '#00000029', 
         paddingHorizontal: 7 
     },
-    text1 : {
+    total : {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
-        flex: 0.2
+        flex: 0.27,
+        textAlign: 'center'
+    },
+    unitPrice : {
+        fontFamily: 'Poppins-Medium',
+        color: '#23233C',
+        fontSize: 12,
+        flex: 0.2,
+        textAlign: 'center'
     },
     quantity : {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
-        flex: 0.05
+        flex: 0.15,
+        textAlign: 'center'
     },
     text2 : {
         fontFamily: 'Poppins-BoldItalic',
