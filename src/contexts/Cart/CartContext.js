@@ -99,7 +99,8 @@ const CartProvider = (props) => {
             loadingContext.setLoading(false)
             Toast.show({
                 type: 'success',
-                text1: 'Product added to cart'
+                text1: 'Product added to cart',
+                position: 'top'
             })
             //navigation.navigate('cart')
         })
