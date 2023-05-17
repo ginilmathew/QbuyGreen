@@ -47,6 +47,12 @@ const SingleItemScreen = ({ route, navigation }) => {
         setItem(route?.params?.item)
         setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image] : [route?.params?.item?.product_image])
         addViewCount(route?.params?.item)
+        if(!item?.variant){
+            if (item?.variant) {
+
+                setAttributes([])
+            }
+        }
         
       }
     
@@ -227,7 +233,15 @@ const SingleItemScreen = ({ route, navigation }) => {
             const containsAll = attri.every(elem => attributes.includes(elem));
 
             if (containsAll) {
-
+                reactotron.log({sin, item})
+                if(item?.stock){
+                    if(!sin?.available){
+                        item.available = false
+                    }
+                    else{
+                        item.available = true
+                    }
+                }
                 setSelectedVariant(sin)
                 setPrice(sin?.price)
                 return false;
@@ -238,36 +252,47 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const renderInStock = () => {
-        if (item?.stock) {
-            if (item?.variant) {
-                if (parseFloat(item?.stock_value) > 0) {
-                    return (
-                        <View
-                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                        </View>
-                    )
+        if(item?.available){
+            if (item?.stock) {
+                if (item?.variant) {
+                    if (parseFloat(item?.stock_value) > 0) {
+                        return (
+                            <View
+                                style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                            >
+                                <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                            </View>
+                        )
+                    }
+                }
+                else {
+                    if (parseFloat(singleProduct?.stock_value) > 0) {
+                        return (
+                            <View
+                                style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                            >
+                                <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                            </View>
+                        )
+                    }
                 }
             }
             else {
-                if (parseFloat(singleProduct?.stock_value) > 0) {
-                    return (
-                        <View
-                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                        </View>
-                    )
-                }
+                return (
+                    <View
+                        style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                    >
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                    </View>
+                )
             }
         }
-        else {
+        else{
             return (
                 <View
-                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: 'red', borderRadius: 8 }}
                 >
-                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'Out Off Stock'}</Text>
                 </View>
             )
         }

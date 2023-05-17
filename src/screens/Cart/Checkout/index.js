@@ -182,7 +182,7 @@ const Checkout = ({ navigation }) => {
                                     product['unitPrice'] = offer;
                                     finalProducts.push(product)
                                 }
-                                else if(fromDate){
+                                else if(fromDate && !toDate){
                                     if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                                         let finalPrice = offer * quantity;
                                         product['price'] = finalPrice;
@@ -203,11 +203,26 @@ const Checkout = ({ navigation }) => {
                                         finalProducts.push(product)
                                     }
                                 }
-                                else{
+                                else if(!fromDate && !toDate){
                                     let finalPrice = offer * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = offer;
                                     finalProducts.push(product)
+                                }
+                                else{
+                                    if(regular > 0){
+                                        let finalPrice = regular * quantity;
+                                        product['price'] = finalPrice;
+                                        product['unitPrice'] = regular;
+                                        finalProducts.push(product)
+                                    }
+                                    else{
+                                        let commission = (seller/100) * comm
+                                        let amount = (seller + commission) * quantity;
+                                        product['unitPrice'] = seller + commission;
+                                        product['price'] = amount;
+                                        finalProducts.push(product)
+                                    }
                                 }
                             }
                             else if(regular > 0){
@@ -238,7 +253,7 @@ const Checkout = ({ navigation }) => {
                                 product['unitPrice'] = offer;
                                 finalProducts.push(product)
                             }
-                            else if(fromDate){
+                            else if(fromDate && !toDate){
                                 if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
                                     let finalPrice = offer * quantity;
                                     product['price'] = finalPrice;
@@ -259,11 +274,26 @@ const Checkout = ({ navigation }) => {
                                     finalProducts.push(product)
                                 }
                             }
-                            else{
+                            else if(!fromDate && !toDate){
                                 let finalPrice = offer * quantity;
                                 product['price'] = finalPrice;
                                 product['unitPrice'] = offer;
                                 finalProducts.push(product)
+                            }
+                            else{
+                                if(regular > 0){
+                                    let finalPrice = regular * quantity;
+                                    product['price'] = finalPrice;
+                                    product['unitPrice'] = regular;
+                                    finalProducts.push(product)
+                                }
+                                else{
+                                    let commission = (seller/100) * comm
+                                    let amount = (seller + commission) * quantity;
+                                    product['unitPrice'] = seller + commission;
+                                    product['price'] = amount;
+                                    finalProducts.push(product)
+                                }
                             }
                         }
                         else if(regular > 0){

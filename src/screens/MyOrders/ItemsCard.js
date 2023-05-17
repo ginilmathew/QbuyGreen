@@ -11,48 +11,20 @@ const ItemsCard = memo(({item, date}) => {
         navigation.navigate('SingleHotel',{item : item, mode:'orderItem'})
     }, [])
 
-    const getPrice = () => {
-        if(item?.variants){
-            if(item?.variants?.offer_price && item?.variants?.offer_price >0 && moment(item?.variants?.offer_date_from, "YYYY-MM-DD") <= moment(date) && moment(item?.variants?.offer_date_to, "YYYY-MM-DD") <= moment(date)){
-                return item?.variants?.offer_price;
-            }
-            else if(item?.variants?.regular_price && parseFloat(item?.variants?.regular_price) > 0){
-                return item?.variants?.regular_price;
-            }
-            else{
-                let commission = (parseFloat(item?.variants?.seller_price)/100) * parseFloat(item?.variants?.commission)
-                let price = parseFloat(item?.variants?.seller_price) + commission
-                return price
-            }
-        }
-        else{
-            if(item?.productdata?.offer_price && parseFloat(item?.productdata?.offer_price) >0 && moment(item?.productdata?.offer_date_from, "YYYY-MM-DD") <= moment(date) && moment(item?.productdata?.offer_date_to, "YYYY-MM-DD") <= moment(date)){
-                return item?.productdata?.offer_price;
-            }
-            //return item?.regular_price;
-            else if(item?.productdata?.regular_price && parseFloat(item?.productdata?.regular_price) > 0){
-                return item?.productdata?.regular_price;
-            }
-            else{
-                let commission = (parseFloat(item?.productdata?.seller_price)/100) * parseFloat(item?.productdata?.commission)
-                let price = parseFloat(item?.productdata?.seller_price) + commission
-                return price
-            }
-        }
-    }
+    
 
     return (
         <View style={styles.container}>
             <View style={{ flex: 0.5 }}>
-                <Text style={styles.text1}>{`${item?.name}`}</Text>
+                <Text style={[styles.text1, { textAlign: 'left' }]}>{`${item?.name} ${item?.variants ? `(${item?.variants?.title})` : ''}`}</Text>
                 {/* <TouchableOpacity 
                 //onPress={goToShop}
                 >
                     <Text style={styles.text2}>{item?.hotel}</Text>
                 </TouchableOpacity> */}
             </View>
-            <Text style={styles.text1}>{item?.quantity}</Text>
-            <Text style={styles.text1}>₹ {getPrice()}</Text>
+            <Text style={[styles.text1, { textAlign: 'center' }]}>{item?.quantity}</Text>
+            <Text style={[styles.text1, { textAlign: 'center' }]}>₹{item?.price}</Text>
         </View>
     )
 })

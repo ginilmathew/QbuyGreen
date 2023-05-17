@@ -12,9 +12,12 @@ import moment from 'moment'
 import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import Toast from 'react-native-toast-message';
+import reactotron from 'reactotron-react-native'
 
 
 const CartItemCard = ({item, index, refreshCart}) => {
+
+    reactotron.log({item})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)

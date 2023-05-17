@@ -167,12 +167,17 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 >
                     <LinearGradient colors={data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{data?.name}</Text>
-                        <Text style={!data?.available ? styles.textSemiError : styles.textSemi}>{data?.available ? `₹ ${data?.price}` : 'Out off stock'}</Text>
+                        {data?.available && <Text style={!data?.available ? styles.textSemiError : styles.textSemi}>{`₹ ${data?.price}` }</Text>}
                         <Text style={styles.lightText}>{data?.store?.name}</Text>
-                        <View style={{ position: 'absolute', top: '50%', padding: 5, borderWidth: 1, alignItems: 'center', width: '100%' }}>
-                            <Text style={{ color: 'white', textAlign: 'center', width: '100%' }}>Out off stock</Text>
-                        </View>
                     </LinearGradient>
+                    {!data?.available && <View style={{ position: 'absolute', top: '32%', width: '100%' }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ padding: 5, borderWidth: 1,  borderColor: '#fff', margin: 8, borderRadius: 8 }}>
+                                <Text style={{ color: 'red', textAlign: 'center',  fontWeight: 'bold', alignSelf: 'center' }}>Out off stock</Text>
+                            </View>
+                        </View>
+                        
+                    </View>}
 
                     {data?.available && <View style={styles.addContainer}>
                         <CommonAddButton

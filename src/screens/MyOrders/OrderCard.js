@@ -190,14 +190,21 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 {showItems && <>
                     <View style={styles.itemsHeadingView}>
                         <View style={{ flex: 0.5 }}>
-                            <Text style={styles.textRegular}>{'Product'}</Text>
+                            <Text style={[styles.textRegular, { textAlign: 'left' }]}>{'Product'}</Text>
                         </View>
-                        <Text style={styles.textBold}>{'Qty'}</Text>
-                        <Text style={styles.textBold}>{'Price'}</Text>
+                        <Text style={[styles.textBold, { textAlign: 'center' }]}>{'Qty'}</Text>
+                        <Text style={[styles.textBold, { textAlign: 'center' }]}>{'Price'}</Text>
                     </View>
                     {item?.product_details.map((ite) => 
                         <ItemsCard item={ite} key={ite?._id} date={item?.created_at} />
                     )}
+                    <View style={styles.delivery}>
+                        <View style={{ flex: 0.5 }}>
+                            <Text style={[styles.text1, { textAlign: 'left' }]}>{`Delivery Charge`}</Text>
+                        </View>
+                        <Text style={[styles.text1, { textAlign: 'center' }]}></Text>
+                        <Text style={[styles.text1, { textAlign: 'center' }]}>₹ {item?.delivery_charge}</Text>
+                    </View>
                 </>}
             </View>
 
@@ -270,6 +277,16 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 export default OrderCard
 
 const styles = StyleSheet.create({
+    delivery: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        backgroundColor: '#F3F3F3', 
+        justifyContent: 'space-between', 
+        paddingVertical: 10, 
+        borderBottomWidth: 1, 
+        borderColor: '#00000029', 
+        paddingHorizontal: 7 
+    },
     container : { 
         borderRadius: 10, 
         shadowOpacity: 0.1, 
@@ -372,6 +389,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#F3F3F3', 
         padding: 10,
         borderRadius: 10 
-    }
+    },
+    text1 : {
+        fontFamily: 'Poppins-Medium',
+        color: '#23233C',
+        fontSize: 12,
+    },
 
 })

@@ -3,7 +3,7 @@ import Context from "./index";
 import { Animated } from 'react-native'
 import customAxios from "../../CustomeAxios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import LoaderContext from "../Loader";
 import AuthContext from "../Auth";
 
@@ -100,7 +100,8 @@ const CartProvider = (props) => {
             Toast.show({
                 type: 'success',
                 text1: 'Product added to cart',
-                position: 'top'
+                position: 'top',
+                visibilityTime: 1000
             })
             //navigation.navigate('cart')
         })
