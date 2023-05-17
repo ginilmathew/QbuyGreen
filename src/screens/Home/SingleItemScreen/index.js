@@ -58,7 +58,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     
 
 
-    // reactotron.log({ item })
+    reactotron.log({ showSingleImg })
 
     const [images, setImages] = useState(null)
     const [imagesArray, setImagesArray] = useState([])
@@ -278,7 +278,6 @@ const SingleItemScreen = ({ route, navigation }) => {
             return { url: `${IMG_URL}${items}` }
         })
         setImagesArray(imagesss)
-
         setShowSingleImg(true)
     }, [images])
 
