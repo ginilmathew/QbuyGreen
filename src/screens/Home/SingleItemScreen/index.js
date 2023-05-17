@@ -41,7 +41,10 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const item = route?.params?.item
 
-    const [images, setImages] = useState( item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
+
+    reactotron.log({item})
+
+    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
     const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
@@ -49,9 +52,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [attributes, setAttributes] = useState([])
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
-    
 
-    const position = new Animated.ValueXY({x:0,y:0})
+
+    const position = new Animated.ValueXY({ x: 0, y: 0 })
 
     let loader = loadingg?.loading
 
@@ -59,13 +62,13 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-    
 
-    reactotron.log({item})
+
+    // reactotron.log({ item })
 
     useEffect(() => {
-        if(item){
-            if(item?.variant){
+        if (item) {
+            if (item?.variant) {
                 let selectedVariant = item?.variants?.find(vari => vari?.available === true)
                 setSelectedVariant(selectedVariant)
 
@@ -74,13 +77,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                     let selected;
                     att?.options?.map(opt => {
                         let values = opt.split(" ");
-                        if(values && names){
+                        if (values && names) {
                             const containsAll = values?.every(elem => names.includes(elem));
-                            if(containsAll){
+                            if (containsAll) {
                                 selected = opt
                             }
                         }
-                        
+
                     })
                     return {
                         ...att,
@@ -92,7 +95,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         }
     }, [item])
-    
+
 
     const [singleProduct, setSingleProduct] = useState([])
     const [selectedImage, setSelectedImage] = useState(0)
@@ -111,9 +114,10 @@ const SingleItemScreen = ({ route, navigation }) => {
     // useEffect(() => {
     //     item?.image?.splice(0, 0, item?.product_image)
     // }, [item?.product_image, item?.image])
-    
-    
 
+
+
+    console.log({singleProduct})
 
     useEffect(() => {
         //getSingleProduct()
@@ -173,7 +177,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const gotoStore = useCallback(() => {
-        navigation.navigate('store', {name : item?.store?.name, mode : 'singleItem', storeId: item?.store?._id })
+        navigation.navigate('store', { name: item?.store?.name, mode: 'singleItem', storeId: item?.store?._id })
     })
 
     const proceedCheckout = useCallback(() => {
@@ -192,8 +196,8 @@ const SingleItemScreen = ({ route, navigation }) => {
     const addToCart = useCallback(async () => {
 
         cartContext.addToCart(item, selectedVariant)
-        
-       
+
+
     }, [selectedVariant, cart?.cart])
 
 
@@ -269,7 +273,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
         let attr = attributes?.map(att => {
             if (att?.options.includes(value)) {
-                if(att?.variant){
+                if (att?.variant) {
                     let values = value.split(' ')
                     values.map(va => {
                         attri.push(va)
@@ -307,8 +311,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                 return false;
             }
         })
-
-
         setAttributes([...attr])
     }
 
@@ -348,27 +350,29 @@ const SingleItemScreen = ({ route, navigation }) => {
             )
         }
     }
- 
+
     const openSingleImg = useCallback(() => {
         let imagesss = images?.map((items, index) => {
-            return {url : `${IMG_URL}${items}`}
+            return { url: `${IMG_URL}${items}` }
         })
         setImagesArray(imagesss)
 
         setShowSingleImg(true)
-    },[images])
+    }, [images])
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
-    },[])
+    }, [])
 
     let image = item?.image ? [item?.product_image, ...item?.image] : [item?.product_image];
 
-    let imageArray = image?.filter((data, index)=> index !== selectedImage)
+    reactotron?.log({image})
+
+    let imageArray = image?.filter((data, index) => index !== selectedImage)
 
     //imageArray?.unshift(item?.image[selectedImage])
 
-    
+
 
 
     const PreOrderMOdal = useCallback(() => {
@@ -385,28 +389,40 @@ const SingleItemScreen = ({ route, navigation }) => {
             >
 
                 <View style={{ height: 200 }}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={openSingleImg}
                         style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}
                     >
 
                         {images && images?.length > 0 ?
-                        <Carousel
-                        // autoPlay={true}
-                        width={width}
-                        data={images}
-                        renderItem={({ index }) => (
-                            <FastImage
-                                // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
-                                style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='contain'
-                            >
-                            </FastImage> 
-                            )}
-                            onSnapToItem={(index) => setSelectedImage(index)}
-                            scrollAnimationDuration={10}
-                        />: <FastImage
+                            <Carousel
+                                // autoPlay={true}
+                                width={width}
+                                data={images}
+                                renderItem={({ index }) => (
+                                    <FastImage
+                                        // source={singleProduct?.image[selectedImage]?.name} 
+                                        source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                        style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                                        resizeMode='contain'
+                                    >
+                                    </FastImage>
+                                
+                                        // <VideoPlayer
+                                        //     video={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+
+                                        //     // showDuration={true}
+                                        //     controlsTimeout={2000}
+                                        //     pauseOnPress={true}
+                                        //     resizeMode='contain'
+                                    
+                                        // />
+                                   
+
+                                )}
+                                onSnapToItem={(index) => setSelectedImage(index)}
+                                scrollAnimationDuration={10}
+                            /> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
                                 source={{ uri: `${IMG_URL}${images[0]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
@@ -417,7 +433,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                     </TouchableOpacity>
-                    {renderInStock()} 
+                    {renderInStock()}
                     {/* <VideoPlayer
                         video={ require('../../../Videos/farming.mp4') }
                         videoWidth={1600}
@@ -594,18 +610,18 @@ const SingleItemScreen = ({ route, navigation }) => {
                     visible={showSingleImg}
                 >
                     <View
-                        style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
+                        style={{ alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
                     >
                         {imagesArray && <Modal visible={showSingleImg} >
                             <View style={{ flex: 1 }}>
                                 <ImageViewer
                                     imageUrls={imagesArray}
-                                    renderHeader={() => 
-                                        <TouchableOpacity 
-                                            onPress={closeSingleImg} 
-                                            style={{alignSelf:'flex-end', position:'absolute', zIndex:100, top:40, right:20}}
+                                    renderHeader={() =>
+                                        <TouchableOpacity
+                                            onPress={closeSingleImg}
+                                            style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 100, top: 40, right: 20 }}
                                         >
-                                            <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} /> 
+                                            <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} />
                                         </TouchableOpacity>
                                     }
                                 />
@@ -613,16 +629,16 @@ const SingleItemScreen = ({ route, navigation }) => {
 
                         </Modal>}
                         {images &&
-                      
-                        <FastImage
-                            source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
-                            style={{ width: width-15, height: 400, borderRadius:10, padding:10 }}
-                            resizeMode='cover'
-                        >
-                            <TouchableOpacity onPress={closeSingleImg} style={{alignSelf:'flex-end', backgroundColor:'#000', borderRadius:10, width:20, height:20, alignItems:'center', justifyContent:'center'}}>
-                                <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
-                            </TouchableOpacity>
-                        </FastImage>
+
+                            <FastImage
+                                source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                style={{ width: width - 15, height: 400, borderRadius: 10, padding: 10 }}
+                                resizeMode='cover'
+                            >
+                                <TouchableOpacity onPress={closeSingleImg} style={{ alignSelf: 'flex-end', backgroundColor: '#000', borderRadius: 10, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' }}>
+                                    <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
+                                </TouchableOpacity>
+                            </FastImage>
                         }
                     </View>
                 </Modal>
@@ -635,4 +651,12 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 export default SingleItemScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    video: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    }
+})
