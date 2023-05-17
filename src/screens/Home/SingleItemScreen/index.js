@@ -42,9 +42,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     const item = route?.params?.item
 
 
-    reactotron.log({item})
+    // reactotron.log({ item })
 
-    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link])
+    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
     const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
@@ -117,7 +117,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
-    reactotron.log({singleProduct})
+    reactotron.log({ singleProduct })
 
     useEffect(() => {
         //getSingleProduct()
@@ -362,11 +362,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
-    }, [])
+    }, [showSingleImg])
 
-    let image = item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link];
+    let image = item?.image ? [item?.product_image, ...item?.image] : [item?.product_image];
 
-    reactotron?.log({image})
+    reactotron?.log({ image })
 
     let imageArray = image?.filter((data, index) => index !== selectedImage)
 
@@ -401,15 +401,15 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 data={images}
                                 renderItem={({ index }) => (
                                     <>
-                                    {images?.length !== images?.lenth && <FastImage
-                                        // source={singleProduct?.image[selectedImage]?.name} 
-                                        source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
-                                        style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                        resizeMode='contain'
-                                    >
-                                    </FastImage> }
-                                
-                                    {/* {images?.length === images?.lenth &&<VideoPlayer
+                                        {images?.length !== images?.lenth && <FastImage
+                                            // source={singleProduct?.image[selectedImage]?.name} 
+                                            source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                            style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                                            resizeMode='contain'
+                                        >
+                                        </FastImage>}
+
+                                        {/* {images?.length === images?.lenth &&<VideoPlayer
                                         video={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
 
                                         // showDuration={true}
@@ -419,7 +419,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 
                                     />} */}
                                     </>
-                                   
+
 
                                 )}
                                 onSnapToItem={(index) => setSelectedImage(index)}
