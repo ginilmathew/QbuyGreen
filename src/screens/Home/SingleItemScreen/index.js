@@ -825,7 +825,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                             fontFamily: 'Poppins',
                             letterSpacing: 1,
                             fontSize: 10,
-
                         }}>{singleProduct?.weight}</Text>
 
                     </View>}
