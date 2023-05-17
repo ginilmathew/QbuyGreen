@@ -66,15 +66,15 @@ const Checkout = ({ navigation }) => {
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
     const [payment, setPayment] = useState([
-        {
-            _id: 'online',
-            name: "Online",
-            selected: true
-        },
+        // {
+        //     _id: 'online',
+        //     name: "Online",
+        //     selected: true
+        // },
         {
             _id: 'COD',
             name: "COD",
-            selected: false
+            selected: true
         }
     ])
 
@@ -545,6 +545,12 @@ const Checkout = ({ navigation }) => {
             
             
         }).catch((err) => {
+            let data = {
+                STATUS: 'TXN_FAILURE',
+                RESPMSG: 'User Cancelled transaction',
+                ORDERID: orderId
+            }
+            updatePaymentResponse(data)
         });
 
     }

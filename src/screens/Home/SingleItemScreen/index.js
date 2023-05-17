@@ -42,6 +42,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const item = route?.params?.item
 
     const [images, setImages] = useState( item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
+    const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
 
@@ -349,21 +350,25 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
  
     const openSingleImg = useCallback(() => {
+        let imagesss = images?.map((items, index) => {
+            return {url : `${IMG_URL}${items}`}
+        })
+        setImagesArray(imagesss)
+
         setShowSingleImg(true)
-    },[])
+    },[images])
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
     },[])
 
-    let image = [item?.product_image, ...item?.image];
+    let image = item?.image ? [item?.product_image, ...item?.image] : [item?.product_image];
 
     let imageArray = image?.filter((data, index)=> index !== selectedImage)
-    imageArray?.unshift(item?.image[selectedImage])
 
-    let imagesss = imageArray?.map((items, index) => {
-        return {url : `${IMG_URL}${items}`}
-    })
+    //imageArray?.unshift(item?.image[selectedImage])
+
+    
 
 
     const PreOrderMOdal = useCallback(() => {
@@ -591,10 +596,10 @@ const SingleItemScreen = ({ route, navigation }) => {
                     <View
                         style={{  alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
                     >
-                        {imagesss && <Modal visible={showSingleImg} >
+                        {imagesArray && <Modal visible={showSingleImg} >
                             <View style={{ flex: 1 }}>
                                 <ImageViewer
-                                    imageUrls={imagesss}
+                                    imageUrls={imagesArray}
                                     renderHeader={() => 
                                         <TouchableOpacity 
                                             onPress={closeSingleImg} 
