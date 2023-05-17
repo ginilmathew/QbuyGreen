@@ -55,14 +55,6 @@ const HomeNav = ({mode, route}) => {
             <Stack.Screen name="Wishlist" component={Wishlist}/>
 
             <Stack.Screen name="FashionCategory" component={FashionCategory}/>
-
-
-
-
-
-
-
-           
         </Stack.Navigator>
         </>
     )

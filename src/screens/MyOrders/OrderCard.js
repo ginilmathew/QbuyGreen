@@ -92,6 +92,12 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             
         }).catch((err) => {
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
+            let data = {
+                STATUS: 'TXN_FAILURE',
+                RESPMSG: 'User Cancelled transaction',
+                ORDERID: orderId
+            }
+            updatePaymentResponse(data)
         });
 
     }

@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal, SafeAreaView, Dimensions } from 'react-native'
-import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal } from 'react-native'
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
 import ItemDetails from './ItemDetails'
@@ -16,7 +16,6 @@ import ImageVideoBox from './ImageVideoBox'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import CommonRating from '../../../Components/CommonRating'
 import customAxios from '../../../CustomeAxios'
-import reactotron from '../../../ReactotronConfig'
 import { IMG_URL, mode } from '../../../config/constants'
 import AuthContext from '../../../contexts/Auth'
 import CartContext from '../../../contexts/Cart'
@@ -24,26 +23,35 @@ import LoaderContext from '../../../contexts/Loader'
 import moment from 'moment'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message';
-import { isEmpty } from 'lodash'
+import reactotron from 'reactotron-react-native'
 import Carousel from 'react-native-reanimated-carousel';
 import ImageViewer from 'react-native-image-zoom-viewer';
+
+
 
 let link = '../../../Videos/farming.mp4'
 
 
 const SingleItemScreen = ({ route, navigation }) => {
-
+    const refRBSheet = useRef();
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
+    const [showSingleImg, setShowSingleImg] = useState(false)
     let active = contextPanda.active
+
+    const item = route?.params?.item
+
+
+    reactotron.log({item})
+
+    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link])
+    const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
 
     const [attributes, setAttributes] = useState([])
     const [price, setPrice] = useState('')
     const [selectedVariant, setSelectedVariant] = useState(null)
-
-    const [showSingleImg, setShowSingleImg] = useState(false)
 
 
     const position = new Animated.ValueXY({ x: 0, y: 0 })
@@ -54,9 +62,40 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-    const item = route?.params?.item
 
-    reactotron.log({ item })
+
+    reactotron.log({ images })
+
+    useEffect(() => {
+        if (item) {
+            if (item?.variant) {
+                let selectedVariant = item?.variants?.find(vari => vari?.available === true)
+                setSelectedVariant(selectedVariant)
+
+                let names = selectedVariant?.title.split(" ")
+                let attributes = item?.attributes?.map(att => {
+                    let selected;
+                    att?.options?.map(opt => {
+                        let values = opt.split(" ");
+                        if (values && names) {
+                            const containsAll = values?.every(elem => names.includes(elem));
+                            if (containsAll) {
+                                selected = opt
+                            }
+                        }
+
+                    })
+                    return {
+                        ...att,
+                        selected
+                    }
+                })
+
+                setAttributes(attributes)
+            }
+        }
+    }, [item])
+
 
     const [singleProduct, setSingleProduct] = useState([])
     const [selectedImage, setSelectedImage] = useState(0)
@@ -69,47 +108,19 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [valueSize, setValueSize] = useState(null);
 
 
-    reactotron.log({ singleProduct })
-
     const { width, height } = useWindowDimensions()
 
 
-    useEffect(() => {
-        singleProduct?.image?.splice(0, 0, singleProduct?.product_image)
-        // reactotron.log({newArray: singleProduct?.image})
-    }, [singleProduct?.product_image, singleProduct?.image])
-
     // useEffect(() => {
-    //     singleProduct?.image?.push(link)
-    // }, [singleProduct?.image])
-
-    let colors = singleProduct?.variants?.map((item, index) => {
-        return (
-            {
-                label: item?.attributs?.[1],
-                value: index
-            }
-        )
-    })
-    const uniqueColor = colors?.filter((obj, index) => colors?.findIndex((item) => item?.label === obj?.label) === index)
-
-    let sizes = singleProduct?.variants?.map((item, index) => {
-        return (
-            {
-                label: item?.attributs?.[0],
-                value: index
-            }
-        )
-    })
+    //     item?.image?.splice(0, 0, item?.product_image)
+    // }, [item?.product_image, item?.image])
 
 
-    const uniqueSize = sizes?.filter((obj, index) => sizes?.findIndex((item) => item?.label === obj?.label) === index)
 
-    let varient = singleProduct?.variants?.map((item, index) => (item))
-    selectedVarient = varient?.find((item) => (item?.attributs?.[0] === valueSize && item?.attributs?.[1] === valueColor))
+    reactotron.log({singleProduct})
 
     useEffect(() => {
-        getSingleProduct()
+        //getSingleProduct()
         addViewCount()
     }, [])
 
@@ -166,7 +177,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const gotoStore = useCallback(() => {
-        navigation.navigate('store', { name: singleProduct?.store?.name, mode: 'singleItem', storeId: singleProduct?.store?._id })
+        navigation.navigate('store', { name: item?.store?.name, mode: 'singleItem', storeId: item?.store?._id })
     })
 
     const proceedCheckout = useCallback(() => {
@@ -184,358 +195,10 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const addToCart = useCallback(async () => {
 
-        let cartItems;
-        let productDetails;
-        let minimumQty = singleProduct?.minimum_qty ? parseFloat(singleProduct?.minimum_qty) : 1
-
-        reactotron.log({ selectedVariant });
-        //return false
-
-        if (singleProduct?.variants?.length > 0 && cart?.cart) {
-
-            //Check products have no stock
-            if (singleProduct?.stock) {
-                if (parseFloat(selectedVariant?.stock_value) === 0) {
-                    Toast.show({
-                        type: 'error',
-                        text1: "Required Stock not available"
-                    });
-                    return false;
-                }
-            }
-            url = "customer/cart/update";
-            let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id && prod?.variants?.[0]?.variant_id === selectedVariant?._id)
-
-            if (existing >= 0) {
-                let cartProducts = cart?.cart?.product_details;
-                let quantity = cartProducts[existing].quantity + 1;
-                if (singleProduct?.stock) {
-                    if (parseFloat(selectedVariant?.stock_value) >= quantity) {
-                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                        cartItems = {
-                            cart_id: cart?.cart?._id,
-                            product_details: cartProducts,
-                            user_id: userData?._id
-                        }
-                    }
-                    else {
-                        Toast.show({
-                            type: 'info',
-                            text1: 'Required quantity not available'
-                        })
-                        return false;
-                    }
-                }
-                else {
-                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-                    cartItems = {
-                        cart_id: cart?.cart?._id,
-                        product_details: cartProducts,
-                        user_id: userData?._id
-                    }
-                }
-
-            }
-            else {
-                if (singleProduct?.stock) {
-                    if (parseFloat(selectedVariant?.stock_value) >= minimumQty) {
-                        productDetails = {
-                            product_id: singleProduct?._id,
-                            name: singleProduct?.name,
-                            image: singleProduct?.product_image,
-                            type: 'variant',
-                            variants: [
-                                {
-                                    variant_id: selectedVariant?._id,
-                                    attributs: selectedVariant?.attributs
-                                }
-                            ],
-                            quantity: minimumQty
-                        };
-                        cartItems = {
-                            cart_id: cart?.cart?._id,
-                            product_details: [...cart?.cart?.product_details, productDetails],
-                            user_id: userData?._id
-                        }
-                    }
-                    else {
-                        Toast.show({
-                            type: 'info',
-                            text1: 'Required quantity not available'
-                        })
-                        return false;
-                    }
-                }
-                else {
-                    productDetails = {
-                        product_id: singleProduct?._id,
-                        name: singleProduct?.name,
-                        image: singleProduct?.product_image,
-                        type: 'variant',
-                        variants: [
-                            {
-                                variant_id: selectedVariant?._id,
-                                attributs: selectedVariant?.attributs
-                            }
-                        ],
-                        quantity: minimumQty
-                    };
-                    cartItems = {
-                        cart_id: cart?.cart?._id,
-                        product_details: [...cart?.cart?.product_details, productDetails],
-                        user_id: userData?._id
-                    }
-                }
+        cartContext.addToCart(item, selectedVariant)
 
 
-            }
-        }
-        else if (cart?.cart) {
-            if (singleProduct?.stock) {
-                if (parseFloat(singleProduct?.stock_value) === 0) {
-                    Toast.show({
-                        type: 'info',
-                        text1: "Required quantity not available"
-                    });
-                    return false;
-                }
-            }
-
-            let existing = cart?.cart?.product_details?.findIndex(prod => prod.product_id === singleProduct?._id)
-            if (existing >= 0) {
-                url = "customer/cart/update";
-                let cartProducts = cart?.cart?.product_details;
-                let quantity = cartProducts[existing].quantity + 1;
-                if (singleProduct?.stock) {
-                    if (singleProduct?.stock_value >= quantity) {
-                        cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-
-                        cartItems = {
-                            cart_id: cart?.cart?._id,
-                            product_details: cartProducts,
-                            user_id: userData?._id
-                        }
-                    }
-                    else {
-                        Toast.show({
-                            type: 'info',
-                            text1: "Required quantity not available"
-                        });
-                        return false;
-                    }
-                }
-                else {
-                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
-
-                    cartItems = {
-                        cart_id: cart?.cart?._id,
-                        product_details: cartProducts,
-                        user_id: userData?._id
-                    }
-                }
-            }
-            else {
-                url = "customer/cart/add";
-                reactotron.log("in")
-                if (singleProduct?.stock) {
-                    if (parseFloat(singleProduct?.stock_value) >= minimumQty) {
-                        productDetails = {
-                            product_id: singleProduct?._id,
-                            name: singleProduct?.name,
-                            image: singleProduct?.product_image,
-                            type: 'single',
-                            variants: null,
-                            quantity: minimumQty
-                        };
-                        cartItems = {
-                            cart_id: cart?.cart?._id,
-                            product_details: [...cart?.cart?.product_details, productDetails],
-                            user_id: userData?._id
-                        }
-                    }
-                    else {
-                        Toast.show({
-                            type: 'info',
-                            text1: "Required quantity not available"
-                        });
-                        return false;
-                    }
-                }
-                else {
-                    if (singleProduct?.stock) {
-                        if (parseFloat(singleProduct?.stock_value) >= minimumQty) {
-                            productDetails = {
-                                product_id: singleProduct?._id,
-                                name: singleProduct?.name,
-                                image: singleProduct?.product_image,
-                                type: 'single',
-                                variants: null,
-                                quantity: minimumQty
-                            };
-                            cartItems = {
-                                cart_id: cart?.cart?._id,
-                                product_details: [...cart?.cart?.product_details, productDetails],
-                                user_id: userData?._id
-                            }
-                        }
-                        else {
-                            Toast.show({
-                                type: 'info',
-                                text1: "Required quantity not available"
-                            });
-                            return false;
-                        }
-                    }
-                    else {
-                        productDetails = {
-                            product_id: singleProduct?._id,
-                            name: singleProduct?.name,
-                            image: singleProduct?.product_image,
-                            type: 'single',
-                            variants: null,
-                            quantity: minimumQty
-                        };
-                        cartItems = {
-                            cart_id: cart?.cart?._id,
-                            product_details: [...cart?.cart?.product_details, productDetails],
-                            user_id: userData?._id
-                        }
-                    }
-
-                }
-
-
-
-            }
-        }
-        else {
-            url = "customer/cart/add";
-            if (singleProduct?.variants?.length > 0) {
-                if (singleProduct?.stock) {
-                    if (parseFloat(selectedVariant?.stock_value) === 0) {
-                        Toast.show({
-                            type: 'info',
-                            text1: "Required quantity not available"
-                        });
-                        return false;
-                    }
-                    else if (parseFloat(selectedVariant?.stock_value) >= minimumQty) {
-                        productDetails = {
-                            product_id: singleProduct?._id,
-                            name: singleProduct?.name,
-                            image: singleProduct?.product_image,
-                            type: 'variant',
-                            variants: [
-                                {
-                                    variant_id: selectedVariant?._id,
-                                    attributs: selectedVariant?.attributs
-                                }
-                            ],
-                            quantity: minimumQty
-                        };
-                        cartItems = {
-                            cart_id: cart?.cart?._id,
-                            product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
-                            user_id: userData?._id
-                        }
-                    }
-                    else {
-                        Toast.show({
-                            type: 'info',
-                            text1: 'Required quantity not available'
-                        })
-                        return false;
-                    }
-                }
-                else {
-                    productDetails = {
-                        product_id: singleProduct?._id,
-                        name: singleProduct?.name,
-                        image: singleProduct?.product_image,
-                        type: 'variant',
-                        variants: [
-                            {
-                                variant_id: selectedVariant?._id,
-                                attributs: selectedVariant?.attributs
-                            }
-                        ],
-                        quantity: minimumQty
-                    };
-                    cartItems = {
-                        cart_id: cart?.cart?._id,
-                        product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
-                        user_id: userData?._id
-                    }
-                }
-            }
-            else if (singleProduct?.stock) {
-                if (parseFloat(singleProduct?.stock_value) === 0) {
-                    Toast.show({
-                        type: 'info',
-                        text1: "Required quantity not available"
-                    });
-                    return false;
-                }
-                else if (parseFloat(singleProduct?.stock_value) >= minimumQty) {
-                    productDetails = {
-                        product_id: singleProduct?._id,
-                        name: singleProduct?.name,
-                        image: singleProduct?.product_image,
-                        type: 'single',
-                        variants: null,
-                        quantity: minimumQty
-                    };
-                    cartItems = {
-                        cart_id: cart?.cart?._id,
-                        product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
-                        user_id: userData?._id
-                    }
-                }
-                else {
-                    Toast.show({
-                        type: 'info',
-                        text1: "Required quantity not available"
-                    });
-                    return false;
-                }
-            }
-            else {
-                productDetails = {
-                    product_id: singleProduct?._id,
-                    name: singleProduct?.name,
-                    image: singleProduct?.product_image,
-                    type: 'single',
-                    variants: null,
-                    quantity: minimumQty
-                };
-                cartItems = {
-                    cart_id: cart?.cart?._id,
-                    product_details: cart?.cart?.product_details ? [...cart?.cart?.product_details, productDetails] : [productDetails],
-                    user_id: userData?._id
-                }
-            }
-
-        }
-
-        loadingg.setLoading(true)
-        await customAxios.post(url, cartItems)
-            .then(async response => {
-                cart.setCart(response?.data?.data)
-                //user?.setCartId(response?.data?.data?._id)
-                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-                loadingg.setLoading(false)
-                //navigation.navigate('cart')
-            })
-            .catch(async error => {
-                console.log(error)
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-                loadingg.setLoading(false)
-            })
-
-    }, [varient])
+    }, [selectedVariant, cart?.cart])
 
 
     const getProductPrice = useCallback((singleProduct) => {
@@ -605,10 +268,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const selectAttributes = (value) => {
-        reactotron.log({ value, attributes, variant: singleProduct })
         let attri = [];
+
+
         let attr = attributes?.map(att => {
-            if (att?.optArray.includes(value)) {
+            if (att?.options.includes(value)) {
                 if (att?.variant) {
                     let values = value.split(' ')
                     values.map(va => {
@@ -632,62 +296,29 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
         })
 
-        reactotron.log({ attri })
-        //let filtered = 
 
-        singleProduct?.variants?.map(sin => {
+        item?.variants?.map(sin => {
             let attributes = []
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            reactotron.log({ attributes })
             const containsAll = attri.every(elem => attributes.includes(elem));
-
-            reactotron.log({ containsAll })
 
             if (containsAll) {
 
                 setSelectedVariant(sin)
-                if (sin?.offer_price) {
-                    if (moment(sin?.offer_date_from) <= moment() && moment(sin?.offer_date_to) >= moment()) {
-                        setPrice(sin?.offer_price)
-                        //return singleProduct?.offer_price;
-                    }
-                    else if (sin?.regular_price) {
-                        setPrice(sin?.regular_price)
-                        //return singleProduct?.regular_price;
-                    }
-                    else {
-                        let comm = sin?.commission ? sin?.commission : 0
-                        let commission = (parseFloat(sin?.seller_price) / 100) * parseFloat(comm)
-                        let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
-                        setPrice(amount)
-                    }
-                }
-                else if (sin?.regular_price) {
-                    setPrice(sin?.regular_price)
-                    //return singleProduct?.regular_price;
-                }
-                else {
-                    let comm = sin?.commission ? sin?.commission : 0
-                    let commission = (parseFloat(sin?.seller_price) / 100) * parseFloat(comm)
-                    let amount = (parseFloat(sin?.seller_price) + parseFloat(commission));
-                    setPrice(amount)
-                }
+                setPrice(sin?.price)
                 return false;
             }
         })
-
-        // reactotron.log({ attr })
-
         setAttributes([...attr])
     }
 
 
     const renderInStock = () => {
-        if (singleProduct?.stock) {
-            if (singleProduct?.variant) {
-                if (parseFloat(selectedVariant?.stock_value) > 0) {
+        if (item?.stock) {
+            if (item?.variant) {
+                if (parseFloat(item?.stock_value) > 0) {
                     return (
                         <View
                             style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
@@ -721,21 +352,32 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
     const openSingleImg = useCallback(() => {
+        let imagesss = images?.map((items, index) => {
+            return { url: `${IMG_URL}${items}` }
+        })
+        setImagesArray(imagesss)
+
         setShowSingleImg(true)
-    }, [])
+    }, [images])
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
     }, [])
 
-    let imageArray = singleProduct?.image?.filter((data, index)=> index !== selectedImage)
-    imageArray?.unshift(singleProduct?.image[selectedImage])
+    let image = item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link];
 
-    let imagesss = imageArray?.map((items, index) => {
-        return {url : `${IMG_URL}${items}`}
-    })
+    reactotron?.log({image})
 
-    reactotron.log({imagesss})
+    let imageArray = image?.filter((data, index) => index !== selectedImage)
+
+    //imageArray?.unshift(item?.image[selectedImage])
+
+
+
+
+    const PreOrderMOdal = useCallback(() => {
+        refRBSheet.current.open()
+    }, [])
 
 
     return (
@@ -752,27 +394,39 @@ const SingleItemScreen = ({ route, navigation }) => {
                         style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}
                     >
 
-                        {singleProduct?.image && singleProduct?.image?.length > 0 ?
-
+                        {images && images?.length > 0 ?
                             <Carousel
                                 // autoPlay={true}
                                 width={width}
-                                data={singleProduct?.image}
+                                data={images}
                                 renderItem={({ index }) => (
-                                    <FastImage
-                                        source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
-                                        style={{ height: 180, borderRadius: 15, }}
+                                    <>
+                                    {images?.length !== images?.lenth && <FastImage
+                                        // source={singleProduct?.image[selectedImage]?.name} 
+                                        source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                        style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                         resizeMode='contain'
                                     >
-                                    </FastImage>
+                                    </FastImage> }
+                                
+                                    {/* {images?.length === images?.lenth &&<VideoPlayer
+                                        video={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+
+                                        // showDuration={true}
+                                        controlsTimeout={2000}
+                                        pauseOnPress={true}
+                                        resizeMode='contain'
+                                
+                                    />} */}
+                                    </>
+                                   
+
                                 )}
                                 onSnapToItem={(index) => setSelectedImage(index)}
                                 scrollAnimationDuration={10}
-                            />
-
-                            : <FastImage
+                            /> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${singleProduct?.product_image}` }}
+                                source={{ uri: `${IMG_URL}${images[0]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                 resizeMode='contain'
                             >
@@ -792,8 +446,8 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                 </View>
-                {singleProduct?.image?.length > 1 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {singleProduct?.image?.map((item, index) =>
+                {images.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {images?.map((item, index) =>
                         <ImageVideoBox
                             key={index}
                             setSelectedImage={setSelectedImage}
@@ -806,14 +460,15 @@ const SingleItemScreen = ({ route, navigation }) => {
 
                 <ItemDetails
                     onPress={gotoStore}
-                    itemName={singleProduct?.name}
-                    hotelName={singleProduct?.store?.name}
-                    views={singleProduct?.viewCount ? singleProduct?.viewCount : 0}
-                    sold={singleProduct?.order_count}
-                    minQty={singleProduct?.minimum_qty === null ? 1 : singleProduct?.minimum_qty}
-                    price={price}
+                    itemName={item?.name}
+                    hotelName={item?.store?.name}
+                    views={item?.viewCount ? item?.viewCount : 0}
+                    sold={item?.order_count}
+                    minQty={item?.minQty}
+                    price={item?.variant ? selectedVariant?.price : item?.price}
+                    available={item?.available}
                 />
-                {singleProduct?.weight !== ('' || null) &&
+                {item?.weight !== ('' || null) &&
                     <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
                         <Text style={{
                             fontFamily: 'Poppins',
@@ -825,7 +480,8 @@ const SingleItemScreen = ({ route, navigation }) => {
                             fontFamily: 'Poppins',
                             letterSpacing: 1,
                             fontSize: 10,
-                        }}>{singleProduct?.weight}</Text>
+
+                        }}>{item?.weight}</Text>
 
                     </View>}
 
@@ -853,15 +509,17 @@ const SingleItemScreen = ({ route, navigation }) => {
                     />} */}
                 </View>
 
-                <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10 }}>
+                <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10, gap: 5 }}>
                     {contextPanda?.active === "panda" && <CustomButton
                         label={'Pre-Order'} bg='#D3D358' width={width / 2.2} onPress={showModals}
                     />}
-                    <CustomButton
+                    {item?.available && <CustomButton
                         onPress={addToCart}
                         label={'Add to Cart'} bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} width={width / 2.2}
                         loading={loader}
-                    />
+                    />}
+
+
 
                 </View>
                 <View style={{ backgroundColor: '#0C256C0D', height: 1, marginVertical: 20 }} />
@@ -948,46 +606,44 @@ const SingleItemScreen = ({ route, navigation }) => {
                     <Text>cary</Text>
                 </Animated.View>  */}
 
-                {/* <Modal
+                <Modal
                     // animationType="slide"
-                    // transparent={true}
+                    transparent={true}
                     visible={showSingleImg}
                 >
-                    
-                    <SafeAreaView>
-                        <View 
-                            style={{ alignSelf: 'center', shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, elevation: 5, width: width - 10, marginTop:5 }}
-                        >
-                        {singleProduct?.image &&
+                    <View
+                        style={{ alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
+                    >
+                        {imagesArray && <Modal visible={showSingleImg} >
+                            <View style={{ flex: 1 }}>
+                                <ImageViewer
+                                    imageUrls={imagesArray}
+                                    renderHeader={() =>
+                                        <TouchableOpacity
+                                            onPress={closeSingleImg}
+                                            style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 100, top: 40, right: 20 }}
+                                        >
+                                            <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} />
+                                        </TouchableOpacity>
+                                    }
+                                />
+                            </View>
+
+                        </Modal>}
+                        {images &&
+
                             <FastImage
-                                source={{ uri: `${IMG_URL}${singleProduct?.image[selectedImage]}` }}
-                                style={{  height: height-100, borderRadius: 10, padding: 10 }}
+                                source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                style={{ width: width - 15, height: 400, borderRadius: 10, padding: 10 }}
+                                resizeMode='cover'
                             >
                                 <TouchableOpacity onPress={closeSingleImg} style={{ alignSelf: 'flex-end', backgroundColor: '#000', borderRadius: 10, width: 20, height: 20, alignItems: 'center', justifyContent: 'center' }}>
                                     <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
                                 </TouchableOpacity>
                             </FastImage>
                         }
-                        </View>
-                    </SafeAreaView>
-                </Modal> */}
-
-                {imagesss && <Modal visible={showSingleImg} >
-                    <View style={{ flex: 1 }}>
-                        <ImageViewer
-                            imageUrls={imagesss}
-                            renderHeader={() => 
-                                <TouchableOpacity 
-                                    onPress={closeSingleImg} 
-                                    style={{alignSelf:'flex-end', position:'absolute', zIndex:100, top:40, right:20}}
-                                >
-                                    <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} /> 
-                                </TouchableOpacity>
-                            }
-                        />
                     </View>
-
-                </Modal>}
+                </Modal>
 
 
             </ScrollView>
@@ -997,4 +653,12 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 export default SingleItemScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    video: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    }
+})
