@@ -626,12 +626,12 @@ const Checkout = ({ navigation }) => {
                 {/* products */}
                 <View style={styles.productBox}>
                     <View style={styles.productHeader}>
-                        <View style={{ flex: 0.45 }}>
+                        <View style={{ flex: 0.42 }}>
                             <Text style={styles.boldText}>{'Product'}</Text>
                         </View>
-                        <Text style={styles.boldText}>{'Price'}</Text>
-                        <Text style={styles.boldText}>{'Qty'}</Text>
-                        <Text style={styles.boldText}>{'Total'}</Text>
+                        <Text style={styles.unitPrice}>{'Price'}</Text>
+                        <Text style={styles.quantity}>{'Qty'}</Text>
+                        <Text style={styles.total}>{'Total'}</Text>
                     </View>
                     <View style={styles.itemUnderProduct}>
                         {cartItems?.map((item, index) =>
@@ -941,6 +941,27 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginHorizontal: 10,
         padding: 10
+    },
+    unitPrice : {
+        fontFamily: 'Poppins-Bold',
+        color: '#23233C',
+        fontSize: 12,
+        flex: 0.2,
+        textAlign: 'center'
+    },
+    quantity : {
+        fontFamily: 'Poppins-Bold',
+        color: '#23233C',
+        fontSize: 12,
+        flex: 0.15,
+        textAlign: 'center'
+    },
+    total : {
+        fontFamily: 'Poppins-Bold',
+        color: '#23233C',
+        fontSize: 12,
+        flex: 0.27,
+        textAlign: 'center'
     },
     boldText: {
         fontFamily: 'Poppins-Bold',

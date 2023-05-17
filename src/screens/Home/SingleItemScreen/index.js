@@ -140,37 +140,7 @@ const SingleItemScreen = ({ route, navigation }) => {
        // addViewCount()
     }, [])
 
-    const getSingleProduct = async () => {
-
-        await customAxios.get(`customer/product/${item?._id}`)
-
-            .then(async response => {
-                setSingleProduct(response?.data?.data)
-                getProductPrice(response?.data?.data)
-                let attributes = response?.data?.data?.attributes.map(attr => {
-                    let options = attr?.options?.map(op => {
-                        return {
-                            label: op,
-                            value: op
-                        }
-                    })
-                    return {
-                        ...attr,
-                        options,
-                        selected: options?.[0]?.label,
-                        optArray: attr?.options
-                    }
-                })
-                setAttributes(attributes)
-                // loadingg.setLoading(false)
-            })
-            .catch(async error => {
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-            })
-    }
+    
 
     const addViewCount = async (item) => {
         let datas = {
@@ -194,7 +164,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const gotoStore = useCallback(() => {
         navigation.navigate('store', { name: item?.store?.name, mode: 'singleItem', storeId: item?.store?._id })
-    })
+    }, item)
 
     const proceedCheckout = useCallback(() => {
         navigation.navigate('Checkout')
@@ -214,74 +184,10 @@ const SingleItemScreen = ({ route, navigation }) => {
         cartContext.addToCart(item, selectedVariant)
 
 
-    }, [selectedVariant, cart?.cart])
+    }, [selectedVariant, cart?.cart, item])
 
 
-    const getProductPrice = useCallback((singleProduct) => {
-        setSelectedVariant(singleProduct?.variants?.[0])
-        if (singleProduct?.variants?.length > 0) {
-            if (singleProduct?.variants?.[0]?.offer_price) {
-                if (moment(singleProduct?.variants?.[0]?.offer_date_from) <= moment() && moment(singleProduct?.variants?.[0]?.offer_date_to) >= moment()) {
-                    setPrice(singleProduct?.variants?.[0]?.offer_price)
-                    //return singleProduct?.variants?.[0]?.offer_price;
-                }
-                else {
-                    if (singleProduct?.variants?.[0]?.regular_price > 0) {
-                        setPrice(singleProduct?.variants?.[0]?.regular_price)
-                    }
-                    else {
-                        let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
-                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
-                        let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
-                        setPrice(price)
-                    }
-                    //return singleProduct?.variants?.[0]?.regular_price;
-                }
-            }
-            else {
-                if (singleProduct?.variants?.[0]?.regular_price > 0) {
-                    setPrice(singleProduct?.variants?.[0]?.regular_price)
-                }
-                else {
-                    let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
-                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
-                    let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
-                    setPrice(price)
-                }
-            }
-        }
-        else {
-            if (singleProduct?.offer_price) {
-                if (moment(singleProduct?.offer_date_from) <= moment() && moment(singleProduct?.offer_date_to) >= moment()) {
-                    setPrice(singleProduct?.offer_price)
-                    //return singleProduct?.offer_price;
-                }
-                else {
-                    if (singleProduct?.regular_price > 0) {
-                        setPrice(singleProduct?.regular_price)
-                    }
-                    else {
-                        let comm = singleProduct?.commission ? singleProduct?.commission : 0
-                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
-                        let price = parseFloat(singleProduct?.seller_price) + commission
-                        setPrice(price)
-                    }
-                }
-            }
-            else {
-                if (singleProduct?.regular_price > 0) {
-                    setPrice(singleProduct?.regular_price)
-                }
-                else {
-                    let comm = singleProduct?.commission ? singleProduct?.commission : 0
-                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
-                    let price = parseFloat(singleProduct?.seller_price) + commission
-                    setPrice(price)
-                }
-            }
-        }
-    }, [])
-
+    
 
     const selectAttributes = (value) => {
         let attri = [];
