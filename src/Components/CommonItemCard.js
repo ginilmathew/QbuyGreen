@@ -183,12 +183,12 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         <Text style={styles.tagText}>{item?.openCloseTag}</Text>
                     </View>} */}
 
-                    {active === 'fashion' || active === 'green' && <TouchableOpacity
+                    <TouchableOpacity
                         onPress={(data?.is_wishlist || wishlistIcon) ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
                         <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12} />
-                    </TouchableOpacity>}
+                    </TouchableOpacity>
 
                 </FastImage>
 

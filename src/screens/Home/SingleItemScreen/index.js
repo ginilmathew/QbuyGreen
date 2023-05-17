@@ -42,7 +42,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     const item = route?.params?.item
 
 
-    reactotron.log({item})
+    reactotron.log({mode})
 
     const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link])
     const [imagesArray, setImagesArray] = useState([])
@@ -158,7 +158,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const addViewCount = async () => {
         let datas = {
-            type: mode,
+            type: contextPanda?.active === "green" ? 'green' : 'fashion',
             product_id: item?._id,
             customer_id: userData?._id
         }
@@ -366,7 +366,6 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     let image = item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link];
 
-    reactotron?.log({image})
 
     let imageArray = image?.filter((data, index) => index !== selectedImage)
 
@@ -378,6 +377,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     const PreOrderMOdal = useCallback(() => {
         refRBSheet.current.open()
     }, [])
+
+
+    reactotron.log({imagesArray})
 
 
     return (
