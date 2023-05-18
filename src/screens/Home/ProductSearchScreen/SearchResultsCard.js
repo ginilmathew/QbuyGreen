@@ -1,18 +1,35 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { IMG_URL } from '../../../config/constants'
 import { useNavigation } from '@react-navigation/native'
 import reactotron from '../../../ReactotronConfig'
+import { getProduct } from '../../../helper/productHelper'
 
 const SearchResultsCard = ({item}) => {
+
+    
+
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        if(item){
+            let data = getProduct(item);
+            reactotron.log({data})
+            setData(data)
+        }
+        else{
+            setData(null)
+        }
+    }, [item])
+    
 
     reactotron.log({item})
 
     const navigation = useNavigation()
 
     const handleClick = useCallback(() => {
-        navigation.navigate('SingleItemScreen', { item: item })
-    }, [])
+        navigation.navigate('SingleItemScreen', { item: data })
+    }, [data])
 
     return (
         <TouchableOpacity

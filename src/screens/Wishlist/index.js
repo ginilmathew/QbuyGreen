@@ -50,10 +50,7 @@ const Wishlist = ({navigation}) => {
                 setWishlist(datas)
             }
             else{
-                Toast.show({
-                    type: 'info',
-                    text1: "Something went wrong!"
-                })
+                setWishlist([])
             }
             loadingContex.setLoading(false)
         })
@@ -87,6 +84,7 @@ const Wishlist = ({navigation}) => {
                             getWishlist={getWishlist}
                         />
                     ))}
+                    
                 </View>
             </ScrollView>
         </>

@@ -1,5 +1,5 @@
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import React, { useContext, useState, useEffect, useCallback } from 'react'
+import React, { useContext, useState, useEffect, useCallback, } from 'react'
 import PandaContext from '../../../contexts/Panda'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CustomSearch from '../../../Components/CustomSearch'

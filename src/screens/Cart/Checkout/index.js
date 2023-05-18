@@ -66,11 +66,11 @@ const Checkout = ({ navigation }) => {
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
     const [payment, setPayment] = useState([
-        // {
-        //     _id: 'online',
-        //     name: "Online",
-        //     selected: true
-        // },
+        {
+            _id: 'online',
+            name: "Online",
+            selected: true
+        },
         {
             _id: 'COD',
             name: "COD",
@@ -120,8 +120,8 @@ const Checkout = ({ navigation }) => {
                         delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock
-                        fromDate = pro?.productdata?.offer_date_from
-                        toDate = pro?.productdata?.offer_date_to
+                        fromDate = moment(pro?.productdata?.offer_date_from).isValid() ? moment(pro?.productdata?.offer_date_from, "YYYY-MM-DD") : null
+                        toDate = moment(pro?.productdata?.offer_date_to).isValid() ? moment(pro?.productdata?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.productdata?.stock_value ? parseFloat(pro?.productdata?.stock_value) : 0
                         product = {
                             product_id: pro?.product_id,
@@ -148,8 +148,8 @@ const Checkout = ({ navigation }) => {
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock;
-                        fromDate = pro?.variants?.offer_date_from
-                        toDate = pro?.variants?.offer_date_to
+                        fromDate = moment(pro?.variants?.offer_date_from).isValid() ? moment(pro?.variants?.offer_date_from, "YYYY-MM-DD") : null
+                        toDate = moment(pro?.variants?.offer_date_to).isValid() ? moment(pro?.variants?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
                         product = {
                             product_id: pro?.product_id,
@@ -518,7 +518,7 @@ const Checkout = ({ navigation }) => {
                             cartContext?.setCart(null)
                             setCartItems(null)
                             await AsyncStorage.removeItem("cartId");
-                            navigation.navigate('OrderPlaced', { item: response.data })
+                            navigation.navigate('OrderPlaced', { item: response.data?.data })
                         }
                     } else {
                         Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
@@ -540,13 +540,15 @@ const Checkout = ({ navigation }) => {
 
     const updatePaymentResponse = async (data) => {
         let details = data
+
+        reactotron.log({details})
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {
                 cartContext?.setCart(null)
                 setCartItems(null)
                 await AsyncStorage.removeItem("cartId");
                 if (details?.STATUS == "TXN_SUCCESS") {
-                    navigation.navigate('OrderPlaced')
+                    navigation.navigate('OrderPlaced',{item: { created_at : details?.TXNDATE,order_id:details?.ORDERID}})
                 } else {
                     Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
                     navigation.navigate("order")
