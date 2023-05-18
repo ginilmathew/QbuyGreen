@@ -59,7 +59,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
-        let isStaging = true
+        let isStaging = false
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="

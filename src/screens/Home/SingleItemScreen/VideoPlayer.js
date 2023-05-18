@@ -13,7 +13,7 @@ const VideoPlayer = ({videoId, selected, index}) => {
     
     useEffect(() => {
         if(selected !== index){
-            setPlaying(false)
+            setPlaying((prev) => !prev);
         }
     }, [selected])
     
@@ -29,7 +29,7 @@ const VideoPlayer = ({videoId, selected, index}) => {
             }, 500);
         }
         else if(state === "playing"){
-            setPlaying(true);
+            setPlaying((prev) => !prev);
         }
     }, []);
 
