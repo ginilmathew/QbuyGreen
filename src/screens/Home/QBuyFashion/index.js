@@ -31,6 +31,7 @@ import AvailableProducts from '../QBuyGreen/AvailableProducts';
 import PandaSuggestions from '../QBuyGreen/PandaSuggestions';
 import Carousel from 'react-native-reanimated-carousel';
 import FastImage from 'react-native-fast-image';
+import reactotron from '../../../ReactotronConfig';
 
 
 const QBuyFashion = () => {
@@ -52,6 +53,7 @@ const QBuyFashion = () => {
 
     const [availablePdt, setavailablePdt] = useState(null)
     const [slider, setSlider] = useState(null)
+
 
 
 

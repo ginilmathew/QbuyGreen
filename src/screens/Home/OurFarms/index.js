@@ -43,7 +43,7 @@ const OurFarms = ({navigation}) => {
             <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
                 <View style={{backgroundColor:'#000', paddingVertical:20, borderRadius:20, marginTop:20}}>
-                    <VideoPlayer
+                    {/* <VideoPlayer
                         video={require('../../../Videos/farming.mp4')} 
                         // showDuration={true}
                         controlsTimeout={2000}
@@ -51,7 +51,7 @@ const OurFarms = ({navigation}) => {
                         videoHeight={750}
                         resizeMode='contain'
                         thumbnail={require('../../../Images/farmThumb.jpeg')}
-                    />
+                    /> */}
                 </View>
 
                 <Title 

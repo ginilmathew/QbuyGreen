@@ -1,5 +1,5 @@
 import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react'
 import ImageSlider from '../../../Components/ImageSlider';
 import CustomSearch from '../../../Components/CustomSearch';
 import { useForm } from "react-hook-form";
@@ -114,8 +114,12 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getHomedata()
+    }, []);
+
+    useEffect(() => {
+        
     }, [])
 
 
@@ -133,7 +137,8 @@ const QBuyGreen = ({ navigation }) => {
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
-                }, 1000);
+                }, 500);
+                
             })
             .catch(async error => {
                 console.log(error)
@@ -176,7 +181,7 @@ const QBuyGreen = ({ navigation }) => {
                 <>
                     <CategoryCard data={item?.data} />
                     <SearchBox onPress={onSearch} />
-                    <View style={{ flex: 1 }}>
+                    {slider?.length > 0 && <View style={{ flex: 1 }}>
                         <Carousel
                             loop
                             width={width}
@@ -186,7 +191,7 @@ const QBuyGreen = ({ navigation }) => {
                             scrollAnimationDuration={1000}
                             renderItem={CarouselCardItem}
                         />
-                    </View>
+                    </View>}
 
                     {/* {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />} */}
                 </>

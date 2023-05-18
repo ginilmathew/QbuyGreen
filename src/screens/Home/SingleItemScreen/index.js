@@ -42,9 +42,9 @@ const SingleItemScreen = ({ route, navigation }) => {
     const item = route?.params?.item
 
 
-    reactotron.log({mode})
+    // reactotron.log({ item })
 
-    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link])
+    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
     const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
@@ -117,7 +117,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
-    reactotron.log({singleProduct})
+    reactotron.log({ singleProduct })
 
     useEffect(() => {
         //getSingleProduct()
@@ -362,10 +362,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const closeSingleImg = useCallback(() => {
         setShowSingleImg(false)
-    }, [])
+    }, [showSingleImg])
 
-    let image = item?.image ? [item?.product_image, ...item?.image, item?.video_link] : [item?.product_image, item?.video_link];
+    let image = item?.image ? [item?.product_image, ...item?.image] : [item?.product_image];
 
+    reactotron?.log({ image })
 
     let imageArray = image?.filter((data, index) => index !== selectedImage)
 
@@ -403,15 +404,15 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 data={images}
                                 renderItem={({ index }) => (
                                     <>
-                                    {images?.length !== images?.lenth && <FastImage
-                                        // source={singleProduct?.image[selectedImage]?.name} 
-                                        source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
-                                        style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                        resizeMode='contain'
-                                    >
-                                    </FastImage> }
-                                
-                                    {/* {images?.length === images?.lenth &&<VideoPlayer
+                                        {images?.length !== images?.lenth && <FastImage
+                                            // source={singleProduct?.image[selectedImage]?.name} 
+                                            source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                            style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                                            resizeMode='contain'
+                                        >
+                                        </FastImage>}
+
+                                        {/* {images?.length === images?.lenth &&<VideoPlayer
                                         video={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
 
                                         // showDuration={true}
@@ -421,7 +422,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 
                                     />} */}
                                     </>
-                                   
+
 
                                 )}
                                 onSnapToItem={(index) => setSelectedImage(index)}
@@ -613,9 +614,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     transparent={true}
                     visible={showSingleImg}
                 >
-                    <View
-                        style={{ alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
-                    >
+                    
                         {imagesArray && <Modal visible={showSingleImg} >
                             <View style={{ flex: 1 }}>
                                 <ImageViewer
@@ -623,16 +622,16 @@ const SingleItemScreen = ({ route, navigation }) => {
                                     renderHeader={() =>
                                         <TouchableOpacity
                                             onPress={closeSingleImg}
-                                            style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 100, top: 40, right: 20 }}
+                                            style={{ alignSelf: 'flex-end', position: 'absolute', top: 50, right: 20, zIndex:10,  }}
                                         >
-                                            <AntDesign name='close' color='#fff' size={25} alignSelf={'flex-end'} />
+                                            <AntDesign name='close' color='#fff' size={25}  />
                                         </TouchableOpacity>
                                     }
                                 />
                             </View>
 
                         </Modal>}
-                        {images &&
+                        {/* {images &&
 
                             <FastImage
                                 source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
@@ -643,8 +642,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                     <AntDesign name='close' color='#fff' size={15} marginLeft={1} />
                                 </TouchableOpacity>
                             </FastImage>
-                        }
-                    </View>
+                        } */}
                 </Modal>
 
 

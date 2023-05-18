@@ -14,7 +14,7 @@ const CommonAddButton = ({onPress}) => {
             onPress={onPress}
             style={styles.container}
         >
-            <MaterialCommunityIcons name={"plus-circle"} size={22} color={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#56D06D'} />
+            <MaterialCommunityIcons name={"plus-circle"} size={35} color={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#56D06D'} />
         </TouchableOpacity>
     )
 }

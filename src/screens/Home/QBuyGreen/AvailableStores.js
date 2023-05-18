@@ -6,7 +6,7 @@ import ShopCard from '../Grocery/ShopCard'
 const AvailableStores = memo(({data}) => {
     return (
         <>
-            <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={15} />
+            {data?.length > 0 && <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={15} />}
             <View style={styles.grossCatView}>
                 {data?.map((item, index) => (
                     <ShopCard key={index} item={item} />
