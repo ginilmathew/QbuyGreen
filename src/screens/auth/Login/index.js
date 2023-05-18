@@ -16,11 +16,13 @@ import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
 import Toast from 'react-native-toast-message'
 import SplashScreen from 'react-native-splash-screen'
+import reactotron from 'reactotron-react-native';
 
 
 const Login = ({ navigation }) => {
 
 	useEffect(() => {
+		reactotron.log("in")
 	   SplashScreen.hide()
 	}, [])
 	

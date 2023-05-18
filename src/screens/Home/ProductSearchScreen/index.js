@@ -12,6 +12,7 @@ import { IMG_URL, env, location } from '../../../config/constants'
 import SearchResultsCard from './SearchResultsCard'
 import Toast from 'react-native-toast-message';
 import AuthContext from '../../../contexts/Auth'
+import reactotron from '../../../ReactotronConfig'
 
 
 const ProductSearchScreen = ({route}) => {
@@ -21,6 +22,8 @@ const ProductSearchScreen = ({route}) => {
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
+
+    reactotron.log({active})
 
     let loader = loadingg?.loading
 

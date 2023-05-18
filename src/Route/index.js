@@ -21,6 +21,7 @@ import LoaderContext from '../contexts/Loader';
 import { isObject } from 'lodash'
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import reactotron from '../ReactotronConfig';
 
 
 // import Menu from './Menu';
@@ -218,6 +219,8 @@ const Route = () => {
             <SplashScreen />
         )
     }
+
+    reactotron.log({mode})
 
     return (
         <NavigationContainer ref={navigationRef}>

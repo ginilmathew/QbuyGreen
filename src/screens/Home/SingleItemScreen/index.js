@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, Moda, RefreshControl, Modal, Pressable } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -39,12 +39,36 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [showSingleImg, setShowSingleImg] = useState(false)
     let active = contextPanda.active
 
-    const item = route?.params?.item
+
+    const [item, setItem] = useState(null)
+
+    reactotron.log({item})
+
+    useEffect(() => {
+      if(route?.params?.item){
+        setItem(route?.params?.item)
+        setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image] : [route?.params?.item?.product_image])
+        addViewCount(route?.params?.item)
+        if(!item?.variant){
+            if (item?.variant) {
+
+                setAttributes([])
+            }
+        }
+        
+      }
+    
+      return () => {
+        setItem(null)
+        setImages([])
+      }
+    }, [route?.params?.item])
+    
 
 
-    // reactotron.log({ item })
+    reactotron.log({ showSingleImg })
 
-    const [images, setImages] = useState(item?.image ? [item?.product_image, ...item?.image] : [item?.product_image])
+    const [images, setImages] = useState(null)
     const [imagesArray, setImagesArray] = useState([])
 
     const loadingg = useContext(LoaderContext)
@@ -121,44 +145,14 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         //getSingleProduct()
-        addViewCount()
+       // addViewCount()
     }, [])
 
-    const getSingleProduct = async () => {
+    
 
-        await customAxios.get(`customer/product/${item?._id}`)
-
-            .then(async response => {
-                setSingleProduct(response?.data?.data)
-                getProductPrice(response?.data?.data)
-                let attributes = response?.data?.data?.attributes.map(attr => {
-                    let options = attr?.options?.map(op => {
-                        return {
-                            label: op,
-                            value: op
-                        }
-                    })
-                    return {
-                        ...attr,
-                        options,
-                        selected: options?.[0]?.label,
-                        optArray: attr?.options
-                    }
-                })
-                setAttributes(attributes)
-                // loadingg.setLoading(false)
-            })
-            .catch(async error => {
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-            })
-    }
-
-    const addViewCount = async () => {
+    const addViewCount = async (item) => {
         let datas = {
-            type: contextPanda?.active === "green" ? 'green' : 'fashion',
+            type: active,
             product_id: item?._id,
             customer_id: userData?._id
         }
@@ -178,7 +172,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const gotoStore = useCallback(() => {
         navigation.navigate('store', { name: item?.store?.name, mode: 'singleItem', storeId: item?.store?._id })
-    })
+    }, item)
 
     const proceedCheckout = useCallback(() => {
         navigation.navigate('Checkout')
@@ -198,74 +192,10 @@ const SingleItemScreen = ({ route, navigation }) => {
         cartContext.addToCart(item, selectedVariant)
 
 
-    }, [selectedVariant, cart?.cart])
+    }, [selectedVariant, cart?.cart, item])
 
 
-    const getProductPrice = useCallback((singleProduct) => {
-        setSelectedVariant(singleProduct?.variants?.[0])
-        if (singleProduct?.variants?.length > 0) {
-            if (singleProduct?.variants?.[0]?.offer_price) {
-                if (moment(singleProduct?.variants?.[0]?.offer_date_from) <= moment() && moment(singleProduct?.variants?.[0]?.offer_date_to) >= moment()) {
-                    setPrice(singleProduct?.variants?.[0]?.offer_price)
-                    //return singleProduct?.variants?.[0]?.offer_price;
-                }
-                else {
-                    if (singleProduct?.variants?.[0]?.regular_price > 0) {
-                        setPrice(singleProduct?.variants?.[0]?.regular_price)
-                    }
-                    else {
-                        let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
-                        let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
-                        let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
-                        setPrice(price)
-                    }
-                    //return singleProduct?.variants?.[0]?.regular_price;
-                }
-            }
-            else {
-                if (singleProduct?.variants?.[0]?.regular_price > 0) {
-                    setPrice(singleProduct?.variants?.[0]?.regular_price)
-                }
-                else {
-                    let comm = singleProduct?.variants?.[0]?.commission ? singleProduct?.variants?.[0]?.commission : 0
-                    let commission = (parseFloat(singleProduct?.variants?.[0]?.seller_price) / 100) * parseFloat(comm)
-                    let price = parseFloat(singleProduct?.variants?.[0]?.seller_price) + commission
-                    setPrice(price)
-                }
-            }
-        }
-        else {
-            if (singleProduct?.offer_price) {
-                if (moment(singleProduct?.offer_date_from) <= moment() && moment(singleProduct?.offer_date_to) >= moment()) {
-                    setPrice(singleProduct?.offer_price)
-                    //return singleProduct?.offer_price;
-                }
-                else {
-                    if (singleProduct?.regular_price > 0) {
-                        setPrice(singleProduct?.regular_price)
-                    }
-                    else {
-                        let comm = singleProduct?.commission ? singleProduct?.commission : 0
-                        let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
-                        let price = parseFloat(singleProduct?.seller_price) + commission
-                        setPrice(price)
-                    }
-                }
-            }
-            else {
-                if (singleProduct?.regular_price > 0) {
-                    setPrice(singleProduct?.regular_price)
-                }
-                else {
-                    let comm = singleProduct?.commission ? singleProduct?.commission : 0
-                    let commission = (parseFloat(singleProduct?.seller_price) / 100) * parseFloat(comm)
-                    let price = parseFloat(singleProduct?.seller_price) + commission
-                    setPrice(price)
-                }
-            }
-        }
-    }, [])
-
+    
 
     const selectAttributes = (value) => {
         let attri = [];
@@ -305,7 +235,15 @@ const SingleItemScreen = ({ route, navigation }) => {
             const containsAll = attri.every(elem => attributes.includes(elem));
 
             if (containsAll) {
-
+                reactotron.log({sin, item})
+                if(item?.stock){
+                    if(!sin?.available){
+                        item.available = false
+                    }
+                    else{
+                        item.available = true
+                    }
+                }
                 setSelectedVariant(sin)
                 setPrice(sin?.price)
                 return false;
@@ -316,36 +254,47 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const renderInStock = () => {
-        if (item?.stock) {
-            if (item?.variant) {
-                if (parseFloat(item?.stock_value) > 0) {
-                    return (
-                        <View
-                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                        </View>
-                    )
+        if(item?.available){
+            if (item?.stock) {
+                if (item?.variant) {
+                    if (parseFloat(item?.stock_value) > 0) {
+                        return (
+                            <View
+                                style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                            >
+                                <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                            </View>
+                        )
+                    }
+                }
+                else {
+                    if (parseFloat(singleProduct?.stock_value) > 0) {
+                        return (
+                            <View
+                                style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                            >
+                                <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                            </View>
+                        )
+                    }
                 }
             }
             else {
-                if (parseFloat(singleProduct?.stock_value) > 0) {
-                    return (
-                        <View
-                            style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
-                        </View>
-                    )
-                }
+                return (
+                    <View
+                        style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                    >
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                    </View>
+                )
             }
         }
-        else {
+        else{
             return (
                 <View
-                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 8 }}
+                    style={{ position: 'absolute', left: 20, top: 15, backgroundColor: 'red', borderRadius: 8 }}
                 >
-                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'In Stock'}</Text>
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'Out Off Stock'}</Text>
                 </View>
             )
         }
@@ -356,7 +305,6 @@ const SingleItemScreen = ({ route, navigation }) => {
             return { url: `${IMG_URL}${items}` }
         })
         setImagesArray(imagesss)
-
         setShowSingleImg(true)
     }, [images])
 
@@ -404,23 +352,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 data={images}
                                 renderItem={({ index }) => (
                                     <>
-                                        {images?.length !== images?.lenth && <FastImage
-                                            // source={singleProduct?.image[selectedImage]?.name} 
-                                            source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
-                                            style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                            resizeMode='contain'
-                                        >
-                                        </FastImage>}
-
-                                        {/* {images?.length === images?.lenth &&<VideoPlayer
-                                        video={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-
-                                        // showDuration={true}
-                                        controlsTimeout={2000}
-                                        pauseOnPress={true}
+                                    {images?.length > 0 && <FastImage
+                                        // source={singleProduct?.image[selectedImage]?.name} 
+                                        source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
+                                        style={{  height: 180, borderRadius: 15, }}
                                         resizeMode='contain'
-                                
-                                    />} */}
+                                    >
+                                    </FastImage> }
                                     </>
 
 
@@ -429,7 +367,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 scrollAnimationDuration={10}
                             /> : <FastImage
                                 // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${images[0]}` }}
+                                source={{ uri: `${IMG_URL}${images?.[0]}` }}
                                 style={{ width: width - 30, height: 180, borderRadius: 15, }}
                                 resizeMode='contain'
                             >
@@ -449,7 +387,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                 </View>
-                {images.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {images?.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     {images?.map((item, index) =>
                         <ImageVideoBox
                             key={index}
@@ -616,19 +554,20 @@ const SingleItemScreen = ({ route, navigation }) => {
                 >
                     
                         {imagesArray && <Modal visible={showSingleImg} >
-                            <View style={{ flex: 1 }}>
                                 <ImageViewer
+                                    style={{ flex: 1 }}
+                                    enableSwipeDown
+                                    onSwipeDown={closeSingleImg}
+                                    onCancel={closeSingleImg}
                                     imageUrls={imagesArray}
-                                    renderHeader={() =>
-                                        <TouchableOpacity
-                                            onPress={closeSingleImg}
-                                            style={{ alignSelf: 'flex-end', position: 'absolute', top: 50, right: 20, zIndex:10,  }}
-                                        >
-                                            <AntDesign name='close' color='#fff' size={25}  />
-                                        </TouchableOpacity>
-                                    }
+                                    onClick={closeSingleImg}
+                                    renderFooter={() => <TouchableOpacity
+                                        onPress={closeSingleImg}
+                                        style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 150, bottom: 50, left: width/2, elevation: 5 }}
+                                    >
+                                        <AntDesign name='closecircle' onPress={closeSingleImg} color='#fff' size={25} alignSelf={'flex-end'} />
+                                    </TouchableOpacity>}
                                 />
-                            </View>
 
                         </Modal>}
                         {/* {images &&
