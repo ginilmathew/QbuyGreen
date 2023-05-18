@@ -17,7 +17,7 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
 
     const onClick = useCallback(() => {
         navigation.navigate('Category', {name : item?.name, mode: contextPanda.active, item : item, storeId })
-    }, [])
+    }, [item])
 
     return (
       
