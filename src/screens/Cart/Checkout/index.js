@@ -518,7 +518,7 @@ const Checkout = ({ navigation }) => {
                             cartContext?.setCart(null)
                             setCartItems(null)
                             await AsyncStorage.removeItem("cartId");
-                            navigation.navigate('OrderPlaced', { item: response.data })
+                            navigation.navigate('OrderPlaced', { item: response.data?.data })
                         }
                     } else {
                         Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
@@ -540,13 +540,15 @@ const Checkout = ({ navigation }) => {
 
     const updatePaymentResponse = async (data) => {
         let details = data
+
+        reactotron.log({details})
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {
                 cartContext?.setCart(null)
                 setCartItems(null)
                 await AsyncStorage.removeItem("cartId");
                 if (details?.STATUS == "TXN_SUCCESS") {
-                    navigation.navigate('OrderPlaced')
+                    navigation.navigate('OrderPlaced',{item: { created_at : details?.TXNDATE,order_id:details?.ORDERID}})
                 } else {
                     Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
                     navigation.navigate("order")

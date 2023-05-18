@@ -34,8 +34,8 @@ const OrderPlaced = ({ route, navigation }) => {
                         />
                     </View>
                     <CommonTexts label={'Order Placed Successfully !'} color='#089321' fontSize={20} textAlign='center' />
-                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16, color: '#23233C', textAlign: 'center' }}>Order ID : #{item?.data?.order_id}</Text>
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 9, color: '#A5A5A5', textAlign: 'center', marginTop: 5 }}>{moment(item?.data?.created_at).format('DD-MM-YYYY hh:mm A')}</Text>
+                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16, color: '#23233C', textAlign: 'center' }}>Order ID : #{item?.order_id}</Text>
+                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 9, color: '#A5A5A5', textAlign: 'center', marginTop: 5 }}>{moment(item?.created_at).format('DD-MM-YYYY hh:mm A')}</Text>
                     {/* <View style={{borderRadius:15, backgroundColor:'#F3FFF5', padding:10, marginVertical:15}}>
                     <Text style={{fontFamily:'Poppins-Regular', fontSize:11, color:'#23233C'}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</Text>
                 </View> */}

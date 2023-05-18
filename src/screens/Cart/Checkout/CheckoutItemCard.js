@@ -7,8 +7,9 @@ import customAxios from '../../../CustomeAxios'
 import AuthContext from '../../../contexts/Auth'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 import { useNavigation } from '@react-navigation/native'
+import reactotron from '../../../ReactotronConfig'
 
-const CheckoutItemCard = ({item, index, refreshCart, view}) => {
+const CheckoutItemCard = ({ item, index, refreshCart, view }) => {
 
     const navigation = useNavigation()
 
@@ -49,15 +50,15 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
     // }, [])
 
     useEffect(() => {
-        if(item){
+        if (item) {
             setData(item)
         }
     }, [item])
-    
+
 
     const addItem = async () => {
-        if(data?.stock){
-            if(parseFloat(data?.stock_value) < data?.quantity + 1){
+        if (data?.stock) {
+            if (parseFloat(data?.stock_value) < data?.quantity + 1) {
                 Toast.show({
                     type: 'error',
                     text1: 'Required quantity not available'
@@ -70,26 +71,26 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
         allProducts[index].quantity = allProducts[index].quantity + 1;
 
         let cartItems = {
-            cart_id : cartContext?.cart?._id,
+            cart_id: cartContext?.cart?._id,
             product_details: allProducts,
             user_id: userContext?.userData?._id
         }
 
         await customAxios.post(`customer/cart/update`, cartItems)
-        .then(async response => {
-            cartContext.setCart(response?.data?.data)
-            refreshCart()
-            //data.quantity = data?.quantity + 1
-            //navigation.navigate('CartNav',{screen: 'Cart'})
-        })
-        .catch(async error => {
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-        })
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                refreshCart()
+                //data.quantity = data?.quantity + 1
+                //navigation.navigate('CartNav',{screen: 'Cart'})
+            })
+            .catch(async error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+            })
 
-        
+
     }
 
     // const removeItem = useCallback(async() => {
@@ -98,13 +99,13 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
     //         let allProducts = cartContext?.cart?.product_details;
     //         allProducts[index].quantity = allProducts[index].quantity - 1;
     //         //setCount(count + 1)
-    
+
     //         let cartItems = {
     //             cart_id : cartContext?.cart?._id,
     //             product_details: allProducts,
     //             user_id: userContext?.userData?._id
     //         }
-    
+
     //         await customAxios.post(`customer/cart/update`, cartItems)
     //             .then(async response => {
     //                 cartContext.setCart(response?.data?.data)
@@ -145,37 +146,37 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
     //     }
     // }, [])
 
-    const removeItem = async() => {
+    const removeItem = async () => {
         let allProducts = cartContext?.cart?.product_details;
         let cartItems;
-        if(data?.quantity > 1){
-            let quantity = data?.quantity 
-            
-            if(quantity - 1 >= data?.minimum_qty){
+        if (data?.quantity > 1) {
+            let quantity = data?.quantity
+
+            if (quantity - 1 >= data?.minimum_qty) {
                 data.quantity = quantity - 1
                 allProducts[index].quantity = allProducts[index].quantity - 1;
                 cartItems = {
-                    cart_id : cartContext?.cart?._id,
+                    cart_id: cartContext?.cart?._id,
                     product_details: allProducts,
                     user_id: userContext?.userData?._id
                 }
 
                 await customAxios.post(`customer/cart/update`, cartItems)
-                .then(async response => {
-                    cartContext.setCart(response?.data?.data)
-                    refreshCart()
-                    //data.quantity = data?.quantity - 1
-                    //navigation.navigate('CartNav',{screen: 'Cart'})
-                })
-                .catch(async error => {
-                    Toast.show({
-                        type: 'error',
-                        text1: error
-                    });
-                    console.log(error)
-                })
+                    .then(async response => {
+                        cartContext.setCart(response?.data?.data)
+                        refreshCart()
+                        //data.quantity = data?.quantity - 1
+                        //navigation.navigate('CartNav',{screen: 'Cart'})
+                    })
+                    .catch(async error => {
+                        Toast.show({
+                            type: 'error',
+                            text1: error
+                        });
+                        console.log(error)
+                    })
             }
-            else{
+            else {
                 Alert.alert(
                     'Warning',
                     'Are you sure want to remove this product',
@@ -192,18 +193,18 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
                         },
                     ],
                     {
-                      cancelable: true
+                        cancelable: true
                     },
                 );
             }
-            
-    
-           
+
+
+
         }
-        else{
-            let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
+        else {
+            let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index);
             let cartItems = {
-                cart_id : cartContext?.cart?._id,
+                cart_id: cartContext?.cart?._id,
                 product_details: allProducts,
                 user_id: userContext?.userData?._id
             }
@@ -212,7 +213,7 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
                 .then(async response => {
                     cartContext.setCart(response?.data?.data)
                     refreshCart()
-                    if(allProducts?.length === 0){
+                    if (allProducts?.length === 0) {
                         navigation.goBack()
                     }
                     //data.quantity = data?.quantity - 1
@@ -226,47 +227,53 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
                     });
                 })
         }
-        
+
     }
 
-    const deleteItem = async() => {
-        let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index );
+    const deleteItem = async () => {
+        let allProducts = cartContext?.cart?.product_details?.filter((prod, i) => i !== index);
         let cartItems = {
-            cart_id : cartContext?.cart?._id,
+            cart_id: cartContext?.cart?._id,
             product_details: allProducts,
             user_id: userContext?.userData?._id
         }
         await customAxios.post(`customer/cart/update`, cartItems)
-                .then(async response => {
-                    cartContext.setCart(response?.data?.data)
-                    refreshCart()
-                    //data.quantity = data?.quantity - 1
-                    //navigation.navigate('CartNav',{screen: 'Cart'})
-                    if(allProducts?.length === 0){
-                        navigation.goBack()
-                    }
-                })
-                .catch(async error => {
-                    console.log(error)
-                    Toast.show({
-                        type: 'error',
-                        text1: error
-                    });
-                })
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                refreshCart()
+                //data.quantity = data?.quantity - 1
+                //navigation.navigate('CartNav',{screen: 'Cart'})
+                if (allProducts?.length === 0) {
+                    navigation.goBack()
+                }
+            })
+            .catch(async error => {
+                console.log(error)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+            })
     }
 
 
-   
+
 
     const gotoStore = useCallback(() => {
-        navigation.navigate('home', {screen: 'store', params : {name : item?.store?.name, mode : 'checkoutItem', storeId: item?.store?._id }})
+        navigation.navigate('home', { screen: 'store', params: { name: item?.store?.name, mode: 'checkoutItem', storeId: item?.store?._id } })
     })
 
+
+    reactotron.log({ itemName: item?.name })
+    reactotron.log({ item: item })
     return (
         <View style={styles.container}>
             <View style={{ flex: 0.42 }}>
-            {item?.attributes?.length > 0 ? <Text style={styles.text1}>{`${item?.name}${'('}${item?.attributes.join(', ')}${')'} `}</Text> : <Text style={styles.text1}>{item?.name}</Text>}
-                {!view && <Text onPress={gotoStore} style={[styles.text2]}>{item?.store?.name}</Text>}
+                {item?.attributes?.length > 0 ? <Text style={styles.text1}>{`${item?.name}${'('}${item?.attributes.join(', ')}${')'} `}</Text> : 
+                <Text style={styles.text1}>{item?.name}</Text>}
+                {!view &&
+                    <Text onPress={gotoStore} style={styles.text2}>{item?.store?.name}</Text>
+                }
             </View>
             <Text style={styles.unitPrice}>₹ {parseFloat(item?.unitPrice).toFixed(2)}</Text>
             <Text style={[styles.quantity]}>{item?.quantity}</Text>
@@ -284,38 +291,44 @@ const CheckoutItemCard = ({item, index, refreshCart, view}) => {
 export default CheckoutItemCard
 
 const styles = StyleSheet.create({
-    container : { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        backgroundColor: '#fff', 
-        justifyContent: 'space-between', 
-        paddingVertical: 10, 
-        borderBottomWidth: 1, 
-        borderColor: '#00000029', 
-        paddingHorizontal: 7 
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: '#00000029',
+        paddingHorizontal: 7
     },
-    total : {
+    total: {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
         flex: 0.27,
         textAlign: 'center'
     },
-    unitPrice : {
+    unitPrice: {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
         flex: 0.2,
         textAlign: 'center'
     },
-    quantity : {
+    quantity: {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
         flex: 0.15,
         textAlign: 'center'
     },
-    text2 : {
+    text1: {
+        fontFamily: 'Poppins-Medium',
+        color: '#23233C',
+        fontSize: 10,
+
+    },
+    text2: {
         fontFamily: 'Poppins-BoldItalic',
         color: '#1185E0',
         fontSize: 9,
