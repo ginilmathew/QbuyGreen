@@ -15,6 +15,7 @@ import AuthContext from '../../contexts/Auth'
 import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
+import { IMG_URL } from '../../config/constants'
 
 
 
@@ -93,7 +94,8 @@ const MyAccount = ({ navigation }) => {
                     <View>
                         <Image
                             style={styles.logo}
-                            source={require('../../Images/drawerLogo.png')}
+
+                            source={userData?.image ? { uri: `${IMG_URL}${userData?.image}` } :  require('../../Images/drawerLogo.png')}
                         />
                         <TouchableOpacity 
                             onPress={onEdit}
