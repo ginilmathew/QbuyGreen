@@ -11,6 +11,7 @@ import PandaContext from '../contexts/Panda'
 import CartContext from '../contexts/Cart'
 import AuthContext from '../contexts/Auth'
 import axios from 'axios'
+import reactotron from '../ReactotronConfig'
 
 const Header = ({ onPress, openAddress, goCart }) => {
     const contextPanda = useContext(PandaContext)
@@ -26,7 +27,8 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
     let myLocation = userContext?.userLocation
 
-
+   
+    reactotron.log({myLocation})
 
     const navigation = useNavigation()
 
