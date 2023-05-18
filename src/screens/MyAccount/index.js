@@ -60,8 +60,9 @@ const MyAccount = ({ navigation }) => {
                 });
                 await AsyncStorage.clear()
                 cartContext.setCart(null)
+                cartContext.setAddress(null)
+                cartContext.setDefaultAddress(null)
                 user?.setUserData(null)
-                navigation.navigate('Login')
                 navigation.dispatch(
                     CommonActions.reset({
                       index: 0,

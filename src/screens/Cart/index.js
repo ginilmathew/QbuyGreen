@@ -60,8 +60,8 @@ const Cart = ({ navigation }) => {
                         delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
                         minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock
-                        fromDate = pro?.productdata?.offer_date_from
-                        toDate = pro?.productdata?.offer_date_to
+                        fromDate = moment(pro?.productdata?.offer_date_from).isValid() ? moment(pro?.productdata?.offer_date_from, "YYYY-MM-DD") : null
+                        toDate = moment(pro?.productdata?.offer_date_to).isValid() ? moment(pro?.productdata?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.productdata?.stock_value ? parseFloat(pro?.productdata?.stock_value) : 0
                         product = {
                             product_id: pro?.product_id,
@@ -85,8 +85,8 @@ const Cart = ({ navigation }) => {
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
                         minQty= pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
                         stock = pro?.productdata?.stock;
-                        fromDate = pro?.variants?.offer_date_from
-                        toDate = pro?.variants?.offer_date_to
+                        fromDate = moment(pro?.variants?.offer_date_from).isValid() ? moment(pro?.variants?.offer_date_from, "YYYY-MM-DD") : null
+                        toDate = moment(pro?.variants?.offer_date_to).isValid() ? moment(pro?.variants?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
                         product = {
                             product_id: pro?.product_id,

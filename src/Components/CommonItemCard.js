@@ -164,6 +164,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
                     source={data?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${data?.product_image}` }}
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
+                    progressiveRenderingEnabled={true}
                 >
                     <LinearGradient colors={data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{data?.name}</Text>

@@ -5,7 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { Controller } from 'react-hook-form'
 import CommonSquareButton from './CommonSquareButton'
 
-const SearchBox = ({ onPress, }) => {
+const SearchBox = ({ onPress }) => {
 
     return (
         <TouchableOpacity

@@ -212,8 +212,8 @@ export function getProduct(product){
     }
     else{
         let offer = product?.offer_price ? parseFloat(product?.offer_price) : 0;
-        let offerFromDate = product?.offer_date_from ? moment(product?.offer_date_from, "YYYY-MM-DD") : null
-        let offerToDate = product?.offer_date_to ? moment(product?.offer_date_to, "YYYY-MM-DD") : null
+        let offerFromDate = moment(product?.offer_date_from).isValid() ? moment(product?.offer_date_from, "YYYY-MM-DD") : null
+        let offerToDate = moment(product?.offer_date_to).isValid() ? moment(product?.offer_date_to, "YYYY-MM-DD") : null
         let regular = product?.regular_price ? parseFloat(product?.regular_price) : 0
         let seller = product?.seller_price ? parseFloat(product?.seller_price) : 0
         let commission = product?.commission ? parseFloat(product?.commission) : 0
