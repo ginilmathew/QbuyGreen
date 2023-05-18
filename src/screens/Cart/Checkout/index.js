@@ -66,15 +66,15 @@ const Checkout = ({ navigation }) => {
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
     const [payment, setPayment] = useState([
-        // {
-        //     _id: 'online',
-        //     name: "Online",
-        //     selected: true
-        // },
+        {
+            _id: 'online',
+            name: "Online",
+            selected: true
+        },
         {
             _id: 'COD',
             name: "COD",
-            selected: true
+            selected: false
         }
     ])
 
@@ -585,6 +585,7 @@ const Checkout = ({ navigation }) => {
             false,//appInvokeRestricted
             `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
+            reactotron.log({result})
             if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
             }
@@ -600,6 +601,7 @@ const Checkout = ({ navigation }) => {
 
 
         }).catch((err) => {
+            reactotron.log({err})
             let data = {
                 STATUS: 'TXN_FAILURE',
                 RESPMSG: 'User Cancelled transaction',
