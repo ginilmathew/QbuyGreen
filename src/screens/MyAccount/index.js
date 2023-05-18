@@ -5,7 +5,7 @@ import ListCard from './ListCard'
 import CustomButton from '../../Components/CustomButton'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-
+import Geolocation from 'react-native-geolocation-service';
 import HeaderWithTitle from '../../Components/HeaderWithTitle'
 import { CommonActions, useNavigation } from '@react-navigation/native'
 import PandaContext from '../../contexts/Panda'
@@ -47,6 +47,39 @@ const MyAccount = ({ navigation }) => {
         setShowModal(false)
     }, [])
 
+
+    const getPosition = async () => {
+        await Geolocation.getCurrentPosition(
+            position => {
+
+         
+                userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
+         
+            },
+            error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+           
+            },
+            {
+                accuracy: {
+                    android: 'high',
+                    ios: 'best',
+                },
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 10000,
+                distanceFilter: 0,
+                forceRequestLocation: true,
+                forceLocationManager: false,
+                showLocationDialog: true,
+            },
+        );
+    }
+
+
     const onClick = async() => {
         setShowModal(false)
         // await AsyncStorage.clear()
@@ -56,6 +89,7 @@ const MyAccount = ({ navigation }) => {
         }
         await customAxios.post(`auth/customerlogout`, datas)
             .then(async response => {
+                getPosition()
                 cartContext.setCart(null)
                 cartContext.setAddress(null)
                 cartContext.setDefaultAddress(null)
