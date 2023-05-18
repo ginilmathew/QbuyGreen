@@ -90,9 +90,11 @@ const Cart = ({ navigation }) => {
                         stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
                         product = {
                             product_id: pro?.product_id,
+                            variant_id: pro?.variants?._id,
+                            attributs: pro?.variants?.attributs,
                             name: pro?.name,
                             image: pro?.image,
-                            type: pro?.type,
+                            type: type,
                             quantity: quantity,
                             stock: stock,
                             delivery,
@@ -247,6 +249,7 @@ const Cart = ({ navigation }) => {
             })
         }
     }
+    
 
 
     useFocusEffect(
@@ -287,34 +290,6 @@ const Cart = ({ navigation }) => {
         else{
             navigation.navigate('Checkout')
         }
-        // reactotron.log({cartItemsList})
-        // return false;
-        // cartItemsList?.map(cart => {
-        //     if(cart?.productdata?.stock){
-        //         if(cart?.type === "variant"){
-        //             if(parseFloat(cart?.variants?.stock_value) < cart?.quantity){
-        //                 cancel = true;
-        //                 Toast.show({
-        //                     type: 'info',
-        //                     text1: 'Please remove out of stocks products and continue'
-        //                 })
-        //                 return false;
-        //             }
-        //         }
-        //         else if(parseFloat(cart?.productdata?.stock_value) < cart?.quantity){
-        //             cancel = true;
-        //             Toast.show({
-        //                 type: 'info',
-        //                 text1: 'Please remove out of stocks products and continue'
-        //             })
-        //             return false;
-        //         }
-        //     }
-        // })
-        // if(!cancel){
-        //     navigation.navigate('Checkout')
-        // }
-        // //navigation.navigate('Checkout')
 
     }, [cartItemsList])
 
