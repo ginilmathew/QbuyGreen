@@ -57,10 +57,7 @@ const OrderPlaced = ({ route, navigation }) => {
                             width={width / 2.2}
                             leftIcon={<Ionicons name='logo-whatsapp' color='#fff' size={18} marginRight={5} />}
                         />
-
                     </View>
-              
-
             </View>
 
 
