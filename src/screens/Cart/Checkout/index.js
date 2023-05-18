@@ -182,8 +182,8 @@ const Checkout = ({ navigation }) => {
                                     product['unitPrice'] = offer;
                                     finalProducts.push(product)
                                 }
-                                else if(fromDate && !toDate){
-                                    if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                                else if (fromDate && !toDate) {
+                                    if (moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) {
                                         let finalPrice = offer * quantity;
                                         product['price'] = finalPrice;
                                         product['unitPrice'] = offer;
@@ -203,21 +203,21 @@ const Checkout = ({ navigation }) => {
                                         finalProducts.push(product)
                                     }
                                 }
-                                else if(!fromDate && !toDate){
+                                else if (!fromDate && !toDate) {
                                     let finalPrice = offer * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = offer;
                                     finalProducts.push(product)
                                 }
-                                else{
-                                    if(regular > 0){
+                                else {
+                                    if (regular > 0) {
                                         let finalPrice = regular * quantity;
                                         product['price'] = finalPrice;
                                         product['unitPrice'] = regular;
                                         finalProducts.push(product)
                                     }
-                                    else{
-                                        let commission = (seller/100) * comm
+                                    else {
+                                        let commission = (seller / 100) * comm
                                         let amount = (seller + commission) * quantity;
                                         product['unitPrice'] = seller + commission;
                                         product['price'] = amount;
@@ -253,8 +253,8 @@ const Checkout = ({ navigation }) => {
                                 product['unitPrice'] = offer;
                                 finalProducts.push(product)
                             }
-                            else if(fromDate && !toDate){
-                                if(moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")){
+                            else if (fromDate && !toDate) {
+                                if (moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) {
                                     let finalPrice = offer * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = offer;
@@ -274,21 +274,21 @@ const Checkout = ({ navigation }) => {
                                     finalProducts.push(product)
                                 }
                             }
-                            else if(!fromDate && !toDate){
+                            else if (!fromDate && !toDate) {
                                 let finalPrice = offer * quantity;
                                 product['price'] = finalPrice;
                                 product['unitPrice'] = offer;
                                 finalProducts.push(product)
                             }
-                            else{
-                                if(regular > 0){
+                            else {
+                                if (regular > 0) {
                                     let finalPrice = regular * quantity;
                                     product['price'] = finalPrice;
                                     product['unitPrice'] = regular;
                                     finalProducts.push(product)
                                 }
-                                else{
-                                    let commission = (seller/100) * comm
+                                else {
+                                    let commission = (seller / 100) * comm
                                     let amount = (seller + commission) * quantity;
                                     product['unitPrice'] = seller + commission;
                                     product['price'] = amount;
@@ -510,7 +510,7 @@ const Checkout = ({ navigation }) => {
                 .then(async response => {
                     // console.log("response ==>", JSON.stringify(response.data), response.status)
                     const { data } = response
-                   
+
                     if (data?.status) {
                         if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
                             payWithPayTM(data?.data)
@@ -540,15 +540,16 @@ const Checkout = ({ navigation }) => {
 
     const updatePaymentResponse = async (data) => {
         let details = data
+        let orderID = details.ORDERID.replace(/^ORDER_/, "")
 
-        reactotron.log({details})
+        reactotron.log({ details })
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {
                 cartContext?.setCart(null)
                 setCartItems(null)
                 await AsyncStorage.removeItem("cartId");
                 if (details?.STATUS == "TXN_SUCCESS") {
-                    navigation.navigate('OrderPlaced',{item: { created_at : details?.TXNDATE,order_id:details?.ORDERID}})
+                    navigation.navigate('OrderPlaced', { item: { created_at: details?.TXNDATE, order_id: orderID } })
                 } else {
                     Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
                     navigation.navigate("order")
@@ -587,7 +588,7 @@ const Checkout = ({ navigation }) => {
             false,//appInvokeRestricted
             `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
-            reactotron.log({result})
+            reactotron.log({ result })
             if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
             }
@@ -603,7 +604,7 @@ const Checkout = ({ navigation }) => {
 
 
         }).catch((err) => {
-            reactotron.log({err})
+            reactotron.log({ err })
             let data = {
                 STATUS: 'TXN_FAILURE',
                 RESPMSG: 'User Cancelled transaction',

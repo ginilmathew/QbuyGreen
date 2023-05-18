@@ -9,11 +9,18 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 
 const HeaderWithTitle = ({ title, noBack, onPressBack, mode }) => {
 
+
+    console.log({mode})
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
 
     const backAction = useCallback(() => {
-        navigation.goBack()
+        if(mode === 'checkout'){
+            navigation.navigate('Checkout')
+        }else{
+            navigation.goBack()
+        }
+    
     }, [])
 
     const onClickFashionCat = useCallback(() => {

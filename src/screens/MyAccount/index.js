@@ -5,7 +5,7 @@ import ListCard from './ListCard'
 import CustomButton from '../../Components/CustomButton'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-
+import Geolocation from 'react-native-geolocation-service';
 import HeaderWithTitle from '../../Components/HeaderWithTitle'
 import { CommonActions, useNavigation } from '@react-navigation/native'
 import PandaContext from '../../contexts/Panda'
@@ -15,6 +15,7 @@ import AuthContext from '../../contexts/Auth'
 import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
+import { IMG_URL } from '../../config/constants'
 
 
 
@@ -22,6 +23,7 @@ const MyAccount = ({ navigation }) => {
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
+    const userContext = useContext(AuthContext)
     let active = contextPanda.active
     const user = useContext(AuthContext)
     let userData = user?.userData
@@ -45,7 +47,40 @@ const MyAccount = ({ navigation }) => {
         setShowModal(false)
     }, [])
 
-    const onClick = useCallback(async() => {
+
+    const getPosition = async () => {
+        await Geolocation.getCurrentPosition(
+            position => {
+
+         
+                userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
+         
+            },
+            error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+           
+            },
+            {
+                accuracy: {
+                    android: 'high',
+                    ios: 'best',
+                },
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 10000,
+                distanceFilter: 0,
+                forceRequestLocation: true,
+                forceLocationManager: false,
+                showLocationDialog: true,
+            },
+        );
+    }
+
+
+    const onClick = async() => {
         setShowModal(false)
         // await AsyncStorage.clear()
 
@@ -54,15 +89,18 @@ const MyAccount = ({ navigation }) => {
         }
         await customAxios.post(`auth/customerlogout`, datas)
             .then(async response => {
+                getPosition()
+                cartContext.setCart(null)
+                cartContext.setAddress(null)
+                cartContext.setDefaultAddress(null)
+                userContext.setCurrentAddress(null)
+                userContext.setUserLocation(null)
+                userContext.setCity(null)
+                await AsyncStorage.clear()
                 Toast.show({
                     type: 'success',
                     text1: response?.data?.message
                 });
-                await AsyncStorage.clear()
-                cartContext.setCart(null)
-                cartContext.setAddress(null)
-                cartContext.setDefaultAddress(null)
-                user?.setUserData(null)
                 navigation.dispatch(
                     CommonActions.reset({
                       index: 0,
@@ -79,7 +117,7 @@ const MyAccount = ({ navigation }) => {
                     text1: error
                 });
             })
-    })
+    }
 
     const onEdit = useCallback(async() => {
         navigation.navigate('EditProfile')
@@ -93,7 +131,8 @@ const MyAccount = ({ navigation }) => {
                     <View>
                         <Image
                             style={styles.logo}
-                            source={require('../../Images/drawerLogo.png')}
+
+                            source={userData?.image ? { uri: `${IMG_URL}${userData?.image}` } :  require('../../Images/drawerLogo.png')}
                         />
                         <TouchableOpacity 
                             onPress={onEdit}

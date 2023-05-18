@@ -143,7 +143,8 @@ const MyAddresses = ({ route, navigation }) => {
         <>
             <HeaderWithTitle
                 title={mode === 'home' ? 'Select Address' : mode === 'MyAcc' ? 'My Addresses' : "My Addresses"}
-                goback={backAction}
+                // goback={backAction}
+                mode={mode}
             />
 
             <View style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', paddingHorizontal: 15, flex: 1 }}>
