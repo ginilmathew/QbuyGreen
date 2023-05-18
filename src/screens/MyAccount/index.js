@@ -23,6 +23,7 @@ const MyAccount = ({ navigation }) => {
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
+    const userContext = useContext(AuthContext)
     let active = contextPanda.active
     const user = useContext(AuthContext)
     let userData = user?.userData
@@ -46,7 +47,7 @@ const MyAccount = ({ navigation }) => {
         setShowModal(false)
     }, [])
 
-    const onClick = useCallback(async() => {
+    const onClick = async() => {
         setShowModal(false)
         // await AsyncStorage.clear()
 
@@ -55,15 +56,17 @@ const MyAccount = ({ navigation }) => {
         }
         await customAxios.post(`auth/customerlogout`, datas)
             .then(async response => {
+                cartContext.setCart(null)
+                cartContext.setAddress(null)
+                cartContext.setDefaultAddress(null)
+                userContext.setCurrentAddress(null)
+                userContext.setUserLocation(null)
+                userContext.setCity(null)
+                await AsyncStorage.clear()
                 Toast.show({
                     type: 'success',
                     text1: response?.data?.message
                 });
-                await AsyncStorage.clear()
-                cartContext.setCart(null)
-                cartContext.setAddress(null)
-                cartContext.setDefaultAddress(null)
-                user?.setUserData(null)
                 navigation.dispatch(
                     CommonActions.reset({
                       index: 0,
@@ -80,7 +83,7 @@ const MyAccount = ({ navigation }) => {
                     text1: error
                 });
             })
-    })
+    }
 
     const onEdit = useCallback(async() => {
         navigation.navigate('EditProfile')

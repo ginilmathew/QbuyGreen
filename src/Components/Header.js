@@ -19,7 +19,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
-    
+
     let loc = userContext.location
 
     let currentAddress = userContext?.currentAddress
@@ -27,8 +27,6 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
     let myLocation = userContext?.userLocation
 
-   
-    reactotron.log({myLocation})
 
     const navigation = useNavigation()
 
@@ -94,7 +92,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
                         source={active === 'green' ? require('../Images/locationGrocery.png') : active === 'fashion' ? require('../Images/fashionLocation.png') : require('../Images/location.png')}
                     />}
                     <View style={{ marginLeft: 5, flex: 0.98, }}>
-                        <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress ? userContext?.currentAddress : myLocation }</Text>
+                        <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress ? userContext?.currentAddress : myLocation}</Text>
                     </View>
                 </TouchableOpacity>
                 {active === 'fashion' &&
