@@ -19,16 +19,17 @@ const Header = ({ onPress, openAddress, goCart }) => {
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
-    
+
     let loc = userContext.location
 
     let currentAddress = userContext?.currentAddress
 
 
+
+
     let myLocation = userContext?.userLocation
 
-   
-    reactotron.log({myLocation})
+
 
     const navigation = useNavigation()
 
@@ -60,6 +61,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${loc[0]},${loc[1]}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
 
             userContext.setUserLocation(response?.data?.results[0]?.formatted_address)
+            reactotron.log({responseLOCATION:response?.data?.results[0]?.formatted_address})
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             userContext.setCity(locality?.long_name)
 
@@ -94,7 +96,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
                         source={active === 'green' ? require('../Images/locationGrocery.png') : active === 'fashion' ? require('../Images/fashionLocation.png') : require('../Images/location.png')}
                     />}
                     <View style={{ marginLeft: 5, flex: 0.98, }}>
-                        <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress ? userContext?.currentAddress : myLocation }</Text>
+                        <Text numberOfLines={2} style={styles.textStyle}>{userContext?.currentAddress ? userContext?.currentAddress : myLocation}</Text>
                     </View>
                 </TouchableOpacity>
                 {active === 'fashion' &&

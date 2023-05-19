@@ -13,7 +13,7 @@ const ShopCard = memo(({item}) => {
 
     const onClick = useCallback(() => {
         navigation.navigate('store', {name : item?.name, mode : 'store', item:item})
-    }, [])
+    }, [item])
 
     return (
         <TouchableOpacity 

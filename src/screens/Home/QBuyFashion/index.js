@@ -105,10 +105,6 @@ const QBuyFashion = () => {
     }, [])
 
 
-
-
-    
-
     
     const getHomedata = async (coord) => {
         loadingg.setLoading(true)

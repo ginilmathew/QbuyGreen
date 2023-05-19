@@ -5,7 +5,7 @@ import CommonTexts from '../../../Components/CommonTexts'
 import ItemDetails from './ItemDetails'
 import CustomButton from '../../../Components/CustomButton'
 import OrderWhatsapp from './OrderWhatsapp'
-import VideoPlayer from 'react-native-video-player'
+import VideoPlayer from './VideoPlayer'
 import FastImage from 'react-native-fast-image'
 import { Animated } from 'react-native'
 import ScheduleDeliveryModal from './ScheduleDeliveryModal'
@@ -29,7 +29,6 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 
 
-let link = '../../../Videos/farming.mp4'
 
 
 const SingleItemScreen = ({ route, navigation }) => {
@@ -39,6 +38,13 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [showSingleImg, setShowSingleImg] = useState(false)
     let active = contextPanda.active
 
+    const courasol = useRef(null)
+
+    const [courasolArray, setCourasolArray] = useState([])
+
+    const [images, setImages] = useState(null)
+    const [imagesArray, setImagesArray] = useState([])
+
 
     const [item, setItem] = useState(null)
 
@@ -46,6 +52,31 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     useEffect(() => {
       if(route?.params?.item){
+        let videoId = null;
+
+        if(route?.params?.item?.video_link){
+            let video = route?.params?.item?.video_link;
+            if(video.includes("https://www.youtube.com/")){
+                videoId = video.split('=')[1]
+            }
+        }
+
+        let images = [{url: route?.params?.item?.product_image, type: 'image' }];
+
+        if(route?.params?.item?.image){
+            route?.params?.item?.image?.map(img => {
+                images.push({ url: img, type: 'image' })
+            })
+        }
+
+        if(videoId){
+            images.push({ url: videoId, type: 'video' })
+        }
+
+        setCourasolArray(images)
+
+
+        
         setItem(route?.params?.item)
         setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image] : [route?.params?.item?.product_image])
         addViewCount(route?.params?.item)
@@ -61,15 +92,12 @@ const SingleItemScreen = ({ route, navigation }) => {
       return () => {
         setItem(null)
         setImages([])
+        setSelectedImage(0)
       }
     }, [route?.params?.item])
     
 
-
-    reactotron.log({ showSingleImg })
-
-    const [images, setImages] = useState(null)
-    const [imagesArray, setImagesArray] = useState([])
+   
 
     const loadingg = useContext(LoaderContext)
 
@@ -86,9 +114,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     const cart = useContext(CartContext)
 
     let userData = user?.userData
-
-
-    reactotron.log({ images })
 
     useEffect(() => {
         if (item) {
@@ -126,27 +151,13 @@ const SingleItemScreen = ({ route, navigation }) => {
     const [showModal, setShowModal] = useState(false);
     const [date, setDate] = useState(new Date())
 
-    const [value, setValue] = useState(null);
-
-    const [valueColor, setValueColor] = useState(null);
-    const [valueSize, setValueSize] = useState(null);
 
 
     const { width, height } = useWindowDimensions()
 
 
-    // useEffect(() => {
-    //     item?.image?.splice(0, 0, item?.product_image)
-    // }, [item?.product_image, item?.image])
 
 
-
-    reactotron.log({ singleProduct })
-
-    useEffect(() => {
-        //getSingleProduct()
-       // addViewCount()
-    }, [])
 
     
 
@@ -172,20 +183,20 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const gotoStore = useCallback(() => {
         navigation.navigate('store', { name: item?.store?.name, mode: 'singleItem', storeId: item?.store?._id })
-    }, item)
+    }, [item])
 
     const proceedCheckout = useCallback(() => {
         navigation.navigate('Checkout')
         setShowModal(false)
-    })
+    },[])
 
     const closeModal = useCallback(() => {
         setShowModal(false)
-    })
+    },[])
 
     const showModals = useCallback(() => {
         setShowModal(true)
-    })
+    },[])
 
     const addToCart = useCallback(async () => {
 
@@ -253,7 +264,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    const renderInStock = () => {
+    const renderInStock = useCallback(() => {
         if(item?.available){
             if (item?.stock) {
                 if (item?.variant) {
@@ -298,7 +309,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 </View>
             )
         }
-    }
+    }, [item])
 
     const openSingleImg = useCallback(() => {
         let imagesss = images?.map((items, index) => {
@@ -314,18 +325,37 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     let image = item?.image ? [item?.product_image, ...item?.image] : [item?.product_image];
 
-    reactotron?.log({ image })
-
-    let imageArray = image?.filter((data, index) => index !== selectedImage)
-
-    //imageArray?.unshift(item?.image[selectedImage])
 
 
 
 
-    const PreOrderMOdal = useCallback(() => {
-        refRBSheet.current.open()
-    }, [])
+
+
+    const renderImageAnimation = ({item, index}) => {
+        if(item?.type === "image"){
+            return(
+                <TouchableOpacity onPress={openSingleImg}>
+                    <FastImage
+                        source={{ uri: `${IMG_URL}${item?.url}` }}
+                        style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                        resizeMode='contain'
+                    >
+                    </FastImage>
+                </TouchableOpacity>
+            )
+        }
+        else{
+            return(
+                <VideoPlayer videoId={item?.url} selected={selectedImage} index={index} />
+            )
+        }
+    }
+
+
+    const makeSelected = (index) => {
+        setSelectedImage(index)
+        courasol?.current?.scrollTo({index,animated:false})
+    }
 
 
     reactotron.log({imagesArray})
@@ -339,16 +369,13 @@ const SingleItemScreen = ({ route, navigation }) => {
                 showsVerticalScrollIndicator={false}
             >
 
-                <View style={{ height: 200 }}>
-                    <TouchableOpacity
-                        onPress={openSingleImg}
-                        style={{ alignItems: 'center', justifyContent: 'center', padding: 10, width: width, }}
-                    >
-
-                        {images && images?.length > 0 ?
+                <View style={{ height: 250 }}>
+                        {courasolArray && courasolArray?.length > 0 ?
                             <Carousel
+                                ref={courasol}
                                 // autoPlay={true}
                                 width={width}
+<<<<<<< HEAD
                                 data={images}
                                 renderItem={({ index }) => (
                                     <>
@@ -363,6 +390,10 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                                 )}
+=======
+                                data={courasolArray}
+                                renderItem={renderImageAnimation}
+>>>>>>> 047e892fed0e6ca689e6e69ec4085ca7128b854a
                                 onSnapToItem={(index) => setSelectedImage(index)}
                                 scrollAnimationDuration={10}
                             /> : <FastImage
@@ -373,9 +404,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                             >
                             </FastImage>
                         }
-
-
-                    </TouchableOpacity>
                     {renderInStock()}
                     {/* <VideoPlayer
                         video={ require('../../../Videos/farming.mp4') }
@@ -387,11 +415,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
                 </View>
-                {images?.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {images?.map((item, index) =>
+                {courasolArray?.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {courasolArray?.map((item, index) =>
                         <ImageVideoBox
                             key={index}
-                            setSelectedImage={setSelectedImage}
+                            setSelectedImage={makeSelected}
                             selectedImage={selectedImage}
                             item={item}
                             index={index}

@@ -6,7 +6,7 @@ const AuthProvider = (props) => {
     const [userData, setUserData] = useState([]);
     const [homeData, setHomeData] = useState([]);
     const [location, setLocation] = useState(null)
-    const [currentAddress, setCurrentAddress] = useState('')
+    const [currentAddress, setCurrentAddress] = useState(null)
 
     const [userLocation, setUserLocation] = useState(null)
     const [city, setCity] = useState(null)

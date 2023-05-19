@@ -15,27 +15,32 @@ import PandaContext from '../../../contexts/Panda'
 import { launchImageLibrary } from 'react-native-image-picker';
 import CartContext from '../../../contexts/Cart';
 import customAxios from '../../../CustomeAxios';
-
+import reactotron from '../../../ReactotronConfig';
+import Toast from 'react-native-toast-message'
+import { IMG_URL } from '../../../config/constants';
 const EditProfile = ({ navigation }) => {
 
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
-
+    const [loading,setLoading]=useState(false)
     const cartContext = useContext(CartContext)
 
 
     const user = useContext(AuthContext)
 
     let userdata = user?.userData
+ 
 
     const [filePath, setFilePath] = useState(null);
+
+
 
     // const [isEnabled, setIsEnabled] = useState(false);
     // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
-        // area: yup.string().required('Area is required'),
+        email: yup.string().email().required('Email is required'),
         // address: yup.string().required('Address is required'),
         // pincode: yup.string().required('Pincode is required'),
     }).required();
@@ -44,40 +49,55 @@ const EditProfile = ({ navigation }) => {
         resolver: yupResolver(schema),
         defaultValues: {
             mobile: userdata?.mobile,
-            address : cartContext?.defaultAddress?.area?.address
+            email: userdata?.email ? userdata?.email : '',
+            name: userdata?.name ? userdata?.name : '',
+            id: userdata?._id
         }
     });
 
 
 
-    const onSubmit = useCallback(async(data) => {
-        navigation.goBack()
+    const onSubmit = useCallback(async (data) => {
 
-        // const formData = new FormData();
-        // formData.append('name', data?.name);
-        // formData.append('address', data?.address);
-       
-        // if (filePath) {
-        //     formData.append('image', {
-        //         name: filePath?.assets?.[0]?.fileName,
-        //         type: filePath?.assets?.[0]?.type,
-        //         uri: filePath?.assets?.[0]?.uri
-        //     });
-        // }
+    
+        setLoading(true)
 
-        // await customAxios.post(`auth/patient/updateProfile`, formData, {
-        //     headers: {
-        //         'Content-Type': 'multipart/form-data',
-        //     }
-        // })
-        //     .then(async response => {
+        const formData = new FormData();
+        if (filePath) {
+            formData.append('image', {
+                name: filePath?.assets?.[0]?.fileName,
+                type: filePath?.assets?.[0]?.type,
+                uri: filePath?.assets?.[0]?.uri
+            });
+        }
+        formData.append('name', data?.name);
+        formData.append('email', data?.email);
+        formData.append('id', data?.id);
 
-        //     })
-        //     .catch(async error => {
-               
-        //     });
+         
+        await customAxios.post(`auth/profile-update`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+            .then(async response => {
+                user.setUserData(response?.data?.data)
+                Toast.show({
+                    type: 'success',
+                    text1: 'Profile updated successfully'
+                })
+                navigation.goBack()
+                setLoading(false)
+            })
+            .catch(async error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                })
+                setLoading(false)
+            });
 
-    }, [])
+    }, [filePath])
 
 
     const imageGalleryLaunch = useCallback(() => {
@@ -101,6 +121,7 @@ const EditProfile = ({ navigation }) => {
             } else {
                 setFilePath(res)
             }
+            reactotron.log({ filePath })
         });
     }, [])
 
@@ -113,20 +134,20 @@ const EditProfile = ({ navigation }) => {
             />
 
 
-            <ScrollView style={{ paddingHorizontal: 30, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff',  }}>
+            <ScrollView style={{ paddingHorizontal: 30, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}>
 
-                    <View style={{alignSelf:'center'}}>
-                        <Image
-                            style={styles.image}
-                            source={filePath ? {uri: filePath?.assets?.[0]?.uri} : require('../../../Images/drawerLogo.png')}
-                        />
-                        <TouchableOpacity 
-                            onPress={imageGalleryLaunch}
-                            style={{width:25, height:25, borderRadius:15, backgroundColor: active === "green" ? '#8ED053' : active === "fashion" ? '#FF7190' : '#58D36E', alignItems:'center', justifyContent:'center', alignSelf:'flex-end', marginTop:-25}}
-                        >
-                            <MaterialIcons name='photo-camera' size={15} color='#fff'/>
-                        </TouchableOpacity>
-                    </View>
+                <View style={{ alignSelf: 'center' }}>
+                    <Image
+                        style={styles.image}
+                        source={filePath ? { uri: filePath?.assets?.[0]?.uri } : userdata.image ? { uri: `${IMG_URL}${userdata?.image}` } : require('../../../Images/drawerLogo.png')}
+                    />
+                    <TouchableOpacity
+                        onPress={imageGalleryLaunch}
+                        style={{ width: 25, height: 25, borderRadius: 15, backgroundColor: active === "green" ? '#8ED053' : active === "fashion" ? '#FF7190' : '#58D36E', alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-end', marginTop: -25 }}
+                    >
+                        <MaterialIcons name='photo-camera' size={15} color='#fff' />
+                    </TouchableOpacity>
+                </View>
                 <CommonInput
                     control={control}
                     error={errors.name}
@@ -136,11 +157,11 @@ const EditProfile = ({ navigation }) => {
                 />
                 <CommonInput
                     control={control}
-                    error={errors.address}
-                    fieldName="address"
-                    topLabel={'Address'}
+                    error={errors.email}
+                    fieldName="email"
+                    topLabel={'email'}
                     top={10}
-         
+
                 />
                 <CommonInput
                     control={control}
@@ -216,6 +237,7 @@ const EditProfile = ({ navigation }) => {
                     bg={active === 'green' ? '#FF9C0C' : active === 'fashion' ? '#2D8FFF' : '#5871D3'}
                     my={30}
                     onPress={handleSubmit(onSubmit)}
+                    loading={loading}
                 />
             </ScrollView>
 

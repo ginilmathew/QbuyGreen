@@ -26,14 +26,17 @@ const ImageVideoBox = memo(({selectedImage, setSelectedImage, onPress, item, ind
             onPress={onClick}
             style={{ width: width / 8, height: height / 17, marginHorizontal: 7 }}
         >
-            <FastImage
+            {item?.type === "image" ? <FastImage
                 // source={item?.name}
-                source={{ uri: `${IMG_URL}${item}` }}
+                source={{ uri: `${IMG_URL}${item?.url}` }}
                 style={{ width: '100%', height: '100%', borderRadius: 12, borderWidth: 2, borderColor: selectedImage === index ? active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E' : "transparent", alignItems: 'center', justifyContent: 'center' }}
                 borderRadius={10}
             >
                 {/* {item?.includes('.mp4') && <View style={{ backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E', borderRadius: 20, alignItems: 'center', justifyContent: 'center', width: 20, height: 20 }}><Ionicons name='ios-play' color='#fff' size={13} marginLeft={2.5} /></View>} */}
-            </FastImage>
+            </FastImage> : <View style={{ backgroundColor: 'black', width: width / 8, height: height / 17, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderColor: selectedImage === index ? active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E' : "transparent", borderWidth: 2 }}>
+                     <Ionicons name="play-outline" style={{ color: '#fff' }} />
+                </View>}
+
 
         </TouchableOpacity>
     )
