@@ -21,14 +21,18 @@ import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import HomeNav from './Home';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CartContext from '../../contexts/Cart';
 import PandaContext from '../../contexts/Panda';
+import reactotron from '../../ReactotronConfig';
 
 
 const TabNav = () => {
 
     const cartContext = useContext(CartContext)
     const pandaContext = useContext(PandaContext)
+
+
 
     const navigation = useNavigation()
     const [isPending, startTransition] = useTransition();
@@ -70,14 +74,14 @@ const TabNav = () => {
             case 'cart':
                 return (
                     <>
-                    {cartContext?.cart && <View style={{ height: 15, width: 15, borderRadius: 7.5, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 15, right: 20,zIndex:1 }}>
-                        <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{cartContext?.cart?.product_details?.length}</Text>
-                    </View>}
-                    <AntDesign
-                        name={"shoppingcart"}
-                        size={25}
-                        color={routeName === selectedTab ? '#FF6184' : '#FF9FB4'}
-                    />
+                        {cartContext?.cart && <View style={{ height: 15, width: 15, borderRadius: 7.5, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 15, right: 20, zIndex: 1 }}>
+                            <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{cartContext?.cart?.product_details?.length}</Text>
+                        </View>}
+                        <AntDesign
+                            name={"shoppingcart"}
+                            size={25}
+                            color={routeName === selectedTab ? '#FF6184' : '#FF9FB4'}
+                        />
                     </>
                 );
             case 'order':
@@ -131,8 +135,20 @@ const TabNav = () => {
 
     }, [])
 
-    const gotoGreen = useCallback(() => {
+    const gotoGreen = useCallback(async () => {
         pandaContext.setActive('green')
+        if(cartContext?.cart){
+            await AsyncStorage.setItem("fashionCart",JSON.stringify(cartContext?.cart))
+        }
+       
+        let cartData = await AsyncStorage.getItem("greenCart");
+        if(cartData){
+            cartContext.setCart(JSON.parse(cartData))
+        }
+        else{
+            cartContext.setCart(null)
+        }
+        
         startTransition(() => {
             navigation.dispatch(
                 CommonActions.reset({
