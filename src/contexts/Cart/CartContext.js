@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import LoaderContext from "../Loader";
 import AuthContext from "../Auth";
+import reactotron from "reactotron-react-native";
 
 const CartProvider = (props) => {
 
@@ -16,6 +17,7 @@ const CartProvider = (props) => {
     const loadingContext = useContext(LoaderContext)
     const authCOntext = useContext(AuthContext)
 
+
     const userData = authCOntext.userData
 
     useEffect(() => {
@@ -24,6 +26,7 @@ const CartProvider = (props) => {
 
 
     const addToCart = async(item, selectedVariant) => {
+        reactotron.log({cart})
         let cartItems, url;
         let productDetails;
         let minimumQty = item?.minQty ? item?.minQty : 1
@@ -94,6 +97,7 @@ const CartProvider = (props) => {
         await customAxios.post(url, cartItems)
         .then(async response => {
             setCart(response?.data?.data)
+            //reactotron.log({cartUpdate: response?.data?.data})
             //user?.setCartId(response?.data?.data?._id)
             await AsyncStorage.setItem("cartId", response?.data?.data?._id)
             loadingContext.setLoading(false)
