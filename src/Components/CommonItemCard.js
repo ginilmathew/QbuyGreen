@@ -72,7 +72,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         }
         //refRBSheet.current.open()
         //navigation.navigate('SingleItemScreen', { item: item })
-    }, [data])
+    }, [data, cartContext.cart])
 
 
 
