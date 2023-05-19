@@ -45,7 +45,7 @@ const TabNav = () => {
     const [showSwitch, setShowSwitch] = useState(false)
 
     const enableSwitch = useCallback(() => {
-         reactotron.log({pandaContext : pandaContext?.active})
+         //reactotron.log({pandaContext : pandaContext?.active})
 
         setShowSwitch(!showSwitch)
     }, [showSwitch])
@@ -166,7 +166,7 @@ const TabNav = () => {
         })
         
         
-    }, [])
+    }, [cartContext?.cart])
 
 
     return (

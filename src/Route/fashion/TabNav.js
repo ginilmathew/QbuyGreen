@@ -142,7 +142,9 @@ const TabNav = () => {
         }
        
         let cartData = await AsyncStorage.getItem("greenCart");
+        reactotron.log({cartData})
         if(cartData){
+            
             cartContext.setCart(JSON.parse(cartData))
         }
         else{
@@ -160,7 +162,7 @@ const TabNav = () => {
             );
         })
 
-    }, [])
+    }, [cartContext?.cart])
 
 
     return (
