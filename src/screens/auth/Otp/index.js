@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView, Platform, SafeAreaView, ToastAndroid, } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, Platform, SafeAreaView, ToastAndroid, TouchableOpacity, } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -76,6 +76,23 @@ const Otp = ({ navigation }) => {
         })
 	})
 
+	const onClickResendOtp = async() => {
+		loadingg.setLoading(true)
+		await customAxios.post(`auth/customerloginotp`, {mobile : mobileNo})
+        .then(async response => {
+            // setData(response?.data?.data)
+            loadingg.setLoading(false)
+        })
+        .catch(async error => {
+            Toast.show({
+				type: 'error',
+				text1: error
+			});
+            loadingg.setLoading(false)
+        })
+
+	}
+
 
 	return (
 		<CommonAuthBg>
@@ -97,12 +114,15 @@ const Otp = ({ navigation }) => {
 					}}
 				/>
 				{errors?.otp && <Text style={{color:'red', fontSize:10}} > {errors?.otp?.message}</Text>}
-				<CommonTexts
-					label={'Resend OTP'}
-					mt={10}
-					textAlign='right'
-					color={'#5871D3'}
-				/>
+				<TouchableOpacity onPress={onClickResendOtp}>
+					<CommonTexts
+						label={'Resend OTP'}
+						mt={10}
+						textAlign='right'
+						color={'#5871D3'}
+					/>
+				</TouchableOpacity>
+				
 				<CustomButton
 					onPress={handleSubmit(onSubmit)}
 					bg='#58D36E'
