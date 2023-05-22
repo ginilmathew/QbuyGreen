@@ -29,7 +29,7 @@
     "lodash": "^4.17.21",
     "lottie-react-native": "^5.1.5",
     "moment": "^2.29.4",
-    "paytm_allinone_react-native": "^1.1.1",
+    "paytm_allinone_react-native": "^1.1.2",
     "react": "18.2.0",
     "react-hook-form": "^7.43.1",
     "react-native": "0.71.1",
