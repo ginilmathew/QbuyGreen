@@ -40,7 +40,7 @@ import SplashScreen from 'react-native-splash-screen'
 
 const QBuyGreen = ({ navigation }) => {
 
-    const { width,height } = useWindowDimensions()
+    const { width, height } = useWindowDimensions()
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
@@ -114,13 +114,20 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
-    useLayoutEffect(() => {
-        getHomedata()
-    }, []);
+    // useLayoutEffect(() => {
+    //     getHomedata()
+    // }, []);
 
-    useEffect(() => {
-        
-    }, [])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            getHomedata()
+        }, [])
+    );
+
+    // useEffect(() => {
+
+    // }, [])
 
 
     const getHomedata = async () => {
@@ -134,11 +141,13 @@ const QBuyGreen = ({ navigation }) => {
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 setHomeData(response?.data?.data)
+
+                reactotron.log('API CALLED')
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
                 }, 500);
-                
+
             })
             .catch(async error => {
                 console.log(error)
@@ -154,16 +163,16 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
 
-    
 
-    
+
+
 
     const CarouselCardItem = ({ item, index }) => {
         return (
-            <View style={{ alignItems: 'center',marginTop:20 }} >
+            <View style={{ alignItems: 'center', marginTop: 20 }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.image}` }}
-                    style={{height:height/5, width: width-35,  borderRadius:20}}
+                    style={{ height: height / 5, width: width - 35, borderRadius: 20 }}
                 // resizeMode='contain'
                 >
                 </FastImage>
@@ -239,14 +248,14 @@ const QBuyGreen = ({ navigation }) => {
         if (item?.type === 'recentlyviewed') {
             return (
                 <>
-                    <RecentlyViewed data={item?.data}  />
+                    <RecentlyViewed data={item?.data} />
                 </>
             )
         }
         if (item?.type === 'suggested_products') {
             return (
                 <>
-                    <PandaSuggestions data={item?.data}  />
+                    <PandaSuggestions data={item?.data} />
                 </>
             )
         }
@@ -261,7 +270,7 @@ const QBuyGreen = ({ navigation }) => {
 
     }
 
-    
+
 
     const renderProducts = ({ item }) => {
         return (

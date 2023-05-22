@@ -100,13 +100,19 @@ const QBuyFashion = () => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
-    useEffect(() => {
-        getHomedata(coord)
-    }, [])
+    // useEffect(() => {
+    //     getHomedata(coord)
+    // }, [])
 
+    useFocusEffect(
+        React.useCallback(() => {
+            getHomedata(coord)
+        }, [])
+      );
 
     
     const getHomedata = async (coord) => {
+        reactotron.log('API CALLEDD')
         loadingg.setLoading(true)
         let datas = {
             type: "fashion",
@@ -115,6 +121,7 @@ const QBuyFashion = () => {
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 //fashionHome?.setFashionHomeData(response?.data?.data)
+                reactotron.log('API CALLEDD')
                 setHomeData(response?.data?.data)
                 loadingg.setLoading(false)
             })
@@ -188,7 +195,7 @@ const QBuyFashion = () => {
                 </>
             )
         }
-        if (item?.type === 'recentlyviewed') {
+        if (item?.type === 'recently_viewed') {
             return (
                 <>
                     <RecentlyViewed data={item?.data} />
