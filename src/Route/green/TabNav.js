@@ -26,7 +26,8 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import QBuyGreen from '../../screens/Home/QBuyGreen';
 import HomeNav from './Home';
 import CartContext from '../../contexts/Cart';
-
+import reactotron from '../../ReactotronConfig';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
@@ -44,6 +45,8 @@ const TabNav = () => {
     const [showSwitch, setShowSwitch] = useState(false)
 
     const enableSwitch = useCallback(() => {
+         //reactotron.log({pandaContext : pandaContext?.active})
+
         setShowSwitch(!showSwitch)
     }, [showSwitch])
 
@@ -138,8 +141,19 @@ const TabNav = () => {
         
     }, [])
 
-    const goToFashion = useCallback(() => {
+    const goToFashion = useCallback(async () => {
         pandaContext.setActive('fashion')
+        if(cartContext?.cart){
+            await AsyncStorage.setItem("greenCart",JSON.stringify(cartContext?.cart))
+        }
+       
+        let cartData = await AsyncStorage.getItem("fashionCart");
+        if(cartData){
+            cartContext.setCart(JSON.parse(cartData))
+        }
+        else{
+            cartContext.setCart(null)
+        }
         startTransition(() => {
             navigation.dispatch(
                 CommonActions.reset({
@@ -152,7 +166,7 @@ const TabNav = () => {
         })
         
         
-    }, [])
+    }, [cartContext?.cart])
 
 
     return (

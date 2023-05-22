@@ -34,8 +34,8 @@ export function getProduct(product){
     if(variant){
         product?.variants?.map(vari => {
             let offer = vari?.offer_price ? parseFloat(vari?.offer_price) : 0;
-            let offerFromDate = vari?.offer_date_from ? moment(vari?.offer_date_from, "YYYY-MM-DD") : null
-            let offerToDate = vari?.offer_date_to ? moment(vari?.offer_date_to, "YYYY-MM-DD") : null
+            let offerFromDate = moment(vari?.offer_date_from).isValid()  ? moment(vari?.offer_date_from, "YYYY-MM-DD") : null
+            let offerToDate = moment(vari?.offer_date_to).isValid() ? moment(vari?.offer_date_to, "YYYY-MM-DD") : null
             let regular = vari?.regular_price ? parseFloat(vari?.regular_price) : 0
             let seller = vari?.seller_price ? parseFloat(vari?.seller_price) : 0
             let commission = vari?.commission ? parseFloat(vari?.commission) : 0
