@@ -38,9 +38,11 @@ const EditProfile = ({ navigation }) => {
     // const [isEnabled, setIsEnabled] = useState(false);
     // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
+    var regexEmail = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+
     const schema = yup.object({
         name: yup.string().required('Name is required'),
-        email: yup.string().email().required('Email is required'),
+        email: yup.string().email().matches(regexEmail,'Not a Valid Email Address').typeError('Not a Valid Email Address').required('Email is required'),
         // address: yup.string().required('Address is required'),
         // pincode: yup.string().required('Pincode is required'),
     }).required();
