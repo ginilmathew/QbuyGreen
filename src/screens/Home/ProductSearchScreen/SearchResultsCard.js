@@ -1,34 +1,63 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect, useContext } from 'react'
 import { IMG_URL } from '../../../config/constants'
-import { useNavigation } from '@react-navigation/native'
+
 import reactotron from '../../../ReactotronConfig'
 import { getProduct } from '../../../helper/productHelper'
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import PandaContext from '../../../contexts/Panda'
+const SearchResultsCard = ({ item }) => {
 
-const SearchResultsCard = ({item}) => {
-
-    
+    const pandaContext = useContext(PandaContext)
 
     const [data, setData] = useState([])
 
     useEffect(() => {
-        if(item){
+        if (item) {
             let data = getProduct(item);
-            reactotron.log({data})
+            reactotron.log({ data })
             setData(data)
         }
-        else{
+        else {
             setData(null)
         }
     }, [item])
-    
 
-    reactotron.log({item})
+
+    reactotron.log({ item })
 
     const navigation = useNavigation()
 
-    const handleClick = useCallback(() => {
-        navigation.navigate('SingleItemScreen', { item: data })
+    const handleClick = useCallback((value) => {
+        if (item?.type === 'fashion') {
+            pandaContext.setActive('fashion')
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 2,
+                    routes: [
+                        { name: 'fashion' },
+                        { name: 'fashion',params:{screen:'TabNavigator',params:{screen:'cart'}} },
+                        { name: 'fashion' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
+                        // { name: 'SingleItemScreen', item: data }
+
+                    ],
+                })
+            );
+        } else {
+            // navigation.navigate('SingleItemScreen', { item: data })
+            pandaContext.setActive('green')
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 2,
+                    routes: [
+                        { name: 'green' },
+                        { name: 'green',params:{screen:'TabNavigator',params:{screen:'cart'}} },
+                        { name: 'green' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
+                    ],
+                })
+            );
+        }
+
     }, [data])
 
     return (
