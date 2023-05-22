@@ -181,7 +181,7 @@ const QBuyGreen = ({ navigation }) => {
                 <>
                     <CategoryCard data={item?.data} />
                     <SearchBox onPress={onSearch} />
-                    <View style={{ flex: 1 }}>
+                    {slider?.length > 0 && <View style={{ flex: 1 }}>
                         <Carousel
                             loop
                             width={width}
@@ -191,7 +191,7 @@ const QBuyGreen = ({ navigation }) => {
                             scrollAnimationDuration={1000}
                             renderItem={CarouselCardItem}
                         />
-                    </View>
+                    </View>}
 
                     {/* {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />} */}
                 </>

@@ -63,7 +63,7 @@ const FashionCategory = ({route}) => {
             <ScrollView
                 style={{
                     flex: 1,
-                    backgroundColor: grocery ? '#F4FFE9' : fashion ? '#FFF5F7' : '#fff',
+                    backgroundColor: '#FFF5F7',
                     paddingHorizontal: 10,
                 }}
             >

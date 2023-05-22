@@ -23,17 +23,20 @@ import AuthContext from '../../../contexts/Auth';
 import SearchBox from '../../../Components/SearchBox';
 import Toast from 'react-native-toast-message'
 import CartContext from '../../../contexts/Cart';
-import { env, location } from '../../../config/constants';
+import { IMG_URL, env, location } from '../../../config/constants';
 import CategoryCard from '../QBuyGreen/CategoryCard';
 import AvailableStores from '../QBuyGreen/AvailableStores';
 import RecentlyViewed from '../QBuyGreen/RecentlyViewed';
 import AvailableProducts from '../QBuyGreen/AvailableProducts';
 import PandaSuggestions from '../QBuyGreen/PandaSuggestions';
+import Carousel from 'react-native-reanimated-carousel';
+import FastImage from 'react-native-fast-image';
+import reactotron from '../../../ReactotronConfig';
 
 
 const QBuyFashion = () => {
 
-    const { width } = useWindowDimensions()
+    const { width, height } = useWindowDimensions()
 
     const navigation = useNavigation()
 
@@ -50,6 +53,7 @@ const QBuyFashion = () => {
 
     const [availablePdt, setavailablePdt] = useState(null)
     const [slider, setSlider] = useState(null)
+
 
 
 
@@ -101,10 +105,6 @@ const QBuyFashion = () => {
     }, [])
 
 
-
-
-    
-
     
     const getHomedata = async (coord) => {
         loadingg.setLoading(true)
@@ -138,7 +138,18 @@ const QBuyFashion = () => {
             return (
                 <>
                     <CategoryCard data={item?.data} />
-                    {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />}
+                    {slider?.length > 0 && 
+                    <View style={{ flex: 1 }}>
+                        <Carousel
+                            loop
+                            width={width}
+                            height={width / 2}
+                            autoPlay={true}
+                            data={slider}
+                            scrollAnimationDuration={1000}
+                            renderItem={CarouselCardItem}
+                        />
+                    </View>}
                 </>
             )
         }
@@ -207,7 +218,7 @@ const QBuyFashion = () => {
                 key={item?._id}
                 width={width / 2.25}
                 height={220}
-                wishlistIcon
+                // wishlistIcon
                 mr={8}
                 ml={8}
                 mb={15}
@@ -215,25 +226,26 @@ const QBuyFashion = () => {
         )
     }
 
+    const CarouselCardItem = ({ item, index }) => {
+        return (
+            <View style={{ alignItems: 'center',marginTop:20 }} >
+                <FastImage
+                    source={{ uri: `${IMG_URL}${item?.image}` }}
+                    style={{height:height/5, width: width-35,  borderRadius:20}}
+                // resizeMode='contain'
+                >
+                </FastImage>
+            </View>
+        )
+    }
+
+
     return (
         <>
             <Header onPress={onClickDrawer} />
             <View style={styles.container}>
 
-
-                {/*<FlatList
-                    data={homeData}
-                    keyExtractor={(item, index) => index}
-                    renderItem={renderItems}
-                    showsVerticalScrollIndicator={false}
-                    pt={2}
-                    mb={170}
-                    refreshing={loader}
-                    onRefresh={getHomedata}
-                /> */}
-
                 <ScrollView
-                    scrollEnabled={false}
                     removeClippedSubviews
                     showsVerticalScrollIndicator={false}
                     refreshControl={

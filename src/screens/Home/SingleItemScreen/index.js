@@ -49,54 +49,57 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
+    reactotron.log({ item })
+    reactotron.log({ courasolArray })
+
     useEffect(() => {
-      if(route?.params?.item){
-        let videoId = null;
+        if (route?.params?.item) {
+            let videoId = null;
 
-        if(route?.params?.item?.video_link){
-            let video = route?.params?.item?.video_link;
-            if(video.includes("https://www.youtube.com/")){
-                videoId = video.split('=')[1]
+            if (route?.params?.item?.video_link) {
+                let video = route?.params?.item?.video_link;
+                if (video.includes("https://www.youtube.com/")) {
+                    videoId = video.split('=')[1]
+                }
             }
-        }
 
-        let images = [{url: route?.params?.item?.product_image, type: 'image' }];
+            let images = [{ url: route?.params?.item?.product_image, type: 'image' }];
 
-        if(route?.params?.item?.image){
-            route?.params?.item?.image?.map(img => {
-                images.push({ url: img, type: 'image' })
-            })
-        }
-
-        if(videoId){
-            images.push({ url: videoId, type: 'video' })
-        }
-
-        setCourasolArray(images)
-
-
-        
-        setItem(route?.params?.item)
-        setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image] : [route?.params?.item?.product_image])
-        addViewCount(route?.params?.item)
-        if(!item?.variant){
-            if (item?.variant) {
-
-                setAttributes([])
+            if (route?.params?.item?.image) {
+                route?.params?.item?.image?.map(img => {
+                    images.push({ url: img, type: 'image' })
+                })
             }
+
+            if (videoId) {
+                images.push({ url: videoId, type: 'video' })
+            }
+
+            setCourasolArray(images)
+
+
+
+            setItem(route?.params?.item)
+            setImages(route?.params?.item?.image ? [route?.params?.item?.product_image, ...route?.params?.item?.image] : [route?.params?.item?.product_image])
+            addViewCount(route?.params?.item)
+            if (!item?.variant) {
+                if (item?.variant) {
+
+                    setAttributes([])
+                }
+            }
+
         }
-        
-      }
-    
-      return () => {
-        setItem(null)
-        setImages([])
-        setSelectedImage(0)
-      }
+
+        return () => {
+            setItem(null)
+            setImages([])
+            setSelectedImage(0)
+        }
     }, [route?.params?.item])
-    
 
-   
+
+
 
     const loadingg = useContext(LoaderContext)
 
@@ -158,7 +161,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
-    
+
 
     const addViewCount = async (item) => {
         let datas = {
@@ -187,15 +190,15 @@ const SingleItemScreen = ({ route, navigation }) => {
     const proceedCheckout = useCallback(() => {
         navigation.navigate('Checkout')
         setShowModal(false)
-    },[])
+    }, [])
 
     const closeModal = useCallback(() => {
         setShowModal(false)
-    },[])
+    }, [])
 
     const showModals = useCallback(() => {
         setShowModal(true)
-    },[])
+    }, [])
 
     const addToCart = useCallback(async () => {
 
@@ -205,7 +208,7 @@ const SingleItemScreen = ({ route, navigation }) => {
     }, [selectedVariant, cart?.cart, item])
 
 
-    
+
 
     const selectAttributes = (value) => {
         let attri = [];
@@ -245,12 +248,12 @@ const SingleItemScreen = ({ route, navigation }) => {
             const containsAll = attri.every(elem => attributes.includes(elem));
 
             if (containsAll) {
-                reactotron.log({sin, item})
-                if(item?.stock){
-                    if(!sin?.available){
+                reactotron.log({ sin, item })
+                if (item?.stock) {
+                    if (!sin?.available) {
                         item.available = false
                     }
-                    else{
+                    else {
                         item.available = true
                     }
                 }
@@ -264,7 +267,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const renderInStock = useCallback(() => {
-        if(item?.available){
+        if (item?.available) {
             if (item?.stock) {
                 if (item?.variant) {
                     if (parseFloat(item?.stock_value) > 0) {
@@ -299,7 +302,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 )
             }
         }
-        else{
+        else {
             return (
                 <View
                     style={{ position: 'absolute', left: 20, top: 15, backgroundColor: 'red', borderRadius: 8 }}
@@ -330,21 +333,21 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
-    const renderImageAnimation = ({item, index}) => {
-        if(item?.type === "image"){
-            return(
+    const renderImageAnimation = ({ item, index }) => {
+        if (item?.type === "image") {
+            return (
                 <TouchableOpacity onPress={openSingleImg}>
                     <FastImage
                         source={{ uri: `${IMG_URL}${item?.url}` }}
-                        style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                        style={{ height: 180, borderRadius: 15, }}
                         resizeMode='contain'
                     >
                     </FastImage>
                 </TouchableOpacity>
             )
         }
-        else{
-            return(
+        else {
+            return (
                 <VideoPlayer videoId={item?.url} selected={selectedImage} index={index} />
             )
         }
@@ -353,8 +356,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const makeSelected = (index) => {
         setSelectedImage(index)
-        courasol?.current?.scrollTo({index,animated:false})
+        courasol?.current?.scrollTo({ index, animated: false })
     }
+
+
+    reactotron.log({ imagesArray })
 
 
     return (
@@ -366,23 +372,23 @@ const SingleItemScreen = ({ route, navigation }) => {
             >
 
                 <View style={{ height: 250 }}>
-                        {courasolArray && courasolArray?.length > 0 ?
-                            <Carousel
-                                ref={courasol}
-                                // autoPlay={true}
-                                width={width}
-                                data={courasolArray}
-                                renderItem={renderImageAnimation}
-                                onSnapToItem={(index) => setSelectedImage(index)}
-                                scrollAnimationDuration={10}
-                            /> : <FastImage
-                                // source={singleProduct?.image[selectedImage]?.name} 
-                                source={{ uri: `${IMG_URL}${images?.[0]}` }}
-                                style={{ width: width - 30, height: 180, borderRadius: 15, }}
-                                resizeMode='contain'
-                            >
-                            </FastImage>
-                        }
+                    {courasolArray && courasolArray?.length > 0 ?
+                        <Carousel
+                            ref={courasol}
+                            // autoPlay={true}
+                            width={width}
+                            data={courasolArray}
+                            renderItem={renderImageAnimation}
+                            onSnapToItem={(index) => setSelectedImage(index)}
+                            scrollAnimationDuration={10}
+                        /> : <FastImage
+                            // source={singleProduct?.image[selectedImage]?.name} 
+                            source={{ uri: `${IMG_URL}${images?.[0]}` }}
+                            style={{ width: width - 30, height: 180, borderRadius: 15, }}
+                            resizeMode='contain'
+                        >
+                        </FastImage>
+                    }
                     {renderInStock()}
                     {/* <VideoPlayer
                         video={ require('../../../Videos/farming.mp4') }
@@ -390,8 +396,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                         videoHeight={900}
                         // thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
                     /> */}
-
-
 
                 </View>
                 {courasolArray?.length > 0 && <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -559,27 +563,25 @@ const SingleItemScreen = ({ route, navigation }) => {
                     transparent={true}
                     visible={showSingleImg}
                 >
-                    <View
-                        style={{ alignSelf: 'center', marginTop: 90, shadowOpacity: 0.1, shadowOffset: { x: 5, y: 5 }, paddingHorizontal: 20, paddingVertical: 10, elevation: 5, }}
-                    >
-                        {imagesArray && <Modal visible={showSingleImg} >
-                                <ImageViewer
-                                    style={{ flex: 1 }}
-                                    enableSwipeDown
-                                    onSwipeDown={closeSingleImg}
-                                    onCancel={closeSingleImg}
-                                    imageUrls={imagesArray}
-                                    onClick={closeSingleImg}
-                                    renderFooter={() => <TouchableOpacity
-                                        onPress={closeSingleImg}
-                                        style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 150, bottom: 50, left: width/2, elevation: 5 }}
-                                    >
-                                        <AntDesign name='closecircle' onPress={closeSingleImg} color='#fff' size={25} alignSelf={'flex-end'} />
-                                    </TouchableOpacity>}
-                                />
 
-                        </Modal>}
-                        {/* {images &&
+                    {imagesArray && <Modal visible={showSingleImg} >
+                        <ImageViewer
+                            style={{ flex: 1 }}
+                            enableSwipeDown
+                            onSwipeDown={closeSingleImg}
+                            onCancel={closeSingleImg}
+                            imageUrls={imagesArray}
+                            onClick={closeSingleImg}
+                            renderFooter={() => <TouchableOpacity
+                                onPress={closeSingleImg}
+                                style={{ alignSelf: 'flex-end', position: 'absolute', zIndex: 150, bottom: 50, left: width / 2, elevation: 5 }}
+                            >
+                                <AntDesign name='closecircle' onPress={closeSingleImg} color='#fff' size={25} alignSelf={'flex-end'} />
+                            </TouchableOpacity>}
+                        />
+
+                    </Modal>}
+                    {/* {images &&
 
                             <FastImage
                                 source={{ uri: `${IMG_URL}${images[selectedImage]}` }}
@@ -591,7 +593,6 @@ const SingleItemScreen = ({ route, navigation }) => {
                                 </TouchableOpacity>
                             </FastImage>
                         } */}
-                    </View>
                 </Modal>
 
 
