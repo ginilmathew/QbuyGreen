@@ -32,6 +32,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 
 const SingleItemScreen = ({ route, navigation }) => {
+
     const refRBSheet = useRef();
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
