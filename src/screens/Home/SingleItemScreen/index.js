@@ -32,6 +32,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 
 const SingleItemScreen = ({ route, navigation }) => {
+
     const refRBSheet = useRef();
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -161,7 +162,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const addViewCount = async (item) => {
         let datas = {
-            type: mode,
+            type: active,
             product_id: item?._id,
             customer_id: userData?._id
         }

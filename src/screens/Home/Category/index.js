@@ -79,7 +79,7 @@ const Category = ({ route }) => {
         loadingContex.setLoading(true)
 
         let datas = {
-            type: "fashion"
+            type: contextPanda?.active
         }
     
         await customAxios.post(`customer/categories`, datas)
