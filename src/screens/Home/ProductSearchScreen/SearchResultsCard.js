@@ -16,7 +16,7 @@ const SearchResultsCard = ({ item }) => {
     useEffect(() => {
         if (item) {
             let data = getProduct(item);
-            reactotron.log({ data })
+            // reactotron.log({ data })
             setData(data)
         }
         else {
@@ -30,42 +30,35 @@ const SearchResultsCard = ({ item }) => {
     const navigation = useNavigation()
 
     const handleClick = useCallback((value) => {
-        //pandaContext.setActive('fashion')
-        //navigation.navigate('fashion', {screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}})
-        // navigation.dispatch(state => {
-        //     // Remove the home route from the stack
-        //     const routes = state.routes.filter(r => r.name !== 'Home');
-          
-        //     reactotron.log({routes})
-        //   });
-        if (item?.type === 'fashion') {
-            pandaContext.setActive('fashion')
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [
-                        { name: 'fashion' ,params:{screen:'TabNavigator',params: [
-                            {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}},
-                            {screen:'cart'},
-                        ]}},
-                    ],
-                })
-            );
-        } else {
-            // navigation.navigate('SingleItemScreen', { item: data })
-            pandaContext.setActive('green')
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 3,
-                    routes: [
-                        { name: 'green' },
-                        { name: 'green',params:{screen:'TabNavigator'} },
-                        { name: 'green',params:{screen:'TabNavigator', params: { screen: 'home' }} },
-                        { name: 'green' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
-                    ],
-                })
-            );
-        }
+          navigation.navigate('SingleItemScreen', { item: data })
+        // if (item?.type === 'fashion') {
+        //     pandaContext.setActive('fashion')
+        //     navigation.dispatch(
+        //         CommonActions.reset({
+        //             index: 2,
+        //             routes: [
+        //                 { name: 'fashion' },
+        //                 { name: 'fashion',params:{screen:'TabNavigator',params:{screen:'cart'}} },
+        //                 { name: 'fashion' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
+        //                 // { name: 'SingleItemScreen', item: data }
+
+        //             ],
+        //         })
+        //     );
+        // } else {
+        //     // navigation.navigate('SingleItemScreen', { item: data })
+        //     pandaContext.setActive('green')
+        //     navigation.dispatch(
+        //         CommonActions.reset({
+        //             index: 2,
+        //             routes: [
+        //                 { name: 'green' },
+        //                 { name: 'green',params:{screen:'TabNavigator',params:{screen:'cart'}} },
+        //                 { name: 'green' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
+        //             ],
+        //         })
+        //     );
+        // }
 
     }, [data])
 

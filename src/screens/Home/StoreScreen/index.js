@@ -17,6 +17,7 @@ import AuthContext from '../../../contexts/Auth'
 import CartContext from '../../../contexts/Cart'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { isEmpty } from 'lodash'
+import moment from 'moment'
 
 
 const StoreScreen = ({ route, navigation }) => {
@@ -101,7 +102,13 @@ const StoreScreen = ({ route, navigation }) => {
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}
-                    />
+                    >
+                        {(storeDetails?.start_time || storeDetails?.end_time) &&  <View 
+                            style={{backgroundColor:'#8ED053', width:150, height:20, borderBottomRightRadius:10, borderTopLeftRadius:10, alignSelf:'flex-end',alignItems:'center', justifyContent:'center'}}
+                        >
+                            <CommonTexts label={`${moment(storeDetails?.start_time, "hh:mm a").format('hh:mm a')} - ${moment(storeDetails?.end_time, "hh:mm a").format('hh:mm a')}`} color={'#fff'} fontSize={11}/>
+                        </View>}
+                    </FastImage>
                     <StoreAddressCard address={item?.store_address ? item?.store_address : storeDetails?.store_address} />
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
@@ -144,7 +151,8 @@ const styles = StyleSheet.create({
         height: 200,
         alignSelf: 'center',
         marginTop: 10,
-        borderRadius: 15
+        borderRadius: 15,
+        justifyContent:'flex-end'
     },
     description: {
         fontFamily: 'Poppins-Regular',

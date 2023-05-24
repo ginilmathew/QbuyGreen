@@ -508,9 +508,13 @@ const Checkout = ({ navigation }) => {
         if (products?.length > 0) {
             await customAxios.post(`customer/order/create`, orderDetails)
                 .then(async response => {
-                    // console.log("response ==>", JSON.stringify(response.data), response.status)
+                    console.log("response ==>", JSON.stringify(response.data), response.status)
                     const { data } = response
+                 
 
+                    if(data?.type === 'cart'){
+                       navigation.navigate('Cart')
+                    }
                     if (data?.status) {
                         if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
                             payWithPayTM(data?.data)
@@ -524,7 +528,7 @@ const Checkout = ({ navigation }) => {
                         Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                     }
                 }).catch(error => {
-                    console.log(error)
+                   
                     Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
                 })
         }
