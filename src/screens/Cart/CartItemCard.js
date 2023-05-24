@@ -216,17 +216,17 @@ const CartItemCard = ({item, index, refreshCart}) => {
                 </View>
                 {/* {renderPricing()} */}
                 <View style={{flexDirection:'row', alignItems:'center'}}>
-                    <Text style={styles.rateText}>{item?.available ?  `₹ ${parseFloat(item?.price).toFixed(2)}` : ""}</Text>
+                    <Text style={styles.rateText}>{(item?.available && item?.status === 'active') ?  `₹ ${parseFloat(item?.price).toFixed(2)}` : ""}</Text>
                     <CommonCounter 
                         count={data.quantity}
                         addItem={addItem}
                         removeItem={removeItem}
-                        disabled={!item?.available}
+                        disabled={!item?.available || item?.status !== 'active'}
                     />
                 </View>
                 
             </View>
-            {!item?.available && <Text style={styles.outofStock}>{"Out off Stock"}</Text>}
+            {(!item?.available || item?.status !== 'active') && <Text style={styles.outofStock}>{"Out off Stock"}</Text>}
         </View>
       
     )
