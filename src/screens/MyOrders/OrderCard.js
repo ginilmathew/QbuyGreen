@@ -72,7 +72,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             paymentDetails?.amount.toFixed(2),//amount
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
-            false,//appInvokeRestricted
+            true,//appInvokeRestricted
           `paytm${paymentDetails?.mid}`//urlScheme
          ).then((result) => {
             reactotron.log({result})

@@ -582,6 +582,7 @@ const Checkout = ({ navigation }) => {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
+        
         await AllInOneSDKManager.startTransaction(
             paymentDetails?.orderId,//orderId
             paymentDetails?.mid,//mid
@@ -589,7 +590,7 @@ const Checkout = ({ navigation }) => {
             paymentDetails?.amount.toFixed(2),//amount
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
-            false,//appInvokeRestricted
+            true,//appInvokeRestricted
             `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
             reactotron.log("PAYTM RESPONSE", { result })
