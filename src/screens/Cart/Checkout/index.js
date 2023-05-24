@@ -510,7 +510,11 @@ const Checkout = ({ navigation }) => {
                 .then(async response => {
                     console.log("response ==>", JSON.stringify(response.data), response.status)
                     const { data } = response
-                    reactotron.log({data})
+                 
+
+                    if(data?.type === 'cart'){
+                       navigation.navigate('Cart')
+                    }
                     if (data?.status) {
                         if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
                             payWithPayTM(data?.data)
