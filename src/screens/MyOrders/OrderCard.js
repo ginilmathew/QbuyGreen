@@ -88,10 +88,11 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 }
                 updatePaymentResponse(data)
             }
-            //console.log("PAYTM =>", JSON.stringify(result));
+            console.log("PAYTM =>", JSON.stringify(result));
             
             
         }).catch((err) => {
+            console.log("PAYTM Error =>", JSON.stringify(err));
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
             let data = {
                 STATUS: 'TXN_FAILURE',

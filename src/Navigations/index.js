@@ -14,6 +14,7 @@ import customAxios from '../CustomeAxios';
 import LoaderContext from '../contexts/Loader';
 import Toast from 'react-native-toast-message'
 import SplashScreen from 'react-native-splash-screen'
+import LoadingModal from '../Components/LoadingModal';
 
 
 // import Menu from './Menu';
@@ -70,6 +71,7 @@ const Navigation = () => {
     
 
     return (
+        <>
         <NavigationContainer ref={navigationRef}>
             <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
 
@@ -89,6 +91,8 @@ const Navigation = () => {
 
             </Stack.Navigator>
         </NavigationContainer>
+        {/* <LoadingModal isVisible={true} /> */}
+        </>
     )
 }
 

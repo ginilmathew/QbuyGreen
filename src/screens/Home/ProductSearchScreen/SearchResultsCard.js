@@ -11,6 +11,7 @@ const SearchResultsCard = ({ item }) => {
     const pandaContext = useContext(PandaContext)
 
     const [data, setData] = useState([])
+    
 
     useEffect(() => {
         if (item) {
@@ -29,17 +30,24 @@ const SearchResultsCard = ({ item }) => {
     const navigation = useNavigation()
 
     const handleClick = useCallback((value) => {
+        //pandaContext.setActive('fashion')
+        //navigation.navigate('fashion', {screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}})
+        // navigation.dispatch(state => {
+        //     // Remove the home route from the stack
+        //     const routes = state.routes.filter(r => r.name !== 'Home');
+          
+        //     reactotron.log({routes})
+        //   });
         if (item?.type === 'fashion') {
             pandaContext.setActive('fashion')
             navigation.dispatch(
                 CommonActions.reset({
-                    index: 2,
+                    index: 0,
                     routes: [
-                        { name: 'fashion' },
-                        { name: 'fashion',params:{screen:'TabNavigator',params:{screen:'cart'}} },
-                        { name: 'fashion' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
-                        // { name: 'SingleItemScreen', item: data }
-
+                        { name: 'fashion' ,params:{screen:'TabNavigator',params: [
+                            {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}},
+                            {screen:'cart'},
+                        ]}},
                     ],
                 })
             );
@@ -48,10 +56,11 @@ const SearchResultsCard = ({ item }) => {
             pandaContext.setActive('green')
             navigation.dispatch(
                 CommonActions.reset({
-                    index: 2,
+                    index: 3,
                     routes: [
                         { name: 'green' },
-                        { name: 'green',params:{screen:'TabNavigator',params:{screen:'cart'}} },
+                        { name: 'green',params:{screen:'TabNavigator'} },
+                        { name: 'green',params:{screen:'TabNavigator', params: { screen: 'home' }} },
                         { name: 'green' ,params:{screen:'TabNavigator',params: {screen:'home',params:{screen:'SingleItemScreen',params:{item:data}}}}},
                     ],
                 })

@@ -588,7 +588,7 @@ const Checkout = ({ navigation }) => {
             false,//appInvokeRestricted
             `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
-            reactotron.log({ result })
+            reactotron.log("PAYTM RESPONSE", { result })
             if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
             }
@@ -604,7 +604,7 @@ const Checkout = ({ navigation }) => {
 
 
         }).catch((err) => {
-            reactotron.log({ err })
+            reactotron.log("PAYTM ERROR", { err })
             let data = {
                 STATUS: 'TXN_FAILURE',
                 RESPMSG: 'User Cancelled transaction',

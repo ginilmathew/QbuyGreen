@@ -124,7 +124,7 @@ const Otp = ({ navigation }) => {
 				</TouchableOpacity>
 				
 				<CustomButton
-					onPress={handleSubmit(onSubmit)}
+					onPress={!loader ? handleSubmit(onSubmit) : null}
 					bg='#58D36E'
 					label={'Confirm'}
 					my={20}

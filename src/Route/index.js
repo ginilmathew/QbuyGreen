@@ -22,6 +22,7 @@ import { isObject } from 'lodash'
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import reactotron from '../ReactotronConfig';
+import LoadingModal from '../Components/LoadingModal';
 
 
 // import Menu from './Menu';
@@ -223,6 +224,7 @@ const Route = () => {
     reactotron.log({mode})
 
     return (
+        <>
         <NavigationContainer ref={navigationRef}>
             <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
 
@@ -235,6 +237,8 @@ const Route = () => {
                 <Stack.Screen name="green" component={Green} />
             </Stack.Navigator>
         </NavigationContainer>
+        {/* <LoadingModal isVisible={true} /> */}
+        </>
     )
 }
 

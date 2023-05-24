@@ -36,18 +36,30 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>We are not using apple music</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We are not using Bluetooth Peripherals</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>We are not using Calander</string>
 	<key>NSCameraUsageDescription</key>
-	<string>QbuyPandaApp app requires camera access to take photo.</string>
+	<string>$(PRODUCT_NAME) would like to use your camera to update user profile</string>
+	<key>NSContactsUsageDescription</key>
+	<string>$(PRODUCT_NAME) Not Used Contacts API </string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Location Permission</string>
+	<string>$(PRODUCT_NAME) would like to access Library for route navigation</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location Permission</string>
-	<key>NSLocationUsageDescription</key>
-	<string>GPS data is required to...</string>
+	<string>$(PRODUCT_NAME) would like to access Library for route navigation</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location Permission</string>
+	<string>$(PRODUCT_NAME) would like to access Library for route navigation</string>
+	<key>NSMotionUsageDescription</key>
+	<string>We are not using Motion</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to access Library to update profile picture</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>QbuyPandaApp app requires photo library access.</string>
+	<string>$(PRODUCT_NAME) would like access to your photo gallery to update profile picture</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We are not using speech Recognition</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
