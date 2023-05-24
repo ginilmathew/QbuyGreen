@@ -10,11 +10,15 @@ import Route from './Route'
 import CartProvider from './contexts/Cart/CartContext'
 import Toast from 'react-native-toast-message';
 import AddressProvider from './contexts/Address/AddressContext'
+import SplashScreen from 'react-native-splash-screen'
 
 
 const App = () => {
 
 
+    if(Platform.OS === 'ios'){
+        //SplashScreen.hide()
+    }
 
 
 
