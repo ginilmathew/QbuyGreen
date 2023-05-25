@@ -195,7 +195,7 @@ const QBuyGreen = ({ navigation }) => {
         return (
             <View style={{ alignItems: 'center', marginTop: 20 }} >
                 <FastImage
-                    source={{ uri: `${IMG_URL}${item?.image}` }}
+                    source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: height / 5, width: width - 35, borderRadius: 20 }}
                 // resizeMode='contain'
                 >
