@@ -36,6 +36,7 @@ import { RefreshControl } from 'react-native-gesture-handler'
 import LoaderContext from '../../../contexts/Loader'
 import { max } from 'lodash'
 import reactotron from 'reactotron-react-native'
+import { env } from '../../../config/constants'
 
 
 const Checkout = ({ navigation }) => {
@@ -577,7 +578,7 @@ const Checkout = ({ navigation }) => {
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let orderId = paymentDetails?.orderId
-        let isStaging = true
+        let isStaging = env === "live" ? false : true
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="

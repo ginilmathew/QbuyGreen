@@ -14,6 +14,7 @@ import LoaderContext from '../../contexts/Loader'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 import reactotron from 'reactotron-react-native'
 import { has } from 'lodash'
+import { env } from '../../config/constants'
 
 const OrderCard = memo(({ item, refreshOrder }) => {
 
@@ -60,7 +61,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
         let orderId = paymentDetails?.orderId
-        let isStaging = true
+        let isStaging = env === "live" ? false : true
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="

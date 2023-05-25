@@ -36,7 +36,7 @@ import { getProduct } from '../../../helper/productHelper';
 import FastImage from 'react-native-fast-image';
 import reactotron from 'reactotron-react-native';
 import SplashScreen from 'react-native-splash-screen'
-import messaging from '@react-native-firebase/messaging';
+//import messaging from '@react-native-firebase/messaging';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -66,27 +66,27 @@ const QBuyGreen = ({ navigation }) => {
     }, [homeData])
 
     useEffect(() => {
-        requestUserPermission()
+        //requestUserPermission()
     }, [])
     
 
-    async function requestUserPermission() {
+    // async function requestUserPermission() {
         
-        if(Platform.OS === 'android'){
-            PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-        }
+    //     if(Platform.OS === 'android'){
+    //         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    //     }
         
-        const authStatus = await messaging().requestPermission();
-        const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    //     const authStatus = await messaging().requestPermission();
+    //     const enabled =
+    //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
       
-        if (enabled) {
-          console.log('Authorization status:', authStatus);
-        }
+    //     if (enabled) {
+    //       console.log('Authorization status:', authStatus);
+    //     }
 
-        //getCurrentLocation()
-    }
+    //getCurrentLocation()
+    // }
 
 
     const schema = yup.object({

@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 #import "RNSplashScreen.h"
-#import <Firebase.h>
+//#import <Firebase.h>
+#import <React/RCTLinkingManager.h>
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -12,7 +13,7 @@
   self.moduleName = @"QBuyGreen";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
-  [FIRApp configure];
+//  [FIRApp configure];
   self.initialProps = @{};
   bool didFinish=[super application:application didFinishLaunchingWithOptions:launchOptions];
   //[RNSplashScreen show];
@@ -37,6 +38,18 @@
 - (BOOL)concurrentRootEnabled
 {
   return true;
+}
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  
+  NSString *urlString = url.absoluteString;
+  NSDictionary *userInfo =
+  [NSDictionary dictionaryWithObject:urlString forKey:@"appInvokeNotificationKey"];
+  [[NSNotificationCenter defaultCenter] postNotificationName:
+   @"appInvokeNotification" object:nil userInfo:userInfo];
+  return [RCTLinkingManager application:app openURL:url options:options];
 }
 
 

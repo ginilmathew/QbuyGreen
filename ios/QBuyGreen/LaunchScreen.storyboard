@@ -17,17 +17,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash" translatesAutoresizingMaskIntoConstraints="NO" id="YjY-Z6-iY4">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Image" translatesAutoresizingMaskIntoConstraints="NO" id="2CB-TS-N9v">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="YjY-Z6-iY4" secondAttribute="bottom" id="2uO-D1-gn6"/>
-                            <constraint firstItem="YjY-Z6-iY4" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="6eY-Da-OyJ"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="YjY-Z6-iY4" secondAttribute="trailing" id="jUi-j1-DI3"/>
-                            <constraint firstItem="YjY-Z6-iY4" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" id="k9P-lk-4jU"/>
+                            <constraint firstItem="2CB-TS-N9v" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" id="p8x-PT-N7i"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="2CB-TS-N9v" secondAttribute="trailing" id="sNS-MQ-417"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="2CB-TS-N9v" secondAttribute="bottom" id="wkJ-hf-u4M"/>
+                            <constraint firstItem="2CB-TS-N9v" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="xlK-7n-lex"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -37,7 +37,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="splash" width="107.5" height="233"/>
+        <image name="Image" width="107.5" height="233"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

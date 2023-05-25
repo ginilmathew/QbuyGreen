@@ -11,7 +11,7 @@ import CartProvider from './contexts/Cart/CartContext'
 import Toast from 'react-native-toast-message';
 import AddressProvider from './contexts/Address/AddressContext'
 import SplashScreen from 'react-native-splash-screen'
-import messaging from '@react-native-firebase/messaging';
+//import messaging from '@react-native-firebase/messaging';
 import {PermissionsAndroid} from 'react-native';
 import notifee from '@notifee/react-native';
 import reactotron from 'reactotron-react-native'
@@ -28,167 +28,167 @@ const App = () => {
         //SplashScreen.hide()
     }
 
-    useEffect(() => {
-        getCurrentLocation()
+    // useEffect(() => {
+    //     getCurrentLocation()
         
-        onAppBootstrap()
-    }, [])
+    //     onAppBootstrap()
+    // }, [])
 
-    async function onMessageReceived(message) {
-        const { notification } = message
+    // async function onMessageReceived(message) {
+    //     const { notification } = message
 
-        reactotron.log({message})
-        // Request permissions (required for iOS)
-        await notifee.requestPermission()
+    //     reactotron.log({message})
+    //     // Request permissions (required for iOS)
+    //     await notifee.requestPermission()
 
-        // Create a channel (required for Android)
-        const channelId = await notifee.createChannel({
-        id: 'default',
-        name: 'Default Channel',
-        });
+    //     // Create a channel (required for Android)
+    //     const channelId = await notifee.createChannel({
+    //     id: 'default',
+    //     name: 'Default Channel',
+    //     });
 
-        // Display a notification
-        await notifee.displayNotification({
-        title: notification?.title,
-        body: notification?.body,
-        android: {
-            channelId,
-            //smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
-            // pressAction is needed if you want the notification to open the app when pressed
-            pressAction: {
-            id: 'default',
-            },
-        },
-        });
-    }
+    //     // Display a notification
+    //     await notifee.displayNotification({
+    //     title: notification?.title,
+    //     body: notification?.body,
+    //     android: {
+    //         channelId,
+    //         //smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+    //         // pressAction is needed if you want the notification to open the app when pressed
+    //         pressAction: {
+    //         id: 'default',
+    //         },
+    //     },
+    //     });
+    // }
 
-    async function onAppBootstrap() {
-        // Register the device with FCM
-        let userDetails = await AsyncStorage.getItem("user");
-        await messaging().registerDeviceForRemoteMessages();
+    // async function onAppBootstrap() {
+    //     // Register the device with FCM
+    //     let userDetails = await AsyncStorage.getItem("user");
+    //     await messaging().registerDeviceForRemoteMessages();
       
-        if(userDetails){
-            let user = JSON.parse(userDetails)
+    //     if(userDetails){
+    //         let user = JSON.parse(userDetails)
 
-            reactotron.log({user})
-            // Get the token
-            const token = await messaging().getToken();
+    //         reactotron.log({user})
+    //         // Get the token
+    //         const token = await messaging().getToken();
 
-            let data = {
-                id: user?._id,
-                token: token
-            }
-            customAxios.post('auth/update-devicetoken', data)
-            .then(response => {
-                reactotron.log({response})
-            })
-            .catch(err => {
-                reactotron.log({err})
-            })
-            reactotron.log({token})
+    //         let data = {
+    //             id: user?._id,
+    //             token: token
+    //         }
+    //         customAxios.post('auth/update-devicetoken', data)
+    //         .then(response => {
+    //             reactotron.log({response})
+    //         })
+    //         .catch(err => {
+    //             reactotron.log({err})
+    //         })
+    //         reactotron.log({token})
 
-        }
+    //     }
        
 
        
       
-        // Save the token
-        //await postToApi('/users/1234/tokens', { token });
-    }
+    //     // Save the token
+    //     //await postToApi('/users/1234/tokens', { token });
+    // }
 
-    useEffect(() => {
-        const unsubscribe = messaging().onMessage(onMessageReceived);
+    // useEffect(() => {
+    //     const unsubscribe = messaging().onMessage(onMessageReceived);
 
-        messaging().onNotificationOpenedApp(remoteMessage => {
-            console.log(
-              'Notification caused app to open from background state:',
-              remoteMessage.notification,
-            );
-            //navigation.navigate(remoteMessage.data.type);
-        });
+    //     messaging().onNotificationOpenedApp(remoteMessage => {
+    //         console.log(
+    //           'Notification caused app to open from background state:',
+    //           remoteMessage.notification,
+    //         );
+    //         //navigation.navigate(remoteMessage.data.type);
+    //     });
 
-        messaging()
-        .getInitialNotification()
-        .then(remoteMessage => {
-            if (remoteMessage) {
-            console.log(
-                'Notification caused app to open from quit state:',
-                remoteMessage.notification,
-            );
-            //setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
-            }
-      });
+    //     messaging()
+    //     .getInitialNotification()
+    //     .then(remoteMessage => {
+    //         if (remoteMessage) {
+    //         console.log(
+    //             'Notification caused app to open from quit state:',
+    //             remoteMessage.notification,
+    //         );
+    //         //setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+    //         }
+    //   });
     
-        return unsubscribe;
-    }, []);
+    //     return unsubscribe;
+    // }, []);
     
-    const getCurrentLocation = useCallback(async () => {
-        if (Platform.OS === 'ios') {
-            const status = await Geolocation.requestAuthorization('whenInUse');
-            if (status === "granted") {
-                //getPosition()
-                requestUserPermission()
-            }
-        }
-        else {
-            if (Platform.OS === 'android' && Platform.Version < 23) {
-               // getPosition()
-               requestUserPermission()
-            }
+    // const getCurrentLocation = useCallback(async () => {
+    //     if (Platform.OS === 'ios') {
+    //         const status = await Geolocation.requestAuthorization('whenInUse');
+    //         if (status === "granted") {
+    //             //getPosition()
+    //             requestUserPermission()
+    //         }
+    //     }
+    //     else {
+    //         if (Platform.OS === 'android' && Platform.Version < 23) {
+    //            // getPosition()
+    //            requestUserPermission()
+    //         }
 
-            const hasPermission = await PermissionsAndroid.check(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            );
+    //         const hasPermission = await PermissionsAndroid.check(
+    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         );
 
-            if (hasPermission) {
-                //getPosition()
-                requestUserPermission()
-            }
+    //         if (hasPermission) {
+    //             //getPosition()
+    //             requestUserPermission()
+    //         }
 
-            const status = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            );
+    //         const status = await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         );
 
-            if (status === PermissionsAndroid.RESULTS.GRANTED) {
-                //getPosition()
-                requestUserPermission()
-            }
+    //         if (status === PermissionsAndroid.RESULTS.GRANTED) {
+    //             //getPosition()
+    //             requestUserPermission()
+    //         }
 
-            if (status === PermissionsAndroid.RESULTS.DENIED) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Location permission denied by user.'
-                });
-                requestUserPermission()
-            }
-            else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Location permission revoked by user.',
-                });
-                requestUserPermission()
-            }
-        }
+    //         if (status === PermissionsAndroid.RESULTS.DENIED) {
+    //             Toast.show({
+    //                 type: 'error',
+    //                 text1: 'Location permission denied by user.'
+    //             });
+    //             requestUserPermission()
+    //         }
+    //         else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+    //             Toast.show({
+    //                 type: 'error',
+    //                 text1: 'Location permission revoked by user.',
+    //             });
+    //             requestUserPermission()
+    //         }
+    //     }
 
-    }, [])
+    // }, [])
 
-    async function requestUserPermission() {
+    // async function requestUserPermission() {
         
-        if(Platform.OS === 'android'){
-            PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-        }
+    //     if(Platform.OS === 'android'){
+    //         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    //     }
         
-        const authStatus = await messaging().requestPermission();
-        const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    //     const authStatus = await messaging().requestPermission();
+    //     const enabled =
+    //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
       
-        if (enabled) {
-          console.log('Authorization status:', authStatus);
-        }
+    //     if (enabled) {
+    //       console.log('Authorization status:', authStatus);
+    //     }
 
-        //getCurrentLocation()
-    }
+    //     //getCurrentLocation()
+    // }
 
 
 
