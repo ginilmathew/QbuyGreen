@@ -195,7 +195,9 @@ const TabNav = () => {
                                 />
                             </LinearGradient>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={gotoGreen}>
+                        <TouchableOpacity 
+                        onPress={gotoGreen}
+                        >
                             <LinearGradient
                                 start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#8BC852', '#9BFF58']}
                                 style={styles.smallPandas}
@@ -241,16 +243,16 @@ const TabNav = () => {
                 position="LEFT"
                 component={HomeNav}
             />
-            <CurvedBottomBar.Screen
+            {/* <CurvedBottomBar.Screen
                 name="cart"
                 position="LEFT"
                 component={CartNav}
-            />
-            <CurvedBottomBar.Screen
+            /> */}
+            {/* <CurvedBottomBar.Screen
                 name="order"
                 component={MyOrderNav}
                 position="RIGHT"
-            />
+            /> */}
             <CurvedBottomBar.Screen
                 name="account"
                 component={MyAccountNav}
