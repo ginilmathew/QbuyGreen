@@ -68,7 +68,7 @@ const Login = ({ navigation }) => {
 			<ScrollView style={{ flex: 1, paddingHorizontal: 40, }}>
 				<FastImage
 					style={styles.logo}
-					source={require('../../../Images/pandaLogo.png')}
+					source={require('../../../Images/qubuylogo.jpg')}
 					resizeMode='contain'
 				/>
 				<CommonAuthHeading
