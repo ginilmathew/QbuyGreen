@@ -471,7 +471,7 @@ const Checkout = ({ navigation }) => {
         if (!cartContext.defaultAddress?.area?.location) {
             Toast.show({
                 type: 'error',
-                text1: 'Please add Delevery Address to continue'
+                text1: 'Please add Delivery  Address to continue'
             });
             return false;
         }
