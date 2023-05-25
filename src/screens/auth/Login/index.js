@@ -65,7 +65,7 @@ const Login = ({ navigation }) => {
 
 	return (
 		<CommonAuthBg>
-			<ScrollView style={{ flex: 1, paddingHorizontal: 40, }}>
+			<ScrollView style={{ flex: 1, paddingHorizontal: 20, }}>
 				<FastImage
 					style={styles.logo}
 					source={require('../../../Images/loginLogo.png')}
