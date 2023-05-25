@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import "RNSplashScreen.h"
+#import <Firebase.h>
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -11,6 +12,7 @@
   self.moduleName = @"QBuyGreen";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
+  [FIRApp configure];
   self.initialProps = @{};
   bool didFinish=[super application:application didFinishLaunchingWithOptions:launchOptions];
   //[RNSplashScreen show];

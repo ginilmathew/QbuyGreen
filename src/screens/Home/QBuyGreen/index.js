@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl, PermissionsAndroid } from 'react-native'
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react'
 import ImageSlider from '../../../Components/ImageSlider';
 import CustomSearch from '../../../Components/CustomSearch';
@@ -36,6 +36,7 @@ import { getProduct } from '../../../helper/productHelper';
 import FastImage from 'react-native-fast-image';
 import reactotron from 'reactotron-react-native';
 import SplashScreen from 'react-native-splash-screen'
+import messaging from '@react-native-firebase/messaging';
 
 
 const QBuyGreen = ({ navigation }) => {
@@ -63,6 +64,29 @@ const QBuyGreen = ({ navigation }) => {
         setSlider(slider?.data)
 
     }, [homeData])
+
+    useEffect(() => {
+        requestUserPermission()
+    }, [])
+    
+
+    async function requestUserPermission() {
+        
+        if(Platform.OS === 'android'){
+            PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        }
+        
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      
+        if (enabled) {
+          console.log('Authorization status:', authStatus);
+        }
+
+        //getCurrentLocation()
+    }
 
 
     const schema = yup.object({

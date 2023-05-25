@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "678656967091",
+    "project_id": "qbuygreen-2185c",
+    "storage_bucket": "qbuygreen-2185c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678656967091:android:64e0caf19332f8ce79cbc6",
+        "android_client_info": {
+          "package_name": "com.diginest.qbuygreen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678656967091-j6eauj9iupvg70r5gtila7ho2spgq3tn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr7ldz6R7nUhdB4nIlGklKiRBh3mZUv9k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678656967091-j6eauj9iupvg70r5gtila7ho2spgq3tn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
