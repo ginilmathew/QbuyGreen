@@ -23,9 +23,9 @@ const Login = ({ navigation }) => {
 
 	useEffect(() => {
 		//reactotron.log("in")
-	   SplashScreen.hide()
+		SplashScreen.hide()
 	}, [])
-	
+
 
 	const loginUser = useContext(AuthContext)
 	const loadingg = useContext(LoaderContext)
@@ -35,31 +35,33 @@ const Login = ({ navigation }) => {
 
 	let loader = loadingg?.loading
 
+
+	const phone = /^(\+\d{1,3}[- ]?)?\d{10}$/
 	const schema = yup.object({
-		mobile: yup.string().required('Phone number is required').max(10, "Phone Number must be 10 digits").min(10, "Phone Number must be 10 digits"),
+		mobile: yup.string().required('Phone number is required').max(10, "Phone Number must be 10 digits").min(10, "Phone Number must be 10 digits").matches(phone,'Not a valid number'),
 	}).required();
 
 	const { control, handleSubmit, formState: { errors }, setValue } = useForm({
 		resolver: yupResolver(schema)
 	});
 
-	const onSubmit = useCallback(async(data) => {
+	const onSubmit = useCallback(async (data) => {
 		// navigation.navigate('Otp')
 		loginUser.setLogin(data)
 		loadingg.setLoading(true)
 		await customAxios.post(`auth/customerloginotp`, data)
-        .then(async response => {
-            setData(response?.data?.data)
-            loadingg.setLoading(false)
-			navigation.navigate('Otp')
-        })
-        .catch(async error => {
-            Toast.show({
-				type: 'error',
-				text1: error
-			});
-            loadingg.setLoading(false)
-        })
+			.then(async response => {
+				setData(response?.data?.data)
+				loadingg.setLoading(false)
+				navigation.navigate('Otp')
+			})
+			.catch(async error => {
+				Toast.show({
+					type: 'error',
+					text1: error
+				});
+				loadingg.setLoading(false)
+			})
 	}, [])
 
 
@@ -100,9 +102,9 @@ const Login = ({ navigation }) => {
 					mt={20}
 					loading={loader}
 				/>
-				
+
 				<Text style={styles.textStyle}>{"Need Support to Login?"}</Text>
-				<HelpAndSupportText/>
+				<HelpAndSupportText />
 			</ScrollView>
 
 		</CommonAuthBg>
@@ -116,15 +118,15 @@ const styles = StyleSheet.create({
 	logo: {
 		width: 130,
 		height: 130,
-		marginTop:100,
+		marginTop: 100,
 		alignSelf: 'center',
 	},
-	textStyle:{
+	textStyle: {
 		fontFamily: 'Poppins-Light',
 		color: '#8D8D8D',
 		fontSize: 11,
 		textAlign: 'center',
-		marginTop:70
+		marginTop: 70
 	}
-	
+
 })

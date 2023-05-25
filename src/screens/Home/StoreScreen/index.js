@@ -18,6 +18,7 @@ import CartContext from '../../../contexts/Cart'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
+import reactotron from 'reactotron-react-native'
 
 
 const StoreScreen = ({ route, navigation }) => {
@@ -43,6 +44,8 @@ const StoreScreen = ({ route, navigation }) => {
 
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
+
+   reactotron.log({storeDetails})
 
     const [selected, setSelected] = useState(false)
 
