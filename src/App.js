@@ -16,6 +16,8 @@ import {PermissionsAndroid} from 'react-native';
 import notifee from '@notifee/react-native';
 import reactotron from 'reactotron-react-native'
 import Geolocation from 'react-native-geolocation-service';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import customAxios from './CustomeAxios'
 
 
 
@@ -62,12 +64,33 @@ const App = () => {
 
     async function onAppBootstrap() {
         // Register the device with FCM
+        let userDetails = await AsyncStorage.getItem("user");
         await messaging().registerDeviceForRemoteMessages();
       
-        // Get the token
-        const token = await messaging().getToken();
+        if(userDetails){
+            let user = JSON.parse(userDetails)
 
-        reactotron.log({token})
+            reactotron.log({user})
+            // Get the token
+            const token = await messaging().getToken();
+
+            let data = {
+                id: user?._id,
+                token: token
+            }
+            customAxios.post('auth/update-devicetoken', data)
+            .then(response => {
+                reactotron.log({response})
+            })
+            .catch(err => {
+                reactotron.log({err})
+            })
+            reactotron.log({token})
+
+        }
+       
+
+       
       
         // Save the token
         //await postToApi('/users/1234/tokens', { token });
