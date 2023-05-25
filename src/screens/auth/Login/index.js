@@ -22,7 +22,7 @@ import reactotron from 'reactotron-react-native';
 const Login = ({ navigation }) => {
 
 	useEffect(() => {
-		reactotron.log("in")
+		//reactotron.log("in")
 	   SplashScreen.hide()
 	}, [])
 	
@@ -68,7 +68,7 @@ const Login = ({ navigation }) => {
 			<ScrollView style={{ flex: 1, paddingHorizontal: 40, }}>
 				<FastImage
 					style={styles.logo}
-					source={require('../../../Images/pandaLogo.png')}
+					source={require('../../../Images/loginLogo.png')}
 					resizeMode='contain'
 				/>
 				<CommonAuthHeading
