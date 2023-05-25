@@ -249,7 +249,12 @@ const QBuyFashion = () => {
 
     return (
         <>
-            <Header onPress={onClickDrawer} />
+
+              <View flex={1} justifyContent={'center'} alignItems={'center'}>
+                    <Text style={{fontSize:20}}>Coming Soon!!!</Text>
+              </View>
+
+            {/* <Header onPress={onClickDrawer} />
             <View style={styles.container}>
 
                 <ScrollView
@@ -277,7 +282,7 @@ const QBuyFashion = () => {
                         numColumns={2}
                         style={{ marginLeft: 5 }}
                     />
-                </ScrollView>
+                </ScrollView> */}
                 {/* <SearchBox onPress={onSearch}/>
                 <ScrollView
                     horizontal
@@ -353,7 +358,7 @@ const QBuyFashion = () => {
                     </View>
                 </>}     */}
 
-            </View>
+            {/* </View>
 
             <CommonSquareButton
                 onPress={gotoChat}
@@ -361,7 +366,7 @@ const QBuyFashion = () => {
                 bottom={10}
                 right={10}
             />
-
+ */}
 
         </>
     )

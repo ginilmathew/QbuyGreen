@@ -11,7 +11,7 @@ const SearchResultsCard = ({ item }) => {
     const pandaContext = useContext(PandaContext)
 
     const [data, setData] = useState([])
-    
+
 
     useEffect(() => {
         if (item) {
@@ -30,7 +30,22 @@ const SearchResultsCard = ({ item }) => {
     const navigation = useNavigation()
 
     const handleClick = useCallback((value) => {
-          navigation.navigate('SingleItemScreen', { item: data })
+
+        if (item?.type === 'fashion') {
+            pandaContext.setActive('fashion')
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'fashion' }
+                    ]
+                }))
+        } else {
+            navigation.navigate('SingleItemScreen', { item: data })
+        }
+
+
+
         // if (item?.type === 'fashion') {
         //     pandaContext.setActive('fashion')
         //     navigation.dispatch(

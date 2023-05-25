@@ -220,7 +220,7 @@ const TabNav = () => {
 
                 component={HomeNav}
             />
-            <CurvedBottomBar.Screen
+            {/* <CurvedBottomBar.Screen
                 name="cart"
                 position="LEFT"
                 component={CartNav}
@@ -229,7 +229,7 @@ const TabNav = () => {
                 name="order"
                 component={MyOrderNav}
                 position="RIGHT"
-            />
+            /> */}
             <CurvedBottomBar.Screen
                 name="account"
                 component={MyAccountNav}

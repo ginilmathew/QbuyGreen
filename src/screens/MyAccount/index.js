@@ -16,6 +16,7 @@ import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-toast-message';
 import CartContext from '../../contexts/Cart'
 import { IMG_URL } from '../../config/constants'
+import reactotron from '../../ReactotronConfig'
 
 
 
@@ -25,6 +26,8 @@ const MyAccount = ({ navigation }) => {
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
+
+    reactotron.log({active})
     const user = useContext(AuthContext)
     let userData = user?.userData
 
@@ -52,16 +55,16 @@ const MyAccount = ({ navigation }) => {
         await Geolocation.getCurrentPosition(
             position => {
 
-         
+
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
-         
+
             },
             error => {
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
-           
+
             },
             {
                 accuracy: {
@@ -80,12 +83,12 @@ const MyAccount = ({ navigation }) => {
     }
 
 
-    const onClick = async() => {
+    const onClick = async () => {
         setShowModal(false)
         // await AsyncStorage.clear()
 
         let datas = {
-            id : userData?._id
+            id: userData?._id
         }
         await customAxios.post(`auth/customerlogout`, datas)
             .then(async response => {
@@ -103,12 +106,12 @@ const MyAccount = ({ navigation }) => {
                 });
                 navigation.dispatch(
                     CommonActions.reset({
-                      index: 0,
-                      routes: [
-                        { name: 'Login' },
-                      ],
+                        index: 0,
+                        routes: [
+                            { name: 'Login' },
+                        ],
                     })
-                  );
+                );
 
             })
             .catch(async error => {
@@ -119,12 +122,16 @@ const MyAccount = ({ navigation }) => {
             })
     }
 
-    const onEdit = useCallback(async() => {
+    const onEdit = useCallback(async () => {
         navigation.navigate('EditProfile')
     })
 
     return (
         <>
+            {active === 'fashion' || active === 'panda' ? <>
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}><Text style={{fontSize:20}}>Coming Soon!!!</Text></View> 
+            </>   :      
+            <>
             <HeaderWithTitle title={'My Account'} noBack />
             <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}>
                 <View style={{ alignItems: 'center' }}>
@@ -132,13 +139,13 @@ const MyAccount = ({ navigation }) => {
                         <Image
                             style={styles.logo}
 
-                            source={userData?.image ? { uri: `${IMG_URL}${userData?.image}` } :  require('../../Images/drawerLogo.png')}
+                            source={userData?.image ? { uri: `${IMG_URL}${userData?.image}` } : require('../../Images/drawerLogo.png')}
                         />
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             onPress={onEdit}
-                            style={{width:25, height:25, borderRadius:15, backgroundColor: active === "green" ? '#8ED053' : active === "fashion" ? '#FF7190' : '#58D36E', alignItems:'center', justifyContent:'center', alignSelf:'flex-end', marginTop:-25}}
+                            style={{ width: 25, height: 25, borderRadius: 15, backgroundColor: active === "green" ? '#8ED053' : active === "fashion" ? '#FF7190' : '#58D36E', alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-end', marginTop: -25 }}
                         >
-                            <MaterialIcons name='edit' size={15} color='#fff'/>
+                            <MaterialIcons name='edit' size={15} color='#fff' />
                         </TouchableOpacity>
                     </View>
 
@@ -213,20 +220,21 @@ const MyAccount = ({ navigation }) => {
                         noBorder
                     />
                     <CustomButton
-                        onPress={()=>setShowModal(true)}
+                        onPress={() => setShowModal(true)}
                         label={'Logout'}
                         bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                         mb={100}
                         mt={20}
                     />
                 </View>
-                
+
                 <LogoutModal
                     visible={showModal}
                     onDismiss={onClose}
-                    onPress={onClick} 
+                    onPress={onClick}
                 />
             </ScrollView>
+            </>}
         </>
     )
 }
