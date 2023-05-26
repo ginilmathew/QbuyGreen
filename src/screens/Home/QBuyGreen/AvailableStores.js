@@ -13,7 +13,13 @@ const AvailableStores = memo(({ data }) => {
 
     return (
         <>
-            {data?.length > 0 && <CommonTexts label={'Available Stores'} ml={15}  mt={15} />}
+            {data?.length > 0 && 
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 15, marginTop: 15 }}>
+                <CommonTexts label={'Available Stores'}  />
+                <Pressable onPress={moveStoreScreen} style={styles.viewallStyle}>
+                    <Text style={styles?.viewallStyleText}>View All</Text>
+                </Pressable>
+            </View>}
             <View style={styles.grossCatView}>
                 {data?.map((item, index) => (
                     <ShopCard key={index} item={item} />
@@ -21,9 +27,7 @@ const AvailableStores = memo(({ data }) => {
 
             </View>
 
-            <Pressable onPress={moveStoreScreen} style={styles.viewallStyle}>
-                <Text style={styles?.viewallStyleText}>View All</Text>
-            </Pressable>
+            
         </>
     )
 })

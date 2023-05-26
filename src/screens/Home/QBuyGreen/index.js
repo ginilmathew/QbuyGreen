@@ -160,7 +160,7 @@ const QBuyGreen = ({ navigation }) => {
 
         let datas = {
             type: "green",
-            coordinates: env === "live" ? location : userContext?.location
+            coordinates: env === "dev" ? location : userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {

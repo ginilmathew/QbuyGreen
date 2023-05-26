@@ -6,6 +6,7 @@ export function getProduct(product){
 
     let variant = product?.variants?.length > 0 ? true : false
     let minQty = minimum_qty ? parseFloat(minimum_qty) : 1
+    let vendorCommission = product?.vendors?.additional_details?.commission ? parseFloat(product?.vendors?.additional_details?.commission) : 0
 
 
     let newProduct = {
@@ -38,7 +39,7 @@ export function getProduct(product){
             let offerToDate = moment(vari?.offer_date_to).isValid() ? moment(vari?.offer_date_to, "YYYY-MM-DD") : null
             let regular = vari?.regular_price ? parseFloat(vari?.regular_price) : 0
             let seller = vari?.seller_price ? parseFloat(vari?.seller_price) : 0
-            let commission = vari?.commission ? parseFloat(vari?.commission) : 0
+            let commission = vari?.commission ? parseFloat(vari?.commission) : vendorCommission
             let delivery = vari?.fixed_delivery_price ? parseFloat(vari?.fixed_delivery_price) : 0
             let stockValue = vari?.stock_value ? parseFloat(vari?.stock_value) : 0
             let price;
@@ -216,7 +217,7 @@ export function getProduct(product){
         let offerToDate = moment(product?.offer_date_to).isValid() ? moment(product?.offer_date_to, "YYYY-MM-DD") : null
         let regular = product?.regular_price ? parseFloat(product?.regular_price) : 0
         let seller = product?.seller_price ? parseFloat(product?.seller_price) : 0
-        let commission = product?.commission ? parseFloat(product?.commission) : 0
+        let commission = product?.commission ? parseFloat(product?.commission) : vendorCommission
         let delivery = product?.fixed_delivery_price ? parseFloat(product?.fixed_delivery_price) : 0
         let stockValue = product?.stock_value ? parseFloat(product?.stock_value) : 0
         let price;
