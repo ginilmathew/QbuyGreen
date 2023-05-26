@@ -13,9 +13,10 @@ import SearchResultsCard from './SearchResultsCard'
 import Toast from 'react-native-toast-message';
 import AuthContext from '../../../contexts/Auth'
 import reactotron from '../../../ReactotronConfig'
+import { useFocusEffect } from '@react-navigation/native'
 
 
-const ProductSearchScreen = ({route}) => {
+const ProductSearchScreen = ({ route }) => {
 
     const contextPanda = useContext(PandaContext)
     const loadingg = useContext(LoaderContext)
@@ -23,12 +24,12 @@ const ProductSearchScreen = ({route}) => {
     let active = contextPanda.active
 
 
-    reactotron.log({active})
+    reactotron.log({ active })
 
     let loader = loadingg?.loading
 
     const [filterResult, setFilterResult] = useState([])
-
+    const [datatrue,setdataTrue]=useState(true)
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -38,6 +39,13 @@ const ProductSearchScreen = ({route}) => {
         resolver: yupResolver(schema)
     });
 
+    const [search, setSearch] = useState('')
+
+
+    const searchItem = useCallback((data) => {
+        setSearch(data)
+    }, [])
+
 
     const filterResults = useCallback(async (value) => {
         if (value === '') {
@@ -46,7 +54,7 @@ const ProductSearchScreen = ({route}) => {
         let datas = {
             coordinates: env === "dev" ? location : userContext?.location,
             search: value,
-            type : active
+            type: active
         }
         loadingg.setLoading(true)
 
@@ -65,6 +73,14 @@ const ProductSearchScreen = ({route}) => {
             })
     }, [])
 
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setFilterResult([])
+      
+        }, [])
+    );
 
     return (
         <>
@@ -85,7 +101,7 @@ const ProductSearchScreen = ({route}) => {
                 />
 
                 <View style={{ paddingHorizontal: 15, marginTop: 10 }}>
-                    {loader ? <ActivityIndicator /> : filterResult?.map((item, index) => (<SearchResultsCard item={item} key={index}/>))}
+                    {loader ? <ActivityIndicator /> : filterResult?.map((item, index) => (<SearchResultsCard item={item} key={index} />))}
                 </View>
             </ScrollView>
         </>
