@@ -18,6 +18,7 @@ import FashionCategory from '../screens/FashionCategory';
 import SwitchHome from './SwitchHome';
 import CategoryScreen from '../screens/Home/CategoryScreen';
 import StoreScreen from '../screens/Home/StoreScreen';
+import ViewAllStore from '../screens/Home/QBuyGreen/ViewAllStore';
 
 
 
@@ -51,6 +52,7 @@ const HomeNav = ({mode, route}) => {
 
             <Stack.Screen name="CustomerFeedback" component={CustomerFeedback}/>
             <Stack.Screen name="ApplyFranchisee" component={ApplyFranchisee}/>
+     
             
             <Stack.Screen name="Wishlist" component={Wishlist}/>
 

@@ -1,9 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { memo } from 'react'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { memo, useCallback } from 'react'
 import CommonTexts from '../../../Components/CommonTexts'
 import ShopCard from '../Grocery/ShopCard'
+import { useNavigation } from '@react-navigation/native'
 
-const AvailableStores = memo(({data}) => {
+const AvailableStores = memo(({ data }) => {
+    const navigation = useNavigation()
+
+    const moveStoreScreen =useCallback(()=>{
+        navigation.navigate('ViewAllStore')
+    },[])
+
     return (
         <>
             {data?.length > 0 && <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={15} />}
@@ -11,7 +18,12 @@ const AvailableStores = memo(({data}) => {
                 {data?.map((item, index) => (
                     <ShopCard key={index} item={item} />
                 ))}
+
             </View>
+
+            <Pressable onPress={moveStoreScreen} style={styles.viewallStyle}>
+                <Text style={styles?.viewallStyleText}>View All</Text>
+            </Pressable>
         </>
     )
 })
@@ -25,4 +37,16 @@ const styles = StyleSheet.create({
         gap: 7,
         marginLeft: 4,
     },
+
+    viewallStyle: {
+        paddingHorizontal:15,
+        alignSelf: 'flex-end',
+        
+    },
+    viewallStyleText:{
+        fontFamily: 'Poppins-Bold',
+        color: '#30B948',
+        fontSize: 16,
+    }
+
 })

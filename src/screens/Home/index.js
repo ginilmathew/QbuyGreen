@@ -301,15 +301,15 @@ const QbuyPanda = ({ navigation }) => {
 
     return (
         <>
-                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                    <Text style={{fontSize:20}}>Coming Soon!!!</Text>
-                </View>
-          
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20 }}>Coming Soon!!!</Text>
+            </View>
+
             {/* <Header onPress={onClickDrawer} /> */}
             {/* <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} > */}
-{/* 
+            {/* 
                 <ImageSlider datas={images} mt={5} /> */}
-{/* 
+            {/* 
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -324,18 +324,18 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView> */}
 
-                {/* <SearchBox onPress={onSearch} /> */}
+            {/* <SearchBox onPress={onSearch} /> */}
 
 
-                {/* <NameText userName={'Shaan Johnson'} mb={20} /> */}
-{/* 
+            {/* <NameText userName={'Shaan Johnson'} mb={20} /> */}
+            {/* 
                 <View style={styles.categoryView}>
                     {categories?.map((item) => (
                         <CategoriesCard key={item?._id} item={item} />
                     ))}
                 </View> */}
 
-                {/* <View style={styles.pickupReferContainer}>
+            {/* <View style={styles.pickupReferContainer}>
                     <PickDropAndReferCard
                         onPress={pickupDropClick}
                         lotties={require('../../Lottie/deliveryBike.json')}
@@ -350,21 +350,21 @@ const QbuyPanda = ({ navigation }) => {
                     />
                 </View> */}
 
-                {/* <View style={styles.offerView}> */}
-                    {/* <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text> */}
-                    {/* <OfferText /> */}
-                    {/* <CountDownComponent/> */}
-                    {/* <Text style={styles.offerValText}>{'Offer valid till period!'}</Text> */}
-                {/* </View> */}
+            {/* <View style={styles.offerView}> */}
+            {/* <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text> */}
+            {/* <OfferText /> */}
+            {/* <CountDownComponent/> */}
+            {/* <Text style={styles.offerValText}>{'Offer valid till period!'}</Text> */}
+            {/* </View> */}
 
-                {/* <View
+            {/* <View
                     style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginBottom: 5, justifyContent: 'space-between', marginRight: 5 }}
                 >
                     <CommonTexts label={'Recently Viewed'} fontSize={13} />
                     <CommonFiltration />
                 </View> */}
 
-                {/* <ScrollView
+            {/* <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
@@ -379,8 +379,8 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView> */}
 
-                {/* <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} /> */}
-                {/* <ScrollView
+            {/* <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} /> */}
+            {/* <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
@@ -395,7 +395,7 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView> */}
 
-                {/* <CommonTexts label={'Lunch Menu'} fontSize={13} ml={15} mb={5} mt={15} />
+            {/* <CommonTexts label={'Lunch Menu'} fontSize={13} ml={15} mb={5} mt={15} />
                 <View style={styles.menuContainer}>
                     {menus?.map((item) => (
                         <CommonItemCard
@@ -407,7 +407,7 @@ const QbuyPanda = ({ navigation }) => {
                     ))}
                 </View> */}
 
-                {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
+            {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
