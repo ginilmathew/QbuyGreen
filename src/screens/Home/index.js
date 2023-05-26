@@ -302,7 +302,7 @@ const QbuyPanda = ({ navigation }) => {
     return (
         <>
                 <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                    <Text style={{fontSize:20}}>Comming Soon!!!</Text>
+                    <Text style={{fontSize:20}}>Coming Soon!!!</Text>
                 </View>
           
             {/* <Header onPress={onClickDrawer} /> */}
