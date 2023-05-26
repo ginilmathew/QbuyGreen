@@ -6,7 +6,7 @@ import ShopCard from '../Grocery/ShopCard'
 const AvailableStores = memo(({data}) => {
     return (
         <>
-            {data?.length > 0 && <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={15} />}
+            {data?.length > 0 && <CommonTexts label={'Available Stores'} ml={15}  mt={15} />}
             <View style={styles.grossCatView}>
                 {data?.map((item, index) => (
                     <ShopCard key={index} item={item} />
@@ -22,7 +22,9 @@ const styles = StyleSheet.create({
     grossCatView: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 7,
-        marginLeft: 4,
+        gap: 5,
+        marginLeft: 2,
+        flex: 1,
+        //justifyContent:'center'
     },
 })

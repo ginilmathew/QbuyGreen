@@ -5,6 +5,7 @@ import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import { IMG_URL } from '../../../config/constants'
 import PandaContext from '../../../contexts/Panda'
+import reactotron from 'reactotron-react-native'
 
 
 const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
@@ -12,7 +13,12 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
 
     const contextPanda = useContext(PandaContext)
 
-    const { width } = useWindowDimensions()
+    const { width, fontScale, height } = useWindowDimensions()
+
+    let imageWidth = width/6
+
+    reactotron.log({fontScale})
+    const styles = makeStyles(fontScale, height);
     const navigation = useNavigation()
 
     const onClick = useCallback(() => {
@@ -20,33 +26,34 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
     }, [item])
 
     return (
-      
+      <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 5 }}>
         <TouchableOpacity 
             onPress={onClick} 
             key={item?._id} 
-            style={{ alignItems: 'center', width: width / 4,}}
+            style={{ alignItems: 'center', width: imageWidth, height: imageWidth }}
         >
             <FastImage
-                style={{ width: 60, height: 60, borderRadius: 30,  }}
+                style={{borderRadius: imageWidth/2, width: '100%', height: '100%' }}
                 source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../../Images/jeans.jpg')}
                 borderRadius={30}
             />
-            <Text
-                numberOfLines={2}
-                style={styles.shopName}
-            >{item?.name}</Text>
+            
         </TouchableOpacity>
-          
+        <Text
+        numberOfLines={2}
+        style={styles.shopName}
+    >{item?.name}</Text>
+         </View> 
     )
 })
 
 export default TypeCard
 
-const styles = StyleSheet.create({
+const makeStyles = (fontScale, width) => StyleSheet.create({
     shopName: {
         fontFamily: 'Poppins-SemiBold',
         color: '#23233C',
-        fontSize: 10,
+        fontSize: 0.013*width,
         textAlign: 'center',
         marginTop: 5,
         paddingHorizontal: 5,

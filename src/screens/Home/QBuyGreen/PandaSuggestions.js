@@ -4,11 +4,11 @@ import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
 const PandaSuggestions = memo(({data}) => {
-    const {width} = useWindowDimensions()
+    const {width, height} = useWindowDimensions()
 
     return (
         <>
-        {data?.length > 0 &&<CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />}
+        {data?.length > 0 &&<CommonTexts label={'Panda Suggestions'}  ml={15} mb={5} mt={15} />}
         <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -19,6 +19,7 @@ const PandaSuggestions = memo(({data}) => {
                     key={item?._id}
                     item={item}
                     width={width / 2.5}
+                    height={height/7}
                     marginHorizontal={5}
                 />
             )}

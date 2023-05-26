@@ -160,7 +160,7 @@ const QBuyGreen = ({ navigation }) => {
 
         let datas = {
             type: "green",
-            coordinates: env === "dev" ? location : userContext?.location
+            coordinates: env === "live" ? location : userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
@@ -196,7 +196,7 @@ const QBuyGreen = ({ navigation }) => {
             <View style={{ alignItems: 'center', marginTop: 20 }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
-                    style={{ height: height / 5, width: width - 35, borderRadius: 20 }}
+                    style={{ height: height / 4, width: width - 35, borderRadius: 20 }}
                 // resizeMode='contain'
                 >
                 </FastImage>
@@ -214,11 +214,11 @@ const QBuyGreen = ({ navigation }) => {
                 <>
                     <CategoryCard data={item?.data} />
                     <SearchBox onPress={onSearch} />
-                    {slider?.length > 0 && <View style={{ flex: 1 }}>
+                    {slider?.length > 0 && <View>
                         <Carousel
                             loop
                             width={width}
-                            height={width / 2}
+                            height={height/4}
                             autoPlay={true}
                             data={slider}
                             scrollAnimationDuration={1000}
@@ -296,17 +296,19 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
-    const renderProducts = ({ item }) => {
+    const renderProducts = ({ item, index }) => {
         return (
+            <View key={index} style={{ flex: 0.5, justifyContent: 'center' }}>
             <CommonItemCard
                 item={item}
                 key={item?._id}
-                width={width / 2.25}
-                height={220}
-                mr={8}
+                width={width / 2.2}
+                height={height/3.6}
+                mr={5}
                 ml={8}
                 mb={15}
             />
+            </View>
         )
     }
 
@@ -323,7 +325,7 @@ const QBuyGreen = ({ navigation }) => {
                         <RefreshControl refreshing={loader} onRefresh={getHomedata} />
                     }>
                     {homeData?.map(home => renderItems(home))}
-                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={20} />}
+                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'}  ml={15} mb={10} mt={20} />}
                     <FlatList
                         data={availablePdt}
                         keyExtractor={(item, index) => index}
@@ -337,6 +339,7 @@ const QBuyGreen = ({ navigation }) => {
                         // onRefresh={getHomedata}
                         numColumns={2}
                         style={{ marginLeft: 5 }}
+                        contentContainerStyle={{ justifyContent: 'center' }}
                     />
                 </ScrollView>
 

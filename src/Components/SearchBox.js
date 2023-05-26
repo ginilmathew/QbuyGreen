@@ -22,11 +22,12 @@ const SearchBox = ({ onPress }) => {
                 alignItems: 'center',
                 margin: 1,
                 justifyContent: 'space-between',
-                marginHorizontal: 18
+                marginHorizontal: 18,
+                height: 60
             }}
             activeOpacity={0.9}
         >
-            <Text style={{ marginLeft: 20, color: '#0C256C21', fontFamily: 'Poppins-SemiBold', fontSize: 12 }}>Search...</Text>
+            <Text style={{ marginLeft: 20, color: '#0C256C21', fontFamily: 'Poppins-SemiBold' }}>Search...</Text>
 
 
             <CommonSquareButton iconName={'search'} onPress={onPress} />

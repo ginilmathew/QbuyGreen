@@ -31,6 +31,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
     const [data, setData] = useState([])
 
+    const { fontScale, height: height1 } = useWindowDimensions()
+
+    const styles = makeStyles(height1);
+
     useEffect(() => {
         if (item) {
             setData(getProduct(item))
@@ -168,7 +172,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 >
                     <LinearGradient colors={data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{data?.name}</Text>
-                        {data?.available && <Text style={!data?.available ? styles.textSemiError : styles.textSemi}>{`₹ ${data?.price}` }</Text>}
+                        {data?.available && <Text style={!data?.available ? styles.textSemiError : styles.bottomRateText}>{`₹ ${data?.price}` }</Text>}
                         <Text style={styles.lightText}>{data?.store?.name}</Text>
                     </LinearGradient>
                     {!data?.available && <View style={{ position: 'absolute', top: '32%', width: '100%' }}>
@@ -196,7 +200,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={(data?.is_wishlist || wishlistIcon) ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12} />
+                        <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12/fontScale} />
                     </TouchableOpacity>
 
                 </FastImage>
@@ -278,35 +282,35 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 export default CommonItemCard
 
-const styles = StyleSheet.create({
+const makeStyles = fontScale => StyleSheet.create({
 
 
     bottomCountText: {
         fontFamily: 'Poppins-medium',
         color: '#fff',
-        fontSize: 11,
+        fontSize: 0.01*fontScale,
     },
     bottomRateText: {
         fontFamily: 'Poppins-ExtraBold',
         color: '#fff',
-        fontSize: 18,
+        fontSize: 0.012*fontScale,
     },
     textSemi: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 10,
+        fontSize: 0.009*fontScale,
         paddingBottom: 2
     },
     textSemiError: {
         fontFamily: 'Poppins-SemiBold',
         color: 'red',
-        fontSize: 10,
+        fontSize: 10/fontScale,
         paddingBottom: 2
     },
     lightText: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 7,
+        fontSize: 0.010*fontScale,
         marginBottom: 3
     },
     addContainer: {
@@ -317,7 +321,7 @@ const styles = StyleSheet.create({
     tagText: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 12,
+        fontSize: 12/fontScale,
         padding: 5
     },
     hearIcon: {
@@ -325,8 +329,8 @@ const styles = StyleSheet.create({
         top: 8,
         right: 8,
         zIndex: 1,
-        width: 24,
-        height: 24,
+        width: 24/fontScale,
+        height: 24/fontScale,
         borderRadius: 12,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         alignItems: 'center',

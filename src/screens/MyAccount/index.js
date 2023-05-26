@@ -189,7 +189,7 @@ const MyAccount = ({ navigation }) => {
                         img={active === 'green' ? require('../../Images/affiliateOrange.png') : require('../../Images/affiliate.png')}
                         label={'Affiliate Bonus'}
                     />}
-                    <ListCard
+                    {/* <ListCard
                         img={active === 'green' ? require('../../Images/buildingOrange.png') : active === 'fashion' ? require('../../Images/fashionBuilding.png') : require('../../Images/building.png')}
                         label={'About Us'}
                     />
@@ -218,7 +218,7 @@ const MyAccount = ({ navigation }) => {
                         label={'Help and Support'}
                         DntshowRightArrow
                         noBorder
-                    />
+                    /> */}
                     <CustomButton
                         onPress={() => setShowModal(true)}
                         label={'Logout'}

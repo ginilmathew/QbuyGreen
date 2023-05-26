@@ -4,21 +4,22 @@ import CommonItemCard from '../../../Components/CommonItemCard'
 import CommonTexts from '../../../Components/CommonTexts'
 
 const RecentlyViewed = memo(({data}) => {
-    const {width} = useWindowDimensions()
+    const {width, height} = useWindowDimensions()
 
     return (
         <>
-        {data?.length > 0 &&<CommonTexts label={'Recently Viewed'} fontSize={13} ml={15} mb={5} mt={5} />}
+        {data?.length > 0 &&<CommonTexts label={'Recently Viewed'}  ml={15} mb={5} mt={5} />}
         <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ flexDirection: 'row', paddingLeft: 7, }}
+            contentContainerStyle={{ flexDirection: 'row', padding: 5, gap: 5, overflow: 'scroll' }}
         >
             {data.map((item) =>
                 <CommonItemCard
                     key={item?._id}
                     item={item}
                     width={width / 2.5}
+                    height={height/7}
                     marginHorizontal={5}
                 />
             )}

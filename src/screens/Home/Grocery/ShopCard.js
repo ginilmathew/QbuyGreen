@@ -8,8 +8,9 @@ import { IMG_URL } from '../../../config/constants';
 
 const ShopCard = memo(({item}) => {
 
-    const {width} = useWindowDimensions()
+    const {width, height, fontScale} = useWindowDimensions()
     const navigation = useNavigation();
+    const styles = makeStyles(height);
 
     const onClick = useCallback(() => {
         navigation.navigate('store', {name : item?.name, mode : 'store', item:item})
@@ -19,10 +20,10 @@ const ShopCard = memo(({item}) => {
         <TouchableOpacity 
             key={item?._id}  
             onPress={onClick} 
-            style={{width: width/4.5,height:80,alignItems:'center', marginTop:10}}
+            style={{width: width/4.2, height:width/4.2, alignItems:'center', justifyContent: 'center', marginTop:10, marginBottom: 5}}
         >
             <FastImage
-                style={{ width: 60, height: 60, borderRadius: 10 }}
+                style={{ width: '90%', height: '85%', borderRadius: 10 }}
                 source={ item?.store_logo ? {  uri: `${IMG_URL}${item?.store_logo}` }  : require('../../../Images/vegies.png')}
                 borderRadius={10}
             />
@@ -36,11 +37,12 @@ const ShopCard = memo(({item}) => {
 
 export default ShopCard
 
-const styles = StyleSheet.create({
+const makeStyles = height => StyleSheet.create({
 
     itemText : { 
         textAlign:'center', 
-        fontSize:11, 
+        fontSize: 0.012*height, 
+        //fontSize: '2x',
         marginTop:5, 
         fontFamily:'Poppins-SemiBold', 
         color:'#23233C' ,
