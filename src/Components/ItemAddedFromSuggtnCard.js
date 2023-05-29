@@ -45,7 +45,7 @@ const ItemAddedFromSuggtnCard = memo(({item}) => {
             <View style={styles.itemContainer}>
                 <Text style={styles.itemNameText} >{item?.name}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.itemRateText}>₹ {item?.rate * count}</Text>
+                    <Text style={styles.itemRateText}>₹ {item?.price * count}</Text>
                     <CommonCounter
                         count={count}
                         addItem={addItem}
@@ -53,7 +53,7 @@ const ItemAddedFromSuggtnCard = memo(({item}) => {
                     />
                 </View>
             </View>
-            {fashion&&<View style={{flexDirection:'row', justifyContent:'space-between' }}>
+            {/* {fashion&&<View style={{flexDirection:'row', justifyContent:'space-between' }}>
                 <CommonSelectDropdown
                     placeholder='Color'
                     data={color}
@@ -70,7 +70,7 @@ const ItemAddedFromSuggtnCard = memo(({item}) => {
                     height={35}
                     width={'45%'}
                 />
-            </View>}
+            </View>} */}
 
         </View>
         

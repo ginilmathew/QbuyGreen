@@ -23,7 +23,9 @@ import reactotron from 'reactotron-react-native'
 
 const StoreScreen = ({ route, navigation }) => {
 
-    const { width } = useWindowDimensions()
+    const { width, height } = useWindowDimensions()
+
+    const styles = makeStyles(height)
 
 
     const contextPanda = useContext(PandaContext)
@@ -148,10 +150,10 @@ const StoreScreen = ({ route, navigation }) => {
 
 export default StoreScreen
 
-const styles = StyleSheet.create({
+const makeStyles = height => StyleSheet.create({
     mainImage: {
         width: '100%',
-        height: 200,
+        height: height/4,
         alignSelf: 'center',
         marginTop: 10,
         borderRadius: 15,

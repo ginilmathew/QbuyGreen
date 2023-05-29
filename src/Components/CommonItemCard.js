@@ -30,6 +30,7 @@ import reactotron from 'reactotron-react-native';
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, mr, ml, mb, getWishlist }) => {
 
     const [data, setData] = useState([])
+    const [variant, setVariant] = useState(false)
 
     const { fontScale, height: height1 } = useWindowDimensions()
 
@@ -68,13 +69,22 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     }, [data])
 
     const openBottomSheet = useCallback(() => {
+        // refRBSheet.current.open()
+        // if(data?.variant){
+        //     setVariant(true)
+        // }
+        // else{
+        //     setVariant(false)
+        //     cartContext?.addToCart(data)
+
+        // }
         if(!data?.variant){
             cartContext?.addToCart(data)
         }
         else{
             navigation.navigate('SingleItemScreen', { item: data })
         }
-        //refRBSheet.current.open()
+        
         //navigation.navigate('SingleItemScreen', { item: item })
     }, [data, cartContext.cart])
 
@@ -240,6 +250,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                                 <Ionicons name='close-circle' color='#000' size={25} />
                             </TouchableOpacity>
                         </View>
+                        <ItemAddedFromSuggtnCard item={item}  />
                         {/* {addedList?.map((item, index) => <ItemAddedFromSuggtnCard item={item} key={index} />)} */}
                         {/* <ScrollView >
                             {suggestions?.map((item) =>
@@ -298,7 +309,7 @@ const makeStyles = fontScale => StyleSheet.create({
     textSemi: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 0.009*fontScale,
+        fontSize: 0.014*fontScale,
         paddingBottom: 2
     },
     textSemiError: {
@@ -310,7 +321,7 @@ const makeStyles = fontScale => StyleSheet.create({
     lightText: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 0.010*fontScale,
+        fontSize: 0.011*fontScale,
         marginBottom: 3
     },
     addContainer: {

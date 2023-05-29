@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 import React, { useContext } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import PandaContext from '../../../contexts/Panda'
 
 const StoreAddressCard = ({address}) => {
+
+    const { height } = useWindowDimensions()
+
+    const styles = makeStyles(height)
 
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
@@ -18,7 +22,7 @@ const StoreAddressCard = ({address}) => {
 
 export default StoreAddressCard
 
-const styles = StyleSheet.create({
+const makeStyles = height =>  StyleSheet.create({
     container: {
         flexDirection:'row', 
         marginTop:10,
@@ -26,7 +30,7 @@ const styles = StyleSheet.create({
     },
     regularText: {
         fontFamily:'Poppins-Regular', 
-        fontSize:11, 
+        fontSize:height*0.012, 
         color:'#23233C', 
         marginLeft:5
     }

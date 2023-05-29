@@ -14,6 +14,9 @@ import PandaContext from '../../../contexts/Panda'
 const ViewAllStore = ({ route, navigation }) => {
 
     const { width, height } = useWindowDimensions()
+    const styles = makeStyles(height);
+
+    reactotron.log({styles})
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
@@ -103,35 +106,42 @@ const ViewAllStore = ({ route, navigation }) => {
         navigation.navigate('store', { name: item?.name, mode: 'store', item: item })
     }, [])
 
+
+    const renderStore = useCallback(({item, index}) => {
+        return (
+            <View key={index}>
+                <TouchableOpacity
+                    key={item?._id}
+                    onPress={() => onClick(item)}
+                    style={{ width: width / 4, height: width / 4, alignItems: 'center', marginTop: 10 }}
+                >
+                    <FastImage
+                        style={{ width: '90%', height: '80%', borderRadius: 10 }}
+                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : require('../../../Images/vegies.png')}
+                        borderRadius={10}
+                    />
+                    <Text
+                        numberOfLines={1}
+                        style={styles.itemText}
+                    >{item?.store_name}</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }, [])
+
+    
+
     return (
         <View>
             <HeaderWithTitle title={'Stores'} onPressBack={NavigationToHome} />
             <FlatList
                 numColumns={4}
                 data={storeList}
+                refreshing={true}
+                onRefresh={getStore}
+                contentContainerStyle={{ height }}
                 keyExtractor={(item) => item._id}
-                renderItem={({ item, index }) => {
-                    return (
-                        <View>
-                            <TouchableOpacity
-                                key={item?._id}
-                                onPress={() => onClick(item)}
-                                style={{ width: width / 4, height: 90, alignItems: 'center', marginTop: 10 }}
-                            >
-                                <FastImage
-                                    style={{ width: 75, height: 70, borderRadius: 10 }}
-                                    source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : require('../../../Images/vegies.png')}
-                                    borderRadius={10}
-                                />
-                                <Text
-                                    numberOfLines={1}
-                                    style={styles.itemText}
-                                >{item?.store_name}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )
-
-                }}
+                renderItem={renderStore}
             />
         </View>
     )
@@ -139,11 +149,11 @@ const ViewAllStore = ({ route, navigation }) => {
 
 export default ViewAllStore
 
-const styles = StyleSheet.create({
+const makeStyles = height => StyleSheet.create({
 
     itemText: {
         textAlign: 'center',
-        fontSize: 11,
+        fontSize: height*0.014,
         marginTop: 5,
         fontFamily: 'Poppins-SemiBold',
         color: '#23233C',
