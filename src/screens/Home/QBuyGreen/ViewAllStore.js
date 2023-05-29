@@ -23,35 +23,7 @@ const ViewAllStore = ({ route, navigation }) => {
     const contextPanda = useContext(PandaContext)
     const [storeList, setStoreList] = useState([])
 
-    reactotron.log({ storeList })
 
-    const storedate = [
-        {
-            id: 10,
-            name: 'ginil'
-
-        },
-        {
-            id: 11,
-            name: 'ginil'
-
-        },
-        {
-            id: 12,
-            name: 'ginil'
-
-        },
-        {
-            id: 13,
-            name: 'ginil'
-
-        },
-        {
-            id: 14,
-            name: 'ginil'
-
-        },
-    ]
 
 
     const getStore = useCallback(async () => {
@@ -66,7 +38,7 @@ const ViewAllStore = ({ route, navigation }) => {
         }).catch((err) => {
             loadingg.setLoading(false)
         })
-    }, [])
+    }, [loadingg?.loading])
 
 
     useEffect(() => {
@@ -135,10 +107,10 @@ const ViewAllStore = ({ route, navigation }) => {
         <View>
             <HeaderWithTitle title={'Stores'} onPressBack={NavigationToHome} />
             <FlatList
+                refreshing={loadingg.loading}
+                onRefresh={getStore}
                 numColumns={4}
                 data={storeList}
-                refreshing={true}
-                onRefresh={getStore}
                 contentContainerStyle={{ height }}
                 keyExtractor={(item) => item._id}
                 renderItem={renderStore}
