@@ -41,7 +41,12 @@ const EditProfile = ({ navigation }) => {
     var regexEmail = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
 
     const schema = yup.object({
-        name: yup.string().required('Name is required'),
+        name: yup.string().max(30, "Name must be less than 30 characters").matches(
+            /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+            'Name can only contain alphabets letters.'
+        )
+            // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+            .required('Name is Required'),
         email: yup.string().email().matches(regexEmail,'Not a Valid Email Address').typeError('Not a Valid Email Address').required('Email is required'),
         // address: yup.string().required('Address is required'),
         // pincode: yup.string().required('Pincode is required'),

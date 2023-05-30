@@ -19,11 +19,14 @@ import Toast from 'react-native-toast-message';
 import has from "lodash"
 import AddressContext from '../../../../../contexts/Address'
 import CartContext from '../../../../../contexts/Cart'
+import reactotron from 'reactotron-react-native'
 
 
 const AddDeliveryAddress = ({ route, navigation }) => {
 
-    let locationData = route?.params?.item
+    let locationData = route?.params?.item;
+
+    reactotron.log({locationData})
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
 
@@ -54,8 +57,8 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            location:  addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
-            address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : locationData?.location,
+            location:locationData?.city,
+            address:locationData?.location,
             comments: locationData?.comments,
             default_status: locationData?.default,
             pincode: locationData?.pincode?.toString()
@@ -84,10 +87,10 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         let datas = {
             address_type: selected.toLocaleLowerCase(),
             area: {
-                latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : locationData?.latitude,
-                longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : locationData?.longitude,
-                address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : data?.address,
-                location: addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
+                latitude:locationData?.latitude,
+                longitude:locationData?.longitude,
+                address:data?.address,
+                location: locationData?.city,
             },
             default_status: !cartContext?.address ? true : isEnabled,
             comments: data?.comments,

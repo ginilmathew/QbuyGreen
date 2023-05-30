@@ -512,6 +512,7 @@ const Checkout = ({ navigation }) => {
                     console.log("response ==>", JSON.stringify(response.data), response.status)
                     const { data } = response
                  
+                    console.log({data},'ONLINE OR OFFLINE')
 
                     if(data?.type === 'cart'){
                        navigation.navigate('Cart')
@@ -526,6 +527,8 @@ const Checkout = ({ navigation }) => {
                             navigation.navigate('OrderPlaced', { item: response.data?.data })
                         }
                     } else {
+                        cartContext?.setCart(null)
+                        setCartItems(null)
                         Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                     }
                 }).catch(error => {

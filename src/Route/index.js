@@ -23,6 +23,8 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import reactotron from '../ReactotronConfig';
 import LoadingModal from '../Components/LoadingModal';
+import LocationScreen from '../screens/MyAccount/MyAddresses/LocationScreen';
+import AddNewLocation from '../screens/MyAccount/MyAddresses/LocationScreen/AddNewLocation';
 
 
 // import Menu from './Menu';
@@ -32,10 +34,11 @@ const Stack = createNativeStackNavigator();
 
 const Route = () => {
 
+
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
     const loadingContext = useContext(LoaderContext)
-    const [location, setLocation] = useState(null) 
+    const [location, setLocation] = useState(null)
 
     const [initialScreen, setInitialScreen] = useState(null)
     useEffect(() => {
@@ -71,12 +74,14 @@ const Route = () => {
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
                     text1: 'Location permission denied by user.'
                 });
             }
             else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
                     text1: 'Location permission revoked by user.',
@@ -91,8 +96,8 @@ const Route = () => {
             userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
             setLocation
         })
-        .catch(err => {
-        })
+            .catch(err => {
+            })
     }
 
     const getPosition = async () => {
@@ -128,61 +133,61 @@ const Route = () => {
     }
 
 
-    const getProfile = useCallback(async() => {
+    const getProfile = useCallback(async () => {
         loadingContext.setLoading(true);
         await customAxios.get(`customer/customer-profile`)
-        .then(async response => {
-            loadingContext.setLoading(false);
-            userContext.setUserData(response?.data?.data)
-            setInitialScreen(mode);
-        })
-        .catch(async error => {
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-            setInitialScreen('Login');
-            await AsyncStorage.clear()
-            loadingContext.setLoading(false);
-        })
-    }, [])
-
-    const getCartDetails = useCallback(async() => {
-        let cartId = await AsyncStorage.getItem("cartId");
-        if(cartId){
-            loadingContext.setLoading(true);
-            await customAxios.get(`customer/cart/show-cart/${cartId}`)
             .then(async response => {
-                if(isObject(response?.data?.data)){
-                    cartContext.setCart(response?.data?.data)
-                }
-                else{
-                    await AsyncStorage.removeItem("cartId")
-                }
                 loadingContext.setLoading(false);
-                
+                userContext.setUserData(response?.data?.data)
+                setInitialScreen(mode);
             })
             .catch(async error => {
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
+                setInitialScreen('Login');
+                await AsyncStorage.clear()
                 loadingContext.setLoading(false);
             })
+    }, [])
+
+    const getCartDetails = useCallback(async () => {
+        let cartId = await AsyncStorage.getItem("cartId");
+        if (cartId) {
+            loadingContext.setLoading(true);
+            await customAxios.get(`customer/cart/show-cart/${cartId}`)
+                .then(async response => {
+                    if (isObject(response?.data?.data)) {
+                        cartContext.setCart(response?.data?.data)
+                    }
+                    else {
+                        await AsyncStorage.removeItem("cartId")
+                    }
+                    loadingContext.setLoading(false);
+
+                })
+                .catch(async error => {
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
+                    loadingContext.setLoading(false);
+                })
         }
-        
+
     }, [])
 
     const getAddressList = async () => {
         loadingContext.setLoading(true)
         await customAxios.get(`customer/address/list`)
             .then(async response => {
-                if(response?.data?.data?.length > 0){
-                    if(response?.data?.data?.length === 1){
+                if (response?.data?.data?.length > 0) {
+                    if (response?.data?.data?.length === 1) {
                         userContext.setLocation([response?.data?.data?.[0]?.area?.latitude, response?.data?.data?.[0]?.area?.longitude])
                         userContext?.setCurrentAddress(response?.data?.data?.[0]?.area?.address)
                     }
-                    else{
+                    else {
                         let defaultAdd = response?.data?.data?.find(add => add?.default === true)
                         userContext.setLocation([defaultAdd?.area?.latitude, defaultAdd?.area?.longitude])
                         userContext?.setCurrentAddress(defaultAdd?.area?.address)
@@ -199,7 +204,7 @@ const Route = () => {
                 });
                 loadingContext.setLoading(false)
             })
-        }
+    }
 
     const checkLogin = async () => {
         // await AsyncStorage.clear()
@@ -221,23 +226,24 @@ const Route = () => {
         )
     }
 
-    reactotron.log({mode})
+    reactotron.log({ mode })
 
     return (
         <>
-        <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
 
-                <Stack.Screen name="SplashScreen" component={SplashScreen} />
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Otp" component={Otp} />
-
-                <Stack.Screen name="panda" component={Panda} />
-                <Stack.Screen name="fashion" component={Fashion} />
-                <Stack.Screen name="green" component={Green} />
-            </Stack.Navigator>
-        </NavigationContainer>
-        {/* <LoadingModal isVisible={true} /> */}
+                    <Stack.Screen name="SplashScreen" component={SplashScreen} />
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Otp" component={Otp} />
+                    <Stack.Screen name="LocationScreen" component={LocationScreen} options={{title:'home'}} />
+                    <Stack.Screen name="AddNewLocation" component={AddNewLocation} />
+                    <Stack.Screen name="panda" component={Panda} />
+                    <Stack.Screen name="fashion" component={Fashion} />
+                    <Stack.Screen name="green" component={Green} />
+                </Stack.Navigator>
+            </NavigationContainer>
+            {/* <LoadingModal isVisible={true} /> */}
         </>
     )
 }

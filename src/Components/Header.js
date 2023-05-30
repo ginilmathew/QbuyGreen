@@ -64,6 +64,15 @@ const Header = ({ onPress, openAddress, goCart }) => {
             reactotron.log({ responseLOCATION: response?.data?.results[0]?.formatted_address })
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             userContext.setCity(locality?.long_name)
+            let value = {
+                area: {
+                    location: locality?.long_name,
+                    address: response?.data?.results[0]?.formatted_address
+                }
+            }
+            cartContext.setDefaultAddress(value)
+
+            // reactotron.log({ response: response?.data?.results[0]?.formatted_address }, 'LOCATION RESPONSE')
 
         })
             .catch(err => {

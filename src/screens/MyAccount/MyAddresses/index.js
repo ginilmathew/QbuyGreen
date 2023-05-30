@@ -83,10 +83,10 @@ const MyAddresses = ({ route, navigation }) => {
             }
             addressContext.setCurrentAddress(Value)
             if (addressContext?.CucurrentAddress) {
-                navigation.navigate('LocationScreen')
+                navigation.navigate('AddNewLocation')
             }
         }
-        navigation.navigate('LocationScreen')
+        navigation.navigate('AddNewLocation')
     }
 
     const deleteSelect = async (id) => {
@@ -140,8 +140,8 @@ const MyAddresses = ({ route, navigation }) => {
     }
 
     return (
-        <>  
-        
+        <>
+
             <HeaderWithTitle
                 title={mode === 'home' ? 'Select Address' : mode === 'MyAcc' ? 'My Addresses' : "My Addresses"}
                 // goback={backAction}

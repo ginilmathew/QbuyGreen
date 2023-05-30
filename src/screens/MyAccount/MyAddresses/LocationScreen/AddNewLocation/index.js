@@ -3,9 +3,12 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import HeaderWithTitle from '../../../../../Components/HeaderWithTitle'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import AddressContext from '../../../../../contexts/Address';
-
+import SplashScreen from 'react-native-splash-screen'
+import reactotron from 'reactotron-react-native';
 const AddNewLocation = ({ route, navigation }) => {
-
+  
+    const backArrowhide = navigation.getState();
+   
     const addressContext = useContext(AddressContext)
 
 
@@ -13,11 +16,13 @@ const AddNewLocation = ({ route, navigation }) => {
 
     const mapRef = useRef()
 
-
+useEffect(()=>{
+    SplashScreen.hide()
+})
     return (
 
         <>
-            <HeaderWithTitle title={'Location'} />
+            <HeaderWithTitle title={'Location'} noBack={backArrowhide.index === 0 ? true : false}/>
             <View style={{ padding: 20 }}>
                 <GooglePlacesAutocomplete
                     fetchDetails={true}
@@ -95,6 +100,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
         zIndex: 999,
         width: '100%',
+    
     },
     textInput: {
         marginLeft: 0,

@@ -15,6 +15,8 @@ import LoaderContext from '../contexts/Loader';
 import Toast from 'react-native-toast-message'
 import SplashScreen from 'react-native-splash-screen'
 import LoadingModal from '../Components/LoadingModal';
+import LocationScreen from '../screens/MyAccount/MyAddresses/LocationScreen';
+import AddNewLocation from '../screens/MyAccount/MyAddresses/LocationScreen/AddNewLocation';
 
 
 // import Menu from './Menu';
@@ -80,7 +82,7 @@ const Navigation = () => {
                 <Stack.Screen name="Otp" component={Otp} />
 
                 <Stack.Screen name="Menu" component={Menu} />
-
+              
 
                 {/* <Stack.Screen name="Menu" component={Menu} /> */}
                 {/* <Stack.Screen name="ViewPdf" component={ViewPdf} options={{
