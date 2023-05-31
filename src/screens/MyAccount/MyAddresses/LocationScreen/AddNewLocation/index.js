@@ -24,7 +24,7 @@ const AddNewLocation = ({ route, navigation }) => {
 
         <>
             <HeaderWithTitle title={'Location'} noBack={backArrowhide.index === 0 ? true : false} />
-            <View style={{ padding: 20 }}>
+            <View style={{padding:15 }}>
                 <GooglePlacesAutocomplete
                     fetchDetails={true}
                     placeholder='Search'
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
         zIndex: 999,
         width: '100%',
+        justifyContent:'center'
 
 
     },
@@ -126,13 +127,14 @@ const styles = StyleSheet.create({
     },
     listView: {
         top: 45.5,
-        zIndex: 10,
+        zIndex:10,
         position: 'absolute',
         color: 'black',
         backgroundColor: "white",
         width: '100%',
         marginLeft: 5,
         marginRight: 0,
+        borderRadius: 10,
     },
     separator: {
         flex: 1,
