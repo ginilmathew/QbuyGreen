@@ -5,10 +5,11 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import AddressContext from '../../../../../contexts/Address';
 import SplashScreen from 'react-native-splash-screen'
 import reactotron from 'reactotron-react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 const AddNewLocation = ({ route, navigation }) => {
-  
+
     const backArrowhide = navigation.getState();
-   
+
     const addressContext = useContext(AddressContext)
 
 
@@ -16,17 +17,18 @@ const AddNewLocation = ({ route, navigation }) => {
 
     const mapRef = useRef()
 
-useEffect(()=>{
-    SplashScreen.hide()
-})
+    useEffect(() => {
+        SplashScreen.hide()
+    })
     return (
 
         <>
-            <HeaderWithTitle title={'Location'} noBack={backArrowhide.index === 0 ? true : false}/>
+            <HeaderWithTitle title={'Location'} noBack={backArrowhide.index === 0 ? true : false} />
             <View style={{ padding: 20 }}>
                 <GooglePlacesAutocomplete
                     fetchDetails={true}
                     placeholder='Search'
+                    renderLeftButton={() => <Ionicons name={"search"} />}
                     textInputProps={{
                         placeholderTextColor: 'gray',
                         returnKeyType: "search"
@@ -100,16 +102,22 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
         zIndex: 999,
         width: '100%',
-    
+
+
     },
     textInput: {
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderRadius: 10,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
         marginLeft: 0,
         marginRight: 0,
         height: 45,
         color: '#5d5d5d',
         fontSize: 16,
-        borderWidth: 1,
         zIndex: 999,
+        borderColor: '#888888',
         borderWidth: 0,
 
     },
@@ -123,6 +131,8 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: "white",
         width: '100%',
+        marginLeft: 5,
+        marginRight: 0,
     },
     separator: {
         flex: 1,

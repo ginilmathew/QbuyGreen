@@ -68,19 +68,19 @@ const QBuyGreen = ({ navigation }) => {
     useEffect(() => {
         //requestUserPermission()
     }, [])
-    
+
 
     // async function requestUserPermission() {
-        
+
     //     if(Platform.OS === 'android'){
     //         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     //     }
-        
+
     //     const authStatus = await messaging().requestPermission();
     //     const enabled =
     //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-      
+
     //     if (enabled) {
     //       console.log('Authorization status:', authStatus);
     //     }
@@ -193,12 +193,12 @@ const QBuyGreen = ({ navigation }) => {
 
     const CarouselCardItem = ({ item, index }) => {
         return (
-            <View style={{width:'100%',height:'85%', alignItems: 'center', marginTop: 20 }} >
+            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
-                resizeMode='cover'
-                    
+                    resizeMode='cover'
+
                 >
                 </FastImage>
             </View>
@@ -219,7 +219,7 @@ const QBuyGreen = ({ navigation }) => {
                         <Carousel
                             loop
                             width={width}
-                            height={height/5}
+                            height={height / 5}
                             autoPlay={true}
                             data={slider}
                             scrollAnimationDuration={1000}
@@ -300,15 +300,15 @@ const QBuyGreen = ({ navigation }) => {
     const renderProducts = ({ item, index }) => {
         return (
             <View key={index} style={{ flex: 0.5, justifyContent: 'center' }}>
-            <CommonItemCard
-                item={item}
-                key={item?._id}
-                width={width / 2.2}
-                height={height/3.6}
-                mr={5}
-                ml={8}
-                mb={15}
-            />
+                <CommonItemCard
+                    item={item}
+                    key={item?._id}
+                    width={width / 2.2}
+                    height={height / 3.6}
+                    mr={5}
+                    ml={8}
+                    mb={15}
+                />
             </View>
         )
     }
@@ -326,7 +326,7 @@ const QBuyGreen = ({ navigation }) => {
                         <RefreshControl refreshing={loader} onRefresh={getHomedata} />
                     }>
                     {homeData?.map(home => renderItems(home))}
-                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'}  ml={15} mb={10} mt={20} />}
+                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} ml={15} mb={10} mt={20} />}
                     <FlatList
                         data={availablePdt}
                         keyExtractor={(item, index) => index}

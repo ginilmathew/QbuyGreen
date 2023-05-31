@@ -50,7 +50,14 @@ const Route = () => {
             const status = await Geolocation.requestAuthorization('whenInUse');
             if (status === "granted") {
                 getPosition()
+            }else{
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
+                setInitialScreen('AddNewLocation');
             }
+
         }
         else {
             if (Platform.OS === 'android' && Platform.Version < 23) {

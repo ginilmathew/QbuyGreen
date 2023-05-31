@@ -12,6 +12,8 @@ import axios from 'axios'
 import AddressContext from '../../../../contexts/Address'
 import reactotron from 'reactotron-react-native'
 import CartContext from '../../../../contexts/Cart'
+import AuthContext from '../../../../contexts/Auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const LocationScreen = ({ route, navigation }) => {
 
@@ -22,6 +24,7 @@ const LocationScreen = ({ route, navigation }) => {
     const cartContext = useContext(CartContext)
     const contextPanda = useContext(PandaContext)
     // const loadingContex = useContext(LoaderContext);
+    const userContext = useContext(AuthContext);
     const addressContext = useContext(AddressContext)
 
 
@@ -95,8 +98,9 @@ const LocationScreen = ({ route, navigation }) => {
         })
     }, [])
 
-    const onConfirm = useCallback(() => {
-   
+    const onConfirm = useCallback(async () => {
+
+        //below code for checking the location is denied condition
         if (homeNavigationbasedIndex?.index === 1) {
             let value = {
                 area: {
@@ -105,7 +109,14 @@ const LocationScreen = ({ route, navigation }) => {
                 }
             }
             cartContext.setDefaultAddress(value);
-            navigation.navigate('Home')
+            userContext.setLocation([addressContext?.currentAddress?.latitude, addressContext?.currentAddress?.longitude]);
+            const token = await AsyncStorage.getItem("token");
+            if (token) {
+                navigation.navigate('green')
+            } else {
+                navigation.navigate('Login')
+            }
+
         } else {
             let locationData = {
                 location: addressContext?.currentAddress?.location ? addressContext?.currentAddress?.location : address,
