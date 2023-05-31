@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl, Platform, PermissionsAndroid, Linking } from 'react-native'
 import React, { useCallback, useContext, useState } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -15,7 +15,7 @@ import Toast from 'react-native-toast-message'
 import AuthContext from '../../../contexts/Auth'
 import axios from 'axios'
 import AddressContext from '../../../contexts/Address'
-
+import Geolocation from 'react-native-geolocation-service';
 
 const MyAddresses = ({ route, navigation }) => {
 
@@ -71,6 +71,100 @@ const MyAddresses = ({ route, navigation }) => {
         navigation.navigate('MyAccountNav')
     }, [])
 
+
+    async function fetchData() {
+        if (Platform.OS === 'android') {
+            await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            )
+        }
+        if (Platform.OS === 'ios') {
+            const hasPermission = await hasPermissionIOS();
+            return hasPermission;
+        }
+    }
+
+    const hasPermissionIOS = async () => {
+        const openSetting = () => {
+            Linking.openSettings().catch(() => {
+                Alert.alert('Unable to open settings');
+            });
+        };
+        const status = await Geolocation.requestAuthorization('whenInUse');
+        if (status === 'granted') {
+            getPosition()
+            return true;
+        }
+        if (status === 'denied') {
+            Alert.alert('Location permission denied');
+        }
+        if (status === 'disabled') {
+            Alert.alert(
+                `Turn on Location Services to allow  to determine your location.`,
+                '',
+                [
+                    { text: 'Go to Settings', onPress: openSetting },
+                    { text: "Don't Use Location", onPress: () => { } },
+                ],
+            );
+        }
+        return false;
+    };
+    const getPosition = async () => {
+
+        
+        await Geolocation.getCurrentPosition(
+            position => {
+
+                //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
+               
+                getAddressFromCoordinates(position?.coords?.latitude,  position?.coords?.longitude);
+               
+            },
+            error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+             
+            },
+            {
+                accuracy: {
+                    android: 'high',
+                    ios: 'best',
+                },
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 10000,
+                distanceFilter: 0,
+                forceRequestLocation: true,
+                forceLocationManager: false,
+                showLocationDialog: true,
+            },
+        );
+    }
+
+
+
+    function getAddressFromCoordinates(latitude, longitude) {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+           
+            // addressContext?.setCurrentAddress(null)
+            // addressContext?.setLocation(null)
+            let value = {
+                latitude: latitude,
+                longitude: longitude,
+                location: locality?.long_name,
+                address: response?.data?.results[0]?.formatted_address
+
+            }
+            addressContext.setCurrentAddress(value)
+            reactotron.log({ value })
+        })
+            .catch(err => {
+            })
+
+    }
     const chooseCrntLocation = () => {
         addressContext.setCurrentAddress(null)
         if (addrList?.length >= 1) {
@@ -155,13 +249,13 @@ const MyAddresses = ({ route, navigation }) => {
                         <RefreshControl refreshing={loadingg} onRefresh={getAddressList} />
                     }
                 >
-                    {(mode === 'home' || addrList?.length === 0) && <CustomButton
-                        onPress={chooseCrntLocation}
+                    {/* {(mode === 'home' || addrList?.length === 0) && <CustomButton
+                        onPress={fetchData}
                         bg={'#19B836'}
                         label='Choose Current Location'
                         mt={10}
                         leftIcon={<Foundation name={'target-two'} color='#fff' size={20} marginRight={10} />}
-                    />}
+                    />} */}
 
                     {addrList?.map((item, index) =>
                         <AddressCard
