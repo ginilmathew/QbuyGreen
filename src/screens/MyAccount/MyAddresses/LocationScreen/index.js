@@ -79,24 +79,28 @@ const LocationScreen = ({ route, navigation }) => {
     };
 
     useEffect(() => {
-        fetchData().then(() => {
-            Geolocation.getCurrentPosition(
-                position => {
-                    getAddressFromCoordinates(addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : position?.coords?.latitude, addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : position?.coords?.longitude);
-                    setLocation({ latitude: addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : position.coords.latitude, longitude: addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : position.coords.longitude })
-                },
-                error => {
-                    console.log(error.code, error.message)
-                },
-                {
-                    showLocationDialog: true,
-                    enableHighAccuracy: true,
-                    timeout: 20000,
-                    maximumAge: 0
-                }
-            )
-        })
-    }, [])
+
+        if (homeNavigationbasedIndex?.index !== 1) {
+            fetchData().then(() => {
+                Geolocation.getCurrentPosition(
+                    position => {
+                        getAddressFromCoordinates(addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : position?.coords?.latitude, addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : position?.coords?.longitude);
+                        setLocation({ latitude: addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : position.coords.latitude, longitude: addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : position.coords.longitude })
+                    },
+                    error => {
+                        console.log(error.code, error.message)
+                    },
+                    {
+                        showLocationDialog: true,
+                        enableHighAccuracy: true,
+                        timeout: 20000,
+                        maximumAge: 0
+                    }
+                )
+            })
+        }
+
+    }, [homeNavigationbasedIndex?.index])
 
     const onConfirm = useCallback(async () => {
 

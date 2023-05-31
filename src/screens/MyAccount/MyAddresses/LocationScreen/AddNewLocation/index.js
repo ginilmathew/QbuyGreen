@@ -28,8 +28,9 @@ const AddNewLocation = ({ route, navigation }) => {
                 <GooglePlacesAutocomplete
                     fetchDetails={true}
                     placeholder='Search'
-                    renderLeftButton={() => <Ionicons name={"search"} />}
+             
                     textInputProps={{
+                        
                         placeholderTextColor: 'gray',
                         returnKeyType: "search"
                     }}
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: "white",
         width: '100%',
-        marginLeft: 5,
+   
         marginRight: 0,
         borderRadius: 10,
     },
