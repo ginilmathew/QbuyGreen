@@ -96,7 +96,7 @@ const MyAddresses = ({ route, navigation }) => {
             return true;
         }
         if (status === 'denied') {
-            Alert.alert('Location permission denied');
+            //Alert.alert('Location permission denied');
         }
         if (status === 'disabled') {
             Alert.alert(

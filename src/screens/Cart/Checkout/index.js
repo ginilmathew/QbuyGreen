@@ -116,7 +116,7 @@ const Checkout = ({ navigation }) => {
                     if (type === "single") {
                         offer = pro?.productdata?.offer_price ? parseFloat(pro?.productdata?.offer_price) : 0
                         regular = pro?.productdata?.regular_price ? parseFloat(pro?.productdata?.regular_price) : 0
-                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : 0
+                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : pro?.productdata?.vendors?.additional_details?.commission ? pro?.productdata?.vendors?.additional_details?.commission : 0
                         seller = pro?.productdata?.seller_price ? parseFloat(pro?.productdata?.seller_price) : 0
                         delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
@@ -144,7 +144,7 @@ const Checkout = ({ navigation }) => {
                     else {
                         offer = pro?.variants?.offer_price ? parseFloat(pro?.variants?.offer_price) : 0
                         regular = pro?.variants?.regular_price ? parseFloat(pro?.variants?.regular_price) : 0
-                        comm = pro?.variants?.commission ? pro?.variants?.commission : 0
+                        comm = pro?.variants?.commission ? pro?.variants?.commission : pro?.productdata?.vendors?.additional_details?.commission ? pro?.productdata?.vendors?.additional_details?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0

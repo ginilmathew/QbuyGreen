@@ -101,7 +101,7 @@ const Route = () => {
     function getAddressFromCoordinates() {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location?.latitude},${location?.longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
             userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
-            setLocation
+            //setLocation
         })
             .catch(err => {
             })
@@ -111,7 +111,7 @@ const Route = () => {
         await Geolocation.getCurrentPosition(
             position => {
 
-                //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
+                getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
                 setLocation(position?.coords)
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
                 checkLogin();
