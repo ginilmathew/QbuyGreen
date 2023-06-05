@@ -25,7 +25,7 @@ const CommonInput = ({ placeholder, control, fieldName, error, inputMode, mt, le
                     borderRadius: 7,
                     marginTop: mt ? mt : 3,
                     maxHeight: maxHeight ? maxHeight : 45,
-                    shadowOpacity: shadowOpacity ,
+                    shadowOpacity: shadowOpacity,
                     shadowRadius: 5,
                     elevation: elevation,
                     shadowOffset: { width: 1, height: 5 },
@@ -57,7 +57,7 @@ const CommonInput = ({ placeholder, control, fieldName, error, inputMode, mt, le
                             fontFamily='Poppins-Regular'
                             fontSize={12}
                             color='#23233C'
-                            width={ width ? width :'100%'}
+                            width={width ? width : '100%'}
                             marginTop={Platform.OS === 'android' ? 5 : 1}
                             editable={editable}
                         />
@@ -84,6 +84,6 @@ const styles = StyleSheet.create({
     errorText: {
         fontFamily: 'Poppins-Regular',
         color: 'red',
-        fontSize: 11, 
+        fontSize: 11,
     }
 })

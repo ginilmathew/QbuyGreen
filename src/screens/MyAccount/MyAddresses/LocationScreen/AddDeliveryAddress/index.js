@@ -47,12 +47,13 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const [isEnabled, setIsEnabled] = useState(locationData?.default_status || false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const schema = yup.object({
         location: yup.string().required('Area is required'),
         address: yup.string().required('Address is required'),
         pincode: yup.number().required('Pincode is required'),
-    }).required();
+        mobile: yup.string().matches(phoneRegExp, 'Mobile number is not valid').nullable()
+    });
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
