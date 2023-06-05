@@ -70,7 +70,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
                     address: response?.data?.results[0]?.formatted_address
                 }
             }
-            cartContext.setDefaultAddress(value)
+            //cartContext.setDefaultAddress(value)
 
             // reactotron.log({ response: response?.data?.results[0]?.formatted_address }, 'LOCATION RESPONSE')
 

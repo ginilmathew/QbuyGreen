@@ -112,7 +112,7 @@ const LocationScreen = ({ route, navigation }) => {
                     address: addressContext?.currentAddress?.city
                 }
             }
-            cartContext.setDefaultAddress(value);
+            //cartContext.setDefaultAddress(value);
             userContext.setLocation([addressContext?.currentAddress?.latitude, addressContext?.currentAddress?.longitude]);
             const token = await AsyncStorage.getItem("token");
             if (token) {

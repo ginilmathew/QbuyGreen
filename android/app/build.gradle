@@ -105,8 +105,8 @@ android {
         applicationId "com.diginest.qbuygreen"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.0"
+        versionCode 4
+        versionName "1.1"
         multiDexEnabled true
     }
 
