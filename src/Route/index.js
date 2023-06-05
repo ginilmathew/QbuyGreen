@@ -55,6 +55,13 @@ const Route = () => {
                     type: 'error',
                     text1: 'Location permission denied by user.'
                 });
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
                 setInitialScreen('AddNewLocation');
             }
 

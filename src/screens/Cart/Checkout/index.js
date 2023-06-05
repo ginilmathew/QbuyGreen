@@ -532,6 +532,7 @@ const Checkout = ({ navigation }) => {
                     } else {
                         cartContext?.setCart(null)
                         setCartItems(null)
+                        navigation.goBack()
                         Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                     }
                 }).catch(error => {

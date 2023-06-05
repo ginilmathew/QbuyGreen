@@ -270,6 +270,7 @@ const Cart = ({ navigation }) => {
             }
             else {
                 setCartItemsList([])
+                //navigation.goBack()
             }
 
         }, [cartContext?.cart?._id])
