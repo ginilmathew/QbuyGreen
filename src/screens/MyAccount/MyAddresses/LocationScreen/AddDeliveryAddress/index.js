@@ -48,23 +48,15 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-<<<<<<< HEAD
-=======
 
 
->>>>>>> a820f010570d0ba6b1e512731cef72429bda65ae
     const schema = yup.object({
         location: yup.string().required('Area is required'),
         address: yup.string().required('Address is required'),
         pincode: yup.number().required('Pincode is required'),
-<<<<<<< HEAD
-        mobile: yup.string().matches(phoneRegExp, 'Mobile number is not valid').nullable()
-    });
-=======
         name: yup.string().required('Name is required'),
-        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10)
+        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10).required('Mobile number is required')
     }).required();
->>>>>>> a820f010570d0ba6b1e512731cef72429bda65ae
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
@@ -109,6 +101,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,
+            name:data?.name
         }
         if (has(locationData, "_id")) {
             datas.id = locationData._id
