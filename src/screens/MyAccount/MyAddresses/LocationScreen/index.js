@@ -63,7 +63,7 @@ const LocationScreen = ({ route, navigation }) => {
             return true;
         }
         if (status === 'denied') {
-            Alert.alert('Location permission denied');
+            //Alert.alert('Location permission denied');
         }
         if (status === 'disabled') {
             Alert.alert(
@@ -112,7 +112,7 @@ const LocationScreen = ({ route, navigation }) => {
                     address: addressContext?.currentAddress?.city
                 }
             }
-            cartContext.setDefaultAddress(value);
+            //cartContext.setDefaultAddress(value);
             userContext.setLocation([addressContext?.currentAddress?.latitude, addressContext?.currentAddress?.longitude]);
             const token = await AsyncStorage.getItem("token");
             if (token) {

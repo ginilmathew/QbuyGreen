@@ -174,7 +174,10 @@ const QBuyGreen = ({ navigation }) => {
 
             })
             .catch(async error => {
-                console.log(error)
+                if(error.includes("Unauthenticated")){
+                    navigation.navigate("Login")
+                }
+                
                 Toast.show({
                     type: 'error',
                     text1: error

@@ -48,16 +48,28 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> a820f010570d0ba6b1e512731cef72429bda65ae
     const schema = yup.object({
         location: yup.string().required('Area is required'),
         address: yup.string().required('Address is required'),
         pincode: yup.number().required('Pincode is required'),
+<<<<<<< HEAD
         mobile: yup.string().matches(phoneRegExp, 'Mobile number is not valid').nullable()
     });
+=======
+        name: yup.string().required('Name is required'),
+        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10)
+    }).required();
+>>>>>>> a820f010570d0ba6b1e512731cef72429bda65ae
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
+            name: locationData?.name,
             location:locationData?.city,
             address:locationData?.location,
             comments: locationData?.comments,
@@ -146,7 +158,12 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                         <CommonSwitch toggleSwitch={toggleSwitch} isEnabled={isEnabled} />
                     </View>
                 </View>
-
+                <CommonInput
+                    control={control}
+                    error={errors.name}
+                    fieldName="name"
+                    topLabel={'Name'}
+                />
                 <CommonInput
                     control={control}
                     error={errors.location}
@@ -164,18 +181,9 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                 />
                 <CommonInput
                     control={control}
-                    error={errors.comments}
-                    fieldName="comments"
-                    topLabel={'Comments (Optional)'}
-                    placeholder='Delivery Instructions e.g. Opposite Gold Souk Mall'
-                    placeholderTextColor='#0C256C21'
-                    top={10}
-                />
-                <CommonInput
-                    control={control}
                     error={errors.mobile}
                     fieldName="mobile"
-                    topLabel={'Mobile (Optional)'}
+                    topLabel={'Mobile'}
                     placeholder='Delivery Mobile Number e.g. mobile of the owner'
                     placeholderTextColor='#0C256C21'
                     top={10}
@@ -189,7 +197,15 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                     placeholderTextColor='#0C256C21'
                     top={10}
                 />
-
+                <CommonInput
+                    control={control}
+                    error={errors.comments}
+                    fieldName="comments"
+                    topLabel={'Comments (Optional)'}
+                    placeholder='Delivery Instructions e.g. Opposite Gold Souk Mall'
+                    placeholderTextColor='#0C256C21'
+                    top={10}
+                />
                 <CustomButton
                     onPress={handleSubmit(onSave)}
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}

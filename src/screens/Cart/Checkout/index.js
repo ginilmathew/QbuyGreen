@@ -116,7 +116,7 @@ const Checkout = ({ navigation }) => {
                     if (type === "single") {
                         offer = pro?.productdata?.offer_price ? parseFloat(pro?.productdata?.offer_price) : 0
                         regular = pro?.productdata?.regular_price ? parseFloat(pro?.productdata?.regular_price) : 0
-                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : 0
+                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : pro?.productdata?.vendors?.additional_details?.commission ? pro?.productdata?.vendors?.additional_details?.commission : 0
                         seller = pro?.productdata?.seller_price ? parseFloat(pro?.productdata?.seller_price) : 0
                         delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
@@ -144,7 +144,7 @@ const Checkout = ({ navigation }) => {
                     else {
                         offer = pro?.variants?.offer_price ? parseFloat(pro?.variants?.offer_price) : 0
                         regular = pro?.variants?.regular_price ? parseFloat(pro?.variants?.regular_price) : 0
-                        comm = pro?.variants?.commission ? pro?.variants?.commission : 0
+                        comm = pro?.variants?.commission ? pro?.variants?.commission : pro?.productdata?.vendors?.additional_details?.commission ? pro?.productdata?.vendors?.additional_details?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
@@ -450,6 +450,8 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
+        reactotron.log({user: authContext?.userData})
+
         let products = [];
         let amount = 0;
         let stores = []
@@ -485,7 +487,7 @@ const Checkout = ({ navigation }) => {
             user_id: authContext?.userData?._id,
             billing_address: cartContext?.defaultAddress?._id,
             shipping_address: cartContext?.defaultAddress?._id,
-            payment_status: pay._id === "online" ? "pending" : "completed",
+            payment_status: pay._id === "online" ? "pending" : "created",
             payment_type: pay._id,
             type: active,
             total_amount: cartItems.reduce(function (previousVal, currentVal) {
@@ -495,7 +497,8 @@ const Checkout = ({ navigation }) => {
             delivery_type: "Slot based",
             franchise: cartItems?.[0]?.franchisee?._id,
             cart_id: cartItems?.[0]?.cartId,
-            store: uniqueStore
+            store: uniqueStore,
+            delivery_date: moment().format("YYYY-MM-DD HH:mm:ss")
         }
 
 
