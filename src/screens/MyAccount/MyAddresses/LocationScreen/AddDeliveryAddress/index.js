@@ -55,7 +55,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         address: yup.string().required('Address is required'),
         pincode: yup.number().required('Pincode is required'),
         name: yup.string().required('Name is required'),
-        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10)
+        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10).required('Mobile number is required')
     }).required();
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
@@ -101,6 +101,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,
+            name:data?.name
         }
         if (has(locationData, "_id")) {
             datas.id = locationData._id
