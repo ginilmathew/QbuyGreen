@@ -26,7 +26,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
 
     let locationData = route?.params?.item;
 
-    reactotron.log({locationData})
+    reactotron.log({ locationData })
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
 
@@ -54,7 +54,12 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         location: yup.string().required('Area is required'),
         address: yup.string().required('Address is required'),
         pincode: yup.number().required('Pincode is required'),
-        name: yup.string().required('Name is required'),
+        name: yup.string().max(30, "Name must be less than 30 characters").matches(
+            /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+            'Name can only contain Alphabets letters.'
+        )
+            // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+            .required('Name is Required'),
         mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10).required('Mobile number is required')
     }).required();
 
@@ -62,8 +67,8 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         resolver: yupResolver(schema),
         defaultValues: {
             name: locationData?.name,
-            location:locationData?.city,
-            address:locationData?.location,
+            location: locationData?.city,
+            address: locationData?.location,
             comments: locationData?.comments,
             default_status: locationData?.default,
             pincode: locationData?.pincode?.toString()
@@ -92,16 +97,16 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         let datas = {
             address_type: selected.toLocaleLowerCase(),
             area: {
-                latitude:locationData?.latitude,
-                longitude:locationData?.longitude,
-                address:data?.address,
+                latitude: locationData?.latitude,
+                longitude: locationData?.longitude,
+                address: data?.address,
                 location: locationData?.city,
             },
             default_status: !cartContext?.address ? true : isEnabled,
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,
-            name:data?.name
+            name: data?.name
         }
         if (has(locationData, "_id")) {
             datas.id = locationData._id

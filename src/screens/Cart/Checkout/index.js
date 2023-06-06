@@ -450,7 +450,7 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
-        reactotron.log({user: authContext?.userData})
+        reactotron.log({ user: authContext?.userData })
 
         let products = [];
         let amount = 0;
@@ -510,15 +510,14 @@ const Checkout = ({ navigation }) => {
 
 
         if (products?.length > 0) {
-            await customAxios.post(`customer/order/create`, orderDetails)
+            await customAxios.post(`customer/order/test-create`, orderDetails)
                 .then(async response => {
                     console.log("response ==>", JSON.stringify(response.data), response.status)
                     const { data } = response
-                 
-                    console.log({data},'ONLINE OR OFFLINE')
 
-                    if(data?.type === 'cart'){
-                       navigation.navigate('Cart')
+                
+                    if (data?.type === 'cart') {
+                        navigation.navigate('Cart')
                     }
                     if (data?.status) {
                         if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
@@ -536,7 +535,7 @@ const Checkout = ({ navigation }) => {
                         Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                     }
                 }).catch(error => {
-                   
+
                     Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
                 })
         }
@@ -590,7 +589,7 @@ const Checkout = ({ navigation }) => {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
-        
+
         await AllInOneSDKManager.startTransaction(
             paymentDetails?.orderId,//orderId
             paymentDetails?.mid,//mid

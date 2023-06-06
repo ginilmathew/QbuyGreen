@@ -22,6 +22,8 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
     let loc = userContext.location
 
+
+
     let currentAddress = userContext?.currentAddress
 
 
@@ -53,8 +55,11 @@ const Header = ({ onPress, openAddress, goCart }) => {
     }, [])
 
     useEffect(() => {
-        getAddressFromCoordinates()
-    }, [])
+        if (useContext?.location) {
+            getAddressFromCoordinates()
+        }
+
+    }, [userContext?.location])
 
 
     function getAddressFromCoordinates() {

@@ -50,7 +50,7 @@ const Route = () => {
             const status = await Geolocation.requestAuthorization('whenInUse');
             if (status === "granted") {
                 getPosition()
-            }else{
+            } else {
                 Toast.show({
                     type: 'error',
                     text1: 'Location permission denied by user.'
@@ -73,6 +73,7 @@ const Route = () => {
 
             const hasPermission = await PermissionsAndroid.check(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                reactotron.log('PERMISION ')
             );
 
             if (hasPermission) {
@@ -81,13 +82,22 @@ const Route = () => {
 
             const status = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
             );
 
             if (status === PermissionsAndroid.RESULTS.GRANTED) {
                 getPosition()
+                reactotron.log('PERMISION 111')
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
                 setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
@@ -95,6 +105,13 @@ const Route = () => {
                 });
             }
             else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
                 setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
@@ -123,12 +140,20 @@ const Route = () => {
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
                 checkLogin();
             },
-            error => {
+            async error => {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
-                    text1: error
+                    text1: error.message
                 });
-                checkLogin();
+                // checkLogin();
             },
             {
                 accuracy: {
@@ -250,7 +275,7 @@ const Route = () => {
                     <Stack.Screen name="SplashScreen" component={SplashScreen} />
                     <Stack.Screen name="Login" component={Login} />
                     <Stack.Screen name="Otp" component={Otp} />
-                    <Stack.Screen name="LocationScreen" component={LocationScreen} options={{title:'home'}} />
+                    <Stack.Screen name="LocationScreen" component={LocationScreen} options={{ title: 'home' }} />
                     <Stack.Screen name="AddNewLocation" component={AddNewLocation} />
                     <Stack.Screen name="panda" component={Panda} />
                     <Stack.Screen name="fashion" component={Fashion} />
