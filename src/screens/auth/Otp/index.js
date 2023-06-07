@@ -15,6 +15,7 @@ import customAxios from '../../../CustomeAxios';
 import { mode } from '../../../config/constants';
 import Toast from 'react-native-toast-message';
 import { CommonActions } from '@react-navigation/native';
+import reactotron from 'reactotron-react-native';
 
 const Otp = ({ navigation }) => {
 
@@ -24,6 +25,8 @@ const Otp = ({ navigation }) => {
 
 	let mobileNo = user?.login?.mobile
 	let userData = user?.userData
+
+	reactotron.log({ user: user?.location })
 
 
 	const schema = yup.object({
@@ -37,59 +40,60 @@ const Otp = ({ navigation }) => {
 	var cardnumber = mobileNo;
 	var first2 = cardnumber?.substring(0, 2);
 	var last1 = cardnumber?.substring(cardnumber.length - 1);
-	
-	mask = cardnumber?.substring(2, cardnumber.length - 1).replace(/\d/g,"*");
+
+	mask = cardnumber?.substring(2, cardnumber.length - 1).replace(/\d/g, "*");
 	let phoneNum = first2 + mask + last1
 
-	const onSubmit = useCallback(async(data) => {
+	const onSubmit = useCallback(async (data) => {
 		loadingg.setLoading(true)
 
 		let datas = {
 			mobile: mobileNo,
-			otp: data?.otp
+			otp: data?.otp,
+			location: user?.location
 		}
 
 		await customAxios.post(`auth/customerlogin`, datas)
-        .then(async response => {
-			user.setUserData(response?.data?.user)
-			AsyncStorage.setItem("token", response?.data?.access_token);
-			AsyncStorage.setItem("user", JSON.stringify(response?.data?.user));
+			.then(async response => {
+				user.setUserData(response?.data?.user)
+				AsyncStorage.setItem("token", response?.data?.access_token);
+				AsyncStorage.setItem("user", JSON.stringify(response?.data?.user));
 
-            loadingg.setLoading(false)
-			// navigation.navigate(mode)
-			// navigation.navigate('NewUserDetails')
+				loadingg.setLoading(false)
+				// navigation.navigate(mode)
+				// navigation.navigate('NewUserDetails')
 
-			navigation.dispatch(CommonActions.reset({
-				index: 0,
-				routes: [
-				  { name: mode }
-				],
-			  }))
+				navigation.dispatch(CommonActions.reset({
+					index: 0,
+					routes: [
+						{ name: mode }
+					],
+				}))
 
-        })
-        .catch(async error => {
-			Toast.show({
-				type: 'error',
-				text1: error
-			});
-            loadingg.setLoading(false)
-        })
+			})
+			.catch(async error => {
+				Toast.show({
+					type: 'error',
+					text1: error
+				});
+				loadingg.setLoading(false)
+			})
 	})
 
-	const onClickResendOtp = async() => {
+	const onClickResendOtp = async () => {
 		loadingg.setLoading(true)
-		await customAxios.post(`auth/customerloginotp`, {mobile : mobileNo})
-        .then(async response => {
-            // setData(response?.data?.data)
-            loadingg.setLoading(false)
-        })
-        .catch(async error => {
-            Toast.show({
-				type: 'error',
-				text1: error
-			});
-            loadingg.setLoading(false)
-        })
+		await customAxios.post(`auth/customerloginotp`, { mobile: mobileNo })
+			.then(async response => {
+				// setData(response?.data?.data)
+				loadingg.setLoading(false)
+			})
+			.catch(async error => {
+				Toast.show({
+					type: 'error',
+					text1: error
+				});
+				loadingg.setLoading(false)
+			})
 
 	}
 
@@ -98,40 +102,40 @@ const Otp = ({ navigation }) => {
 		<CommonAuthBg>
 			<ScrollView style={{ flex: 1, paddingHorizontal: 40, }}>
 				<SafeAreaView>
-				<CommonTitle goBack={()=>navigation.goBack()} mt={40}/>
-				<CommonTexts
-					label={'Enter the 4 - digit code we sent to your registered mobile number'}
-					mt={40}
-				/>
-				<CommonTexts
-					label={phoneNum}
-					mt={40}
-					textAlign='center'
-				/>
-				<OtpInput 
-					onchange={(text) => {
-						setValue("otp", text) 
-					}}
-				/>
-				{errors?.otp && <Text style={{color:'red', fontSize:10}} > {errors?.otp?.message}</Text>}
-				<TouchableOpacity onPress={onClickResendOtp}>
+					<CommonTitle goBack={() => navigation.goBack()} mt={40} />
 					<CommonTexts
-						label={'Resend OTP'}
-						mt={10}
-						textAlign='right'
-						color={'#5871D3'}
+						label={'Enter the 4 - digit code we sent to your registered mobile number'}
+						mt={40}
 					/>
-				</TouchableOpacity>
-				
-				<CustomButton
-					onPress={!loader ? handleSubmit(onSubmit) : null}
-					bg='#58D36E'
-					label={'Confirm'}
-					my={20}
-					width={100}
-					alignSelf='center'
-					loading={loader}
-				/>
+					<CommonTexts
+						label={phoneNum}
+						mt={40}
+						textAlign='center'
+					/>
+					<OtpInput
+						onchange={(text) => {
+							setValue("otp", text)
+						}}
+					/>
+					{errors?.otp && <Text style={{ color: 'red', fontSize: 10 }} > {errors?.otp?.message}</Text>}
+					<TouchableOpacity onPress={onClickResendOtp}>
+						<CommonTexts
+							label={'Resend OTP'}
+							mt={10}
+							textAlign='right'
+							color={'#5871D3'}
+						/>
+					</TouchableOpacity>
+
+					<CustomButton
+						onPress={!loader ? handleSubmit(onSubmit) : null}
+						bg='#58D36E'
+						label={'Confirm'}
+						my={20}
+						width={100}
+						alignSelf='center'
+						loading={loader}
+					/>
 				</SafeAreaView>
 			</ScrollView>
 		</CommonAuthBg>

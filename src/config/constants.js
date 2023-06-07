@@ -1,4 +1,4 @@
-export const env = "dev"
+export const env = "testing"
 
 const URLS = {
     live: "https://apiqbuygreen.diginestsolutions.in/public/api/",

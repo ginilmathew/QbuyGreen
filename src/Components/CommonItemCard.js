@@ -43,6 +43,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     }, [item])
 
 
+    reactotron.log({data})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
