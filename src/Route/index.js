@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform, StyleSheet, ToastAndroid } from 'react-native'
+import { PermissionsAndroid, Platform, StyleSheet, ToastAndroid, AppState, useRef } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -39,6 +39,7 @@ const Route = () => {
     const cartContext = useContext(CartContext)
     const loadingContext = useContext(LoaderContext)
     const [location, setLocation] = useState(null)
+
 
     const [initialScreen, setInitialScreen] = useState(null)
     useEffect(() => {
@@ -259,13 +260,30 @@ const Route = () => {
             setInitialScreen('Login');
         }
     }
+
+    useEffect( async () => {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+            const subscription = AppState.addEventListener('change', async nextAppState => {
+                if (nextAppState === 'active') {
+                     await customAxios.post('customer/login-status-update',{login_status:true})
+                } else {
+                    await customAxios.post('customer/login-status-update',{login_status:false})
+                }
+            });
+            return () => {
+                subscription.remove();
+            };
+        }
+    }, []);
+
     if (!initialScreen) {
         return (
             <SplashScreen />
         )
     }
 
-    reactotron.log({ mode })
+
 
     return (
         <>
