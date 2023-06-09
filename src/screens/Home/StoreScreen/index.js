@@ -47,7 +47,6 @@ const StoreScreen = ({ route, navigation }) => {
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
 
-   reactotron.log({storeDetails})
 
     const [selected, setSelected] = useState(false)
 

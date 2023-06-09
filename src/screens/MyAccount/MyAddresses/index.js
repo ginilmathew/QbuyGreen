@@ -16,6 +16,7 @@ import AuthContext from '../../../contexts/Auth'
 import axios from 'axios'
 import AddressContext from '../../../contexts/Address'
 import Geolocation from 'react-native-geolocation-service';
+import reactotron from '../../../ReactotronConfig'
 
 const MyAddresses = ({ route, navigation }) => {
 
@@ -27,6 +28,7 @@ const MyAddresses = ({ route, navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
     const addressContext = useContext(AddressContext)
+
     let active = contextPanda.active
 
 
@@ -112,21 +114,21 @@ const MyAddresses = ({ route, navigation }) => {
     };
     const getPosition = async () => {
 
-        
+
         await Geolocation.getCurrentPosition(
             position => {
 
                 //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
-               
-                getAddressFromCoordinates(position?.coords?.latitude,  position?.coords?.longitude);
-               
+
+                getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
+
             },
             error => {
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
-             
+
             },
             {
                 accuracy: {
@@ -148,7 +150,7 @@ const MyAddresses = ({ route, navigation }) => {
 
     function getAddressFromCoordinates(latitude, longitude) {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
-           
+
             // addressContext?.setCurrentAddress(null)
             // addressContext?.setLocation(null)
             let value = {
@@ -203,9 +205,12 @@ const MyAddresses = ({ route, navigation }) => {
 
     const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
+        //  await customAxios.post(`customer/get-cart-product`,{cart_id:cartContext?.cart?._id,address_id:address})
+
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
-
+        cartContext.setDefaultAddress(address);
+       
         // if (!address?.default) {
         address.default_status = true;
         address.id = address?._id
@@ -228,7 +233,7 @@ const MyAddresses = ({ route, navigation }) => {
             navigation.goBack()
         }
         else if (mode === "checkout") {
-            cartContext.setDefaultAddress(address)
+
             navigation.navigate("Checkout")
         }
     }

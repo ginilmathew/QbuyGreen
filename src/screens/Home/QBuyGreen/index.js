@@ -166,7 +166,7 @@ const QBuyGreen = ({ navigation }) => {
             .then(async response => {
                 setHomeData(response?.data?.data)
 
-                reactotron.log('API CALLED')
+  
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()

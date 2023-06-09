@@ -8,16 +8,16 @@ import { navigate } from '../../../Navigations/RootNavigation'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useNavigation } from '@react-navigation/native'
 import reactotron from 'reactotron-react-native'
+
 const AddressCard = memo(({ setSelected, selected, item, deleteSelect }) => {
 
 
-    reactotron.log({item},'ADDRESS')
 
     const navigation = useNavigation()
     const contextPanda = useContext(PandaContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
-
+  
 
 
     const onClick = useCallback((id) => {

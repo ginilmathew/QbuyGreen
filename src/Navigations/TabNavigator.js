@@ -28,7 +28,7 @@ const TabNavigator = ({ navigation }) => {
     let colors = contextPanda.color
     let logos = contextPanda.logo
 
-    console.log({ grocery, fashion })
+
 
     const [showPandas, setShowPandas] = useState(false)
 

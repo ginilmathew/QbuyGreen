@@ -56,8 +56,6 @@ const Login = ({ navigation }) => {
 				navigation.navigate('Otp')
 			})
 			.catch(async error => {
-
-				reactotron.log({error})
 				Toast.show({
 					type: 'error',
 					text1: error

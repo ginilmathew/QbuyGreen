@@ -29,6 +29,7 @@ import reactotron from 'reactotron-react-native';
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, mr, ml, mb, getWishlist }) => {
 
+
     const [data, setData] = useState([])
     const [variant, setVariant] = useState(false)
 
@@ -43,13 +44,13 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     }, [item])
 
 
-    reactotron.log({data})
+
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
-    
+
 
     const loadingg = useContext(LoaderContext)
 
@@ -61,10 +62,10 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
 
-    const handleClick = useCallback(() => {
 
+
+    const handleClick = useCallback(() => {
         startTransition(() => {
-            reactotron.log({data})
             navigation.navigate('SingleItemScreen', { item: data })
         })
     }, [data])
@@ -79,13 +80,22 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         //     cartContext?.addToCart(data)
 
         // }
-        if(!data?.variant){
+        if(parseInt(data?.price) < 1 ){
+            Toast.show({
+                type: 'info',
+                text1: 'Price should be more than 1'
+            });
+            return false
+         }
+
+   
+        if (!data?.variant) {
             cartContext?.addToCart(data)
         }
-        else{
+        else {
             navigation.navigate('SingleItemScreen', { item: data })
         }
-        
+
         //navigation.navigate('SingleItemScreen', { item: item })
     }, [data, cartContext.cart])
 
@@ -108,14 +118,14 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         await customAxios.post(`customer/wishlist/delete`, datas)
             .then(async response => {
                 setHeart(!heart)
-                if(wishlistIcon){
+                if (wishlistIcon) {
                     getWishlist()
                 }
-                else{
+                else {
                     data.is_wishlist = false
-                    setData({...data})
+                    setData({ ...data })
                 }
-                
+
                 // if(has(response?.data, 'data')){
 
                 // }
@@ -147,7 +157,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         await customAxios.post(`customer/wishlist/create`, datas)
             .then(async response => {
                 data.is_wishlist = true
-                setData({...data})
+                setData({ ...data })
                 setHeart(!heart)
                 // if(has(response?.data, 'data')){
                 //     setHeart(!heart)
@@ -183,16 +193,16 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                 >
                     <LinearGradient colors={data?.available ? ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.7)'] : ['rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.9)']} style={{ height: '100%', justifyContent: 'flex-end', padding: 10 }}>
                         <Text style={styles.textSemi}>{data?.name}</Text>
-                        {data?.available && <Text style={!data?.available ? styles.textSemiError : styles.bottomRateText}>{`₹ ${data?.price}` }</Text>}
+                        {data?.available && <Text style={!data?.available ? styles.textSemiError : styles.bottomRateText}>{`₹ ${data?.price}`}</Text>}
                         <Text style={styles.lightText}>{data?.store?.name}</Text>
                     </LinearGradient>
                     {!data?.available && <View style={{ position: 'absolute', top: '32%', width: '100%' }}>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ padding: 5, borderWidth: 1,  borderColor: '#fff', margin: 8, borderRadius: 8 }}>
-                                <Text style={{ color: 'red', textAlign: 'center',  fontWeight: 'bold', alignSelf: 'center' }}>Out off stock</Text>
+                            <View style={{ padding: 5, borderWidth: 1, borderColor: '#fff', margin: 8, borderRadius: 8 }}>
+                                <Text style={{ color: 'red', textAlign: 'center', fontWeight: 'bold', alignSelf: 'center' }}>Out off stock</Text>
                             </View>
                         </View>
-                        
+
                     </View>}
 
                     {data?.available && <View style={styles.addContainer}>
@@ -211,7 +221,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={(data?.is_wishlist || wishlistIcon) ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                        <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12/fontScale} />
+                   
+                        <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12 / fontScale} />
                     </TouchableOpacity>
 
                 </FastImage>
@@ -251,7 +262,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                                 <Ionicons name='close-circle' color='#000' size={25} />
                             </TouchableOpacity>
                         </View>
-                        <ItemAddedFromSuggtnCard item={item}  />
+                        <ItemAddedFromSuggtnCard item={item} />
                         {/* {addedList?.map((item, index) => <ItemAddedFromSuggtnCard item={item} key={index} />)} */}
                         {/* <ScrollView >
                             {suggestions?.map((item) =>
@@ -300,29 +311,29 @@ const makeStyles = fontScale => StyleSheet.create({
     bottomCountText: {
         fontFamily: 'Poppins-medium',
         color: '#fff',
-        fontSize: 0.01*fontScale,
+        fontSize: 0.01 * fontScale,
     },
     bottomRateText: {
         fontFamily: 'Poppins-ExtraBold',
         color: '#fff',
-        fontSize: 0.012*fontScale,
+        fontSize: 0.012 * fontScale,
     },
     textSemi: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 0.014*fontScale,
+        fontSize: 0.014 * fontScale,
         paddingBottom: 2
     },
     textSemiError: {
         fontFamily: 'Poppins-SemiBold',
         color: 'red',
-        fontSize: 10/fontScale,
+        fontSize: 10 / fontScale,
         paddingBottom: 2
     },
     lightText: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 0.011*fontScale,
+        fontSize: 0.011 * fontScale,
         marginBottom: 3
     },
     addContainer: {
@@ -333,7 +344,7 @@ const makeStyles = fontScale => StyleSheet.create({
     tagText: {
         fontFamily: 'Poppins-SemiBold',
         color: '#fff',
-        fontSize: 12/fontScale,
+        fontSize: 12 / fontScale,
         padding: 5
     },
     hearIcon: {
@@ -341,8 +352,8 @@ const makeStyles = fontScale => StyleSheet.create({
         top: 8,
         right: 8,
         zIndex: 1,
-        width: 24/fontScale,
-        height: 24/fontScale,
+        width: 24,
+        height: 24,
         borderRadius: 12,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         alignItems: 'center',

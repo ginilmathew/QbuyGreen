@@ -32,40 +32,21 @@ const HomeNav = () => {
         <View style={{ flex: 1, marginBottom: 70 }}>
         <Stack.Navigator initialRouteName='Home'  screenOptions={{ headerShown: false }}> 
             <Stack.Screen name="Home" component={QBuyGreen}/>
-
-
             <Stack.Screen name="SingleHotel" component={SingleHotel}/>
-
             <Stack.Screen name="SingleItemScreen" component={SingleItemScreen}/>
-
-
             <Stack.Screen name="Category" component={CategoryScreen}/>
             <Stack.Screen name="store" component={StoreScreen}/>
-
-
             <Stack.Screen name="PickupAndDropoff" component={PickupAndDropoff}/>
             <Stack.Screen name="OurFarms" component={OurFarms}/>
-
             <Stack.Screen name="RefferRestaurant" component={RefferRestaurant}/>
-
             <Stack.Screen name="SellWithUs" component={SellWithUs}/>
             <Stack.Screen name="WorkWithPanda" component={WorkWithPanda}/>
             <Stack.Screen name="RegisterAsAffiliate" component={RegisterAsAffiliate}/>
-
             <Stack.Screen name="CustomerFeedback" component={CustomerFeedback}/>
             <Stack.Screen name="ApplyFranchisee" component={ApplyFranchisee}/>
             <Stack.Screen name="ViewAllStore" component={ViewAllStore}/>
             <Stack.Screen name="Wishlist" component={Wishlist}/>
-
-            <Stack.Screen name="FashionCategory" component={FashionCategory}/>
-
-
-
-
-
-
-
-           
+            <Stack.Screen name="FashionCategory" component={FashionCategory}/>           
         </Stack.Navigator>
         </View>
     )
