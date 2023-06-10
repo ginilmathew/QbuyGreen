@@ -57,7 +57,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
-    reactotron.log({ singleProduct },'singleProduct')
+  
 
 
     useEffect(() => {
@@ -273,7 +273,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             const containsAll = attri.every(elem => attributes.includes(elem));
 
             if (containsAll) {
-                reactotron.log({ sin, item })
+           
                 if (item?.stock) {
                     if (!sin?.available) {
                         item.available = false
@@ -403,7 +403,6 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    reactotron.log({item},'IN DIMENTION')
 
 
     return (

@@ -47,6 +47,7 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
+    reactotron.log({userContext:userContext?.location})
     let userData = userContext?.userData
 
 

@@ -450,7 +450,7 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
-        reactotron.log({ user: authContext?.userData })
+   
 
         let products = [];
         let amount = 0;
@@ -553,7 +553,6 @@ const Checkout = ({ navigation }) => {
         let details = data
         let orderID = details.ORDERID.replace(/^ORDER_/, "")
 
-        reactotron.log({ details })
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {
                 cartContext?.setCart(null)

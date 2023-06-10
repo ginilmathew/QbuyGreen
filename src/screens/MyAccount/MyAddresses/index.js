@@ -74,54 +74,116 @@ const MyAddresses = ({ route, navigation }) => {
     }, [])
 
 
-    async function fetchData() {
-        if (Platform.OS === 'android') {
-            await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            )
-        }
+    // async function fetchData() {
+
+    //     if (Platform.OS === 'android') {
+    //         await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         )
+    //     }
+    //     if (Platform.OS === 'ios') {
+    //         const hasPermission = await hasPermissionIOS();
+    //         return hasPermission;
+    //     }
+    // }
+
+
+
+    // const hasPermissionIOS = async () => {
+    //     reactotron.log('ANDROID')
+    //     const openSetting = () => {
+    //         Linking.openSettings().catch(() => {
+    //             Alert.alert('Unable to open settings');
+    //         });
+    //     };
+    //     const status = await Geolocation.requestAuthorization('whenInUse');
+
+    //     reactotron.log({status})
+    //     if (status === 'granted') {
+    //         getPosition()
+    //         return true;
+    //     }
+    //     if (status === 'denied') {
+    //         //Alert.alert('Location permission denied');
+    //     }
+    //     if (status === 'disabled') {
+    //         Alert.alert(
+    //             `Turn on Location Services to allow  to determine your location.`,
+    //             '',
+    //             [
+    //                 { text: 'Go to Settings', onPress: openSetting },
+    //                 { text: "Don't Use Location", onPress: () => { } },
+    //             ],
+    //         );
+    //     }
+    //     return false;
+    // };
+    const getCurrentLocation = useCallback(async () => {
         if (Platform.OS === 'ios') {
-            const hasPermission = await hasPermissionIOS();
-            return hasPermission;
-        }
-    }
+            const status = await Geolocation.requestAuthorization('whenInUse');
+            if (status === "granted") {
+                getPosition()
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
 
-    const hasPermissionIOS = async () => {
-        const openSetting = () => {
-            Linking.openSettings().catch(() => {
-                Alert.alert('Unable to open settings');
-            });
-        };
-        const status = await Geolocation.requestAuthorization('whenInUse');
-        if (status === 'granted') {
-            getPosition()
-            return true;
+
+
+            }
+
         }
-        if (status === 'denied') {
-            //Alert.alert('Location permission denied');
-        }
-        if (status === 'disabled') {
-            Alert.alert(
-                `Turn on Location Services to allow  to determine your location.`,
-                '',
-                [
-                    { text: 'Go to Settings', onPress: openSetting },
-                    { text: "Don't Use Location", onPress: () => { } },
-                ],
+        else {
+            if (Platform.OS === 'android' && Platform.Version < 23) {
+                getPosition()
+            }
+
+            const hasPermission = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
             );
+
+            if (hasPermission) {
+                getPosition()
+            }
+
+            const status = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
+            );
+
+            if (status === PermissionsAndroid.RESULTS.GRANTED) {
+                getPosition()
+
+            }
+
+            if (status === PermissionsAndroid.RESULTS.DENIED) {
+
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
+            }
+            else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission revoked by user.',
+                });
+            }
         }
-        return false;
-    };
+
+    }, [])
+
     const getPosition = async () => {
-
-
         await Geolocation.getCurrentPosition(
             position => {
 
                 //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
-
+                reactotron.log({ position })
                 getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
-
+                // userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
             },
             error => {
                 Toast.show({
@@ -150,18 +212,22 @@ const MyAddresses = ({ route, navigation }) => {
 
     function getAddressFromCoordinates(latitude, longitude) {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
-
+            // userContext.setLocation([latitude, longitude])
             // addressContext?.setCurrentAddress(null)
             // addressContext?.setLocation(null)
+
+
             let value = {
                 latitude: latitude,
                 longitude: longitude,
-                location: locality?.long_name,
+                location: '',
                 address: response?.data?.results[0]?.formatted_address
 
             }
+
             addressContext.setCurrentAddress(value)
-            reactotron.log({ value })
+            navigation.navigate('LocationScreen')
+
         })
             .catch(err => {
             })
@@ -177,6 +243,8 @@ const MyAddresses = ({ route, navigation }) => {
                 latitude: result[0]?.area?.latitude,
                 longitude: result[0]?.area?.longitude
             }
+
+            // userContext.setLocation([result[0]?.area?.latitude,result[0]?.area?.longitude])
             addressContext.setCurrentAddress(Value)
             if (addressContext?.CucurrentAddress) {
                 navigation.navigate('AddNewLocation')
@@ -206,11 +274,11 @@ const MyAddresses = ({ route, navigation }) => {
     const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
         //  await customAxios.post(`customer/get-cart-product`,{cart_id:cartContext?.cart?._id,address_id:address})
-
+        reactotron.log({address})
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
         cartContext.setDefaultAddress(address);
-       
+
         // if (!address?.default) {
         address.default_status = true;
         address.id = address?._id
@@ -254,13 +322,13 @@ const MyAddresses = ({ route, navigation }) => {
                         <RefreshControl refreshing={loadingg} onRefresh={getAddressList} />
                     }
                 >
-                    {/* {(mode === 'home' || addrList?.length === 0) && <CustomButton
-                        onPress={fetchData}
+                    {(mode === 'home' || addrList?.length === 0) && <CustomButton
+                        onPress={getCurrentLocation}
                         bg={'#19B836'}
                         label='Choose Current Location'
                         mt={10}
                         leftIcon={<Foundation name={'target-two'} color='#fff' size={20} marginRight={10} />}
-                    />} */}
+                    />}
 
                     {addrList?.map((item, index) =>
                         <AddressCard

@@ -200,13 +200,19 @@ const MyAccount = ({ navigation }) => {
                                 label={'My Addresses'}
                             />
                             <ListCard
-                                onPress={gotoPandaCoins}
+                                onPress={
+                                    // gotoPandaCoins
+                                    null
+                                }
                                 img={active === 'green' ? require('../../Images/Orangepanda.png') : active === 'fashion' ? require('../../Images/fashionPanda.png') : require('../../Images/panda.png')}
                                 label={'Panda Coins'}
-                                pandaCoin='500'
+                                pandaCoin=''
                             />
                             {!active === 'fashion' || !active === 'green' ? null : <ListCard
-                                onPress={gotoAffiliateBonus}
+                                onPress={
+                                    // gotoAffiliateBonus
+                                null
+                                }
                                 img={active === 'green' ? require('../../Images/affiliateOrange.png') : require('../../Images/affiliate.png')}
                                 label={'Affiliate Bonus'}
                             />}

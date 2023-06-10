@@ -33,7 +33,7 @@ const LocationScreen = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
 
     const mapRef = useRef()
-    console.log("route", route?.params);
+
 
     const [location, setLocation] = useState({ latitude: editAddress?.area?.latitude || 0, longitude: editAddress?.area?.longitude || 0 })
 

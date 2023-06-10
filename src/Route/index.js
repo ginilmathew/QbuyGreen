@@ -74,7 +74,7 @@ const Route = () => {
 
             const hasPermission = await PermissionsAndroid.check(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                reactotron.log('PERMISION ')
+                
             );
 
             if (hasPermission) {
@@ -88,7 +88,7 @@ const Route = () => {
 
             if (status === PermissionsAndroid.RESULTS.GRANTED) {
                 getPosition()
-                reactotron.log('PERMISION 111')
+             
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
@@ -261,14 +261,14 @@ const Route = () => {
         }
     }
 
-    useEffect( async () => {
+    useEffect(async () => {
         const token = await AsyncStorage.getItem("token");
         if (token) {
             const subscription = AppState.addEventListener('change', async nextAppState => {
                 if (nextAppState === 'active') {
-                     await customAxios.post('customer/login-status-update',{login_status:true})
+                    await customAxios.post('customer/login-status-update', { login_status: true })
                 } else {
-                    await customAxios.post('customer/login-status-update',{login_status:false})
+                    await customAxios.post('customer/login-status-update', { login_status: false })
                 }
             });
             return () => {

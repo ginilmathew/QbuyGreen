@@ -26,7 +26,7 @@ const CartProvider = (props) => {
 
 
     const addToCart = async(item, selectedVariant) => {
-        reactotron.log({cart})
+    
         let cartItems, url;
         let productDetails;
         let minimumQty = item?.minQty ? item?.minQty : 1

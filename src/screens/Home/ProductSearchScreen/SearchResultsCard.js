@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, { useCallback, useState, useEffect, useContext } from 'react'
+import React, { useCallback, useState, useEffect, useContext, memo } from 'react'
 import { IMG_URL } from '../../../config/constants'
 
 import reactotron from '../../../ReactotronConfig'
 import { getProduct } from '../../../helper/productHelper'
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import PandaContext from '../../../contexts/Panda'
-const SearchResultsCard = ({ item }) => {
+const SearchResultsCard = memo(({ item,setValue }) => {
 
     const pandaContext = useContext(PandaContext)
 
@@ -40,7 +40,9 @@ const SearchResultsCard = ({ item }) => {
                         { name: 'fashion' }
                     ]
                 }))
+                setValue('name','')
         } else {
+            setValue('name','')
             navigation.navigate('SingleItemScreen', { item: data })
         }
 
@@ -92,7 +94,7 @@ const SearchResultsCard = ({ item }) => {
             </View>
         </TouchableOpacity>
     )
-}
+})
 
 export default SearchResultsCard
 
