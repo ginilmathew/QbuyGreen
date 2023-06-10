@@ -47,6 +47,7 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
+    reactotron.log({userContext:userContext?.location})
     let userData = userContext?.userData
 
 
@@ -166,7 +167,7 @@ const QBuyGreen = ({ navigation }) => {
             .then(async response => {
                 setHomeData(response?.data?.data)
 
-                reactotron.log('API CALLED')
+  
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()

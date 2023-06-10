@@ -24,7 +24,7 @@ const ProductSearchScreen = ({ route }) => {
     let active = contextPanda.active
 
 
-    reactotron.log({ active })
+
 
     let loader = loadingg?.loading
 
@@ -48,6 +48,7 @@ const ProductSearchScreen = ({ route }) => {
 
 
     const filterResults = useCallback(async (value) => {
+      
         if (value === '') {
             setFilterResult([])
         }
@@ -77,8 +78,8 @@ const ProductSearchScreen = ({ route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
+
             setFilterResult([])
-      
         }, [])
     );
 
@@ -101,7 +102,7 @@ const ProductSearchScreen = ({ route }) => {
                 />
 
                 <View style={{ paddingHorizontal: 15, marginTop: 10 }}>
-                    {loader ? <ActivityIndicator /> : filterResult?.map((item, index) => (<SearchResultsCard item={item} key={index} />))}
+                    {loader ? <ActivityIndicator /> : filterResult?.map((item, index) => (<SearchResultsCard item={item} key={index} setValue={setValue} />))}
                 </View>
             </ScrollView>
         </>

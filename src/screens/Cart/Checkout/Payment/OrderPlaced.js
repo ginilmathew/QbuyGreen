@@ -16,17 +16,15 @@ import AuthContext from '../../../../contexts/Auth'
 const OrderPlaced = ({ route, navigation }) => {
     const { item } = route.params;
     
-    reactotron.log({item},'WHTSAPP')
+
 
     const userContext = useContext(AuthContext);
 
-    reactotron.log(userContext?.userData)
 
-    console.log({ item }, 'in params')
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
 
-    console.log(contextPanda?.order_id)
+
     const { width } = useWindowDimensions()
 
 

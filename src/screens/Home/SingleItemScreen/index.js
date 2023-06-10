@@ -57,8 +57,8 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
-    reactotron.log({ item })
-    reactotron.log({ singleProduct })
+  
+
 
     useEffect(() => {
         if (route?.params?.item) {
@@ -218,8 +218,16 @@ const SingleItemScreen = ({ route, navigation }) => {
     }, [])
 
     const addToCart = useCallback(async () => {
+  let price = item?.variant ? selectedVariant?.price : item?.price;
+         if(parseInt(price) < 1 ){
+            Toast.show({
+                type: 'info',
+                text1: 'Price Should be more than 1'
+            });
+         }else{
+            cartContext.addToCart(item, selectedVariant)
+         }
 
-        cartContext.addToCart(item, selectedVariant)
 
 
     }, [selectedVariant, cart?.cart, item])
@@ -265,7 +273,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             const containsAll = attri.every(elem => attributes.includes(elem));
 
             if (containsAll) {
-                reactotron.log({ sin, item })
+           
                 if (item?.stock) {
                     if (!sin?.available) {
                         item.available = false
@@ -396,6 +404,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
+
     return (
         <>
             <HeaderWithTitle title={item?.name} />
@@ -467,6 +476,38 @@ const SingleItemScreen = ({ route, navigation }) => {
                             fontSize: 10,
 
                         }}>{item?.weight}</Text>
+
+                    </View>}
+                    {singleProduct?.dimensions?.width &&
+                    <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>width :</Text>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>{singleProduct?.dimensions?.width}</Text>
+
+                    </View>}
+                    {singleProduct?.dimensions?.height &&
+                    <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>height :</Text>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>{singleProduct?.dimensions?.height }</Text>
 
                     </View>}
 
@@ -576,6 +617,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         )}
                     </ScrollView>
                 </>} */}
+             
 
                 {item?.description &&
                     <View style={{ paddingLeft: 10, paddingRight: 10 }}>

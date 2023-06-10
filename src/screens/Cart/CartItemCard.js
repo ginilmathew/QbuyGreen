@@ -17,7 +17,6 @@ import reactotron from 'reactotron-react-native'
 
 const CartItemCard = ({item, index, refreshCart}) => {
 
-    reactotron.log({item})
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -117,7 +116,7 @@ const CartItemCard = ({item, index, refreshCart}) => {
                         type: 'error',
                         text1: error
                     });
-                    console.log(error)
+                    
                 })
             }
             else{

@@ -46,7 +46,7 @@ const AddNewLocation = ({ route, navigation }) => {
 
                         addressContext.setCurrentAddress(Value)
                         // addressContext.setLocation(details)
-                        navigation.navigate('LocationScreen')
+                        navigation.navigate('LocationScreen',{mode:''})
 
                     }}
                     query={{

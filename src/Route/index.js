@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform, StyleSheet, ToastAndroid } from 'react-native'
+import { PermissionsAndroid, Platform, StyleSheet, ToastAndroid, AppState, useRef } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -40,6 +40,7 @@ const Route = () => {
     const loadingContext = useContext(LoaderContext)
     const [location, setLocation] = useState(null)
 
+
     const [initialScreen, setInitialScreen] = useState(null)
     useEffect(() => {
         getCurrentLocation()
@@ -50,7 +51,7 @@ const Route = () => {
             const status = await Geolocation.requestAuthorization('whenInUse');
             if (status === "granted") {
                 getPosition()
-            }else{
+            } else {
                 Toast.show({
                     type: 'error',
                     text1: 'Location permission denied by user.'
@@ -73,6 +74,7 @@ const Route = () => {
 
             const hasPermission = await PermissionsAndroid.check(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                
             );
 
             if (hasPermission) {
@@ -81,13 +83,22 @@ const Route = () => {
 
             const status = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
             );
 
             if (status === PermissionsAndroid.RESULTS.GRANTED) {
                 getPosition()
+             
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
                 setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
@@ -95,6 +106,13 @@ const Route = () => {
                 });
             }
             else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
                 setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
@@ -123,12 +141,20 @@ const Route = () => {
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
                 checkLogin();
             },
-            error => {
+            async error => {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
-                    text1: error
+                    text1: error.message
                 });
-                checkLogin();
+                // checkLogin();
             },
             {
                 accuracy: {
@@ -234,13 +260,30 @@ const Route = () => {
             setInitialScreen('Login');
         }
     }
+
+    useEffect(async () => {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+            const subscription = AppState.addEventListener('change', async nextAppState => {
+                if (nextAppState === 'active') {
+                    await customAxios.post('customer/login-status-update', { login_status: true })
+                } else {
+                    await customAxios.post('customer/login-status-update', { login_status: false })
+                }
+            });
+            return () => {
+                subscription.remove();
+            };
+        }
+    }, []);
+
     if (!initialScreen) {
         return (
             <SplashScreen />
         )
     }
 
-    reactotron.log({ mode })
+
 
     return (
         <>
@@ -250,7 +293,7 @@ const Route = () => {
                     <Stack.Screen name="SplashScreen" component={SplashScreen} />
                     <Stack.Screen name="Login" component={Login} />
                     <Stack.Screen name="Otp" component={Otp} />
-                    <Stack.Screen name="LocationScreen" component={LocationScreen} options={{title:'home'}} />
+                    <Stack.Screen name="LocationScreen" component={LocationScreen} options={{ title: 'home' }} />
                     <Stack.Screen name="AddNewLocation" component={AddNewLocation} />
                     <Stack.Screen name="panda" component={Panda} />
                     <Stack.Screen name="fashion" component={Fashion} />

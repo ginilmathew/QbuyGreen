@@ -17,7 +17,6 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
 
     let imageWidth = width/6
 
-    reactotron.log({fontScale})
     const styles = makeStyles(fontScale, height);
     const navigation = useNavigation()
 

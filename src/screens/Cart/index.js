@@ -326,9 +326,10 @@ const Cart = ({ navigation }) => {
         //     navigation.navigate('Checkout')
         // }
         const satisfiesConditions = cartItemsList.every((item) => {
-            return item.available === true && (item.stock !== true || (item.stock === true && item.minimum_qty < item.stock_value));
+            return item.available === true && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
           });
           
+
 
         if (!satisfiesConditions) {
             Toast.show({

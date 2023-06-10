@@ -17,6 +17,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const LocationScreen = ({ route, navigation }) => {
 
+    const { mode } = route.params
+
+    reactotron.log({ mode })
 
     const homeNavigationbasedIndex = navigation.getState()
     reactotron.log({ homeNavigationbasedIndex })
@@ -33,7 +36,7 @@ const LocationScreen = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
 
     const mapRef = useRef()
-    console.log("route", route?.params);
+
 
     const [location, setLocation] = useState({ latitude: editAddress?.area?.latitude || 0, longitude: editAddress?.area?.longitude || 0 })
 
@@ -103,9 +106,10 @@ const LocationScreen = ({ route, navigation }) => {
     }, [homeNavigationbasedIndex?.index])
 
     const onConfirm = useCallback(async () => {
-
+        reactotron.log('text')
+        reactotron.log({ home: homeNavigationbasedIndex?.index })
         //below code for checking the location is denied condition
-        if (homeNavigationbasedIndex?.index === 1) {
+        if (homeNavigationbasedIndex?.index === 1 && mode !== "currentlocation") {
             let value = {
                 area: {
                     location: addressContext?.currentAddress?.location,
@@ -122,12 +126,15 @@ const LocationScreen = ({ route, navigation }) => {
             }
 
         } else {
+            reactotron.log({ addressContext: addressContext?.currentAddress })
             let locationData = {
                 location: addressContext?.currentAddress?.location ? addressContext?.currentAddress?.location : address,
                 city: addressContext?.currentAddress?.city ? addressContext?.currentAddress?.city : city,
                 latitude: addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : location?.latitude,
                 longitude: addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : location?.longitude,
             }
+
+            reactotron?.log({ locationData })
             navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
         }
 

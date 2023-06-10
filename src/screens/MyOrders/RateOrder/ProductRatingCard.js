@@ -11,7 +11,7 @@ const ProductRatingCard = memo(({item}) => {
 
     const [itemRating, setItemRating] = useState('')
 
-    console.log({itemRating})
+
 
     const schema = yup.object({
 	}).required();

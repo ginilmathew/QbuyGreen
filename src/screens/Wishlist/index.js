@@ -24,7 +24,7 @@ const Wishlist = ({navigation}) => {
     const contextPanda = useContext(PandaContext)
 
     let userData = userContext?.userData
-
+   
 
     let loadingg = loadingContex?.loading
     let active = contextPanda.active
@@ -39,7 +39,8 @@ const Wishlist = ({navigation}) => {
     const getWishlist = async() => {
         loadingContex.setLoading(true)
         let data = {
-            type: active
+            type: active,
+            coordinates:userContext?.location
         }
         await customAxios.post(`customer/wishlist/list`, data)
       
