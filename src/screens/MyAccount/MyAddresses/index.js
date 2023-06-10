@@ -181,7 +181,7 @@ const MyAddresses = ({ route, navigation }) => {
             position => {
 
                 //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
-                reactotron.log({ position })
+
                 getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
                 // userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
             },
@@ -215,18 +215,22 @@ const MyAddresses = ({ route, navigation }) => {
             // userContext.setLocation([latitude, longitude])
             // addressContext?.setCurrentAddress(null)
             // addressContext?.setLocation(null)
+                 reactotron.log({response:response?.data?.results[0]})
+                 let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
 
-
+         
             let value = {
                 latitude: latitude,
                 longitude: longitude,
-                location: '',
-                address: response?.data?.results[0]?.formatted_address
+                location:response?.data?.results[0]?.formatted_address,
+                city:locality?.long_name
 
             }
+        
 
             addressContext.setCurrentAddress(value)
-            navigation.navigate('LocationScreen')
+         
+            navigation.navigate('LocationScreen',{mode:'currentlocation'})
 
         })
             .catch(err => {
@@ -274,7 +278,7 @@ const MyAddresses = ({ route, navigation }) => {
     const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
         //  await customAxios.post(`customer/get-cart-product`,{cart_id:cartContext?.cart?._id,address_id:address})
-        reactotron.log({address})
+        reactotron.log({ address })
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
         cartContext.setDefaultAddress(address);

@@ -48,6 +48,7 @@ const StoreScreen = ({ route, navigation }) => {
     const [categories, setCategories] = useState([])
 
 
+    reactotron.log({storeDetails})
     const [selected, setSelected] = useState(false)
 
     useEffect(() => {
@@ -107,7 +108,7 @@ const StoreScreen = ({ route, navigation }) => {
                         style={styles.mainImage}
                         borderRadius={15}
                     >
-                        {(storeDetails?.start_time || storeDetails?.end_time) &&  <View 
+                        {((storeDetails?.start_time && storeDetails?.start_time !== 'Invalid date' && storeDetails?.start_time !== "null" ) || (storeDetails?.end_time && storeDetails?.end_time !== "Invalid date" && storeDetails?.end_time !== "null") ) &&  <View 
                             style={{backgroundColor:'#8ED053', width:150, height:20, borderBottomRightRadius:10, borderTopLeftRadius:10, alignSelf:'flex-end',alignItems:'center', justifyContent:'center'}}
                         >
                             <CommonTexts label={`${moment(storeDetails?.start_time, "hh:mm a").format('hh:mm a')} - ${moment(storeDetails?.end_time, "hh:mm a").format('hh:mm a')}`} color={'#fff'} fontSize={11}/>
