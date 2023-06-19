@@ -57,7 +57,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
-  
+   reactotron.log({item})
 
 
     useEffect(() => {
@@ -126,15 +126,17 @@ const SingleItemScreen = ({ route, navigation }) => {
         if (item) {
             if (item?.variant) {
                 let selectedVariant = item?.variants?.find(vari => vari?.available === true)
+
+     
                 setSelectedVariant(selectedVariant)
 
-                let names = selectedVariant?.title.split(" ")
+                let names = selectedVariant?.title?.split(" ")
                 let attributes = item?.attributes?.map(att => {
                     let selected;
                     att?.options?.map(opt => {
-                        let values = opt.split(" ");
+                        let values = opt?.split(" ");
                         if (values && names) {
-                            const containsAll = values?.every(elem => names.includes(elem));
+                            const containsAll = values?.every(elem => names?.includes(elem));
                             if (containsAll) {
                                 selected = opt
                             }
@@ -218,15 +220,15 @@ const SingleItemScreen = ({ route, navigation }) => {
     }, [])
 
     const addToCart = useCallback(async () => {
-  let price = item?.variant ? selectedVariant?.price : item?.price;
-         if(parseInt(price) < 1 ){
+        let price = item?.variant ? selectedVariant?.price : item?.price;
+        if (parseInt(price) < 1) {
             Toast.show({
                 type: 'info',
                 text1: 'Price Should be more than 1'
             });
-         }else{
+        } else {
             cartContext.addToCart(item, selectedVariant)
-         }
+        }
 
 
 
@@ -242,8 +244,8 @@ const SingleItemScreen = ({ route, navigation }) => {
         let attr = attributes?.map(att => {
             if (att?.options.includes(value)) {
                 if (att?.variant) {
-                    let values = value.split(' ')
-                    values.map(va => {
+                    let values = value?.split(' ')
+                    values?.map(va => {
                         attri.push(va)
                     })
                 }
@@ -255,8 +257,8 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
             else {
                 if (att?.variant) {
-                    let values = att.selected.split(' ')
-                    values.map(va => {
+                    let values = att.selected?.split(' ')
+                    values?.map(va => {
                         attri.push(va)
                     })
                 }
@@ -270,10 +272,10 @@ const SingleItemScreen = ({ route, navigation }) => {
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            const containsAll = attri.every(elem => attributes.includes(elem));
+            const containsAll = attri.every(elem => attributes?.includes(elem));
 
             if (containsAll) {
-           
+
                 if (item?.stock) {
                     if (!sin?.available) {
                         item.available = false
@@ -332,7 +334,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 <View
                     style={{ position: 'absolute', left: 20, top: 15, backgroundColor: 'red', borderRadius: 8 }}
                 >
-                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'Out Off Stock'}</Text>
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'Out Of Stock'}</Text>
                 </View>
             )
         }
@@ -478,7 +480,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         }}>{item?.weight}</Text>
 
                     </View>}
-                    {singleProduct?.dimensions?.width &&
+                {singleProduct?.dimensions?.width &&
                     <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
                         <Text style={{
                             fontFamily: 'Poppins',
@@ -494,7 +496,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         }}>{singleProduct?.dimensions?.width}</Text>
 
                     </View>}
-                    {singleProduct?.dimensions?.height &&
+                {singleProduct?.dimensions?.height &&
                     <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
                         <Text style={{
                             fontFamily: 'Poppins',
@@ -507,7 +509,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             letterSpacing: 1,
                             fontSize: 10,
 
-                        }}>{singleProduct?.dimensions?.height }</Text>
+                        }}>{singleProduct?.dimensions?.height}</Text>
 
                     </View>}
 
@@ -617,7 +619,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                         )}
                     </ScrollView>
                 </>} */}
-             
+
 
                 {item?.description &&
                     <View style={{ paddingLeft: 10, paddingRight: 10 }}>

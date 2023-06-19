@@ -13,6 +13,7 @@ export function getProduct(product){
     let vendorCommission = product?.vendors?.additional_details?.commission ? parseFloat(product?.vendors?.additional_details?.commission) : 0
 
 
+
     let newProduct = {
         _id, 
         product_id, 

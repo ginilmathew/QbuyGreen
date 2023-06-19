@@ -150,7 +150,7 @@ const LocationScreen = ({ route, navigation }) => {
     const myApiKey = "Key Received from Google map"
 
     function getAddressFromCoordinates(latitude, longitude) {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
             setAddress(response?.data?.results[0]?.formatted_address)
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             setCity(locality?.long_name)

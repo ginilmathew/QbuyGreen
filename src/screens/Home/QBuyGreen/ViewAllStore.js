@@ -30,7 +30,8 @@ const ViewAllStore = ({ route, navigation }) => {
         loadingg.setLoading(true)
         let datas = {
             type: contextPanda.active,
-            coordinates: env === "dev" ? location : userContext?.location
+            // coordinates: env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
         }
         await customAxios.post('customer/store-list', datas).then((res) => {
             setStoreList(res?.data?.data)

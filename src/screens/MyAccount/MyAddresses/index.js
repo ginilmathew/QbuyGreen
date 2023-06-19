@@ -211,7 +211,7 @@ const MyAddresses = ({ route, navigation }) => {
 
 
     function getAddressFromCoordinates(latitude, longitude) {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
             // userContext.setLocation([latitude, longitude])
             // addressContext?.setCurrentAddress(null)
             // addressContext?.setLocation(null)
@@ -226,7 +226,8 @@ const MyAddresses = ({ route, navigation }) => {
                 city:locality?.long_name
 
             }
-        
+
+                  
 
             addressContext.setCurrentAddress(value)
          
@@ -278,10 +279,10 @@ const MyAddresses = ({ route, navigation }) => {
     const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
         //  await customAxios.post(`customer/get-cart-product`,{cart_id:cartContext?.cart?._id,address_id:address})
-        reactotron.log({ address })
+      
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
-        cartContext.setDefaultAddress(address);
+      
 
         // if (!address?.default) {
         address.default_status = true;
@@ -290,6 +291,8 @@ const MyAddresses = ({ route, navigation }) => {
         loadingContex.setLoading(true)
         await customAxios.post(`customer/address/update`, address).then((response) => {
             setAddrList(response?.data?.data)
+            const find = addrList.find(addr => addr?._id === id)
+            cartContext.setDefaultAddress(find);
             loadingContex.setLoading(false)
         }
         ).catch(async error => {

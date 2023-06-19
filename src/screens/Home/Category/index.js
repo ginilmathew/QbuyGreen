@@ -54,7 +54,8 @@ const Category = ({ route }) => {
 
         let datas = {
             category_id:  item?._id,
-            coordinates :  env === "dev" ? location : userContext?.location
+            // coordinates :  env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
         }
     
         await customAxios.post(`customer/product/category-based`, datas)

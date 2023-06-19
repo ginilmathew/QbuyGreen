@@ -1,5 +1,5 @@
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useContext, useState, useEffect} from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import CommonTexts from '../../Components/CommonTexts'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import CustomButton from '../../Components/CustomButton'
@@ -15,12 +15,12 @@ import Toast from 'react-native-toast-message';
 const MyOrders = () => {
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
-    
+
     const loadingg = useContext(LoaderContext)
     const user = useContext(AuthContext)
     let loader = loadingg?.loading
 
-    const [orderList,setOrderList] = useState([])
+    const [orderList, setOrderList] = useState([])
 
 
     useEffect(() => {
@@ -47,19 +47,19 @@ const MyOrders = () => {
 
     return (
         <>
-            <HeaderWithTitle title={'My Orders'} noBack/>
-            <View 
-                style={{flex:1, paddingBottom:60, backgroundColor: active === 'green' ? '#F4FFE9' :  active === 'fashion' ? '#FFF5F7' : '#fff'}}
+            <HeaderWithTitle title={'My Orders'} noBack />
+            <View
+                style={{ flex: 1, paddingBottom: 60, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
             >
-            <ScrollView 
-            
-                refreshControl={
-                    <RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />
-                }
-                style={{  paddingHorizontal: 10 ,paddingTop:10,marginBottom:20}}
-            >
-                {orderList.map((ord, index)=><OrderCard key={index} item = {ord} refreshOrder={getOrderList}  />)}
-            </ScrollView>
+                <ScrollView
+
+                    refreshControl={
+                        <RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />
+                    }
+                    style={{ paddingHorizontal: 10, paddingTop: 10, marginBottom: 20 }}
+                >
+                    {orderList?.map((ord, index) => <OrderCard key={index} item={ord} refreshOrder={getOrderList} />)}
+                </ScrollView>
             </View>
         </>
     )
@@ -68,5 +68,5 @@ const MyOrders = () => {
 export default MyOrders
 
 const styles = StyleSheet.create({
-    
+
 })

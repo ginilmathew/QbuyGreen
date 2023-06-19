@@ -199,7 +199,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                     {!data?.available && <View style={{ position: 'absolute', top: '32%', width: '100%' }}>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ padding: 5, borderWidth: 1, borderColor: '#fff', margin: 8, borderRadius: 8 }}>
-                                <Text style={{ color: 'red', textAlign: 'center', fontWeight: 'bold', alignSelf: 'center' }}>Out off stock</Text>
+                                <Text style={{ color: 'red', textAlign: 'center', fontWeight: 'bold', alignSelf: 'center' }}>Out of stock</Text>
                             </View>
                         </View>
 

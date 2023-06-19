@@ -51,6 +51,10 @@ const Checkout = ({ navigation }) => {
     // let myCity = authContext?.city
 
 
+    reactotron.log({ cartContext: cartContext?.cart?._id })
+    reactotron.log({ cartContextAddress: cartContext?.defaultAddress?._id })
+
+
     const loadingg = useContext(LoaderContext)
     const loader = loadingg?.loading
 
@@ -453,28 +457,7 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
-   
-
-        let products = [];
-        let amount = 0;
-        let stores = []
-
-        cartItems?.map(cart => {
-            stores.push(cart?.store?._id)
-            products.push({
-                product_id: cart?.product_id,
-                name: cart?.name,
-                image: cart?.image,
-                type: cart?.type,
-                variant_id: cart?.variant_id,
-                quantity: cart?.quantity,
-                price: cart?.price,
-                unitPrice: cart?.unitPrice,
-                deliveryPrice: cart?.delivery
-            })
-        })
-
-        if (!cartContext.defaultAddress?.area?.location) {
+        if (!cartContext?.defaultAddress) {
             Toast.show({
                 type: 'error',
                 text1: 'Please add Delivery  Address to continue'
@@ -482,72 +465,105 @@ const Checkout = ({ navigation }) => {
             return false;
         }
 
-        let uniqueStore = uniq(stores)
-        let pay = payment.find(pay => pay.selected === true)
-
-        const orderDetails = {
-            product_details: products,
-            user_id: authContext?.userData?._id,
-            billing_address: cartContext?.defaultAddress?._id,
-            shipping_address: cartContext?.defaultAddress?._id,
-            payment_status: pay._id === "online" ? "pending" : "created",
-            payment_type: pay._id,
-            type: active,
-            total_amount: Math.round(cartItems.reduce(function (previousVal, currentVal) {
-                return previousVal + currentVal?.price;
-            }, 0)),
-            delivery_charge: Math.round(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery),
-            delivery_type: "Slot based",
-            franchise: cartItems?.[0]?.franchisee?._id,
-            cart_id: cartItems?.[0]?.cartId,
-            store: uniqueStore,
-            delivery_date: moment().format("YYYY-MM-DD HH:mm:ss")
+        let data = {
+            cart_id: cartContext?.cart?._id,
+            address_id: cartContext?.defaultAddress?._id
         }
 
+        await customAxios.post('customer/get-cart-product', data).then(async response => {
+            let products = [];
+            let amount = 0;
+            let stores = []
+
+            cartItems?.map(cart => {
+                stores.push(cart?.store?._id)
+                products.push({
+                    product_id: cart?.product_id,
+                    name: cart?.name,
+                    image: cart?.image,
+                    type: cart?.type,
+                    variant_id: cart?.variant_id,
+                    quantity: cart?.quantity,
+                    price: cart?.price,
+                    unitPrice: cart?.unitPrice,
+                    deliveryPrice: cart?.delivery
+                })
+            })
+
+            if (!cartContext.defaultAddress?.area?.location) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please add Delivery  Address to continue'
+                });
+                return false;
+            }
+
+            let uniqueStore = uniq(stores)
+            let pay = payment.find(pay => pay.selected === true)
+
+            const orderDetails = {
+                product_details: products,
+                user_id: authContext?.userData?._id,
+                billing_address: cartContext?.defaultAddress?._id,
+                shipping_address: cartContext?.defaultAddress?._id,
+                payment_status: pay._id === "online" ? "pending" : "created",
+                payment_type: pay._id,
+                type: active,
+                total_amount: Math.round(cartItems.reduce(function (previousVal, currentVal) {
+                    return previousVal + currentVal?.price;
+                }, 0)),
+                delivery_charge: Math.round(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery),
+                delivery_type: "Slot based",
+                franchise: cartItems?.[0]?.franchisee?._id,
+                cart_id: cartItems?.[0]?.cartId,
+                store: uniqueStore,
+                delivery_date: moment().format("YYYY-MM-DD HH:mm:ss")
+            }
+
+            if (products?.length > 0) {
+                await customAxios.post(`customer/order/test-create`, orderDetails)
+                    .then(async response => {
+                        console.log("response ==>", JSON.stringify(response.data), response.status)
+                        const { data } = response
 
 
-
-
-
-
-
-
-        if (products?.length > 0) {
-            await customAxios.post(`customer/order/test-create`, orderDetails)
-                .then(async response => {
-                    console.log("response ==>", JSON.stringify(response.data), response.status)
-                    const { data } = response
-
-                
-                    if (data?.type === 'cart') {
-                        navigation.navigate('Cart')
-                    }
-                    if (data?.status) {
-                        if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
-                            payWithPayTM(data?.data)
+                        if (data?.type === 'cart') {
+                            navigation.navigate('Cart')
+                        }
+                        if (data?.status) {
+                            if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
+                                payWithPayTM(data?.data)
+                            } else {
+                                cartContext?.setCart(null)
+                                setCartItems(null)
+                                await AsyncStorage.removeItem("cartId");
+                                navigation.navigate('OrderPlaced', { item: response.data?.data })
+                            }
                         } else {
                             cartContext?.setCart(null)
                             setCartItems(null)
-                            await AsyncStorage.removeItem("cartId");
-                            navigation.navigate('OrderPlaced', { item: response.data?.data })
+                            navigation.goBack()
+                            Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                         }
-                    } else {
-                        cartContext?.setCart(null)
-                        setCartItems(null)
-                        navigation.goBack()
-                        Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
-                    }
-                }).catch(error => {
+                    }).catch(error => {
 
-                    Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                        Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                    })
+            }
+            else {
+                Toast.show({
+                    type: 'info',
+                    text1: 'Please add some products to cart to proceed'
                 })
-        }
-        else {
+            }
+        }).catch((err) => {
             Toast.show({
                 type: 'info',
-                text1: 'Please add some products to cart to proceed'
+                text1: JSON.parse(err)
             })
-        }
+        })
+
+
 
     }
 

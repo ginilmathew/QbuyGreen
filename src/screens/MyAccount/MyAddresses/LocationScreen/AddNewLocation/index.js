@@ -15,7 +15,9 @@ const AddNewLocation = ({ route, navigation }) => {
 
     const { width, height } = useWindowDimensions()
 
-    const mapRef = useRef()
+    const location = useRef()
+
+    reactotron.log({ location })
 
     useEffect(() => {
         SplashScreen.hide()
@@ -24,18 +26,20 @@ const AddNewLocation = ({ route, navigation }) => {
 
         <>
             <HeaderWithTitle title={'Location'} noBack={backArrowhide.index === 0 ? true : false} />
-            <View style={{padding:15 }}>
+            <View style={{ padding: 15 }}>
                 <GooglePlacesAutocomplete
+                    autoFocus={false}
+                    returnKeyType={'default'}
                     fetchDetails={true}
                     placeholder='Search'
-             
+                    keyboardAppearance={'light'}
                     textInputProps={{
-                        
                         placeholderTextColor: 'gray',
                         returnKeyType: "search"
                     }}
                     onPress={(data, details = null) => {
                         // 'details' is provided when fetchDetails = true
+
                         let Value = {
                             location: data?.description,
                             city: details?.address_components?.filter(st => st.types?.includes('locality'))[0]?.long_name,
@@ -46,7 +50,7 @@ const AddNewLocation = ({ route, navigation }) => {
 
                         addressContext.setCurrentAddress(Value)
                         // addressContext.setLocation(details)
-                        navigation.navigate('LocationScreen',{mode:''})
+                        navigation.navigate('LocationScreen', { mode: '' })
 
                     }}
                     query={{
@@ -103,7 +107,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
         zIndex: 999,
         width: '100%',
-        justifyContent:'center'
+        justifyContent: 'center'
 
 
     },
@@ -128,12 +132,12 @@ const styles = StyleSheet.create({
     },
     listView: {
         top: 45.5,
-        zIndex:10,
+        zIndex: 10,
         position: 'absolute',
         color: 'black',
         backgroundColor: "white",
         width: '100%',
-   
+
         marginRight: 0,
         borderRadius: 10,
     },

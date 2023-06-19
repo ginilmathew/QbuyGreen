@@ -22,10 +22,10 @@ const SearchResultsCard = memo(({ item,setValue }) => {
         else {
             setData(null)
         }
-    }, [item])
+    }, [])
 
 
-    reactotron.log({ item })
+
 
     const navigation = useNavigation()
 

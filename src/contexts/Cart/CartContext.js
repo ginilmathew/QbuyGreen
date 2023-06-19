@@ -26,6 +26,8 @@ const CartProvider = (props) => {
 
 
     const addToCart = async(item, selectedVariant) => {
+
+
     
         let cartItems, url;
         let productDetails;

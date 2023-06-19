@@ -22,14 +22,14 @@ const EditProfile = ({ navigation }) => {
 
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
-    const [loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     const cartContext = useContext(CartContext)
 
 
     const user = useContext(AuthContext)
 
     let userdata = user?.userData
- 
+
 
     const [filePath, setFilePath] = useState(null);
 
@@ -47,7 +47,7 @@ const EditProfile = ({ navigation }) => {
         )
             // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
             .required('Name is Required'),
-        email: yup.string().email().matches(regexEmail,'Not a Valid Email Address').typeError('Not a Valid Email Address').required('Email is required'),
+        email: yup.string().email().matches(regexEmail, 'Not a Valid Email Address').typeError('Not a Valid Email Address').required('Email is required'),
         // address: yup.string().required('Address is required'),
         // pincode: yup.string().required('Pincode is required'),
     }).required();
@@ -66,7 +66,7 @@ const EditProfile = ({ navigation }) => {
 
     const onSubmit = useCallback(async (data) => {
 
-    
+
         setLoading(true)
 
         const formData = new FormData();
@@ -81,7 +81,7 @@ const EditProfile = ({ navigation }) => {
         formData.append('email', data?.email);
         formData.append('id', data?.id);
 
-         
+
         await customAxios.post(`auth/profile-update`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -109,26 +109,46 @@ const EditProfile = ({ navigation }) => {
 
     const imageGalleryLaunch = useCallback(() => {
         let options = {
+
             storageOptions: {
                 skipBackup: true,
                 path: 'images',
+
             },
         };
+
         launchImageLibrary(options, (res) => {
 
-            setFilePath(res)
+            let format = ['image/png', 'image/jpeg','image/jpg']
 
-            if (res.didCancel) {
-                // console.log('User cancelled image picker');
-            } else if (res.error) {
-                setFilePath(null)
-            } else if (res.customButton) {
-                // console.log('User tapped custom button: ', res.customButton);
-                // alert(res.customButton);
-            } else {
+            let image = res?.assets?.some(obj => format.includes(obj.type))
+
+            if (image) {
                 setFilePath(res)
+            } else {
+                setFilePath(null)
+                Toast.show({
+                    type: 'info',
+                    text1: 'unsupported format'
+                })
+                return;
             }
-            reactotron.log({ filePath })
+
+
+
+
+
+            // if (res.didCancel) {
+            //     // console.log('User cancelled image picker');
+            // } else if (res.error) {
+            //     setFilePath(null)
+            // } else if (res.customButton) {
+            //     // console.log('User tapped custom button: ', res.customButton);
+            //     // alert(res.customButton);
+            // } else {
+            //     setFilePath(res)
+            // }
+            // reactotron.log({ filePath })
         });
     }, [])
 

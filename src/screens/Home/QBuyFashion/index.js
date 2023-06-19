@@ -116,7 +116,8 @@ const QBuyFashion = () => {
         loadingg.setLoading(true)
         let datas = {
             type: "fashion",
-            coordinates: env === "dev" ? location : auth.location
+            // coordinates: env === "dev" ? location : auth.location
+            coordinates: auth?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {

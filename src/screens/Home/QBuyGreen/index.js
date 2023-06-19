@@ -47,7 +47,7 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
-    reactotron.log({userContext:userContext?.location})
+    reactotron.log({ userContext: userContext?.location })
     let userData = userContext?.userData
 
 
@@ -161,13 +161,14 @@ const QBuyGreen = ({ navigation }) => {
 
         let datas = {
             type: "green",
-            coordinates: env === "dev" ? location : userContext?.location
+            // coordinates: env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 setHomeData(response?.data?.data)
 
-  
+
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
@@ -175,10 +176,10 @@ const QBuyGreen = ({ navigation }) => {
 
             })
             .catch(async error => {
-                if(error.includes("Unauthenticated")){
+                if (error.includes("Unauthenticated")) {
                     navigation.navigate("Login")
                 }
-                
+
                 Toast.show({
                     type: 'error',
                     text1: error

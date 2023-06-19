@@ -29,7 +29,7 @@ const ProductSearchScreen = ({ route }) => {
     let loader = loadingg?.loading
 
     const [filterResult, setFilterResult] = useState([])
-    const [datatrue,setdataTrue]=useState(true)
+    const [datatrue, setdataTrue] = useState(true)
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -40,7 +40,7 @@ const ProductSearchScreen = ({ route }) => {
     });
 
     const [search, setSearch] = useState('')
-
+    const [text, setText] = useState("")
 
     const searchItem = useCallback((data) => {
         setSearch(data)
@@ -48,12 +48,13 @@ const ProductSearchScreen = ({ route }) => {
 
 
     const filterResults = useCallback(async (value) => {
-      
+        setText(value)
         if (value === '') {
             setFilterResult([])
         }
         let datas = {
-            coordinates: env === "dev" ? location : userContext?.location,
+            // coordinates: env === "dev" ? location : userContext?.location,
+            coordinates: userContext?.location,
             search: value,
             type: active
         }
@@ -78,7 +79,7 @@ const ProductSearchScreen = ({ route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-
+            setText("")
             setFilterResult([])
         }, [])
     );
@@ -92,6 +93,7 @@ const ProductSearchScreen = ({ route }) => {
             }}
             >
                 <CustomSearch
+                    values={text}
                     mb={2}
                     control={control}
                     error={errors.name}

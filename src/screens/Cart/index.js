@@ -48,6 +48,8 @@ const Cart = ({ navigation }) => {
                 .then(async response => {
 
                     let products = response?.data?.data?.product_details;
+                    // cartContext?.setCart(response?.data?.data)
+                    reactotron.log({products})
                     let finalProducts = [];
                     //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
                     products?.map((pro) => {
@@ -70,14 +72,16 @@ const Cart = ({ navigation }) => {
                                 name: pro?.name,
                                 image: pro?.image,
                                 type: pro?.type,
-                                quantity: quantity,
+                                // quantity: quantity >= minQty ? quantity : minQty,
+                                quantity: quantity ,
                                 stock: stock,
                                 delivery,
                                 commission: comm,
                                 minimum_qty: minQty,
                                 stock_value,
                                 store: pro?.productdata?.store,
-                                status: pro?.productdata?.status
+                                status: pro?.productdata?.status,
+                                availability:pro?.availability
                             }
                         }
                         else {
@@ -98,7 +102,8 @@ const Cart = ({ navigation }) => {
                                 name: pro?.name,
                                 image: pro?.image,
                                 type: type,
-                                quantity: quantity,
+                                // quantity: quantity >= minQty ? quantity : minQty,
+                                quantity: quantity ,
                                 stock: stock,
                                 delivery,
                                 commission: comm,
@@ -106,7 +111,8 @@ const Cart = ({ navigation }) => {
                                 attributes: pro?.variants?.attributs,
                                 stock_value,
                                 store: pro?.productdata?.store,
-                                status: pro?.productdata?.status
+                                status: pro?.productdata?.status,
+                                availability:pro?.availability
                             }
                         }
 
@@ -114,7 +120,8 @@ const Cart = ({ navigation }) => {
                             product['available'] = false;
                             finalProducts.push(product)
                         }
-
+                         
+                         
                         if (product?.status === "active") {
                             if (stock) {
                                 //products have stock
@@ -247,7 +254,7 @@ const Cart = ({ navigation }) => {
                     })
                     setCartItemsList(finalProducts)
 
-                    reactotron.log({ finalProducts })
+
                     // setSingleProduct(response?.data?.data)
                     // loadingg.setLoading(false)
                 })
@@ -326,15 +333,15 @@ const Cart = ({ navigation }) => {
         //     navigation.navigate('Checkout')
         // }
         const satisfiesConditions = cartItemsList.every((item) => {
-            return item.available === true && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
-          });
-          
+            return item.available === true && item.availability === true && item?.quantity >= item?.minimum_qty && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
+        });
+
 
 
         if (!satisfiesConditions) {
             Toast.show({
                 type: 'info',
-                text1: 'Please remove out of stocks products and continue'
+                text1: 'Please remove products with warnings',
             })
             return false;
         } else {

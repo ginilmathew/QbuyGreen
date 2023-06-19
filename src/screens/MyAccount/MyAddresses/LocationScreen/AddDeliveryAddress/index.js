@@ -141,7 +141,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
             >
                 <View style={styles.headerView}>
                     <View style={{ flexDirection: 'row', }}>
-                        {datas.map((item, index) =>
+                        {datas?.map((item, index) =>
                             <ChooseAddressType
                                 item={item}
                                 key={index}

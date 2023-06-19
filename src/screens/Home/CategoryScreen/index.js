@@ -72,7 +72,8 @@ const CategoryScreen = ({ route, navigation }) => {
         loadingContex.setLoading(true)
         let datas = {
             category_id: item?._id ? item?._id : item?.id,
-            coordinates: env === "dev" ? location : auth?.location
+            // coordinates: env === "dev" ? location : auth?.location
+            coordinates: auth?.location
         }
 
     reactotron.log({datas})
