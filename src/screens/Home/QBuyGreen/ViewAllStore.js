@@ -90,7 +90,7 @@ const ViewAllStore = ({ route, navigation }) => {
                 >
                     <FastImage
                         style={{ width: '90%', height: '80%', borderRadius: 10 }}
-                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : require('../../../Images/vegies.png')}
+                        source={{ uri: `${IMG_URL}${item?.store_logo}` }}
                         borderRadius={10}
                     />
                     <Text

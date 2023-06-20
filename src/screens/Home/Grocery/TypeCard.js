@@ -33,7 +33,7 @@ const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
         >
             <FastImage
                 style={{borderRadius: imageWidth/2, width: '100%', height: '100%' }}
-                source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../../Images/jeans.jpg')}
+                source={{ uri: `${IMG_URL}${item?.image}` }}
                 borderRadius={30}
             />
             

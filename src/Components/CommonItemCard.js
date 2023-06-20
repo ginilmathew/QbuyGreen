@@ -187,7 +187,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
             >
                 <FastImage
                     // source={{ uri: `${IMG_URL}${item?.product_image}` }}
-                    source={data?.product_image === null ? require('../Images/jeans.jpg') : { uri: `${IMG_URL}${data?.product_image}` }}
+                    source={{ uri: `${IMG_URL}${data?.product_image}` }}
                     style={{ height: height ? height : 110, width: width, justifyContent: 'flex-end', borderRadius: 16 }}
                     progressiveRenderingEnabled={true}
                 >

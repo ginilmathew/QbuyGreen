@@ -148,10 +148,10 @@ const MyAccount = ({ navigation }) => {
     })
 
     return (
-        <>
-            {active === 'fashion' || active === 'panda' ? <>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20 }}>Coming Soon!!!</Text></View>
-            </> :
+        // <>
+        //     {active === 'fashion' || active === 'panda' ? <>
+        //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20 }}>Coming Soon!!!</Text></View>
+        //     </> :
                 <>
                     <HeaderWithTitle title={'My Account'} noBack />
                     <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}>
@@ -262,8 +262,8 @@ const MyAccount = ({ navigation }) => {
                             label={'Are you sure to logout?'}
                         />
                     </ScrollView>
-                </>}
-        </>
+                </>
+        // </>
     )
 }
 

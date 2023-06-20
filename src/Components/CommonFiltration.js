@@ -4,7 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-const CommonFiltration = ({ margin }) => {
+const CommonFiltration = ({ margin, onChange }) => {
 
     const [isEnabled, setIsEnabled] = useState(false);
 
@@ -12,12 +12,30 @@ const CommonFiltration = ({ margin }) => {
 
 
     const toggleSwitch = useCallback(() =>{ 
+        setToggleCheckBox(true)
+        if(isEnabled){
+            onChange("veg")
+        }
+        else{
+            onChange("non-veg")
+        }
         setIsEnabled(previousState => !previousState)
-    })
+    }, [isEnabled])
 
     const clickCheckbox = useCallback(() =>{ 
+        if(toggleCheckBox){
+            onChange("all")
+        }
+        else{
+            if(isEnabled){
+                onChange("non-veg")
+            }
+            else{
+                onChange("veg")
+            }
+        }
         setToggleCheckBox(!toggleCheckBox)
-    })
+    }, [toggleCheckBox])
 
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', margin }}>

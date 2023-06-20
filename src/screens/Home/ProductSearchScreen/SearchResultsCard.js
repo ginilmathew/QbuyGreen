@@ -85,7 +85,7 @@ const SearchResultsCard = memo(({ item,setValue }) => {
             style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
             <Image
                 style={{ width: 60, height: 60, borderRadius: 30 }}
-                source={item?.product_image ? { uri: `${IMG_URL}${item?.product_image}` } : require('../../../Images/jeans.jpg')}
+                source={{ uri: `${IMG_URL}${item?.product_image}` }}
                 borderRadius={30}
             />
             <View style={{ marginLeft: 10, flex: 0.95 }}>

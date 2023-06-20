@@ -24,7 +24,7 @@ const FashionCatCard = ({item}) => {
         >
             <FastImage
                 style={{ width: width / 3.38, height: 100, borderRadius: 15, alignItems: 'center', justifyContent: 'center' }}
-                source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../Images/jeans.jpg')}
+                source={{ uri: `${IMG_URL}${item?.image}` }}
                 borderRadius={15}
             />
             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 11, color: '#23233C', marginTop: 3, marginLeft:3 }}>{item?.name}</Text>

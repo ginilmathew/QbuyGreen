@@ -121,7 +121,7 @@ const CategoryScreen = ({ route, navigation }) => {
             >
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../../Images/jeans.jpg')}
+                        source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}
                     />

@@ -1,19 +1,26 @@
-import React,{useState, useEffect, memo, useCallback} from 'react'
+import React,{useState, useEffect, memo, useCallback, useContext} from 'react'
 import { View, ImageBackground, StyleSheet,TouchableOpacity,useWindowDimensions, Text } from "react-native";
 import { useNavigation } from '@react-navigation/native'
 import Lottie from 'lottie-react-native';
+import FastImage from 'react-native-fast-image';
+import { IMG_URL } from '../../config/constants';
+import PandaContext from '../../contexts/Panda';
 
 
 
 const CategoriesCard = memo(({item}) => {
 
-    const {width} = useWindowDimensions()
+    const { width, fontScale, height } = useWindowDimensions()
+    const contextPanda = useContext(PandaContext)
+
+
+    let imageWidth = width/6
 
     const navigation = useNavigation();
 
     const onClick = useCallback(() => {
-        navigation.navigate('Category', {name : item?.name})
-    },[])
+        navigation.navigate('Category', {name : item?.name, mode: contextPanda.active, item : item })
+    }, [item])
 
     return (
         <TouchableOpacity 
@@ -23,10 +30,11 @@ const CategoriesCard = memo(({item}) => {
             <View
                 style={styles.lottieView}
             >
-                <Lottie 
-					source={item?.lottie} 
-					autoPlay
-				/>
+                <FastImage
+                    style={{borderRadius: imageWidth/2, width: '100%', height: '100%' }}
+                    source={{ uri: `${IMG_URL}${item?.image}` }}
+                    borderRadius={30}
+                />
             </View>
             <Text style={styles.itemText}>{item?.name}</Text>
         </TouchableOpacity>

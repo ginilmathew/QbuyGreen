@@ -14,28 +14,28 @@ const OurFarms = ({navigation}) => {
     const {width} = useWindowDimensions()
 
 
-    farm = [
-        {
-            _id: '1',
-            image : require('../../../Images/farm1.jpeg')
-        },
-        {
-            _id: '2',
-            image : require('../../../Images/farm2.jpeg')
+    // farm = [
+    //     {
+    //         _id: '1',
+    //         image : require('../../../Images/farm1.jpeg')
+    //     },
+    //     {
+    //         _id: '2',
+    //         image : require('../../../Images/farm2.jpeg')
 
-        },
-        {
-            _id: '3',
-            image : require('../../../Images/store2.jpeg')
+    //     },
+    //     {
+    //         _id: '3',
+    //         image : require('../../../Images/store2.jpeg')
 
-        },
-        {
-            _id: '4',
-            image : require('../../../Images/tomato.jpeg')
+    //     },
+    //     {
+    //         _id: '4',
+    //         image : require('../../../Images/tomato.jpeg')
 
-        },
+    //     },
      
-    ]
+    // ]
 
     return (
         <>
@@ -70,7 +70,7 @@ const OurFarms = ({navigation}) => {
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop:10}}>
 
-                    {farm?.map( item => <Image key={item?._id} source={item?.image} style={{width: width/2.5, height:100, borderRadius:15, marginRight:10}}/>)}
+                    {/* {farm?.map( item => <Image key={item?._id} source={item?.image} style={{width: width/2.5, height:100, borderRadius:15, marginRight:10}}/>)} */}
 
                 </ScrollView>
 
