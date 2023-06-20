@@ -230,7 +230,7 @@ const CartItemCard = ({ item, index, refreshCart }) => {
             </View>
 
             <TouchableOpacity 
-            onPress={removeItem}
+            onPress={deleteItem}
             style={{marginLeft:5,backgroundColor:'red' ,width:15,height:15,borderRadius:7.5,justifyContent:'center',alignItems:'center',position:'absolute',right:5,top:10}}>
                              <Text style={{color:'white',fontSize:12,fontWeight:'bold'}}>X</Text>
                         </TouchableOpacity>

@@ -18,12 +18,12 @@ const HotelCard = ({ heights, item }) => {
             style={{ width: width/2.2,height:200 }}
         >
             <View>
-                <FastImage
+                {/* <FastImage
                     source={item?.image ? item?.image : require('../../../Images/hotel.jpeg')}
                     style={{ height: 170, width:width/2.2, justifyContent: 'flex-end', borderRadius:20 }}
                 >
                     {/* <CommonRating rating={3.8} position={'absolute'} bottom={10} left={5} starSize={12}/> */}
-                </FastImage>
+                {/* </FastImage> */}
                 <Text
                     style={styles.nameText}
                 >{item?.hotel}</Text>

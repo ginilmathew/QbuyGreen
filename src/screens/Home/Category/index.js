@@ -135,11 +135,11 @@ const Category = ({ route }) => {
                     >
                         {fooodItems.map((item) =>
                             <TouchableOpacity key={item?._id} style={{ alignItems: 'center', width: width / 4.5 }}>
-                                <FastImage
+                                {/* <FastImage
                                     style={{ width: 60, height: 60, borderRadius: 30 }}
                                     source={require('../../../Images/biriyani.jpeg')}
                                     borderRadius={30}
-                                />
+                                /> */}
                                 <Text style={styles.foodName}>{item?.name}</Text>
                             </TouchableOpacity>
                         )}

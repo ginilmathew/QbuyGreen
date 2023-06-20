@@ -119,24 +119,24 @@ const QbuyPanda = ({ navigation }) => {
 
 
 
-    const images = [
-        {
-            id: "1",
-            img: require('../../Images/ads.png')
-        },
-        {
-            id: "2",
-            img: require('../../Images/image1.jpeg')
-        },
-        {
-            id: "3",
-            img: require('../../Images/image2.jpeg')
-        },
-        {
-            id: "4",
-            img: require('../../Images/image3.jpeg')
-        }
-    ]
+    // const images = [
+    //     {
+    //         id: "1",
+    //         img: require('../../Images/ads.png')
+    //     },
+    //     {
+    //         id: "2",
+    //         img: require('../../Images/image1.jpeg')
+    //     },
+    //     {
+    //         id: "3",
+    //         img: require('../../Images/image2.jpeg')
+    //     },
+    //     {
+    //         id: "4",
+    //         img: require('../../Images/image3.jpeg')
+    //     }
+    // ]
 
 
     const getHomedata = async () => {
