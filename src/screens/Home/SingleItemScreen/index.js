@@ -202,10 +202,11 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const addToCart = useCallback(async () => {
 
-        cartContext.addToCart(item, selectedVariant)
+        //cartContext.addToCart(item, selectedVariant)
+        cartContext.addLocalCart(item, selectedVariant)
 
 
-    }, [selectedVariant, cart?.cart, item])
+    }, [selectedVariant, cart?.cart, item, cart?.products])
 
 
 

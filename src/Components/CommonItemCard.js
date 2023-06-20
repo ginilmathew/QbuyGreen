@@ -79,14 +79,14 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
         // }
         if(!data?.variant){
-            cartContext?.addToCart(data)
+            cartContext?.addLocalCart(data)
         }
         else{
             navigation.navigate('SingleItemScreen', { item: data })
         }
         
         //navigation.navigate('SingleItemScreen', { item: item })
-    }, [data, cartContext.cart])
+    }, [data, cartContext.cart, cartContext?.products])
 
 
 

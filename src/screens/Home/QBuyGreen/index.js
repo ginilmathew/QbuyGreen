@@ -193,14 +193,14 @@ const QBuyGreen = ({ navigation }) => {
 
     const CarouselCardItem = ({ item, index }) => {
         return (
-            <View style={{ alignItems: 'center', marginTop: 20 }} >
+            <View style={{ alignItems: 'center', marginTop: 20, width: '100%', height: '85%' }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
-                    style={{ height: height / 4, width: width - 35, borderRadius: 20 }}
-                // resizeMode='contain'
+                    style={{ height: '100%', width: '95%', borderRadius: 20 }}
+                    resizeMode='cover'
                 >
                 </FastImage>
-            </View>
+           </View>
         )
     }
 
@@ -218,7 +218,7 @@ const QBuyGreen = ({ navigation }) => {
                         <Carousel
                             loop
                             width={width}
-                            height={height/4}
+                            height={height/5}
                             autoPlay={true}
                             data={slider}
                             scrollAnimationDuration={1000}

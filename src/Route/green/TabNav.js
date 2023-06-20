@@ -80,8 +80,8 @@ const TabNav = () => {
             case 'cart':
                 return (
                     <>
-                    {cartContext?.cart?.product_details?.length > 0 && <View style={{ height: 15, width: 15, borderRadius: 7.5, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 15, right: 20,zIndex:1 }}>
-                        <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{cartContext?.cart?.product_details?.length}</Text>
+                    {cartContext?.products?.length > 0 && <View style={{ height: 15, width: 15, borderRadius: 7.5, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 15, right: 20,zIndex:1 }}>
+                        <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{cartContext?.products?.reduce((partialSum, a) => partialSum + a.quantity, 0)}</Text>
                     </View>}
                     <AntDesign
                         name={"shoppingcart"}

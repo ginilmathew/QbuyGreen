@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform, StyleSheet, ToastAndroid } from 'react-native'
+import { AppState, PermissionsAndroid, Platform, StyleSheet, ToastAndroid } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -41,6 +41,25 @@ const Route = () => {
     useEffect(() => {
         getCurrentLocation()
     }, [])
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', nextAppState => {
+        //   if (
+        //     appState.current.match(/inactive|background/) &&
+        //     nextAppState === 'active'
+        //   ) {
+        //     console.log('App has come to the foreground!');
+        //   }
+    
+        //   appState.current = nextAppState;
+        //   setAppStateVisible(appState.current);
+          reactotron.log('AppState', nextAppState, cartContext.cart);
+        });
+    
+        return () => {
+          subscription.remove();
+        };
+      }, [cartContext.cart]);
 
     const getCurrentLocation = useCallback(async () => {
         if (Platform.OS === 'ios') {
