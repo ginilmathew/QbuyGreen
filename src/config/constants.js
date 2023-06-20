@@ -1,4 +1,4 @@
-export const env = "dev"
+export const env = "testing"
 
 const URLS = {
     live: "https://apiqbuygreen.diginestsolutions.in/public/api/",
@@ -12,7 +12,7 @@ const IMG_BASEPATH = {
     dev: "https://apiqbuypanda.diginestsolutions.in/public/"
 }
 
-export const mode = "green"
+export const mode = "panda"
 
 
 export const BASE_URL = URLS[env]

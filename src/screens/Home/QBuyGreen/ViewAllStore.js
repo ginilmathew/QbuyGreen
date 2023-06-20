@@ -30,7 +30,8 @@ const ViewAllStore = ({ route, navigation }) => {
         loadingg.setLoading(true)
         let datas = {
             type: contextPanda.active,
-            coordinates: env === "dev" ? location : userContext?.location
+            // coordinates: env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
         }
         await customAxios.post('customer/store-list', datas).then((res) => {
             setStoreList(res?.data?.data)
@@ -89,7 +90,7 @@ const ViewAllStore = ({ route, navigation }) => {
                 >
                     <FastImage
                         style={{ width: '90%', height: '80%', borderRadius: 10 }}
-                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : require('../../../Images/vegies.png')}
+                        source={{ uri: `${IMG_URL}${item?.store_logo}` }}
                         borderRadius={10}
                     />
                     <Text

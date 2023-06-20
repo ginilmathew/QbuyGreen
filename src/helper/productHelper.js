@@ -1,12 +1,17 @@
 import moment from "moment";
 import { min, max } from 'lodash'
+import reactotron from "../ReactotronConfig";
 
 export function getProduct(product){
+
+
+
     let { _id, product_id, name, description, store, franchisee, weight, type, image, stock, minimum_qty, product_image, order_count, is_wishlist, viewCount, attributes, video_link  } = product
 
     let variant = product?.variants?.length > 0 ? true : false
     let minQty = minimum_qty ? parseFloat(minimum_qty) : 1
     let vendorCommission = product?.vendors?.additional_details?.commission ? parseFloat(product?.vendors?.additional_details?.commission) : 0
+
 
 
     let newProduct = {
@@ -27,7 +32,8 @@ export function getProduct(product){
         variant,
         viewCount,
         attributes: attributes,
-        video_link
+        video_link,
+       
     }
 
     
@@ -192,11 +198,12 @@ export function getProduct(product){
         variants.map(vari => {
             if(vari?.available){
                 if(vari?.price){
-                    priceList.push(vari?.price)
+                    priceList.push(parseFloat(vari?.price))
                 }
                 
             }
         })
+        
         if(priceList?.length > 1){
             newProduct['price'] = `${parseFloat(min(priceList)).toFixed(2)}-${parseFloat(max(priceList)).toFixed(2)}`
             newProduct['available'] = true

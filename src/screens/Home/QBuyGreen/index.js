@@ -47,6 +47,7 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
+    reactotron.log({ userContext: userContext?.location })
     let userData = userContext?.userData
 
 
@@ -68,19 +69,19 @@ const QBuyGreen = ({ navigation }) => {
     useEffect(() => {
         //requestUserPermission()
     }, [])
-    
+
 
     // async function requestUserPermission() {
-        
+
     //     if(Platform.OS === 'android'){
     //         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     //     }
-        
+
     //     const authStatus = await messaging().requestPermission();
     //     const enabled =
     //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-      
+
     //     if (enabled) {
     //       console.log('Authorization status:', authStatus);
     //     }
@@ -160,13 +161,14 @@ const QBuyGreen = ({ navigation }) => {
 
         let datas = {
             type: "green",
-            coordinates: env === "dev" ? location : userContext?.location
+            // coordinates: env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 setHomeData(response?.data?.data)
 
-                reactotron.log('API CALLED')
+
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
@@ -174,7 +176,10 @@ const QBuyGreen = ({ navigation }) => {
 
             })
             .catch(async error => {
-                console.log(error)
+                if (error.includes("Unauthenticated")) {
+                    navigation.navigate("Login")
+                }
+
                 Toast.show({
                     type: 'error',
                     text1: error
@@ -299,15 +304,15 @@ const QBuyGreen = ({ navigation }) => {
     const renderProducts = ({ item, index }) => {
         return (
             <View key={index} style={{ flex: 0.5, justifyContent: 'center' }}>
-            <CommonItemCard
-                item={item}
-                key={item?._id}
-                width={width / 2.2}
-                height={height/3.6}
-                mr={5}
-                ml={8}
-                mb={15}
-            />
+                <CommonItemCard
+                    item={item}
+                    key={item?._id}
+                    width={width / 2.2}
+                    height={height / 3.6}
+                    mr={5}
+                    ml={8}
+                    mb={15}
+                />
             </View>
         )
     }
@@ -325,7 +330,7 @@ const QBuyGreen = ({ navigation }) => {
                         <RefreshControl refreshing={loader} onRefresh={getHomedata} />
                     }>
                     {homeData?.map(home => renderItems(home))}
-                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'}  ml={15} mb={10} mt={20} />}
+                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} ml={15} mb={10} mt={20} />}
                     <FlatList
                         data={availablePdt}
                         keyExtractor={(item, index) => index}

@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, Button, View, Alert, PermissionsAndroid, Platform, useWindowDimensions, TouchableOpacity } from 'react-native'
+import { ScrollView, StyleSheet, Text, Button, View, Alert, PermissionsAndroid, Platform, useWindowDimensions, TouchableOpacity, Linking } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Foundation from 'react-native-vector-icons/Foundation'
@@ -10,11 +10,24 @@ import PandaContext from '../../../../contexts/Panda'
 import Geolocation, { getCurrentPosition } from 'react-native-geolocation-service';
 import axios from 'axios'
 import AddressContext from '../../../../contexts/Address'
+import reactotron from 'reactotron-react-native'
+import CartContext from '../../../../contexts/Cart'
+import AuthContext from '../../../../contexts/Auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const LocationScreen = ({ route, navigation }) => {
 
+    const { mode } = route.params
+
+    reactotron.log({ mode })
+
+    const homeNavigationbasedIndex = navigation.getState()
+    reactotron.log({ homeNavigationbasedIndex })
+
+    const cartContext = useContext(CartContext)
     const contextPanda = useContext(PandaContext)
     // const loadingContex = useContext(LoaderContext);
+    const userContext = useContext(AuthContext);
     const addressContext = useContext(AddressContext)
 
 
@@ -23,7 +36,7 @@ const LocationScreen = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
 
     const mapRef = useRef()
-    console.log("route", route?.params);
+
 
     const [location, setLocation] = useState({ latitude: editAddress?.area?.latitude || 0, longitude: editAddress?.area?.longitude || 0 })
 
@@ -53,7 +66,7 @@ const LocationScreen = ({ route, navigation }) => {
             return true;
         }
         if (status === 'denied') {
-            Alert.alert('Location permission denied');
+            //Alert.alert('Location permission denied');
         }
         if (status === 'disabled') {
             Alert.alert(
@@ -69,35 +82,65 @@ const LocationScreen = ({ route, navigation }) => {
     };
 
     useEffect(() => {
-        fetchData().then(() => {
-            Geolocation.getCurrentPosition(
-                position => {
-                    getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
-                    setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude })
-                },
-                error => {
-                    console.log(error.code, error.message)
-                },
-                {
-                    showLocationDialog: true,
-                    enableHighAccuracy: true,
-                    timeout: 20000,
-                    maximumAge: 0
-                }
-            )
-        })
-    }, [])
 
-    const onConfirm = useCallback(() => {
-
-        let locationData = {
-            location: address,
-            city: city,
-            latitude: location?.latitude,
-            longitude: location?.longitude,
+        if (homeNavigationbasedIndex?.index !== 1) {
+            fetchData().then(() => {
+                Geolocation.getCurrentPosition(
+                    position => {
+                        getAddressFromCoordinates(addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : position?.coords?.latitude, addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : position?.coords?.longitude);
+                        setLocation({ latitude: addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : position.coords.latitude, longitude: addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : position.coords.longitude })
+                    },
+                    error => {
+                        console.log(error.code, error.message)
+                    },
+                    {
+                        showLocationDialog: true,
+                        enableHighAccuracy: true,
+                        timeout: 20000,
+                        maximumAge: 0
+                    }
+                )
+            })
         }
 
-        navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
+    }, [homeNavigationbasedIndex?.index])
+
+    const onConfirm = useCallback(async () => {
+        reactotron.log('text')
+        reactotron.log({ home: homeNavigationbasedIndex?.index })
+        //below code for checking the location is denied condition
+        if (homeNavigationbasedIndex?.index === 1 && mode !== "currentlocation") {
+            let value = {
+                area: {
+                    location: addressContext?.currentAddress?.location,
+                    address: addressContext?.currentAddress?.city
+                }
+            }
+            //cartContext.setDefaultAddress(value);
+            userContext.setLocation([addressContext?.currentAddress?.latitude, addressContext?.currentAddress?.longitude]);
+            const token = await AsyncStorage.getItem("token");
+            if (token) {
+                navigation.navigate('green')
+            } else {
+                navigation.navigate('Login')
+            }
+
+        } else {
+            reactotron.log({ addressContext: addressContext?.currentAddress })
+            let locationData = {
+                location: addressContext?.currentAddress?.location ? addressContext?.currentAddress?.location : address,
+                city: addressContext?.currentAddress?.city ? addressContext?.currentAddress?.city : city,
+                latitude: addressContext?.currentAddress?.latitude ? addressContext?.currentAddress?.latitude : location?.latitude,
+                longitude: addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : location?.longitude,
+            }
+
+            reactotron?.log({ locationData })
+            navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
+        }
+
+
+
+
     }, [location, address, city, addressContext?.currentAddress, addressContext?.location])
 
     const addNewAddress = useCallback(() => {
@@ -107,12 +150,21 @@ const LocationScreen = ({ route, navigation }) => {
     const myApiKey = "Key Received from Google map"
 
     function getAddressFromCoordinates(latitude, longitude) {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
             setAddress(response?.data?.results[0]?.formatted_address)
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             setCity(locality?.long_name)
             // addressContext?.setCurrentAddress(null)
             // addressContext?.setLocation(null)
+            let value = {
+                latitude: latitude,
+                longitude: longitude,
+                location: locality?.long_name,
+                address: response?.data?.results[0]?.formatted_address
+
+            }
+            // addressContext.setCurrentAddress(value)
+            reactotron.log({ value })
         })
             .catch(err => {
             })
@@ -125,7 +177,9 @@ const LocationScreen = ({ route, navigation }) => {
 
         getAddressFromCoordinates(coordinates?.latitude, coordinates?.longitude)
         setLocation({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
+        addressContext.setCurrentAddress({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
         //setLocation(region)
+        reactotron.log(addressContext?.currentAddress)
     }
 
     return (
@@ -161,7 +215,7 @@ const LocationScreen = ({ route, navigation }) => {
                 <View style={{ flexDirection: 'row', }}>
                     <Foundation name={'target-two'} color='#FF0000' size={23} marginTop={7} />
                     <View style={{ flex: 0.9, marginLeft: 7, }}>
-                        <CommonTexts label={addressContext?.currentAddress ? addressContext?.currentAddress?.city : city} fontSize={22} />
+                        <CommonTexts label={addressContext?.currentAddress?.city ? addressContext?.currentAddress?.city : city} fontSize={22} />
                         <Text
                             style={{
                                 fontFamily: 'Poppins-Regular',
@@ -169,7 +223,7 @@ const LocationScreen = ({ route, navigation }) => {
                                 fontSize: 11,
                                 marginTop: -5
                             }}
-                        >{addressContext?.currentAddress ? addressContext?.currentAddress?.location : address}</Text>
+                        >{addressContext?.currentAddress?.location ? addressContext?.currentAddress?.location : address}</Text>
                     </View>
                     <TouchableOpacity
                         onPress={addNewAddress}

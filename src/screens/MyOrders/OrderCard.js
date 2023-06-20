@@ -18,6 +18,7 @@ import { env } from '../../config/constants'
 
 const OrderCard = memo(({ item, refreshOrder }) => {
 
+
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const loadingg = useContext(LoaderContext)
@@ -93,7 +94,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             
             
         }).catch((err) => {
-            console.log("PAYTM Error =>", JSON.stringify(err));
+            // console.log("PAYTM Error =>", JSON.stringify(err));
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
             let data = {
                 STATUS: 'TXN_FAILURE',
@@ -129,14 +130,18 @@ const OrderCard = memo(({ item, refreshOrder }) => {
         let data = {
             id: item?._id
         }
-        await customAxios.post(`customer/order/paynow`, data)
+        await customAxios.post(`customer/order/paynow`,data)
             .then(async response => {
                 const { data } = response
-                if (data?.status) {
-                    payWithPayTM(data?.data)
-                } else {
-                    Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
-                }
+                 reactotron.log({response})
+                reactotron.log({data:data?.data})
+                cartContext.setCart(data?.data)
+                navigation.navigate('cart')
+                // if (data?.status) {
+                //     payWithPayTM(data?.data)
+                // } else {
+                //     Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
+                // }
                 loadingg.setLoading(false)
             })
             .catch(async error => {
@@ -263,7 +268,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 
                 }
 
-                {item?.payment_status === 'pending' && <CustomButton
+                {(item?.status !==  'cancelled' && item?.payment_status === 'pending') && <CustomButton
                     onPress={payAmount}
                     label={'Pay Now'}
                     bg={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}

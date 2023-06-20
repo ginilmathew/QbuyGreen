@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator,RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import CommonTexts from '../../../Components/CommonTexts'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
@@ -47,8 +47,8 @@ const StoreScreen = ({ route, navigation }) => {
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
 
-   reactotron.log({storeDetails})
 
+    reactotron.log({ storeDetails })
     const [selected, setSelected] = useState(false)
 
     useEffect(() => {
@@ -59,8 +59,10 @@ const StoreScreen = ({ route, navigation }) => {
         loadingContex.setLoading(true)
 
         let data = {
-            vendor_id: item?._id ?  item?._id : storeId,
-            coordinates: env === "dev" ? location : userContext?.location
+            vendor_id: item?._id ? item?._id : storeId,
+            // coordinates: env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
+
         }
 
         await customAxios.post(`customer/store`, data)
@@ -79,39 +81,39 @@ const StoreScreen = ({ route, navigation }) => {
 
 
 
-  
-    
+
+
 
     const backToCart = useCallback(() => {
         navigation.navigate('Cart')
-    },[])
+    }, [])
 
     const backToCheckout = useCallback(() => {
         navigation.navigate('Checkout')
-    },[])
+    }, [])
 
 
     return (
         <>
-            <HeaderWithTitle title={mode === 'store' ? item?.store_name : name} onPressBack={mode === 'cartItem' ? backToCart : mode === 'checkoutItem' ? backToCheckout : '' } />
+            <HeaderWithTitle title={mode === 'store' ? item?.store_name : name} onPressBack={mode === 'cartItem' ? backToCart : mode === 'checkoutItem' ? backToCheckout : ''} />
             <ScrollView
                 style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
-                    <RefreshControl refreshing={ loadingContex.loading} onRefresh={getStoreDetails} />
+                    <RefreshControl refreshing={loadingContex.loading} onRefresh={getStoreDetails} />
                 }>
-            
+
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : storeDetails?.store_logo ?  { uri: `${IMG_URL}${storeDetails?.store_logo}` } : require('../../../Images/storeImage.jpg')}
+                        source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : storeDetails?.store_logo ? { uri: `${IMG_URL}${storeDetails?.store_logo}` } : require('../../../Images/storeImage.jpg')}
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}
                     >
-                        {(storeDetails?.start_time || storeDetails?.end_time) &&  <View 
-                            style={{backgroundColor:'#8ED053', width:150, height:20, borderBottomRightRadius:10, borderTopLeftRadius:10, alignSelf:'flex-end',alignItems:'center', justifyContent:'center'}}
+                        {((storeDetails?.start_time && storeDetails?.start_time !== 'Invalid date' && storeDetails?.start_time !== "null") || (storeDetails?.end_time && storeDetails?.end_time !== "Invalid date" && storeDetails?.end_time !== "null")) && <View
+                            style={{ backgroundColor: '#8ED053', width: 150, height: 20, borderBottomRightRadius: 10, borderTopLeftRadius: 10, alignSelf: 'flex-end', alignItems: 'center', justifyContent: 'center' }}
                         >
-                            <CommonTexts label={`${moment(storeDetails?.start_time, "hh:mm a").format('hh:mm a')} - ${moment(storeDetails?.end_time, "hh:mm a").format('hh:mm a')}`} color={'#fff'} fontSize={11}/>
+                            <CommonTexts label={`${moment(storeDetails?.start_time, "hh:mm a").format('hh:mm a')} - ${moment(storeDetails?.end_time, "hh:mm a").format('hh:mm a')}`} color={'#fff'} fontSize={11} />
                         </View>}
                     </FastImage>
                     <StoreAddressCard address={item?.store_address ? item?.store_address : storeDetails?.store_address} />
@@ -153,11 +155,11 @@ export default StoreScreen
 const makeStyles = height => StyleSheet.create({
     mainImage: {
         width: '100%',
-        height: height/4,
+        height: height / 4,
         alignSelf: 'center',
         marginTop: 10,
         borderRadius: 15,
-        justifyContent:'flex-end'
+        justifyContent: 'flex-end'
     },
     description: {
         fontFamily: 'Poppins-Regular',

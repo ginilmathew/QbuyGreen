@@ -1,5 +1,5 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid } from 'react-native'
-import React, { useCallback, useContext, useState } from 'react'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, RefreshControl } from 'react-native'
+import React, { useCallback, useContext, useState, useEffect } from 'react'
 import ImageSlider from '../../Components/ImageSlider';
 import CustomSearch from '../../Components/CustomSearch';
 import { useForm } from "react-hook-form";
@@ -20,6 +20,14 @@ import TypeCard from './Grocery/TypeCard';
 import CommonItemCard from '../../Components/CommonItemCard';
 import CommonFiltration from '../../Components/CommonFiltration';
 import SearchBox from '../../Components/SearchBox';
+import AuthContext from '../../contexts/Auth';
+import LoaderContext from '../../contexts/Loader';
+import SplashScreen from 'react-native-splash-screen';
+import customAxios from '../../CustomeAxios';
+import Carousel from 'react-native-reanimated-carousel';
+import FastImage from 'react-native-fast-image';
+import { IMG_URL } from '../../config/constants';
+import reactotron from 'reactotron-react-native';
 
 const QbuyPanda = ({ navigation }) => {
 
@@ -27,9 +35,28 @@ const QbuyPanda = ({ navigation }) => {
     // let grocery = contextPanda.greenPanda
     // let fashion = contextPanda.pinkPanda
 
+    const [homeData, setHomeData] = useState([])
+    const [tags, setTags] = useState([])
+    const [category, setCategory] = useState([])
+    const [recentLists, setRecentLists] = useState([])
+    const [pandaSuggestions, setPandaSuggestions] = useState([])
+    const [products, setProducts] = useState([])
+    const [sliders, setSliders] = useState([])
+
     const [selected, setSelected] = useState('')
 
-    const { width } = useWindowDimensions()
+    const userContext = useContext(AuthContext)
+    const loadingg = useContext(LoaderContext)
+    const [filter, setFilter] = useState('')
+
+
+    reactotron.log({ recentLists, pandaSuggestions, products })
+
+    
+
+    //let loader = loadingg?.loading
+
+    const { width, height } = useWindowDimensions()
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -39,222 +66,56 @@ const QbuyPanda = ({ navigation }) => {
         resolver: yupResolver(schema)
     });
 
-    let datas = [
-        {
-            _id: '1',
-            name: 'Biriyani'
-        },
-        {
-            _id: '2',
-            name: 'Fresh Meat'
-        },
-        {
-            _id: '3',
-            name: 'Lunch Box'
-        },
-        {
-            _id: '4',
-            name: 'Veggies'
-        },
-        {
-            _id: '5',
-            name: 'Farm Pick'
-        },
 
-    ]
-
-    let categories = [
-        {
-            _id: '1',
-            name: 'Vegetables',
-            lottie: require('../../Lottie/veg.json'),
-            type: 'grocery'
-        },
-        {
-            _id: '2',
-            name: 'Fruits',
-            lottie: require('../../Lottie/fruits.json'),
-            type: 'grocery'
-        },
-        {
-            _id: '3',
-            name: 'Fish,Meat',
-            lottie: require('../../Lottie/meat.json'),
-            type: 'grocery'
-        },
-        {
-            _id: '4',
-            name: 'Home Chef',
-            lottie: require('../../Lottie/chef.json'),
-            type: 'grocery'
-        },
-        {
-            _id: '5',
-            name: 'Grocery',
-            lottie: require('../../Lottie/grocery.json'),
-            type: 'grocery'
-        },
-        {
-            _id: '6',
-            name: 'Restaurant',
-            lottie: require('../../Lottie/rest.json'),
-            type: 'restuarant'
-        },
-        {
-            _id: '7',
-            name: 'Snacks',
-            lottie: require('../../Lottie/pop.json'),
-            type: 'grocery'
-        },
-        {
-            _id: '8',
-            name: 'Pet foods',
-            type: 'grocery',
-            lottie: require('../../Lottie/petFood.json'),
-        },
-    ]
-
-    let recentView = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
-
-    let pandaSugg = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
-
-
-    let trend = [
-        {
-            _id: '1',
-            name: 'Biriyani',
-            rate: 250,
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Masal Dosha',
-            rate: 90,
-            hotel: 'Aryaas Veg'
-        },
-        {
-            _id: '3',
-            name: 'Veg Biriyani',
-            rate: 150,
-            hotel: 'Aryaas Center'
-        },
-        {
-            _id: '4',
-            name: 'Fried Rice',
-            rate: 180,
-            hotel: 'Zam Zam'
-
-
-        },
-        {
-            _id: '5',
-            name: 'Egg Biriyani',
-            rate: 130,
-            hotel: 'KH'
-        },
-
-    ]
+    useEffect(() => {
+      getHomedata()
+    }, [])
 
 
 
-    let menus = [
-        {
-            _id: '1',
-            name: 'Chicken Biriyani',
-            rate: 260,
-            openCloseTag: 'Closes Soon',
-            hotel: 'MRA'
-        },
-        {
-            _id: '2',
-            name: 'Chicken Mandhi',
-            rate: 380,
-            hotel: 'Zam Zam'
-        },
-        {
-            _id: '3',
-            name: 'Chicken Fried Rice',
-            rate: 200,
-            hotel: 'Al-Saj'
-        },
-        {
-            _id: '4',
-            name: 'Mutton Biriyani',
-            openCloseTag: 'Opens Soon',
-            rate: 350,
-            hotel: 'Le-Arabia'
-        },
+    useEffect(() => {
+        if(filter){
+            let recents = homeData?.find(home => home?.type === "recentlyviewed")
+            if(recents?.data?.length > 0){
+                if(filter === "all"){
+                    setRecentLists(recents?.data)
+                }
+                else{
+                    setRecentLists(recents?.data?.filter(prod => prod?.category_type === filter))
+                }
 
+                
+                
+            }
+            
 
-    ]
+            let pandaSuggestions = homeData?.find(home => home?.type === "suggested_products")
+            if(pandaSuggestions?.data?.length > 0){
+                if(filter === "all"){
+                    setPandaSuggestions(pandaSuggestions?.data)
+                }
+                else{
+                    setPandaSuggestions(pandaSuggestions?.data?.filter(prod => prod?.category_type === filter))
+                }
+                
+            }
+
+            let products = homeData?.find(home => home?.type === "available_products")
+            if(products?.data?.length > 0){
+                if(filter === "all"){
+                    setProducts(products?.data)
+                }
+                else{
+                    setProducts(products?.data?.filter(prod => prod?.category_type === filter))
+                }
+                
+            }
+        }
+    }, [filter])
+    
+    
+
+   
 
 
 
@@ -278,6 +139,60 @@ const QbuyPanda = ({ navigation }) => {
     ]
 
 
+    const getHomedata = async () => {
+
+        loadingg.setLoading(true)
+
+        let datas = {
+            type: "panda",
+            // coordinates: env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
+        }
+        await customAxios.post(`customer/home`, datas)
+            .then(async response => {
+                setHomeData(response?.data?.data)
+
+                let tags = response?.data?.data?.find(home => home?.type === "tags")
+                setTags(tags?.data)
+
+                let categories = response?.data?.data?.find(home => home?.type === "categories")
+                setCategory(categories?.data)
+
+
+                let recents = response?.data?.data?.find(home => home?.type === "recentlyviewed")
+                setRecentLists(recents?.data)
+
+                let pandaSuggestions = response?.data?.data?.find(home => home?.type === "suggested_products")
+                setPandaSuggestions(pandaSuggestions?.data)
+
+                let products = response?.data?.data?.find(home => home?.type === "available_products")
+                setProducts(products?.data)
+
+                let sliders = response?.data?.data?.find(home => home?.type === "sliders")
+                setSliders(sliders?.data)
+                
+
+
+                loadingg.setLoading(false)
+                setTimeout(() => {
+                    SplashScreen.hide()
+                }, 500);
+
+            })
+            .catch(async error => {
+                if (error.includes("Unauthenticated")) {
+                    navigation.navigate("Login")
+                }
+
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+                loadingg.setLoading(false)
+            })
+    }
+
+
 
     const pickupDropClick = useCallback(() => {
         navigation.navigate('PickupAndDropoff')
@@ -299,43 +214,72 @@ const QbuyPanda = ({ navigation }) => {
         navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
 
+    const CarouselCardItem = ({ item, index }) => {
+        return (
+            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
+                <FastImage
+                    source={{ uri: `${IMG_URL}${item?.original_image}` }}
+                    style={{ height: '100%', width: '95%', borderRadius: 20 }}
+                    resizeMode='cover'
+
+                >
+                </FastImage>
+            </View>
+        )
+    }
+
     return (
         <>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 20 }}>Coming Soon!!!</Text>
-            </View>
+            </View> */}
 
-            {/* <Header onPress={onClickDrawer} /> */}
-            {/* <ScrollView style={{ flex: 1, backgroundColor: '#fff' }} > */}
-            {/* 
-                <ImageSlider datas={images} mt={5} /> */}
-            {/* 
+            <Header onPress={onClickDrawer} />
+            <ScrollView 
+                style={{ flex: 1, backgroundColor: '#fff' }} 
+                refreshControl={
+                    <RefreshControl refreshing={loadingg.loading} onRefresh={getHomedata} />
+                }
+            >
+            
+                {sliders?.length > 0 && <View>
+                        <Carousel
+                            loop
+                            width={width}
+                            height={height / 5}
+                            autoPlay={true}
+                            data={sliders}
+                            scrollAnimationDuration={1000}
+                            renderItem={CarouselCardItem}
+                        />
+                    </View>}
+            
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={styles.foodTypeView}
                 >
-                    {datas.map((item, index) =>
+                    {tags?.map((item, index) =>
                     (<CommonItemSelect
                         item={item} key={index}
                         selected={selected}
                         setSelected={setSelected}
                     />)
                     )}
-                </ScrollView> */}
+                </ScrollView>
 
-            {/* <SearchBox onPress={onSearch} /> */}
+            <SearchBox onPress={onSearch} />
 
 
-            {/* <NameText userName={'Shaan Johnson'} mb={20} /> */}
-            {/* 
+            <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
+            
                 <View style={styles.categoryView}>
-                    {categories?.map((item) => (
+                    {category?.map((item) => (
                         <CategoriesCard key={item?._id} item={item} />
                     ))}
-                </View> */}
+                </View>
 
-            {/* <View style={styles.pickupReferContainer}>
+            <View style={styles.pickupReferContainer}>
                     <PickDropAndReferCard
                         onPress={pickupDropClick}
                         lotties={require('../../Lottie/deliveryBike.json')}
@@ -348,28 +292,28 @@ const QbuyPanda = ({ navigation }) => {
                         label={'Refer A Restaurant'}
                         lottieFlex={0.5}
                     />
-                </View> */}
+                </View>
 
-            {/* <View style={styles.offerView}> */}
-            {/* <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text> */}
-            {/* <OfferText /> */}
+            <View style={styles.offerView}>
+            <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+            <OfferText />
             {/* <CountDownComponent/> */}
-            {/* <Text style={styles.offerValText}>{'Offer valid till period!'}</Text> */}
-            {/* </View> */}
+            <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+            </View>
 
-            {/* <View
+            <View
                     style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginBottom: 5, justifyContent: 'space-between', marginRight: 5 }}
                 >
                     <CommonTexts label={'Recently Viewed'} fontSize={13} />
-                    <CommonFiltration />
-                </View> */}
+                    <CommonFiltration onChange={setFilter} />
+                </View>
 
-            {/* <ScrollView
+            <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
                 >
-                    {recentView.map((item) =>
+                    {recentLists.map((item) =>
                         <CommonItemCard
                             key={item?._id}
                             item={item}
@@ -377,15 +321,15 @@ const QbuyPanda = ({ navigation }) => {
                             marginHorizontal={5}
                         />
                     )}
-                </ScrollView> */}
+                </ScrollView>
 
-            {/* <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} /> */}
-            {/* <ScrollView
+            <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
+            <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
                 >
-                    {pandaSugg.map((item) =>
+                    {pandaSuggestions.map((item) =>
                         <CommonItemCard
                             key={item?._id}
                             item={item}
@@ -393,11 +337,11 @@ const QbuyPanda = ({ navigation }) => {
                             marginHorizontal={5}
                         />
                     )}
-                </ScrollView> */}
+                </ScrollView>
 
-            {/* <CommonTexts label={'Lunch Menu'} fontSize={13} ml={15} mb={5} mt={15} />
+            <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
                 <View style={styles.menuContainer}>
-                    {menus?.map((item) => (
+                    {products?.map((item) => (
                         <CommonItemCard
                             item={item}
                             key={item?._id}
@@ -405,7 +349,7 @@ const QbuyPanda = ({ navigation }) => {
                             height={250}
                         />
                     ))}
-                </View> */}
+                </View>
 
             {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
@@ -422,13 +366,13 @@ const QbuyPanda = ({ navigation }) => {
                         />
                     )}
                 </ScrollView> */}
-            {/* </ScrollView> */}
-            {/* <CommonSquareButton
+            </ScrollView>
+            <CommonSquareButton
                 onPress={gotoChat}
                 position='absolute'
                 bottom={10}
                 right={10}
-            /> */}
+            />
         </>
     )
 }

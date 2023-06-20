@@ -23,6 +23,8 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import reactotron from '../ReactotronConfig';
 import LoadingModal from '../Components/LoadingModal';
+import LocationScreen from '../screens/MyAccount/MyAddresses/LocationScreen';
+import AddNewLocation from '../screens/MyAccount/MyAddresses/LocationScreen/AddNewLocation';
 
 
 // import Menu from './Menu';
@@ -32,10 +34,12 @@ const Stack = createNativeStackNavigator();
 
 const Route = () => {
 
+
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
     const loadingContext = useContext(LoaderContext)
-    const [location, setLocation] = useState(null) 
+    const [location, setLocation] = useState(null)
+
 
     const [initialScreen, setInitialScreen] = useState(null)
     useEffect(() => {
@@ -66,7 +70,21 @@ const Route = () => {
             const status = await Geolocation.requestAuthorization('whenInUse');
             if (status === "granted") {
                 getPosition()
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
+                setInitialScreen('AddNewLocation');
             }
+
         }
         else {
             if (Platform.OS === 'android' && Platform.Version < 23) {
@@ -75,6 +93,7 @@ const Route = () => {
 
             const hasPermission = await PermissionsAndroid.check(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                
             );
 
             if (hasPermission) {
@@ -83,19 +102,37 @@ const Route = () => {
 
             const status = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
             );
 
             if (status === PermissionsAndroid.RESULTS.GRANTED) {
                 getPosition()
+             
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
                     text1: 'Location permission denied by user.'
                 });
             }
             else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
                     text1: 'Location permission revoked by user.',
@@ -106,29 +143,37 @@ const Route = () => {
     }, [])
 
     function getAddressFromCoordinates() {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location?.latitude},${location?.longitude}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location?.latitude},${location?.longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
             userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
-            setLocation
+            //setLocation
         })
-        .catch(err => {
-        })
+            .catch(err => {
+            })
     }
 
     const getPosition = async () => {
         await Geolocation.getCurrentPosition(
             position => {
 
-                //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
+                getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
                 setLocation(position?.coords)
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
                 checkLogin();
             },
-            error => {
+            async error => {
+                const token = await AsyncStorage.getItem("token");
+
+                if (token) {
+                    getProfile()
+                    getCartDetails()
+                    getAddressList()
+                }
+                setInitialScreen('AddNewLocation');
                 Toast.show({
                     type: 'error',
-                    text1: error
+                    text1: error.message
                 });
-                checkLogin();
+                // checkLogin();
             },
             {
                 accuracy: {
@@ -147,61 +192,61 @@ const Route = () => {
     }
 
 
-    const getProfile = useCallback(async() => {
+    const getProfile = useCallback(async () => {
         loadingContext.setLoading(true);
         await customAxios.get(`customer/customer-profile`)
-        .then(async response => {
-            loadingContext.setLoading(false);
-            userContext.setUserData(response?.data?.data)
-            setInitialScreen(mode);
-        })
-        .catch(async error => {
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-            setInitialScreen('Login');
-            await AsyncStorage.clear()
-            loadingContext.setLoading(false);
-        })
-    }, [])
-
-    const getCartDetails = useCallback(async() => {
-        let cartId = await AsyncStorage.getItem("cartId");
-        if(cartId){
-            loadingContext.setLoading(true);
-            await customAxios.get(`customer/cart/show-cart/${cartId}`)
             .then(async response => {
-                if(isObject(response?.data?.data)){
-                    cartContext.setCart(response?.data?.data)
-                }
-                else{
-                    await AsyncStorage.removeItem("cartId")
-                }
                 loadingContext.setLoading(false);
-                
+                userContext.setUserData(response?.data?.data)
+                setInitialScreen(mode);
             })
             .catch(async error => {
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
+                setInitialScreen('Login');
+                await AsyncStorage.clear()
                 loadingContext.setLoading(false);
             })
+    }, [])
+
+    const getCartDetails = useCallback(async () => {
+        let cartId = await AsyncStorage.getItem("cartId");
+        if (cartId) {
+            loadingContext.setLoading(true);
+            await customAxios.get(`customer/cart/show-cart/${cartId}`)
+                .then(async response => {
+                    if (isObject(response?.data?.data)) {
+                        cartContext.setCart(response?.data?.data)
+                    }
+                    else {
+                        await AsyncStorage.removeItem("cartId")
+                    }
+                    loadingContext.setLoading(false);
+
+                })
+                .catch(async error => {
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
+                    loadingContext.setLoading(false);
+                })
         }
-        
+
     }, [])
 
     const getAddressList = async () => {
         loadingContext.setLoading(true)
         await customAxios.get(`customer/address/list`)
             .then(async response => {
-                if(response?.data?.data?.length > 0){
-                    if(response?.data?.data?.length === 1){
+                if (response?.data?.data?.length > 0) {
+                    if (response?.data?.data?.length === 1) {
                         userContext.setLocation([response?.data?.data?.[0]?.area?.latitude, response?.data?.data?.[0]?.area?.longitude])
                         userContext?.setCurrentAddress(response?.data?.data?.[0]?.area?.address)
                     }
-                    else{
+                    else {
                         let defaultAdd = response?.data?.data?.find(add => add?.default === true)
                         userContext.setLocation([defaultAdd?.area?.latitude, defaultAdd?.area?.longitude])
                         userContext?.setCurrentAddress(defaultAdd?.area?.address)
@@ -218,7 +263,7 @@ const Route = () => {
                 });
                 loadingContext.setLoading(false)
             })
-        }
+    }
 
     const checkLogin = async () => {
         // await AsyncStorage.clear()
@@ -234,29 +279,47 @@ const Route = () => {
             setInitialScreen('Login');
         }
     }
+
+    useEffect(async () => {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+            const subscription = AppState.addEventListener('change', async nextAppState => {
+                if (nextAppState === 'active') {
+                    await customAxios.post('customer/login-status-update', { login_status: true })
+                } else {
+                    await customAxios.post('customer/login-status-update', { login_status: false })
+                }
+            });
+            return () => {
+                subscription.remove();
+            };
+        }
+    }, []);
+
     if (!initialScreen) {
         return (
             <SplashScreen />
         )
     }
 
-    reactotron.log({mode})
+
 
     return (
         <>
-        <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
 
-                <Stack.Screen name="SplashScreen" component={SplashScreen} />
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Otp" component={Otp} />
-
-                <Stack.Screen name="panda" component={Panda} />
-                <Stack.Screen name="fashion" component={Fashion} />
-                <Stack.Screen name="green" component={Green} />
-            </Stack.Navigator>
-        </NavigationContainer>
-        {/* <LoadingModal isVisible={true} /> */}
+                    <Stack.Screen name="SplashScreen" component={SplashScreen} />
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Otp" component={Otp} />
+                    <Stack.Screen name="LocationScreen" component={LocationScreen} options={{ title: 'home' }} />
+                    <Stack.Screen name="AddNewLocation" component={AddNewLocation} />
+                    <Stack.Screen name="panda" component={Panda} />
+                    <Stack.Screen name="fashion" component={Fashion} />
+                    <Stack.Screen name="green" component={Green} />
+                </Stack.Navigator>
+            </NavigationContainer>
+            {/* <LoadingModal isVisible={true} /> */}
         </>
     )
 }

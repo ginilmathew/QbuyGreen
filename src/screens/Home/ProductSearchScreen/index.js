@@ -24,12 +24,12 @@ const ProductSearchScreen = ({ route }) => {
     let active = contextPanda.active
 
 
-    reactotron.log({ active })
+
 
     let loader = loadingg?.loading
 
     const [filterResult, setFilterResult] = useState([])
-    const [datatrue,setdataTrue]=useState(true)
+    const [datatrue, setdataTrue] = useState(true)
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -40,7 +40,7 @@ const ProductSearchScreen = ({ route }) => {
     });
 
     const [search, setSearch] = useState('')
-
+    const [text, setText] = useState("")
 
     const searchItem = useCallback((data) => {
         setSearch(data)
@@ -48,11 +48,13 @@ const ProductSearchScreen = ({ route }) => {
 
 
     const filterResults = useCallback(async (value) => {
+        setText(value)
         if (value === '') {
             setFilterResult([])
         }
         let datas = {
-            coordinates: env === "dev" ? location : userContext?.location,
+            // coordinates: env === "dev" ? location : userContext?.location,
+            coordinates: userContext?.location,
             search: value,
             type: active
         }
@@ -77,8 +79,8 @@ const ProductSearchScreen = ({ route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
+            setText("")
             setFilterResult([])
-      
         }, [])
     );
 
@@ -91,6 +93,7 @@ const ProductSearchScreen = ({ route }) => {
             }}
             >
                 <CustomSearch
+                    values={text}
                     mb={2}
                     control={control}
                     error={errors.name}
@@ -101,7 +104,7 @@ const ProductSearchScreen = ({ route }) => {
                 />
 
                 <View style={{ paddingHorizontal: 15, marginTop: 10 }}>
-                    {loader ? <ActivityIndicator /> : filterResult?.map((item, index) => (<SearchResultsCard item={item} key={index} />))}
+                    {loader ? <ActivityIndicator /> : filterResult?.map((item, index) => (<SearchResultsCard item={item} key={index} setValue={setValue} />))}
                 </View>
             </ScrollView>
         </>

@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, { useCallback, useState, useEffect, useContext } from 'react'
+import React, { useCallback, useState, useEffect, useContext, memo } from 'react'
 import { IMG_URL } from '../../../config/constants'
 
 import reactotron from '../../../ReactotronConfig'
 import { getProduct } from '../../../helper/productHelper'
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import PandaContext from '../../../contexts/Panda'
-const SearchResultsCard = ({ item }) => {
+const SearchResultsCard = memo(({ item,setValue }) => {
 
     const pandaContext = useContext(PandaContext)
 
@@ -22,10 +22,10 @@ const SearchResultsCard = ({ item }) => {
         else {
             setData(null)
         }
-    }, [item])
+    }, [])
 
 
-    reactotron.log({ item })
+
 
     const navigation = useNavigation()
 
@@ -40,7 +40,9 @@ const SearchResultsCard = ({ item }) => {
                         { name: 'fashion' }
                     ]
                 }))
+                setValue('name','')
         } else {
+            setValue('name','')
             navigation.navigate('SingleItemScreen', { item: data })
         }
 
@@ -83,7 +85,7 @@ const SearchResultsCard = ({ item }) => {
             style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
             <Image
                 style={{ width: 60, height: 60, borderRadius: 30 }}
-                source={item?.product_image ? { uri: `${IMG_URL}${item?.product_image}` } : require('../../../Images/jeans.jpg')}
+                source={{ uri: `${IMG_URL}${item?.product_image}` }}
                 borderRadius={30}
             />
             <View style={{ marginLeft: 10, flex: 0.95 }}>
@@ -92,7 +94,7 @@ const SearchResultsCard = ({ item }) => {
             </View>
         </TouchableOpacity>
     )
-}
+})
 
 export default SearchResultsCard
 

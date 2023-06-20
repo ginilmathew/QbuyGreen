@@ -22,6 +22,8 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
     let loc = userContext.location
 
+
+
     let currentAddress = userContext?.currentAddress
 
 
@@ -53,17 +55,29 @@ const Header = ({ onPress, openAddress, goCart }) => {
     }, [])
 
     useEffect(() => {
-        getAddressFromCoordinates()
-    }, [])
+        if (useContext?.location) {
+            getAddressFromCoordinates()
+        }
+
+    }, [userContext?.location])
 
 
     function getAddressFromCoordinates() {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${loc[0]},${loc[1]}&key=AIzaSyDDFfawHZ7MhMPe2K62Vy2xrmRZ0lT6X0I`).then(response => {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${loc[0]},${loc[1]}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
 
             userContext.setUserLocation(response?.data?.results[0]?.formatted_address)
-            reactotron.log({ responseLOCATION: response?.data?.results[0]?.formatted_address })
+           
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             userContext.setCity(locality?.long_name)
+            let value = {
+                area: {
+                    location: locality?.long_name,
+                    address: response?.data?.results[0]?.formatted_address
+                }
+            }
+            //cartContext.setDefaultAddress(value)
+
+            // reactotron.log({ response: response?.data?.results[0]?.formatted_address }, 'LOCATION RESPONSE')
 
         })
             .catch(err => {

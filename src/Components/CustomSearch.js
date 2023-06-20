@@ -7,7 +7,7 @@ import CommonSquareButton from './CommonSquareButton'
 import { useFocusEffect } from '@react-navigation/native'
 
 
-const CustomSearch = ({ placeholder, control, fieldName, error, placeHoldeColor, width, keyboardType, mt, mb, onPress, onChangeText, readonly, autoFocus }) => {
+const CustomSearch = ({ placeholder, control, fieldName, error, placeHoldeColor, width, keyboardType, mt, mb, onPress, onChangeText, readonly, autoFocus,values }) => {
 
     const textRef = useRef(null);
 
@@ -59,7 +59,7 @@ const CustomSearch = ({ placeholder, control, fieldName, error, placeHoldeColor,
                             width={width}
                             onBlur={onBlur}
                             onChangeText={onChangeText ? onChangeText : onChange}
-                            value={value}
+                            value={values ? values : value}
                             variant="unstyled"
                             placeholder={placeholder}
                             backgroundColor={'#fff'}

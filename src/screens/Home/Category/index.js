@@ -54,7 +54,8 @@ const Category = ({ route }) => {
 
         let datas = {
             category_id:  item?._id,
-            coordinates :  env === "dev" ? location : userContext?.location
+            // coordinates :  env === "dev" ? location : userContext?.location
+            coordinates: userContext?.location
         }
     
         await customAxios.post(`customer/product/category-based`, datas)
@@ -115,7 +116,7 @@ const Category = ({ route }) => {
             >
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={item?.image  ?  { uri: `${IMG_URL}${item?.image}`} : require('../../../Images/jeans.jpg')} 
+                        source={{ uri: `${IMG_URL}${item?.image}`}} 
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}

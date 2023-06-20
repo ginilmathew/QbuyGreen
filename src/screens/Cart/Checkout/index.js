@@ -51,6 +51,10 @@ const Checkout = ({ navigation }) => {
     // let myCity = authContext?.city
 
 
+    reactotron.log({ cartContext: cartContext?.cart?._id })
+    reactotron.log({ cartContextAddress: cartContext?.defaultAddress?._id })
+
+
     const loadingg = useContext(LoaderContext)
     const loader = loadingg?.loading
 
@@ -116,7 +120,7 @@ const Checkout = ({ navigation }) => {
                     if (type === "single") {
                         offer = pro?.productdata?.offer_price ? parseFloat(pro?.productdata?.offer_price) : 0
                         regular = pro?.productdata?.regular_price ? parseFloat(pro?.productdata?.regular_price) : 0
-                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : 0
+                        comm = pro?.productdata?.commission ? pro?.productdata?.commission : pro?.productdata?.vendors?.additional_details?.commission ? pro?.productdata?.vendors?.additional_details?.commission : 0
                         seller = pro?.productdata?.seller_price ? parseFloat(pro?.productdata?.seller_price) : 0
                         delivery = pro?.productdata?.fixed_delivery_price ? parseFloat(pro?.productdata?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
@@ -144,7 +148,7 @@ const Checkout = ({ navigation }) => {
                     else {
                         offer = pro?.variants?.offer_price ? parseFloat(pro?.variants?.offer_price) : 0
                         regular = pro?.variants?.regular_price ? parseFloat(pro?.variants?.regular_price) : 0
-                        comm = pro?.variants?.commission ? pro?.variants?.commission : 0
+                        comm = pro?.variants?.commission ? pro?.variants?.commission : pro?.productdata?.vendors?.additional_details?.commission ? pro?.productdata?.vendors?.additional_details?.commission : 0
                         seller = pro?.variants?.seller_price ? parseFloat(pro?.variants?.seller_price) : 0
                         delivery = pro?.variants?.fixed_delivery_price ? parseFloat(pro?.variants?.fixed_delivery_price) : 0
                         minQty = pro?.productdata?.minimum_qty ? parseFloat(pro?.productdata?.minimum_qty) : 0
@@ -448,28 +452,12 @@ const Checkout = ({ navigation }) => {
         setShowList(!showList)
     })
 
+
+    //const checkProductAvailability = () => {}
+
     const placeOrder = async () => {
 
-        let products = [];
-        let amount = 0;
-        let stores = []
-
-        cartItems?.map(cart => {
-            stores.push(cart?.store?._id)
-            products.push({
-                product_id: cart?.product_id,
-                name: cart?.name,
-                image: cart?.image,
-                type: cart?.type,
-                variant_id: cart?.variant_id,
-                quantity: cart?.quantity,
-                price: cart?.price,
-                unitPrice: cart?.unitPrice,
-                deliveryPrice: cart?.delivery
-            })
-        })
-
-        if (!cartContext.defaultAddress?.area?.location) {
+        if (!cartContext?.defaultAddress) {
             Toast.show({
                 type: 'error',
                 text1: 'Please add Delivery  Address to continue'
@@ -477,68 +465,105 @@ const Checkout = ({ navigation }) => {
             return false;
         }
 
-        let uniqueStore = uniq(stores)
-        let pay = payment.find(pay => pay.selected === true)
-
-        const orderDetails = {
-            product_details: products,
-            user_id: authContext?.userData?._id,
-            billing_address: cartContext?.defaultAddress?._id,
-            shipping_address: cartContext?.defaultAddress?._id,
-            payment_status: pay._id === "online" ? "pending" : "completed",
-            payment_type: pay._id,
-            type: active,
-            total_amount: cartItems.reduce(function (previousVal, currentVal) {
-                return previousVal + currentVal?.price;
-            }, 0),
-            delivery_charge: cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery,
-            delivery_type: "Slot based",
-            franchise: cartItems?.[0]?.franchisee?._id,
-            cart_id: cartItems?.[0]?.cartId,
-            store: uniqueStore
+        let data = {
+            cart_id: cartContext?.cart?._id,
+            address_id: cartContext?.defaultAddress?._id
         }
 
+        await customAxios.post('customer/get-cart-product', data).then(async response => {
+            let products = [];
+            let amount = 0;
+            let stores = []
+
+            cartItems?.map(cart => {
+                stores.push(cart?.store?._id)
+                products.push({
+                    product_id: cart?.product_id,
+                    name: cart?.name,
+                    image: cart?.image,
+                    type: cart?.type,
+                    variant_id: cart?.variant_id,
+                    quantity: cart?.quantity,
+                    price: cart?.price,
+                    unitPrice: cart?.unitPrice,
+                    deliveryPrice: cart?.delivery
+                })
+            })
+
+            if (!cartContext.defaultAddress?.area?.location) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please add Delivery  Address to continue'
+                });
+                return false;
+            }
+
+            let uniqueStore = uniq(stores)
+            let pay = payment.find(pay => pay.selected === true)
+
+            const orderDetails = {
+                product_details: products,
+                user_id: authContext?.userData?._id,
+                billing_address: cartContext?.defaultAddress?._id,
+                shipping_address: cartContext?.defaultAddress?._id,
+                payment_status: pay._id === "online" ? "pending" : "created",
+                payment_type: pay._id,
+                type: active,
+                total_amount: Math.round(cartItems.reduce(function (previousVal, currentVal) {
+                    return previousVal + currentVal?.price;
+                }, 0)),
+                delivery_charge: Math.round(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery),
+                delivery_type: "Slot based",
+                franchise: cartItems?.[0]?.franchisee?._id,
+                cart_id: cartItems?.[0]?.cartId,
+                store: uniqueStore,
+                delivery_date: moment().format("YYYY-MM-DD HH:mm:ss")
+            }
+
+            if (products?.length > 0) {
+                await customAxios.post(`customer/order/test-create`, orderDetails)
+                    .then(async response => {
+                        console.log("response ==>", JSON.stringify(response.data), response.status)
+                        const { data } = response
 
 
-
-
-
-
-
-
-        if (products?.length > 0) {
-            await customAxios.post(`customer/order/create`, orderDetails)
-                .then(async response => {
-                    console.log("response ==>", JSON.stringify(response.data), response.status)
-                    const { data } = response
-                 
-
-                    if(data?.type === 'cart'){
-                       navigation.navigate('Cart')
-                    }
-                    if (data?.status) {
-                        if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
-                            payWithPayTM(data?.data)
+                        if (data?.type === 'cart') {
+                            navigation.navigate('Cart')
+                        }
+                        if (data?.status) {
+                            if (data?.data?.payment_type == "online" && has(data?.data, "paymentDetails") && !isEmpty(data?.data?.paymentDetails)) {
+                                payWithPayTM(data?.data)
+                            } else {
+                                cartContext?.setCart(null)
+                                setCartItems(null)
+                                await AsyncStorage.removeItem("cartId");
+                                navigation.navigate('OrderPlaced', { item: response.data?.data })
+                            }
                         } else {
                             cartContext?.setCart(null)
                             setCartItems(null)
-                            await AsyncStorage.removeItem("cartId");
-                            navigation.navigate('OrderPlaced', { item: response.data?.data })
+                            navigation.goBack()
+                            Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                         }
-                    } else {
-                        Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
-                    }
-                }).catch(error => {
-                   
-                    Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                    }).catch(error => {
+
+                        Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                    })
+            }
+            else {
+                Toast.show({
+                    type: 'info',
+                    text1: 'Please add some products to cart to proceed'
                 })
-        }
-        else {
+            }
+        }).catch((err) => {
             Toast.show({
                 type: 'info',
-                text1: 'Please add some products to cart to proceed'
+                text1: JSON.parse(err)
             })
-        }
+        })
+
+
 
     }
 
@@ -547,7 +572,6 @@ const Checkout = ({ navigation }) => {
         let details = data
         let orderID = details.ORDERID.replace(/^ORDER_/, "")
 
-        reactotron.log({ details })
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {
                 cartContext?.setCart(null)
@@ -583,7 +607,7 @@ const Checkout = ({ navigation }) => {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
-        
+
         await AllInOneSDKManager.startTransaction(
             paymentDetails?.orderId,//orderId
             paymentDetails?.mid,//mid

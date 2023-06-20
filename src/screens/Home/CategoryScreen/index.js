@@ -61,18 +61,22 @@ const CategoryScreen = ({ route, navigation }) => {
 
 
     useEffect(() => {
-        getProductBasedCat(auth.location);
+        getProductBasedCat();
     }, [])
 
 
 
 
     const getProductBasedCat = async (coords) => {
+
         loadingContex.setLoading(true)
         let datas = {
             category_id: item?._id ? item?._id : item?.id,
-            coordinates: env === "dev" ? location : coords
+            // coordinates: env === "dev" ? location : auth?.location
+            coordinates: auth?.location
         }
+
+    reactotron.log({datas})
         await customAxios.post(`customer/product/category-based`, datas)
             .then(async response => {
 
@@ -117,7 +121,7 @@ const CategoryScreen = ({ route, navigation }) => {
             >
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={item?.image ? { uri: `${IMG_URL}${item?.image}` } : require('../../../Images/jeans.jpg')}
+                        source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}
                     />

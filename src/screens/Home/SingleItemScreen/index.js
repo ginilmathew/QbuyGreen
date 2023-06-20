@@ -37,6 +37,14 @@ const SingleItemScreen = ({ route, navigation }) => {
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const [showSingleImg, setShowSingleImg] = useState(false)
+    const [singleProduct, setSingleProduct] = useState([])
+    const [selectedImage, setSelectedImage] = useState(0)
+    const [showModal, setShowModal] = useState(false);
+    const [date, setDate] = useState(new Date())
+    const [attributes, setAttributes] = useState([])
+    const [price, setPrice] = useState('')
+    const [selectedVariant, setSelectedVariant] = useState(null)
+    const [loading, setLoading] = useState(false)
     let active = contextPanda.active
 
     const courasol = useRef(null)
@@ -49,8 +57,8 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
-    reactotron.log({ item })
-    reactotron.log({ courasolArray })
+   reactotron.log({item})
+
 
     useEffect(() => {
         if (route?.params?.item) {
@@ -103,9 +111,6 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const loadingg = useContext(LoaderContext)
 
-    const [attributes, setAttributes] = useState([])
-    const [price, setPrice] = useState('')
-    const [selectedVariant, setSelectedVariant] = useState(null)
 
 
     const position = new Animated.ValueXY({ x: 0, y: 0 })
@@ -121,15 +126,17 @@ const SingleItemScreen = ({ route, navigation }) => {
         if (item) {
             if (item?.variant) {
                 let selectedVariant = item?.variants?.find(vari => vari?.available === true)
+
+     
                 setSelectedVariant(selectedVariant)
 
-                let names = selectedVariant?.title.split(" ")
+                let names = selectedVariant?.title?.split(" ")
                 let attributes = item?.attributes?.map(att => {
                     let selected;
                     att?.options?.map(opt => {
-                        let values = opt.split(" ");
+                        let values = opt?.split(" ");
                         if (values && names) {
-                            const containsAll = values?.every(elem => names.includes(elem));
+                            const containsAll = values?.every(elem => names?.includes(elem));
                             if (containsAll) {
                                 selected = opt
                             }
@@ -144,20 +151,32 @@ const SingleItemScreen = ({ route, navigation }) => {
 
                 setAttributes(attributes)
             }
+            getSingleProductList()
         }
     }, [item])
 
 
-    const [singleProduct, setSingleProduct] = useState([])
-    const [selectedImage, setSelectedImage] = useState(0)
-    const [showModal, setShowModal] = useState(false);
-    const [date, setDate] = useState(new Date())
 
 
 
     const { width, height } = useWindowDimensions()
 
+    const getSingleProductList = async () => {
+        setLoading(true);
+        await customAxios.get(`customer/product/${item?._id}`)
+            .then((res) => {
+                setSingleProduct(res?.data?.data)
+                setLoading(false)
+            }).catch(err => {
+                Toast.show({
+                    type: 'error',
+                    text1: err
+                });
+                setLoading(false)
 
+            })
+
+    }
 
 
 
@@ -201,9 +220,16 @@ const SingleItemScreen = ({ route, navigation }) => {
     }, [])
 
     const addToCart = useCallback(async () => {
+        let price = item?.variant ? selectedVariant?.price : item?.price;
+        if (parseInt(price) < 1) {
+            Toast.show({
+                type: 'info',
+                text1: 'Price Should be more than 1'
+            });
+        } else {
+            cartContext.addToCart(item, selectedVariant)
+        }
 
-        //cartContext.addToCart(item, selectedVariant)
-        cartContext.addLocalCart(item, selectedVariant)
 
 
     }, [selectedVariant, cart?.cart, item, cart?.products])
@@ -218,8 +244,8 @@ const SingleItemScreen = ({ route, navigation }) => {
         let attr = attributes?.map(att => {
             if (att?.options.includes(value)) {
                 if (att?.variant) {
-                    let values = value.split(' ')
-                    values.map(va => {
+                    let values = value?.split(' ')
+                    values?.map(va => {
                         attri.push(va)
                     })
                 }
@@ -231,8 +257,8 @@ const SingleItemScreen = ({ route, navigation }) => {
             }
             else {
                 if (att?.variant) {
-                    let values = att.selected.split(' ')
-                    values.map(va => {
+                    let values = att.selected?.split(' ')
+                    values?.map(va => {
                         attri.push(va)
                     })
                 }
@@ -246,10 +272,10 @@ const SingleItemScreen = ({ route, navigation }) => {
             sin?.attributs?.map(att => {
                 attributes.push(att)
             })
-            const containsAll = attri.every(elem => attributes.includes(elem));
+            const containsAll = attri.every(elem => attributes?.includes(elem));
 
             if (containsAll) {
-                reactotron.log({ sin, item })
+
                 if (item?.stock) {
                     if (!sin?.available) {
                         item.available = false
@@ -308,7 +334,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                 <View
                     style={{ position: 'absolute', left: 20, top: 15, backgroundColor: 'red', borderRadius: 8 }}
                 >
-                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'Out Off Stock'}</Text>
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: '#fff', fontSize: 12, padding: 5 }}>{'Out Of Stock'}</Text>
                 </View>
             )
         }
@@ -361,7 +387,24 @@ const SingleItemScreen = ({ route, navigation }) => {
     }
 
 
-    reactotron.log({ imagesArray })
+
+    const renderRelatedProducts = ({ item, index }) => {
+        return (
+            <View key={index} style={{ flex: 0.6, justifyContent: 'center' }}>
+                <CommonItemCard
+                    item={item}
+                    key={item?._id}
+                    width={width / 2.4}
+                    height={height / 3.7}
+                    mr={5}
+                    ml={8}
+                    mb={15}
+                />
+            </View>
+        )
+    }
+
+
 
 
     return (
@@ -437,6 +480,38 @@ const SingleItemScreen = ({ route, navigation }) => {
                         }}>{item?.weight}</Text>
 
                     </View>}
+                {singleProduct?.dimensions?.width &&
+                    <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>width :</Text>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>{singleProduct?.dimensions?.width}</Text>
+
+                    </View>}
+                {singleProduct?.dimensions?.height &&
+                    <View style={{ paddingLeft: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>height :</Text>
+                        <Text style={{
+                            fontFamily: 'Poppins',
+                            letterSpacing: 1,
+                            fontSize: 10,
+
+                        }}>{singleProduct?.dimensions?.height}</Text>
+
+                    </View>}
 
                 <View style={{ paddingHorizontal: 10 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap' }}>
@@ -509,7 +584,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                     )}
                 </ScrollView> */}
 
-                <OrderWhatsapp />
+                {/* <OrderWhatsapp /> */}
 
                 {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
@@ -545,6 +620,35 @@ const SingleItemScreen = ({ route, navigation }) => {
                     </ScrollView>
                 </>} */}
 
+
+                {item?.description &&
+                    <View style={{ paddingLeft: 10, paddingRight: 10 }}>
+                        <Text style={styles.DetailsText}>Details</Text>
+                        <Text style={styles.DetailsTextDescription}>{item?.description}</Text>
+
+                    </View>}
+                {singleProduct?.relatedProducts?.length > 0 && <View style={{ backgroundColor: '#0C256C0D', height: 1, marginVertical: 20 }} />}
+                {singleProduct?.relatedProducts?.length > 0 &&
+
+                    <View style={{ paddingLeft: 10, paddingRight: 10 }}>
+
+                        <Text style={styles.headingRelatedProduct}>Related Products</Text>
+                        <FlatList
+                            data={singleProduct?.relatedProducts}
+                            keyExtractor={(item, index) => index}
+                            renderItem={renderRelatedProducts}
+                            showsVerticalScrollIndicator={false}
+                            initialNumToRender={6}
+                            removeClippedSubviews={true}
+                            windowSize={10}
+                            maxToRenderPerBatch={5}
+                            // refreshing={loader}
+                            // onRefresh={getHomedata}
+                            numColumns={2}
+                            style={{ marginLeft: 5 }}
+                        />
+
+                    </View>}
 
                 <ScheduleDeliveryModal
                     showModal={showModal}
@@ -611,5 +715,24 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
+    },
+    DetailsText: {
+        fontFamily: 'Poppins-Bold',
+        color: '#000',
+        letterSpacing: 1,
+        fontSize: 14,
+    },
+    headingRelatedProduct: {
+        marginBottom: 10,
+        fontFamily: 'Poppins-Bold',
+        color: '#000',
+        letterSpacing: 1,
+        fontSize: 14,
+    },
+    DetailsTextDescription: {
+        fontFamily: 'Poppins-Regular',
+        color: '#000',
+        letterSpacing: 1,
+        fontSize: 12,
     }
 })

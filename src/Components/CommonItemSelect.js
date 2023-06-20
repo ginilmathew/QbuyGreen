@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity } from 'react-native'
 import React, { memo, useCallback, useContext, useState } from 'react'
 import PandaContext from '../contexts/Panda'
+import * as RootNavigation from '../Navigations/RootNavigation'
+import reactotron from 'reactotron-react-native'
 
 
 const CommonItemSelect = memo(({item, setSelected, selected}) => {
@@ -11,8 +13,10 @@ const CommonItemSelect = memo(({item, setSelected, selected}) => {
 
 
     const onClick = useCallback(() => {
-        setSelected(item?._id)
-    },[])
+        reactotron.log({item})
+
+        RootNavigation.navigate("tagScreen", { item })
+    },[item])
     
     return (
         

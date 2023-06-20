@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet } from 'react-native'
+import { SafeAreaView, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../../screens/Home';
@@ -17,6 +17,7 @@ import Wishlist from '../../screens/Wishlist';
 import FashionCategory from '../../screens/FashionCategory';
 import QbuyPanda from '../../screens/Home';
 import CategoryScreen from '../../screens/Home/CategoryScreen';
+import TagScreen from '../../screens/Home/TagScreen';
 
 
 
@@ -24,12 +25,13 @@ const Stack = createNativeStackNavigator();
 
 const HomeNav = () => {
     return (
-        <SafeAreaView style={{ flex: 1, marginBottom: 70 }}>
+        <View style={{ flex: 1, marginBottom: 70 }}>
         <Stack.Navigator initialRouteName='Home'  screenOptions={{ headerShown: false }}> 
             <Stack.Screen name="Home" component={QbuyPanda}/>
 
 
             <Stack.Screen name="SingleHotel" component={SingleHotel}/>
+            <Stack.Screen name="tagScreen" component={TagScreen}/>
 
             <Stack.Screen name="SingleItemScreen" component={SingleItemScreen}/>
 
@@ -59,7 +61,7 @@ const HomeNav = () => {
 
            
         </Stack.Navigator>
-        </SafeAreaView>
+        </View>
     )
 }
 

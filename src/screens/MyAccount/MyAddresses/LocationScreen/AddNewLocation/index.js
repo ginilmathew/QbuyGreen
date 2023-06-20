@@ -3,31 +3,43 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import HeaderWithTitle from '../../../../../Components/HeaderWithTitle'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import AddressContext from '../../../../../contexts/Address';
-
+import SplashScreen from 'react-native-splash-screen'
+import reactotron from 'reactotron-react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 const AddNewLocation = ({ route, navigation }) => {
+
+    const backArrowhide = navigation.getState();
 
     const addressContext = useContext(AddressContext)
 
 
     const { width, height } = useWindowDimensions()
 
-    const mapRef = useRef()
+    const location = useRef()
 
+    reactotron.log({ location })
 
+    useEffect(() => {
+        SplashScreen.hide()
+    })
     return (
 
         <>
-            <HeaderWithTitle title={'Location'} />
-            <View style={{ padding: 20 }}>
+            <HeaderWithTitle title={'Location'} noBack={backArrowhide.index === 0 ? true : false} />
+            <View style={{ padding: 15 }}>
                 <GooglePlacesAutocomplete
+                    autoFocus={false}
+                    returnKeyType={'default'}
                     fetchDetails={true}
                     placeholder='Search'
+                    keyboardAppearance={'light'}
                     textInputProps={{
                         placeholderTextColor: 'gray',
                         returnKeyType: "search"
                     }}
                     onPress={(data, details = null) => {
                         // 'details' is provided when fetchDetails = true
+
                         let Value = {
                             location: data?.description,
                             city: details?.address_components?.filter(st => st.types?.includes('locality'))[0]?.long_name,
@@ -38,7 +50,7 @@ const AddNewLocation = ({ route, navigation }) => {
 
                         addressContext.setCurrentAddress(Value)
                         // addressContext.setLocation(details)
-                        navigation.navigate('LocationScreen')
+                        navigation.navigate('LocationScreen', { mode: '' })
 
                     }}
                     query={{
@@ -95,15 +107,23 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0,
         zIndex: 999,
         width: '100%',
+        justifyContent: 'center'
+
+
     },
     textInput: {
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderRadius: 10,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
         marginLeft: 0,
         marginRight: 0,
         height: 45,
         color: '#5d5d5d',
         fontSize: 16,
-        borderWidth: 1,
         zIndex: 999,
+        borderColor: '#888888',
         borderWidth: 0,
 
     },
@@ -117,6 +137,9 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: "white",
         width: '100%',
+
+        marginRight: 0,
+        borderRadius: 10,
     },
     separator: {
         flex: 1,

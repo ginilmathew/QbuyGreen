@@ -27,7 +27,7 @@ const MyAccount = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
-    reactotron.log({active})
+    reactotron.log({ active })
     const user = useContext(AuthContext)
     let userData = user?.userData
 
@@ -84,42 +84,63 @@ const MyAccount = ({ navigation }) => {
 
 
     const onClick = async () => {
-        setShowModal(false)
+  
         // await AsyncStorage.clear()
 
-        let datas = {
-            id: userData?._id
-        }
-        await customAxios.post(`auth/customerlogout`, datas)
-            .then(async response => {
-                getPosition()
-                cartContext.setCart(null)
-                cartContext.setAddress(null)
-                cartContext.setDefaultAddress(null)
-                userContext.setCurrentAddress(null)
-                userContext.setUserLocation(null)
-                userContext.setCity(null)
-                await AsyncStorage.clear()
-                Toast.show({
-                    type: 'success',
-                    text1: response?.data?.message
-                });
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [
-                            { name: 'Login' },
-                        ],
-                    })
-                );
+        // let datas = {
+        //     id: userData?._id
+        // }
+        // await customAxios.post(`auth/customerlogout`, datas)
+        //     .then(async response => {
+        //         getPosition()
+        //         cartContext.setCart(null)
+        //         cartContext.setAddress(null)
+        //         cartContext.setDefaultAddress(null)
+        //         userContext.setCurrentAddress(null)
+        //         userContext.setUserLocation(null)
+        //         userContext.setCity(null)
+        //         await AsyncStorage.clear()
+        //         Toast.show({
+        //             type: 'success',
+        //             text1: response?.data?.message
+        //         });
+        //         navigation.dispatch(
+        //             CommonActions.reset({
+        //                 index: 0,
+        //                 routes: [
+        //                     { name: 'Login' },
+        //                 ],
+        //             })
+        //         );
 
+        //     })
+        //     .catch(async error => {
+        //         Toast.show({
+        //             type: 'error',
+        //             text1: error
+        //         });
+        //     })
+        cartContext.setCart(null)
+        cartContext.setAddress(null)
+        cartContext.setDefaultAddress(null)
+        userContext.setCurrentAddress(null)
+        userContext.setUserLocation(null)
+        userContext.setCity(null)
+        await AsyncStorage.clear()
+        setShowModal(false)
+        Toast.show({
+            type: 'success',
+            text1: 'Logout successfully'
+        });
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    { name: 'Login' },
+                ],
             })
-            .catch(async error => {
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-            })
+        );
+
     }
 
     const onEdit = useCallback(async () => {
@@ -127,69 +148,75 @@ const MyAccount = ({ navigation }) => {
     })
 
     return (
-        <>
-            {active === 'fashion' || active === 'panda' ? <>
-            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}><Text style={{fontSize:20}}>Coming Soon!!!</Text></View> 
-            </>   :      
-            <>
-            <HeaderWithTitle title={'My Account'} noBack />
-            <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}>
-                <View style={{ alignItems: 'center' }}>
-                    <View>
-                        <Image
-                            style={styles.logo}
+        // <>
+        //     {active === 'fashion' || active === 'panda' ? <>
+        //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20 }}>Coming Soon!!!</Text></View>
+        //     </> :
+                <>
+                    <HeaderWithTitle title={'My Account'} noBack />
+                    <ScrollView style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', }}>
+                        <View style={{ alignItems: 'center' }}>
+                            <View>
+                                <Image
+                                    style={styles.logo}
 
-                            source={userData?.image ? { uri: `${IMG_URL}${userData?.image}` } : require('../../Images/drawerLogo.png')}
-                        />
-                        <TouchableOpacity
-                            onPress={onEdit}
-                            style={{ width: 25, height: 25, borderRadius: 15, backgroundColor: active === "green" ? '#8ED053' : active === "fashion" ? '#FF7190' : '#58D36E', alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-end', marginTop: -25 }}
-                        >
-                            <MaterialIcons name='edit' size={15} color='#fff' />
-                        </TouchableOpacity>
-                    </View>
+                                    source={userData?.image ? { uri: `${IMG_URL}${userData?.image}` } : require('../../Images/drawerLogo.png')}
+                                />
+                                <TouchableOpacity
+                                    onPress={onEdit}
+                                    style={{ width: 25, height: 25, borderRadius: 15, backgroundColor: active === "green" ? '#8ED053' : active === "fashion" ? '#FF7190' : '#58D36E', alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-end', marginTop: -25 }}
+                                >
+                                    <MaterialIcons name='edit' size={15} color='#fff' />
+                                </TouchableOpacity>
+                            </View>
 
 
-                    <CommonTexts
-                        label={userData?.name}
-                        color="#23233C"
-                        fontSize={13}
-                        mt={3}
-                    />
-                    <Text
-                        style={{
-                            fontFamily: 'Poppins-Regular',
-                            color: '#A9A9A9',
-                            fontSize: 9,
-                        }}
-                    >{userData?.email}</Text>
-                    <Text
-                        style={{
-                            fontFamily: 'Poppins-Regular',
-                            color: '#A9A9A9',
-                            fontSize: 9,
-                            marginTop: 1,
-                        }}
-                    >{userData?.mobile}</Text>
-                </View>
-                <View style={{ marginHorizontal: 20 }}>
-                    <ListCard
-                        onPress={gotoMyAddress}
-                        img={active === 'green' ? require('../../Images/addressOrange.png') : active === 'fashion' ? require('../../Images/fashionAddress.png') : require('../../Images/address.png')}
-                        label={'My Addresses'}
-                    />
-                    <ListCard
-                        onPress={gotoPandaCoins}
-                        img={active === 'green' ? require('../../Images/Orangepanda.png') : active === 'fashion' ? require('../../Images/fashionPanda.png') : require('../../Images/panda.png')}
-                        label={'Panda Coins'}
-                        pandaCoin='500'
-                    />
-                    {!active === 'fashion' || !active === 'green' ? null : <ListCard
-                        onPress={gotoAffiliateBonus}
-                        img={active === 'green' ? require('../../Images/affiliateOrange.png') : require('../../Images/affiliate.png')}
-                        label={'Affiliate Bonus'}
-                    />}
-                    {/* <ListCard
+                            <CommonTexts
+                                label={userData?.name}
+                                color="#23233C"
+                                fontSize={13}
+                                mt={3}
+                            />
+                            <Text
+                                style={{
+                                    fontFamily: 'Poppins-Regular',
+                                    color: '#A9A9A9',
+                                    fontSize: 9,
+                                }}
+                            >{userData?.email}</Text>
+                            <Text
+                                style={{
+                                    fontFamily: 'Poppins-Regular',
+                                    color: '#A9A9A9',
+                                    fontSize: 9,
+                                    marginTop: 1,
+                                }}
+                            >{userData?.mobile}</Text>
+                        </View>
+                        <View style={{ marginHorizontal: 20 }}>
+                            <ListCard
+                                onPress={gotoMyAddress}
+                                img={active === 'green' ? require('../../Images/addressOrange.png') : active === 'fashion' ? require('../../Images/fashionAddress.png') : require('../../Images/address.png')}
+                                label={'My Addresses'}
+                            />
+                            <ListCard
+                                onPress={
+                                    // gotoPandaCoins
+                                    null
+                                }
+                                img={active === 'green' ? require('../../Images/Orangepanda.png') : active === 'fashion' ? require('../../Images/fashionPanda.png') : require('../../Images/panda.png')}
+                                label={'Panda Coins'}
+                                pandaCoin=''
+                            />
+                            {!active === 'fashion' || !active === 'green' ? null : <ListCard
+                                onPress={
+                                    // gotoAffiliateBonus
+                                null
+                                }
+                                img={active === 'green' ? require('../../Images/affiliateOrange.png') : require('../../Images/affiliate.png')}
+                                label={'Affiliate Bonus'}
+                            />}
+                            {/* <ListCard
                         img={active === 'green' ? require('../../Images/buildingOrange.png') : active === 'fashion' ? require('../../Images/fashionBuilding.png') : require('../../Images/building.png')}
                         label={'About Us'}
                     />
@@ -219,23 +246,24 @@ const MyAccount = ({ navigation }) => {
                         DntshowRightArrow
                         noBorder
                     /> */}
-                    <CustomButton
-                        onPress={() => setShowModal(true)}
-                        label={'Logout'}
-                        bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
-                        mb={100}
-                        mt={20}
-                    />
-                </View>
+                            <CustomButton
+                                onPress={() => setShowModal(true)}
+                                label={'Logout'}
+                                bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
+                                mb={100}
+                                mt={20}
+                            />
+                        </View>
 
-                <LogoutModal
-                    visible={showModal}
-                    onDismiss={onClose}
-                    onPress={onClick}
-                />
-            </ScrollView>
-            </>}
-        </>
+                        <LogoutModal
+                            visible={showModal}
+                            onDismiss={onClose}
+                            onPress={onClick}
+                            label={'Are you sure to logout?'}
+                        />
+                    </ScrollView>
+                </>
+        // </>
     )
 }
 

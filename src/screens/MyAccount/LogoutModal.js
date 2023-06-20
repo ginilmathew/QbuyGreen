@@ -4,10 +4,10 @@ import CustomButton from '../../Components/CustomButton'
 import CommonTexts from '../../Components/CommonTexts'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-const LogoutModal = ({visible, onDismiss, onPress}) => {
+const LogoutModal = ({ visible, onDismiss, onPress,label }) => {
 
-    const {width} = useWindowDimensions()
-    
+    const { width } = useWindowDimensions()
+
     return (
         <Modal
             animationType="slide"
@@ -24,7 +24,7 @@ const LogoutModal = ({visible, onDismiss, onPress}) => {
                 >
                     <Ionicons name='close-circle' color='#000' size={25} />
                 </TouchableOpacity>
-                <CommonTexts label={'Are you sure to logout?'} fontSize={18} textAlign='center' mt={10} />
+                <CommonTexts label={label} fontSize={18} textAlign='center' mt={10} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20 }}>
                     <CustomButton
                         onPress={onDismiss}

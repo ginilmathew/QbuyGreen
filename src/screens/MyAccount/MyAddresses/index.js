@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native'
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, RefreshControl, Platform, PermissionsAndroid, Linking } from 'react-native'
 import React, { useCallback, useContext, useState } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import CommonTexts from '../../../Components/CommonTexts'
@@ -15,7 +15,8 @@ import Toast from 'react-native-toast-message'
 import AuthContext from '../../../contexts/Auth'
 import axios from 'axios'
 import AddressContext from '../../../contexts/Address'
-
+import Geolocation from 'react-native-geolocation-service';
+import reactotron from '../../../ReactotronConfig'
 
 const MyAddresses = ({ route, navigation }) => {
 
@@ -27,6 +28,7 @@ const MyAddresses = ({ route, navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
     const addressContext = useContext(AddressContext)
+
     let active = contextPanda.active
 
 
@@ -71,6 +73,171 @@ const MyAddresses = ({ route, navigation }) => {
         navigation.navigate('MyAccountNav')
     }, [])
 
+
+    // async function fetchData() {
+
+    //     if (Platform.OS === 'android') {
+    //         await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //         )
+    //     }
+    //     if (Platform.OS === 'ios') {
+    //         const hasPermission = await hasPermissionIOS();
+    //         return hasPermission;
+    //     }
+    // }
+
+
+
+    // const hasPermissionIOS = async () => {
+    //     reactotron.log('ANDROID')
+    //     const openSetting = () => {
+    //         Linking.openSettings().catch(() => {
+    //             Alert.alert('Unable to open settings');
+    //         });
+    //     };
+    //     const status = await Geolocation.requestAuthorization('whenInUse');
+
+    //     reactotron.log({status})
+    //     if (status === 'granted') {
+    //         getPosition()
+    //         return true;
+    //     }
+    //     if (status === 'denied') {
+    //         //Alert.alert('Location permission denied');
+    //     }
+    //     if (status === 'disabled') {
+    //         Alert.alert(
+    //             `Turn on Location Services to allow  to determine your location.`,
+    //             '',
+    //             [
+    //                 { text: 'Go to Settings', onPress: openSetting },
+    //                 { text: "Don't Use Location", onPress: () => { } },
+    //             ],
+    //         );
+    //     }
+    //     return false;
+    // };
+    const getCurrentLocation = useCallback(async () => {
+        if (Platform.OS === 'ios') {
+            const status = await Geolocation.requestAuthorization('whenInUse');
+            if (status === "granted") {
+                getPosition()
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
+
+
+
+            }
+
+        }
+        else {
+            if (Platform.OS === 'android' && Platform.Version < 23) {
+                getPosition()
+            }
+
+            const hasPermission = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
+            );
+
+            if (hasPermission) {
+                getPosition()
+            }
+
+            const status = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+
+            );
+
+            if (status === PermissionsAndroid.RESULTS.GRANTED) {
+                getPosition()
+
+            }
+
+            if (status === PermissionsAndroid.RESULTS.DENIED) {
+
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission denied by user.'
+                });
+            }
+            else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+
+                Toast.show({
+                    type: 'error',
+                    text1: 'Location permission revoked by user.',
+                });
+            }
+        }
+
+    }, [])
+
+    const getPosition = async () => {
+        await Geolocation.getCurrentPosition(
+            position => {
+
+                //getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
+
+                getAddressFromCoordinates(position?.coords?.latitude, position?.coords?.longitude);
+                // userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
+            },
+            error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+
+            },
+            {
+                accuracy: {
+                    android: 'high',
+                    ios: 'best',
+                },
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 10000,
+                distanceFilter: 0,
+                forceRequestLocation: true,
+                forceLocationManager: false,
+                showLocationDialog: true,
+            },
+        );
+    }
+
+
+
+    function getAddressFromCoordinates(latitude, longitude) {
+        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
+            // userContext.setLocation([latitude, longitude])
+            // addressContext?.setCurrentAddress(null)
+            // addressContext?.setLocation(null)
+                 reactotron.log({response:response?.data?.results[0]})
+                 let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
+
+         
+            let value = {
+                latitude: latitude,
+                longitude: longitude,
+                location:response?.data?.results[0]?.formatted_address,
+                city:locality?.long_name
+
+            }
+
+                  
+
+            addressContext.setCurrentAddress(value)
+         
+            navigation.navigate('LocationScreen',{mode:'currentlocation'})
+
+        })
+            .catch(err => {
+            })
+
+    }
     const chooseCrntLocation = () => {
         addressContext.setCurrentAddress(null)
         if (addrList?.length >= 1) {
@@ -81,12 +248,14 @@ const MyAddresses = ({ route, navigation }) => {
                 latitude: result[0]?.area?.latitude,
                 longitude: result[0]?.area?.longitude
             }
+
+            // userContext.setLocation([result[0]?.area?.latitude,result[0]?.area?.longitude])
             addressContext.setCurrentAddress(Value)
             if (addressContext?.CucurrentAddress) {
-                navigation.navigate('LocationScreen')
+                navigation.navigate('AddNewLocation')
             }
         }
-        navigation.navigate('LocationScreen')
+        navigation.navigate('AddNewLocation')
     }
 
     const deleteSelect = async (id) => {
@@ -109,8 +278,11 @@ const MyAddresses = ({ route, navigation }) => {
 
     const selectAddress = async (id) => {
         let address = addrList.find(addr => addr?._id === id);
+        //  await customAxios.post(`customer/get-cart-product`,{cart_id:cartContext?.cart?._id,address_id:address})
+      
         userContext.setLocation([address?.area?.latitude, address?.area?.longitude])
         userContext.setCurrentAddress(address?.area?.address)
+      
 
         // if (!address?.default) {
         address.default_status = true;
@@ -119,6 +291,8 @@ const MyAddresses = ({ route, navigation }) => {
         loadingContex.setLoading(true)
         await customAxios.post(`customer/address/update`, address).then((response) => {
             setAddrList(response?.data?.data)
+            const find = addrList.find(addr => addr?._id === id)
+            cartContext.setDefaultAddress(find);
             loadingContex.setLoading(false)
         }
         ).catch(async error => {
@@ -134,14 +308,14 @@ const MyAddresses = ({ route, navigation }) => {
             navigation.goBack()
         }
         else if (mode === "checkout") {
-            cartContext.setDefaultAddress(address)
+
             navigation.navigate("Checkout")
         }
     }
 
     return (
-        <>  
-        
+        <>
+
             <HeaderWithTitle
                 title={mode === 'home' ? 'Select Address' : mode === 'MyAcc' ? 'My Addresses' : "My Addresses"}
                 // goback={backAction}
@@ -156,7 +330,7 @@ const MyAddresses = ({ route, navigation }) => {
                     }
                 >
                     {(mode === 'home' || addrList?.length === 0) && <CustomButton
-                        onPress={chooseCrntLocation}
+                        onPress={getCurrentLocation}
                         bg={'#19B836'}
                         label='Choose Current Location'
                         mt={10}

@@ -19,11 +19,14 @@ import Toast from 'react-native-toast-message';
 import has from "lodash"
 import AddressContext from '../../../../../contexts/Address'
 import CartContext from '../../../../../contexts/Cart'
+import reactotron from 'reactotron-react-native'
 
 
 const AddDeliveryAddress = ({ route, navigation }) => {
 
-    let locationData = route?.params?.item
+    let locationData = route?.params?.item;
+
+    reactotron.log({ locationData })
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
 
@@ -44,18 +47,28 @@ const AddDeliveryAddress = ({ route, navigation }) => {
     const [isEnabled, setIsEnabled] = useState(locationData?.default_status || false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+
 
     const schema = yup.object({
         location: yup.string().required('Area is required'),
         address: yup.string().required('Address is required'),
         pincode: yup.number().required('Pincode is required'),
+        name: yup.string().max(30, "Name must be less than 30 characters").matches(
+            /^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi,
+            'Name can only contain Alphabets letters.'
+        )
+            // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
+            .required('Name is Required'),
+        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10).required('Mobile number is required')
     }).required();
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            location:  addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
-            address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : locationData?.location,
+            name: locationData?.name,
+            location: locationData?.city,
+            address: locationData?.location,
             comments: locationData?.comments,
             default_status: locationData?.default,
             pincode: locationData?.pincode?.toString()
@@ -84,15 +97,16 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         let datas = {
             address_type: selected.toLocaleLowerCase(),
             area: {
-                latitude: addressContext?.currentAddress ? addressContext?.currentAddress?.latitude : locationData?.latitude,
-                longitude: addressContext?.currentAddress ? addressContext?.currentAddress?.longitude : locationData?.longitude,
-                address: addressContext?.currentAddress ? addressContext?.currentAddress?.location : data?.address,
-                location: addressContext?.currentAddress ? addressContext?.currentAddress?.city : locationData?.city,
+                latitude: locationData?.latitude,
+                longitude: locationData?.longitude,
+                address: data?.address,
+                location: locationData?.city,
             },
             default_status: !cartContext?.address ? true : isEnabled,
             comments: data?.comments,
             mobile: data?.mobile,
             pincode: data?.pincode,
+            name: data?.name
         }
         if (has(locationData, "_id")) {
             datas.id = locationData._id
@@ -127,7 +141,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
             >
                 <View style={styles.headerView}>
                     <View style={{ flexDirection: 'row', }}>
-                        {datas.map((item, index) =>
+                        {datas?.map((item, index) =>
                             <ChooseAddressType
                                 item={item}
                                 key={index}
@@ -142,7 +156,12 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                         <CommonSwitch toggleSwitch={toggleSwitch} isEnabled={isEnabled} />
                     </View>
                 </View>
-
+                <CommonInput
+                    control={control}
+                    error={errors.name}
+                    fieldName="name"
+                    topLabel={'Name'}
+                />
                 <CommonInput
                     control={control}
                     error={errors.location}
@@ -160,18 +179,9 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                 />
                 <CommonInput
                     control={control}
-                    error={errors.comments}
-                    fieldName="comments"
-                    topLabel={'Comments (Optional)'}
-                    placeholder='Delivery Instructions e.g. Opposite Gold Souk Mall'
-                    placeholderTextColor='#0C256C21'
-                    top={10}
-                />
-                <CommonInput
-                    control={control}
                     error={errors.mobile}
                     fieldName="mobile"
-                    topLabel={'Mobile (Optional)'}
+                    topLabel={'Mobile'}
                     placeholder='Delivery Mobile Number e.g. mobile of the owner'
                     placeholderTextColor='#0C256C21'
                     top={10}
@@ -185,7 +195,15 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                     placeholderTextColor='#0C256C21'
                     top={10}
                 />
-
+                <CommonInput
+                    control={control}
+                    error={errors.comments}
+                    fieldName="comments"
+                    topLabel={'Comments (Optional)'}
+                    placeholder='Delivery Instructions e.g. Opposite Gold Souk Mall'
+                    placeholderTextColor='#0C256C21'
+                    top={10}
+                />
                 <CustomButton
                     onPress={handleSubmit(onSave)}
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
