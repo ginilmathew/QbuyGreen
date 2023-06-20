@@ -133,7 +133,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
         await customAxios.post(`customer/order/paynow`,data)
             .then(async response => {
                 const { data } = response
-                 reactotron.log({response})
+                reactotron.log({response},'PAYNOW')
                 reactotron.log({data:data?.data})
                 cartContext.setCart(data?.data)
                 navigation.navigate('cart')

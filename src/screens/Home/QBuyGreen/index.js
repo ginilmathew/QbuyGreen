@@ -96,24 +96,24 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
-    const groceImg = [
-        {
-            id: "1",
-            img: require('../../../Images/groceryAdds.jpeg')
-        },
-        {
-            id: "2",
-            img: require('../../../Images/image1.jpeg')
-        },
-        {
-            id: "3",
-            img: require('../../../Images/image2.jpeg')
-        },
-        {
-            id: "4",
-            img: require('../../../Images/image3.jpeg')
-        }
-    ]
+    // const groceImg = [
+    //     {
+    //         id: "1",
+    //         img: require('../../../Images/groceryAdds.jpeg')
+    //     },
+    //     {
+    //         id: "2",
+    //         img: require('../../../Images/image1.jpeg')
+    //     },
+    //     {
+    //         id: "3",
+    //         img: require('../../../Images/image2.jpeg')
+    //     },
+    //     {
+    //         id: "4",
+    //         img: require('../../../Images/image3.jpeg')
+    //     }
+    // ]
 
     const ourFarm = useCallback(() => {
         navigation.navigate('OurFarms')
