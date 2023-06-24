@@ -215,7 +215,7 @@ const MyAddresses = ({ route, navigation }) => {
             // userContext.setLocation([latitude, longitude])
             // addressContext?.setCurrentAddress(null)
             // addressContext?.setLocation(null)
-                 reactotron.log({response:response?.data?.results[0]})
+                
                  let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
 
          

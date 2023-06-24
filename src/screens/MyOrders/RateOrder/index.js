@@ -36,7 +36,6 @@ const RateOrder = ({route, navigation}) => {
 
 
 
-    console.log({riderRating})
 
     const {width} = useWindowDimensions()
 

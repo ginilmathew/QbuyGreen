@@ -16,7 +16,7 @@ const ViewAllStore = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
     const styles = makeStyles(height);
 
-    reactotron.log({styles})
+    reactotron.log({ styles })
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)
@@ -80,7 +80,7 @@ const ViewAllStore = ({ route, navigation }) => {
     }, [])
 
 
-    const renderStore = useCallback(({item, index}) => {
+    const renderStore = useCallback(({ item, index }) => {
         return (
             <View key={index}>
                 <TouchableOpacity
@@ -102,20 +102,24 @@ const ViewAllStore = ({ route, navigation }) => {
         )
     }, [])
 
-    
+
 
     return (
         <View>
             <HeaderWithTitle title={'Stores'} onPressBack={NavigationToHome} />
-            <FlatList
-                refreshing={loadingg.loading}
-                onRefresh={getStore}
-                numColumns={4}
-                data={storeList}
-                contentContainerStyle={{ height }}
-                keyExtractor={(item) => item._id}
-                renderItem={renderStore}
-            />
+            <View style={{height:'85%',marginBottom:10}}>
+                <FlatList
+                   
+                    refreshing={loadingg.loading}
+                    onRefresh={getStore}
+                    numColumns={4}
+                    data={storeList}
+                    //  contentContainerStyle={{ height:'80%'}}
+                    keyExtractor={(item) => item._id}
+                    renderItem={renderStore}
+                />
+            </View>
+
         </View>
     )
 }
@@ -126,7 +130,7 @@ const makeStyles = height => StyleSheet.create({
 
     itemText: {
         textAlign: 'center',
-        fontSize: height*0.014,
+        fontSize: height * 0.014,
         marginTop: 5,
         fontFamily: 'Poppins-SemiBold',
         color: '#23233C',

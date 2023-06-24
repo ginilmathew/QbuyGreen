@@ -50,9 +50,9 @@ const QbuyPanda = ({ navigation }) => {
     const [filter, setFilter] = useState('')
 
 
-    reactotron.log({ recentLists, pandaSuggestions, products })
 
-    
+
+
 
     //let loader = loadingg?.loading
 
@@ -68,54 +68,54 @@ const QbuyPanda = ({ navigation }) => {
 
 
     useEffect(() => {
-      getHomedata()
+        getHomedata()
     }, [])
 
 
 
     useEffect(() => {
-        if(filter){
+        if (filter) {
             let recents = homeData?.find(home => home?.type === "recentlyviewed")
-            if(recents?.data?.length > 0){
-                if(filter === "all"){
+            if (recents?.data?.length > 0) {
+                if (filter === "all") {
                     setRecentLists(recents?.data)
                 }
-                else{
+                else {
                     setRecentLists(recents?.data?.filter(prod => prod?.category_type === filter))
                 }
 
-                
-                
+
+
             }
-            
+
 
             let pandaSuggestions = homeData?.find(home => home?.type === "suggested_products")
-            if(pandaSuggestions?.data?.length > 0){
-                if(filter === "all"){
+            if (pandaSuggestions?.data?.length > 0) {
+                if (filter === "all") {
                     setPandaSuggestions(pandaSuggestions?.data)
                 }
-                else{
+                else {
                     setPandaSuggestions(pandaSuggestions?.data?.filter(prod => prod?.category_type === filter))
                 }
-                
+
             }
 
             let products = homeData?.find(home => home?.type === "available_products")
-            if(products?.data?.length > 0){
-                if(filter === "all"){
+            if (products?.data?.length > 0) {
+                if (filter === "all") {
                     setProducts(products?.data)
                 }
-                else{
+                else {
                     setProducts(products?.data?.filter(prod => prod?.category_type === filter))
                 }
-                
+
             }
         }
     }, [filter])
-    
-    
 
-   
+
+
+
 
 
 
@@ -170,7 +170,7 @@ const QbuyPanda = ({ navigation }) => {
 
                 let sliders = response?.data?.data?.find(home => home?.type === "sliders")
                 setSliders(sliders?.data)
-                
+
 
 
                 loadingg.setLoading(false)
@@ -235,25 +235,25 @@ const QbuyPanda = ({ navigation }) => {
             </View> */}
 
             <Header onPress={onClickDrawer} />
-            <ScrollView 
-                style={{ flex: 1, backgroundColor: '#fff' }} 
+            <ScrollView
+                style={{ flex: 1, backgroundColor: '#fff' }}
                 refreshControl={
                     <RefreshControl refreshing={loadingg.loading} onRefresh={getHomedata} />
                 }
             >
-            
+
                 {sliders?.length > 0 && <View>
-                        <Carousel
-                            loop
-                            width={width}
-                            height={height / 5}
-                            autoPlay={true}
-                            data={sliders}
-                            scrollAnimationDuration={1000}
-                            renderItem={CarouselCardItem}
-                        />
-                    </View>}
-            
+                    <Carousel
+                        loop
+                        width={width}
+                        height={height / 5}
+                        autoPlay={true}
+                        data={sliders}
+                        scrollAnimationDuration={1000}
+                        renderItem={CarouselCardItem}
+                    />
+                </View>}
+
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -268,18 +268,18 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView>
 
-            <SearchBox onPress={onSearch} />
+                <SearchBox onPress={onSearch} />
 
 
-            <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
-            
+                <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
+{/* 
                 <View style={styles.categoryView}>
                     {category?.map((item) => (
                         <CategoriesCard key={item?._id} item={item} />
                     ))}
-                </View>
+                </View> */}
 
-            <View style={styles.pickupReferContainer}>
+                <View style={styles.pickupReferContainer}>
                     <PickDropAndReferCard
                         onPress={pickupDropClick}
                         lotties={require('../../Lottie/deliveryBike.json')}
@@ -294,21 +294,21 @@ const QbuyPanda = ({ navigation }) => {
                     />
                 </View>
 
-            <View style={styles.offerView}>
-            <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
-            <OfferText />
-            {/* <CountDownComponent/> */}
-            <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-            </View>
+                <View style={styles.offerView}>
+                    <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+                    <OfferText />
+                    {/* <CountDownComponent/> */}
+                    <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+                </View>
 
-            <View
+                <View
                     style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginBottom: 5, justifyContent: 'space-between', marginRight: 5 }}
                 >
                     <CommonTexts label={'Recently Viewed'} fontSize={13} />
                     <CommonFiltration onChange={setFilter} />
                 </View>
 
-            <ScrollView
+                <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
@@ -323,8 +323,8 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView>
 
-            <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
-            <ScrollView
+                <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
+                <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
@@ -339,7 +339,7 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView>
 
-            <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
+                <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
                 <View style={styles.menuContainer}>
                     {products?.map((item) => (
                         <CommonItemCard
@@ -351,7 +351,7 @@ const QbuyPanda = ({ navigation }) => {
                     ))}
                 </View>
 
-            {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
+                {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}

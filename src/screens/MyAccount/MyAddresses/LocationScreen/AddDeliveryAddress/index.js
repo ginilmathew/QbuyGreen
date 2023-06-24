@@ -26,7 +26,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
 
     let locationData = route?.params?.item;
 
-    reactotron.log({ locationData })
+  
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
 

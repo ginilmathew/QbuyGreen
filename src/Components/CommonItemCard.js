@@ -45,7 +45,6 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
 
-
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
@@ -65,10 +64,13 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
     const handleClick = useCallback(() => {
-        startTransition(() => {
-            navigation.navigate('SingleItemScreen', { item: data })
-        })
-    }, [data])
+        if(item?.status === "active"){
+            startTransition(() => {
+                navigation.navigate('SingleItemScreen', { item: data })
+            })
+        }
+       
+    }, [data,item])
 
     const openBottomSheet = useCallback(() => {
         // refRBSheet.current.open()
@@ -80,15 +82,15 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         //     cartContext?.addToCart(data)
 
         // }
-        if(parseInt(data?.price) < 1 ){
+        if (parseInt(data?.price) < 1) {
             Toast.show({
                 type: 'info',
                 text1: 'Price should be more than 1'
             });
             return false
-         }
+        }
 
-   
+
         if (!data?.variant) {
             cartContext?.addToCart(data)
         }
@@ -97,7 +99,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         }
 
         //navigation.navigate('SingleItemScreen', { item: item })
-    }, [data, cartContext.cart])
+    }, [data, cartContext.cart, cartContext?.products])
 
 
 
@@ -204,8 +206,16 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         </View>
 
                     </View>}
+                    {item?.status === "inactive" && <View style={{ position: 'absolute', top: '32%', width: '100%' }}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ padding: 5, borderWidth: 1, borderColor: '#fff', margin: 8, borderRadius: 8 }}>
+                                <Text style={{ color: 'red', textAlign: 'center', fontWeight: 'bold', alignSelf: 'center' }}>Product Not Available</Text>
+                            </View>
+                        </View>
 
-                    {data?.available && <View style={styles.addContainer}>
+                    </View>}
+
+                    {(data?.available  && item?.status === "active") && <View style={styles.addContainer}>
                         <CommonAddButton
                             onPress={openBottomSheet}
                         />
@@ -221,7 +231,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
                         onPress={(data?.is_wishlist || wishlistIcon) ? RemoveAction : AddAction}
                         style={styles.hearIcon}
                     >
-                   
+
                         <Fontisto name={"heart"} color={(data?.is_wishlist || wishlistIcon) ? "#FF6464" : '#EDEDED'} size={12 / fontScale} />
                     </TouchableOpacity>
 

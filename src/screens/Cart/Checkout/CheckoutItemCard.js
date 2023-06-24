@@ -173,7 +173,7 @@ const CheckoutItemCard = ({ item, index, refreshCart, view }) => {
                             type: 'error',
                             text1: error
                         });
-                        console.log(error)
+                    
                     })
             }
             else {
@@ -248,7 +248,7 @@ const CheckoutItemCard = ({ item, index, refreshCart, view }) => {
                 }
             })
             .catch(async error => {
-                console.log(error)
+             
                 Toast.show({
                     type: 'error',
                     text1: error
@@ -264,8 +264,7 @@ const CheckoutItemCard = ({ item, index, refreshCart, view }) => {
     })
 
 
-    reactotron.log({ itemName: item?.name })
-    reactotron.log({ item: item })
+ 
     return (
         <View style={styles.container}>
             <View style={{ flex: 0.42 }}>

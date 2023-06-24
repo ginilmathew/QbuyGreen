@@ -8,7 +8,7 @@ import reactotron from '../../../ReactotronConfig'
 
 const ImageVideoBox = memo(({selectedImage, setSelectedImage, onPress, item, index}) => {
 
-    // reactotron.log({item},'item in app')
+    reactotron.log({item},'item in app')
 
     const { width, height } = useWindowDimensions()
 

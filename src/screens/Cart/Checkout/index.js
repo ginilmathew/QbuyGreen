@@ -45,14 +45,13 @@ const Checkout = ({ navigation }) => {
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const authContext = useContext(AuthContext)
+
     let active = contextPanda.active
 
     let myLocation = authContext?.userLocation
     // let myCity = authContext?.city
 
 
-    reactotron.log({ cartContext: cartContext?.cart?._id })
-    reactotron.log({ cartContextAddress: cartContext?.defaultAddress?._id })
 
 
     const loadingg = useContext(LoaderContext)
@@ -457,6 +456,14 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
+
+
+        let franchise = await customAxios.post('customer/get-franchise', { coordinates: authContext.location })
+
+        if (!franchise) {
+            return false
+        }
+
         if (!cartContext?.defaultAddress) {
             Toast.show({
                 type: 'error',
@@ -523,7 +530,7 @@ const Checkout = ({ navigation }) => {
             if (products?.length > 0) {
                 await customAxios.post(`customer/order/test-create`, orderDetails)
                     .then(async response => {
-                        console.log("response ==>", JSON.stringify(response.data), response.status)
+                        // console.log("response ==>", JSON.stringify(response.data), response.status)
                         const { data } = response
 
 
@@ -618,7 +625,7 @@ const Checkout = ({ navigation }) => {
             true,//appInvokeRestricted
             `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
-            reactotron.log("PAYTM RESPONSE", { result })
+         
             if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
             }
@@ -634,7 +641,7 @@ const Checkout = ({ navigation }) => {
 
 
         }).catch((err) => {
-            reactotron.log("PAYTM ERROR", { err })
+        
             let data = {
                 STATUS: 'TXN_FAILURE',
                 RESPMSG: 'User Cancelled transaction',

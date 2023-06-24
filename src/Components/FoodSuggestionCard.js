@@ -24,10 +24,10 @@ const FoodSuggestionCard = ({item, onPress}) => {
     
     return (
         <View style={styles.container}>
-            <FastImage
+            {/* <FastImage
                 style={{width:80, height:80, borderRadius:10}}
                 source={require('../Images/biriyani.jpeg')}
-            />
+            /> */}
             <View style={{marginLeft:8, flex:0.98}}>
                 <Text
                     style={styles.nameText}

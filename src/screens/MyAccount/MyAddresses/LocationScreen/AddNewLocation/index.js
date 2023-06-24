@@ -17,7 +17,7 @@ const AddNewLocation = ({ route, navigation }) => {
 
     const location = useRef()
 
-    reactotron.log({ location })
+
 
     useEffect(() => {
         SplashScreen.hide()

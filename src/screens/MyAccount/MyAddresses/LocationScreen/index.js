@@ -19,10 +19,10 @@ const LocationScreen = ({ route, navigation }) => {
 
     const { mode } = route.params
 
-    reactotron.log({ mode })
+
 
     const homeNavigationbasedIndex = navigation.getState()
-    reactotron.log({ homeNavigationbasedIndex })
+   
 
     const cartContext = useContext(CartContext)
     const contextPanda = useContext(PandaContext)
@@ -106,8 +106,8 @@ const LocationScreen = ({ route, navigation }) => {
     }, [homeNavigationbasedIndex?.index])
 
     const onConfirm = useCallback(async () => {
-        reactotron.log('text')
-        reactotron.log({ home: homeNavigationbasedIndex?.index })
+  
+
         //below code for checking the location is denied condition
         if (homeNavigationbasedIndex?.index === 1 && mode !== "currentlocation") {
             let value = {
@@ -126,7 +126,7 @@ const LocationScreen = ({ route, navigation }) => {
             }
 
         } else {
-            reactotron.log({ addressContext: addressContext?.currentAddress })
+          
             let locationData = {
                 location: addressContext?.currentAddress?.location ? addressContext?.currentAddress?.location : address,
                 city: addressContext?.currentAddress?.city ? addressContext?.currentAddress?.city : city,
@@ -134,7 +134,7 @@ const LocationScreen = ({ route, navigation }) => {
                 longitude: addressContext?.currentAddress?.longitude ? addressContext?.currentAddress?.longitude : location?.longitude,
             }
 
-            reactotron?.log({ locationData })
+   
             navigation.navigate('AddDeliveryAddress', { item: { ...editAddress, ...locationData } })
         }
 
@@ -164,7 +164,7 @@ const LocationScreen = ({ route, navigation }) => {
 
             }
             // addressContext.setCurrentAddress(value)
-            reactotron.log({ value })
+         
         })
             .catch(err => {
             })
@@ -179,7 +179,7 @@ const LocationScreen = ({ route, navigation }) => {
         setLocation({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
         addressContext.setCurrentAddress({ latitude: coordinates?.latitude, longitude: coordinates?.longitude })
         //setLocation(region)
-        reactotron.log(addressContext?.currentAddress)
+   
     }
 
     return (

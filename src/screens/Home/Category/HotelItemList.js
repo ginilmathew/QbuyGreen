@@ -15,11 +15,11 @@ const HotelItemList = ({list}) => {
         >
             {list.map((item)=> 
                 <TouchableOpacity key={item?._id} style={{alignItems:'center', marginRight:5, width: width/4}}>
-                    <FastImage
+                    {/* <FastImage
                         style={{width:70, height:70, borderRadius:35 }}
                         source={require('../../../Images/biriyani.jpeg')}
                         borderRadius = {35}
-                    />
+                    /> */}
                     <Text style={styles.foodName}>{item?.name}</Text>
                 </TouchableOpacity>
             )}

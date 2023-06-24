@@ -16,9 +16,10 @@ import Toast from 'react-native-toast-message';
 import LoaderContext from '../../contexts/Loader';
 import moment from 'moment';
 import reactotron from 'reactotron-react-native';
+import CartItemCardtest from './cartItemCardtest';
 
 
-const Cart = ({ navigation }) => {
+const CartTest = ({ navigation }) => {
 
 
     const contextPanda = useContext(PandaContext)
@@ -31,7 +32,7 @@ const Cart = ({ navigation }) => {
 
     const user = useContext(AuthContext)
     const cartContext = useContext(CartContext)
-
+    const userContext = useContext(AuthContext)
 
 
     //let cartId = user?.cartId
@@ -39,7 +40,7 @@ const Cart = ({ navigation }) => {
 
     const [cartItemsList, setCartItemsList] = useState([])
 
-   
+  
 
 
     const getCartItems = async () => {
@@ -49,7 +50,7 @@ const Cart = ({ navigation }) => {
 
                     let products = response?.data?.data?.product_details;
                     // cartContext?.setCart(response?.data?.data)
-                    reactotron.log({products})
+                 
                     let finalProducts = [];
                     //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
                     products?.map((pro) => {
@@ -298,59 +299,46 @@ const Cart = ({ navigation }) => {
     const gotoCheckout = useCallback(async () => {
         let cancel = false
 
-        // reactotron.log({ cartItemsList })
-        // let quantity = cartItemsList?.find(cart => cart?.stock && cart?.quantity > cart?.stock_value);
-        //   let quantity =  cartItemsList?.some((cart) => {
-        //         if (cart?.available) {
-        //             if (cart?.stock) {
-        //                 cart?.quantity < cart?.stock_value
+        let allProducts = cartContext?.cart?.product_details;
+    
 
-        //             }
-        //         } else {
-        //             Toast.show({
-        //                 type: 'info',
-        //                 text1: 'Please remove out of stocks products and continue'
-        //             })
-        //             return false;
-        //         }
-        //     })
-
-        //     reactotron.log({quantity})
-
-        //     if(quantity){
-        //         navigation.navigate('Checkout')
-        //     }
-
-
-        // if (quantity) {
-        //     Toast.show({
-        //         type: 'info',
-        //         text1: 'Please remove out of stocks products and continue'
-        //     })
-        //     return false;
-        // }
-        // else {
-        //     navigation.navigate('Checkout')
-        // }
-        const satisfiesConditions = cartItemsList.every((item) => {
-            return item.available === true && item.availability === true && item?.quantity >= item?.minimum_qty && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
-        });
-
-
-
-        if (!satisfiesConditions) {
-            Toast.show({
-                type: 'info',
-                text1: 'Please remove products with warnings',
-            })
-            return false;
-        } else {
-            navigation.navigate('Checkout')
+        let cartItems = {
+            cart_id: cartContext?.cart?._id,
+            product_details: allProducts,
+            user_id: userContext?.userData?._id
         }
+         await customAxios.post(`customer/cart/update`, cartItems)
+            .then(async response => {
+                cartContext.setCart(response?.data?.data)
+                refreshCart()
+                const satisfiesConditions = cartItemsList.every((item) => {
+                    return item.available === true && item.availability === true && item?.quantity >= item?.minimum_qty && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
+                });
+        
+        
+        
+                if (!satisfiesConditions) {
+                    Toast.show({
+                        type: 'info',
+                        text1: 'Please remove products with warnings',
+                    })
+                    return false;
+                } else {
+                    navigation.navigate('Checkout')
+                }
+            })
+            .catch(async error => {
+                console.log(error)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+            })
+        
         // reactotron.log("Conditions are satisfied:", satisfiesConditions);
 
 
-    }, [cartItemsList])
+    }, [cartItemsList,cartContext?.cart])
 
     const goHome = useCallback(() => {
         navigation.navigate('home')
@@ -395,7 +383,7 @@ const Cart = ({ navigation }) => {
                     />
                 </View> :
                     <>
-                        {cartItemsList?.map((item, index) => <CartItemCard item={item} key={index} index={index} refreshCart={refreshCart} />)}
+                        {cartItemsList?.map((item, index) => <CartItemCardtest item={item} key={index} index={index} refreshCart={refreshCart} />)}
                     </>}
 
 
@@ -442,6 +430,6 @@ const Cart = ({ navigation }) => {
     )
 }
 
-export default Cart
+export default CartTest
 
 const styles = StyleSheet.create({})

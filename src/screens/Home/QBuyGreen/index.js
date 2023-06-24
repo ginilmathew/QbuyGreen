@@ -47,7 +47,7 @@ const QBuyGreen = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
-    reactotron.log({ userContext: userContext?.location })
+
     let userData = userContext?.userData
 
 
@@ -96,24 +96,7 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
-    // const groceImg = [
-    //     {
-    //         id: "1",
-    //         img: require('../../../Images/groceryAdds.jpeg')
-    //     },
-    //     {
-    //         id: "2",
-    //         img: require('../../../Images/image1.jpeg')
-    //     },
-    //     {
-    //         id: "3",
-    //         img: require('../../../Images/image2.jpeg')
-    //     },
-    //     {
-    //         id: "4",
-    //         img: require('../../../Images/image3.jpeg')
-    //     }
-    // ]
+
 
     const ourFarm = useCallback(() => {
         navigation.navigate('OurFarms')
@@ -139,15 +122,12 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
-    // useLayoutEffect(() => {
-    //     getHomedata()
-    // }, []);
-
+ 
 
     useFocusEffect(
         React.useCallback(() => {
             getHomedata()
-        }, [])
+        }, [userContext?.location])
     );
 
     // useEffect(() => {
@@ -198,12 +178,11 @@ const QBuyGreen = ({ navigation }) => {
 
     const CarouselCardItem = ({ item, index }) => {
         return (
-            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
+            <View style={{ alignItems: 'center', marginTop: 20, width: '100%', height: '85%' }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
                     resizeMode='cover'
-
                 >
                 </FastImage>
             </View>

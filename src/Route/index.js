@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform, StyleSheet, ToastAndroid, AppState, useRef } from 'react-native'
+import { AppState, PermissionsAndroid, Platform, StyleSheet, ToastAndroid } from 'react-native'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -41,10 +41,30 @@ const Route = () => {
     const [location, setLocation] = useState(null)
 
 
+
     const [initialScreen, setInitialScreen] = useState(null)
     useEffect(() => {
         getCurrentLocation()
     }, [])
+
+    // useEffect(() => {
+    //     const subscription = AppState.addEventListener('change', nextAppState => {
+    //     //   if (
+    //     //     appState.current.match(/inactive|background/) &&
+    //     //     nextAppState === 'active'
+    //     //   ) {
+    //     //     console.log('App has come to the foreground!');
+    //     //   }
+    
+    //     //   appState.current = nextAppState;
+    //     //   setAppStateVisible(appState.current);
+    //       reactotron.log('AppState', nextAppState, cartContext.cart);
+    //     });
+    
+    //     return () => {
+    //       subscription.remove();
+    //     };
+    //   }, [cartContext.cart]);
 
     const getCurrentLocation = useCallback(async () => {
         if (Platform.OS === 'ios') {
@@ -261,14 +281,21 @@ const Route = () => {
         }
     }
 
+
+    
+
     useEffect(async () => {
         const token = await AsyncStorage.getItem("token");
         if (token) {
             const subscription = AppState.addEventListener('change', async nextAppState => {
+
                 if (nextAppState === 'active') {
+              
                     await customAxios.post('customer/login-status-update', { login_status: true })
+                
                 } else {
                     await customAxios.post('customer/login-status-update', { login_status: false })
+            
                 }
             });
             return () => {

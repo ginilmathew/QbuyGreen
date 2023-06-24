@@ -57,8 +57,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
-   reactotron.log({item})
-
+reactotron.log({singleProduct})
 
     useEffect(() => {
         if (route?.params?.item) {
@@ -232,7 +231,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
 
-    }, [selectedVariant, cart?.cart, item])
+    }, [selectedVariant, cart?.cart, item, cart?.products])
 
 
 

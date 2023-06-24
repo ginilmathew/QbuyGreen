@@ -48,7 +48,7 @@ const StoreScreen = ({ route, navigation }) => {
     const [categories, setCategories] = useState([])
 
 
-    reactotron.log({ storeDetails })
+
     const [selected, setSelected] = useState(false)
 
     useEffect(() => {
@@ -116,7 +116,7 @@ const StoreScreen = ({ route, navigation }) => {
                             <CommonTexts label={`${moment(storeDetails?.start_time, "hh:mm a").format('hh:mm a')} - ${moment(storeDetails?.end_time, "hh:mm a").format('hh:mm a')}`} color={'#fff'} fontSize={11} />
                         </View>}
                     </FastImage>
-                    <StoreAddressCard address={item?.store_address ? item?.store_address : storeDetails?.store_address} />
+                    <StoreAddressCard address={item?.store_address || item?.store_address !== "null" ? item?.store_address : storeDetails?.store_address} />
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
 

@@ -77,7 +77,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             true,//appInvokeRestricted
           `paytm${paymentDetails?.mid}`//urlScheme
          ).then((result) => {
-            reactotron.log({result})
+         
             if(has(result, "STATUS")){
                 
                 updatePaymentResponse(result)
@@ -119,7 +119,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             }
             
         }).catch(async error => {
-            console.log(error)
+        
             Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
             refreshOrder()
         })
@@ -133,8 +133,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
         await customAxios.post(`customer/order/paynow`,data)
             .then(async response => {
                 const { data } = response
-                reactotron.log({response},'PAYNOW')
-                reactotron.log({data:data?.data})
+              
                 cartContext.setCart(data?.data)
                 navigation.navigate('cart')
                 // if (data?.status) {
@@ -145,7 +144,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 loadingg.setLoading(false)
             })
             .catch(async error => {
-                console.log(error)
+              
                 Toast.show({
                     type: 'error',
                     text1: error

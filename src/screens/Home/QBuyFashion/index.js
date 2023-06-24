@@ -112,7 +112,7 @@ const QBuyFashion = () => {
 
     
     const getHomedata = async (coord) => {
-        reactotron.log('API CALLEDD')
+   
         loadingg.setLoading(true)
         let datas = {
             type: "fashion",
@@ -122,7 +122,7 @@ const QBuyFashion = () => {
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 //fashionHome?.setFashionHomeData(response?.data?.data)
-                reactotron.log('API CALLEDD')
+            
                 setHomeData(response?.data?.data)
                 loadingg.setLoading(false)
             })

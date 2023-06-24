@@ -35,9 +35,10 @@ const CategoryScreen = ({ route, navigation }) => {
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [filterProducts, setFilterProduct] = useState([])
-    const [categories, setCategories] = useState([])
+
     const [selected, setSelected] = useState(null);
-    const [refreshing, setRefreshing] = useState(false);
+
+
 
 
     //code for filter by subCategory.......
@@ -54,7 +55,7 @@ const CategoryScreen = ({ route, navigation }) => {
         }
     }, [selected])
 
-   //****************************************/
+    //****************************************/
 
 
 
@@ -76,7 +77,7 @@ const CategoryScreen = ({ route, navigation }) => {
             coordinates: auth?.location
         }
 
-    reactotron.log({datas})
+
         await customAxios.post(`customer/product/category-based`, datas)
             .then(async response => {
 
@@ -103,7 +104,7 @@ const CategoryScreen = ({ route, navigation }) => {
     }
 
 
-  
+
 
 
 
@@ -125,23 +126,24 @@ const CategoryScreen = ({ route, navigation }) => {
                         style={styles.mainImage}
                         borderRadius={15}
                     />
-                    <Text style={styles.description}>{item?.seo_description === null  ? '' : item?.seo_description}</Text>
+                    <Text style={styles.description}>{item?.seo_description === null ? '' : item?.seo_description}</Text>
                 </View>
 
-
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={{ backgroundColor: '#76867314', marginTop: 5 }}
-                >
-                    {item?.subcategories?.map((item, index) =>
-                    (<CommonItemSelect
-                        item={item} key={index}
-                        selected={selected}
-                        setSelected={setSelected}
-                    />)
-                    )}
-                </ScrollView>
+       
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={{ backgroundColor: '#76867314', marginTop: 5 }}
+                    >
+                        {item?.subcategories?.map((item, index) =>
+                        (<CommonItemSelect
+                            item={item}
+                            key={index}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />)
+                        )}
+                    </ScrollView>
 
                 {availablePdts?.length > 0 && <>
                     <CommonTexts label={'Available Products'} mt={15} ml={10} fontSize={13} mb={5} />

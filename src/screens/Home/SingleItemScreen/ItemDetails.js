@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import CommonTexts from '../../../Components/CommonTexts'
 import Tooltip from 'react-native-walkthrough-tooltip';
+import reactotron from '../../../ReactotronConfig';
 
 
 const ItemDetails = ({ itemName, hotelName, views, sold, minQty, price, onPress, available }) => {
+    
 
-
-    const [tooltip, setTooltip] = useState(true)
+ const [tooltip, setTooltip] = useState(true)
 
     useEffect(() => {
         setTimeout(() => {

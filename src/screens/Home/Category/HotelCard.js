@@ -22,8 +22,8 @@ const HotelCard = ({ heights, item }) => {
                     source={item?.image ? item?.image : require('../../../Images/hotel.jpeg')}
                     style={{ height: 170, width:width/2.2, justifyContent: 'flex-end', borderRadius:20 }}
                 >
-            
-                </FastImage> */}
+                    {/* <CommonRating rating={3.8} position={'absolute'} bottom={10} left={5} starSize={12}/> */}
+                {/* </FastImage> */}
                 <Text
                     style={styles.nameText}
                 >{item?.hotel}</Text>

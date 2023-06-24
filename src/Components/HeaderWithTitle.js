@@ -10,7 +10,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 const HeaderWithTitle = ({ title, noBack, onPressBack, mode }) => {
 
 
-    console.log({mode})
+
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
 

@@ -11,6 +11,7 @@ import reactotron from "reactotron-react-native";
 const CartProvider = (props) => {
 
     const [cart, setCart] = useState(null);
+    const [products, setProducts] = useState(null)
     const [address, setAddress] = useState(null);
     const [defaultAddress, setDefaultAddress] = useState(null);
     const [animation, setAnimation] = useState(new Animated.ValueXY({ x: 0, y: 0 }))
@@ -20,15 +21,15 @@ const CartProvider = (props) => {
 
     const userData = authCOntext.userData
 
+    reactotron.log({products})
+
     useEffect(() => {
         getDefaultAddress()
     }, [address])
 
 
     const addToCart = async(item, selectedVariant) => {
-
-
-    
+        //reactotron.log({cart})
         let cartItems, url;
         let productDetails;
         let minimumQty = item?.minQty ? item?.minQty : 1
@@ -122,6 +123,99 @@ const CartProvider = (props) => {
     }
 
 
+    const addLocalCart = async(item, selectedVariant = null) => {
+        //reactotron.log({item})
+        let { _id, name, store, franchisee, stock, minQty, product_image, variant, price, available, stockValue, delivery} = item
+        if(variant){
+            //Find Product
+            let findPro = await products?.find(pro => pro?._id === _id && pro?.variant_id === selectedVariant?.id)
+            if(findPro){
+                if(stock){
+                    if((findPro?.quantity + 1) <= selectedVariant?.stockValue){
+                        findPro.quantity += 1;
+                    }
+                    else{
+                        Toast.show({ type: 'info', text1: 'Required quantity not available' })
+                    }
+                }
+                else{
+                    findPro.quantity += 1;
+                }
+            }
+            else{
+                let product = {
+                    _id,
+                    name: `${name} (${selectedVariant?.title})`,
+                    store,
+                    franchisee,
+                    product_image,
+                    price: parseFloat(selectedVariant?.price),
+                    quantity: selectedVariant?.minQty,
+                    stockValue: selectedVariant?.stockValue,
+                    variant_id: selectedVariant?.id
+                }
+
+                if(stock){
+                    if(selectedVariant?.minQty < selectedVariant?.stockValue){
+                        setProducts((prev) => prev ? [...prev, product] : [product])
+                    }
+                    else{
+                        Toast.show({ type: 'info', text1: 'Required quantity not available' })
+                    }
+                }
+                else{
+                    setProducts((prev) => prev ? [...prev, product] : [product])
+                }
+            }
+        }
+        else{
+            //Find Product
+            let findPro = await products?.find(pro => pro?._id === _id)
+            if(findPro){
+                if(stock){
+                    let quan = findPro.quantity
+                    if((quan + 1 ) <= stockValue){
+                        findPro.quantity += 1;
+                    }
+                    else{
+                        Toast.show({ type: 'info', text1: 'Required quantity not available' })
+                    }
+                }
+                else{
+                    findPro.quantity += 1;
+                }
+
+            }
+            else{
+                let product = {
+                    _id,
+                    name,
+                    store,
+                    franchisee,
+                    product_image,
+                    price: parseFloat(price),
+                    quantity: minQty,
+                    stockValue: stockValue
+                }
+                if(stock){
+                    if(minQty < stockValue){
+                        setProducts((prev) => prev ? [...prev, product] : [product])
+                    }
+                    else{
+                        Toast.show({ type: 'info', text1: 'Required quantity not available' })
+                    }
+                }
+                else{
+                    setProducts((prev) => prev ? [...prev, product] : [product])
+                }
+                
+            }
+        }
+        //reactotron.log({item})
+        //setProducts((prev) => prev ? [...prev, item] : [item])
+    }
+
+
     const getDefaultAddress = useCallback(() => {
         if (address) {
             let defau = address?.find(add => add.default === true)
@@ -143,11 +237,13 @@ const CartProvider = (props) => {
                 cart,
                 address,
                 defaultAddress,
+                products,
                 setCart,
                 setAddress,
                 getDefaultAddress,
                 setDefaultAddress,
                 setAnimation,
+                addLocalCart,
                 animation,
                 addToCart
 

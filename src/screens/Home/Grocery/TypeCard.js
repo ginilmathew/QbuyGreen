@@ -8,41 +8,41 @@ import PandaContext from '../../../contexts/Panda'
 import reactotron from 'reactotron-react-native'
 
 
-const TypeCard = memo(({item, mode, onCategoryPress, storeId}) => {
+const TypeCard = memo(({ item, mode, onCategoryPress, storeId }) => {
 
 
     const contextPanda = useContext(PandaContext)
 
     const { width, fontScale, height } = useWindowDimensions()
 
-    let imageWidth = width/6
+    let imageWidth = width / 6
 
     const styles = makeStyles(fontScale, height);
     const navigation = useNavigation()
 
     const onClick = useCallback(() => {
-        navigation.navigate('Category', {name : item?.name, mode: contextPanda.active, item : item, storeId })
+        navigation.navigate('Category', { name: item?.name, mode: contextPanda.active, item: item, storeId })
     }, [item])
 
     return (
-      <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 5 }}>
-        <TouchableOpacity 
-            onPress={onClick} 
-            key={item?._id} 
-            style={{ alignItems: 'center', width: imageWidth, height: imageWidth }}
-        >
-            <FastImage
-                style={{borderRadius: imageWidth/2, width: '100%', height: '100%' }}
-                source={{ uri: `${IMG_URL}${item?.image}` }}
-                borderRadius={30}
-            />
-            
-        </TouchableOpacity>
-        <Text
-        numberOfLines={2}
-        style={styles.shopName}
-    >{item?.name}</Text>
-         </View> 
+        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 5 }}>
+            <TouchableOpacity
+                onPress={onClick}
+                key={item?._id}
+                style={{ alignItems: 'center', width: imageWidth, height: imageWidth }}
+            >
+                <FastImage
+                    style={{ borderRadius: imageWidth / 2, width: '100%', height: '100%' }}
+                    source={{ uri: `${IMG_URL}${item?.image}` }}
+                    borderRadius={30}
+                />
+
+            </TouchableOpacity>
+            <Text
+                numberOfLines={2}
+                style={styles.shopName}
+            >{item?.name}</Text>
+        </View>
     )
 })
 
@@ -52,7 +52,7 @@ const makeStyles = (fontScale, width) => StyleSheet.create({
     shopName: {
         fontFamily: 'Poppins-SemiBold',
         color: '#23233C',
-        fontSize: 0.013*width,
+        fontSize: 0.013 * width,
         textAlign: 'center',
         marginTop: 5,
         paddingHorizontal: 5,

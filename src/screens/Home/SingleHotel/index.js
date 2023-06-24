@@ -98,13 +98,12 @@ const SingleHotel = ({ route, navigation }) => {
                 />
             <ScrollView style={{ flex: 1, backgroundColor:active === "green" ? '#F4FFE9' : active === "fashion" ? '#FFF5F7' : '#fff',  }}>
                 <View style={{ paddingHorizontal: 10 }}>
-                    <FastImage
+                    {/* <FastImage
                         source={require('../../../Images/hotel.jpeg')}
                         style={styles.hotelImage}
                         borderRadius={15}
                     >
-                        {/* <CommonRating rating={4.1} position={'absolute'} bottom={10} left={5} starSize={12} /> */}
-                    </FastImage>
+                    </FastImage> */}
                     <StoreAddressCard />
                     <Text
                         style={styles.descriptionText}

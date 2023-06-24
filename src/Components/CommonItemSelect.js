@@ -13,9 +13,8 @@ const CommonItemSelect = memo(({item, setSelected, selected}) => {
 
 
     const onClick = useCallback(() => {
-        reactotron.log({item})
-
-        RootNavigation.navigate("tagScreen", { item })
+        setSelected(item?._id)
+        // RootNavigation.navigate("tagScreen", { item })
     },[item])
     
     return (
