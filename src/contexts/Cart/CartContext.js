@@ -7,6 +7,7 @@ import Toast from "react-native-toast-message";
 import LoaderContext from "../Loader";
 import AuthContext from "../Auth";
 import reactotron from "reactotron-react-native";
+import PandaContext from "../Panda";
 
 const CartProvider = (props) => {
 
@@ -17,34 +18,34 @@ const CartProvider = (props) => {
     const [animation, setAnimation] = useState(new Animated.ValueXY({ x: 0, y: 0 }))
     const loadingContext = useContext(LoaderContext)
     const authCOntext = useContext(AuthContext)
-
+    const panda = useContext(PandaContext)
 
     const userData = authCOntext.userData
 
-    reactotron.log({products})
+
 
     useEffect(() => {
         getDefaultAddress()
     }, [address])
 
 
-    const addToCart = async(item, selectedVariant) => {
+    const addToCart = async (item, selectedVariant) => {
         //reactotron.log({cart})
         let cartItems, url;
         let productDetails;
         let minimumQty = item?.minQty ? item?.minQty : 1
 
-        if(cart){
+        if (cart) {
             url = "customer/cart/update";
             let cartProducts = cart?.product_details;
             let existing;
-            if(item?.variant){
+            if (item?.variant) {
                 existing = cart?.product_details?.find(prod => prod.product_id === item?._id && prod?.variants?.[0]?.variant_id === selectedVariant?.id)
             }
-            else{
+            else {
                 existing = cart?.product_details?.find(prod => prod.product_id === item?._id)
             }
-            if(existing){
+            if (existing) {
                 existing.quantity = existing.quantity + 1;
                 cartItems = {
                     cart_id: cart?._id,
@@ -73,7 +74,7 @@ const CartProvider = (props) => {
                 }
             }
         }
-        else{
+        else {
             url = "customer/cart/add";
             productDetails = {
                 product_id: item?._id,
@@ -90,59 +91,60 @@ const CartProvider = (props) => {
             };
             cartItems = {
                 product_details: [productDetails],
-                user_id: userData?._id
+                user_id: userData?._id,
+                type: panda.active
             }
 
-            
+
         }
 
         loadingContext.setLoading(true)
         await customAxios.post(url, cartItems)
-        .then(async response => {
-            setCart(response?.data?.data)
-            //reactotron.log({cartUpdate: response?.data?.data})
-            //user?.setCartId(response?.data?.data?._id)
-            await AsyncStorage.setItem("cartId", response?.data?.data?._id)
-            loadingContext.setLoading(false)
-            Toast.show({
-                type: 'success',
-                text1: 'Product added to cart',
-                position: 'top',
-                visibilityTime: 1000
+            .then(async response => {
+                setCart(response?.data?.data)
+                //reactotron.log({cartUpdate: response?.data?.data})
+                //user?.setCartId(response?.data?.data?._id)
+                await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                loadingContext.setLoading(false)
+                Toast.show({
+                    type: 'success',
+                    text1: 'Product added to cart',
+                    position: 'top',
+                    visibilityTime: 1000
+                })
+                //navigation.navigate('cart')
             })
-            //navigation.navigate('cart')
-        })
-        .catch(async error => {
-            console.log(error)
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-            loadingContext.setLoading(false)
-        })
+            .catch(async error => {
+                console.log(error)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+                loadingContext.setLoading(false)
+            })
     }
 
 
-    const addLocalCart = async(item, selectedVariant = null) => {
+    const addLocalCart = async (item, selectedVariant = null) => {
         //reactotron.log({item})
-        let { _id, name, store, franchisee, stock, minQty, product_image, variant, price, available, stockValue, delivery} = item
-        if(variant){
+        let { _id, name, store, franchisee, stock, minQty, product_image, variant, price, available, stockValue, delivery } = item
+        if (variant) {
             //Find Product
             let findPro = await products?.find(pro => pro?._id === _id && pro?.variant_id === selectedVariant?.id)
-            if(findPro){
-                if(stock){
-                    if((findPro?.quantity + 1) <= selectedVariant?.stockValue){
+            if (findPro) {
+                if (stock) {
+                    if ((findPro?.quantity + 1) <= selectedVariant?.stockValue) {
                         findPro.quantity += 1;
                     }
-                    else{
+                    else {
                         Toast.show({ type: 'info', text1: 'Required quantity not available' })
                     }
                 }
-                else{
+                else {
                     findPro.quantity += 1;
                 }
             }
-            else{
+            else {
                 let product = {
                     _id,
                     name: `${name} (${selectedVariant?.title})`,
@@ -155,38 +157,38 @@ const CartProvider = (props) => {
                     variant_id: selectedVariant?.id
                 }
 
-                if(stock){
-                    if(selectedVariant?.minQty < selectedVariant?.stockValue){
+                if (stock) {
+                    if (selectedVariant?.minQty < selectedVariant?.stockValue) {
                         setProducts((prev) => prev ? [...prev, product] : [product])
                     }
-                    else{
+                    else {
                         Toast.show({ type: 'info', text1: 'Required quantity not available' })
                     }
                 }
-                else{
+                else {
                     setProducts((prev) => prev ? [...prev, product] : [product])
                 }
             }
         }
-        else{
+        else {
             //Find Product
             let findPro = await products?.find(pro => pro?._id === _id)
-            if(findPro){
-                if(stock){
+            if (findPro) {
+                if (stock) {
                     let quan = findPro.quantity
-                    if((quan + 1 ) <= stockValue){
+                    if ((quan + 1) <= stockValue) {
                         findPro.quantity += 1;
                     }
-                    else{
+                    else {
                         Toast.show({ type: 'info', text1: 'Required quantity not available' })
                     }
                 }
-                else{
+                else {
                     findPro.quantity += 1;
                 }
 
             }
-            else{
+            else {
                 let product = {
                     _id,
                     name,
@@ -197,18 +199,18 @@ const CartProvider = (props) => {
                     quantity: minQty,
                     stockValue: stockValue
                 }
-                if(stock){
-                    if(minQty < stockValue){
+                if (stock) {
+                    if (minQty < stockValue) {
                         setProducts((prev) => prev ? [...prev, product] : [product])
                     }
-                    else{
+                    else {
                         Toast.show({ type: 'info', text1: 'Required quantity not available' })
                     }
                 }
-                else{
+                else {
                     setProducts((prev) => prev ? [...prev, product] : [product])
                 }
-                
+
             }
         }
         //reactotron.log({item})

@@ -536,10 +536,10 @@ reactotron.log({singleProduct})
                     />} */}
                 </View>
 
-                <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'space-between' : 'center', marginTop: 10, paddingHorizontal: 10, gap: 5 }}>
-                    {contextPanda?.active === "panda" && <CustomButton
+                <View style={{ flexDirection: 'row', width: width, justifyContent: contextPanda?.active === "panda" ? 'center' : 'center', marginTop: 10, paddingHorizontal: 10, gap: 5 }}>
+                    {/* {contextPanda?.active === "panda" && <CustomButton
                         label={'Pre-Order'} bg='#D3D358' width={width / 2.2} onPress={showModals}
-                    />}
+                    />} */}
                     {item?.available && <CustomButton
                         onPress={addToCart}
                         label={'Add to Cart'} bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'} width={width / 2.2}

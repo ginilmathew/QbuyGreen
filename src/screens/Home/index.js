@@ -28,6 +28,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import FastImage from 'react-native-fast-image';
 import { IMG_URL } from '../../config/constants';
 import reactotron from 'reactotron-react-native';
+import CategoryCard from './QBuyGreen/CategoryCard';
 
 const QbuyPanda = ({ navigation }) => {
 
@@ -50,7 +51,7 @@ const QbuyPanda = ({ navigation }) => {
     const [filter, setFilter] = useState('')
 
 
-
+    //reactotron.log({ recentLists, pandaSuggestions, products })
 
 
 
@@ -211,7 +212,7 @@ const QbuyPanda = ({ navigation }) => {
     }, [])
 
     const onSearch = useCallback(() => {
-        navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
+        navigation.navigate('ProductSearchScreen', { mode: 'panda' })
     }, [])
 
     const CarouselCardItem = ({ item, index }) => {
@@ -264,6 +265,7 @@ const QbuyPanda = ({ navigation }) => {
                         item={item} key={index}
                         selected={selected}
                         setSelected={setSelected}
+                        screen={'home'}
                     />)
                     )}
                 </ScrollView>
@@ -272,12 +274,14 @@ const QbuyPanda = ({ navigation }) => {
 
 
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
-{/* 
+
                 <View style={styles.categoryView}>
                     {category?.map((item) => (
                         <CategoriesCard key={item?._id} item={item} />
                     ))}
-                </View> */}
+                </View>
+                {/* <CategoryCard data={category} /> */}
+
 
                 <View style={styles.pickupReferContainer}>
                     <PickDropAndReferCard
@@ -308,7 +312,7 @@ const QbuyPanda = ({ navigation }) => {
                     <CommonFiltration onChange={setFilter} />
                 </View>
 
-                <ScrollView
+                {recentLists?.length > 0 && <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
@@ -321,10 +325,10 @@ const QbuyPanda = ({ navigation }) => {
                             marginHorizontal={5}
                         />
                     )}
-                </ScrollView>
+                </ScrollView>}
 
                 <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
-                <ScrollView
+                {pandaSuggestions?.length > 0 && <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
@@ -337,7 +341,7 @@ const QbuyPanda = ({ navigation }) => {
                             marginHorizontal={5}
                         />
                     )}
-                </ScrollView>
+                </ScrollView>}
 
                 <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
                 <View style={styles.menuContainer}>

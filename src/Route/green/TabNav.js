@@ -28,6 +28,10 @@ import HomeNav from './Home';
 import CartContext from '../../contexts/Cart';
 import reactotron from '../../ReactotronConfig';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomAnimated from './CustomAnimated';
+import CustomMainAnimated from './CustomMainAnimated';
+import AuthContext from '../../contexts/Auth';
+import customAxios from '../../CustomeAxios';
 
 
 
@@ -35,8 +39,10 @@ const TabNav = () => {
 
     const cartContext = useContext(CartContext)
     const pandaContext = useContext(PandaContext)
+    const userContext = useContext(AuthContext)
 
 
+    reactotron.log({ cart: userContext?.userData })
     const navigation = useNavigation()
     const [isPending, startTransition] = useTransition();
 
@@ -44,9 +50,9 @@ const TabNav = () => {
     let [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
     const [showSwitch, setShowSwitch] = useState(false)
 
-    const enableSwitch = useCallback(() => {
-         //reactotron.log({pandaContext : pandaContext?.active})
 
+    const enableSwitch = useCallback(() => {
+        //reactotron.log({pandaContext : pandaContext?.active})
         setShowSwitch(!showSwitch)
     }, [showSwitch])
 
@@ -65,46 +71,123 @@ const TabNav = () => {
     }, [])
 
 
+
+    const switchcartUpdate = async(type) => {
+        let value = {
+            user_id: userContext?.userData?._id,
+            type :type
+
+        }
+     let result =  await customAxios.post('customer/cart/newshow-cart',value)
+     cartContext.setCart(result?.data?.data)
+
+    }
+
     const _renderIcon = (routeName, selectedTab) => {
         let icon = '';
 
         switch (routeName) {
             case 'home':
                 return (
-                    <Entypo
-                        name={"home"}
-                        size={25}
-                        color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
-                    />
+                    <>
+                        {pandaContext?.active === 'green' &&
+                            <Entypo
+                                name={"home"}
+                                size={25}
+                                color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === 'panda' &&
+                            <Entypo
+                                name={"home"}
+                                size={25}
+                                color={routeName === selectedTab ? '#58D36E' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === "fashion" &&
+                            <Entypo
+                                name={"home"}
+                                size={25}
+                                color={routeName === selectedTab ? '#FF6184' : '#FF9FB4'}
+                            />
+                        }
+                    </>
                 );
             case 'cart':
                 return (
                     <>
-                    {cartContext?.cart?.product_details?.length > 0 && <View style={{ height: 15, width: 15, borderRadius: 7.5, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 15, right: 20,zIndex:1 }}>
-                        <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{cartContext?.cart?.product_details?.length}</Text>
-                    </View>}
-                    <AntDesign
-                        name={"shoppingcart"}
-                        size={25}
-                        color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
-                    />
+                        {cartContext?.cart?.product_details?.length > 0 && <View style={{ height: 15, width: 15, borderRadius: 7.5, backgroundColor: 'red', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: 15, right: 20, zIndex: 1 }}>
+                            <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>{cartContext?.cart?.product_details?.length}</Text>
+                        </View>}
+                        {pandaContext?.active === 'green' &&
+                            <AntDesign
+                                name={"shoppingcart"}
+                                size={25}
+                                color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === 'panda' &&
+                            <AntDesign
+                                name={"shoppingcart"}
+                                size={25}
+                                color={routeName === selectedTab ? '#58D36E' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === "fashion" &&
+                            <AntDesign
+                                name={"shoppingcart"}
+                                size={25}
+                                color={routeName === selectedTab ? '#FF6184' : '#FF9FB4'}
+                            />
+                        }
+
                     </>
                 );
             case 'order':
                 return (
-                    <FontAwesome
-                        name={"shopping-bag"}
-                        size={25}
-                        color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
-                    />
+                    <>
+                        {pandaContext?.active === 'green' &&
+                            <FontAwesome
+                                name={"shopping-bag"}
+                                size={25}
+                                color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === 'panda' &&
+                            <FontAwesome
+                                name={"shopping-bag"}
+                                size={25}
+                                color={routeName === selectedTab ? '#58D36E' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === "fashion" &&
+                            <FontAwesome
+                                name={"shopping-bag"}
+                                size={25}
+                                color={routeName === selectedTab ? '#FF6184' : '#FF9FB4'}
+                            />
+                        }
+                    </>
+
                 );
             case 'account':
                 return (
-                    <Ionicons
-                        name={"settings-sharp"}
-                        size={25}
-                        color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
-                    />
+                    <>
+                        {pandaContext?.active === 'green' &&
+                            <Ionicons
+                                name={"settings-sharp"}
+                                size={25}
+                                color={routeName === selectedTab ? '#8ED053' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === 'panda' &&
+                            <Ionicons
+                                name={"settings-sharp"}
+                                size={25}
+                                color={routeName === selectedTab ? '#58D36E' : '#AAD1A2'}
+                            />}
+                        {pandaContext?.active === "fashion" &&
+                            <Ionicons
+                                name={"settings-sharp"}
+                                size={25}
+                                color={routeName === selectedTab ? '#FF6184' : '#FF9FB4'}
+                            />
+                        }
+                    </>
+
                 );
         }
     };
@@ -127,46 +210,63 @@ const TabNav = () => {
     };
 
     const gotoPanda = useCallback(() => {
+        switchcartUpdate('panda')
         pandaContext.setActive('panda')
-        startTransition(() => {
-            navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    { name: 'panda' },
-                  ],
-                })
-            );
-        })
-        
-    }, [])
+        setShowSwitch(!showSwitch)
+        // startTransition(() => {
+        //     navigation.dispatch(
+        //         CommonActions.reset({
+        //           index: 0,
+        //           routes: [
+        //             { name: 'panda' },
+        //           ],
+        //         })
+        //     );
+        // })
+
+    }, [showSwitch, cartContext?.cart])
 
     const goToFashion = useCallback(async () => {
+        switchcartUpdate('fashion')
         pandaContext.setActive('fashion')
-        if(cartContext?.cart){
-            await AsyncStorage.setItem("greenCart",JSON.stringify(cartContext?.cart))
-        }
-       
-        let cartData = await AsyncStorage.getItem("fashionCart");
-        if(cartData){
-            cartContext.setCart(JSON.parse(cartData))
-        }
-        else{
-            cartContext.setCart(null)
-        }
-        startTransition(() => {
-            navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    { name: 'fashion' },
-                  ],
-                })
-            );
-        })
-        
-        
-    }, [cartContext?.cart])
+        setShowSwitch(!showSwitch)
+        // if(cartContext?.cart){
+        //     await AsyncStorage.setItem("greenCart",JSON.stringify(cartContext?.cart))
+        // }
+
+        // let cartData = await AsyncStorage.getItem("fashionCart");
+        // if(cartData){
+        //     cartContext.setCart(JSON.parse(cartData))
+        // }
+        // else{
+        //     cartContext.setCart(null)
+        // }
+        // startTransition(() => {
+        //     navigation.dispatch(
+        //         CommonActions.reset({
+        //           index: 0,
+        //           routes: [
+        //             { name: 'fashion' },
+        //           ],
+        //         })
+        //     );
+        // })
+
+
+    }, [cartContext?.cart, showSwitch])
+
+    const goTogreen = useCallback(() => {
+        switchcartUpdate('green')
+        pandaContext.setActive('green')
+
+        setShowSwitch(!showSwitch)
+    }, [showSwitch, cartContext?.cart])
+
+    const imageswitch = {
+        panda: require('../../Images/home.png'),
+        fashion: require('../../Images/textile.png'),
+        green: require('../../Images/grocery.png')
+    }
 
 
     return (
@@ -176,74 +276,94 @@ const TabNav = () => {
             shadowStyle={styles.shawdow}
             height={70}
             circleWidth={50}
-            bgColor="#F3FFF5"
+            // bgColor="#F3FFF5"
+            bgColor={
+                pandaContext?.active === "green" ?
+                    '#F3FFF5' :
+                    pandaContext?.active === "panda" ?
+                        "#F3FFF5" :
+                        pandaContext?.active === "fashion" ?
+                            "#FFE1E7" :
+                            "#F3FFF5"
+            }
             initialRouteName="title1"
             screenOptions={{
                 headerShown: false
             }}
             renderCircle={({ selectedTab, navigate }) => (
-                <Animated.View style={styles.btnCircleUp}>
-                    {showSwitch && <View style={{ position: 'absolute', bottom: 70, flexDirection: 'row', width: 120, justifyContent: 'space-between' }}>
-                        <TouchableOpacity onPress={gotoPanda}>
-                            <LinearGradient
-                                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#7BE495', '#329D9C']}
-                                style={styles.smallPandas}
-                            >
-                                <Animatable.Image
-                                    animation={'pulse'}
-                                    easing='ease-in-out-quad'
-                                    iterationCount='infinite'
-                                    style={styles.smallPandasLogo}
-                                    // source={require('../Images/cool.png')}
-                                    source={require('../../Images/home.png')}
+                <>
+                    {pandaContext?.active === "green" &&
+                        <Animated.View style={styles.btnCircleUp}>
+                            {showSwitch && <View style={{ position: 'absolute', bottom: 70, flexDirection: 'row', width: 120, justifyContent: 'space-between' }}>
+                                <CustomAnimated
+                                    onpress={gotoPanda}
+                                    imageswitch={imageswitch?.panda}
+                                    colors={['#7BE495', '#329D9C']}
                                 />
-                            </LinearGradient>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={goToFashion}>
-                            <LinearGradient
-                                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#FF41F2', '#FF5757']}
-                                style={styles.smallPandas}
-                            >
-                                <Animatable.Image
-                                    animation={'pulse'}
-                                    easing='ease-in-out'
-                                    iterationCount='infinite'
-                                    style={styles.smallPandasLogo}
-                                    // source={ require('../Images/green.png')}
-                                    source={require('../../Images/textile.png')}
+                                <CustomAnimated
+                                    onpress={goToFashion}
+                                    imageswitch={imageswitch?.fashion}
+                                    colors={['#FF41F2', '#FF5757']}
                                 />
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    </View>}
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={enableSwitch}
-                    >
-                        <LinearGradient
-                            start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#8BC852', '#9BFF58']}
-                            style={styles.panda}
-                        >
-                            <Animated.Image
-                                style={{
-                                    transform: [{
-                                        rotate: animatedValue.interpolate({
-                                            inputRange: [-1, 1],
-                                            outputRange: ['-0.1rad', '0.1rad']
-                                        })
-                                    }]
-                                }}
-                                source={require('../../Images/grocery.png')}
+                            </View>}
+                            <CustomMainAnimated
+                                enableSwitch={enableSwitch}
+                                imageswitch={imageswitch?.green}
+                                colors={['#8BC852', '#9BFF58']}
                             />
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </Animated.View>
+                        </Animated.View>}
+
+                    {
+                        pandaContext?.active === "panda" &&
+                        <Animated.View style={styles.btnCircleUp}>
+                            {showSwitch && <View style={{ position: 'absolute', bottom: 70, flexDirection: 'row', width: 120, justifyContent: 'space-between' }}>
+                                <CustomAnimated
+                                    onpress={goTogreen}
+                                    imageswitch={imageswitch?.green}
+                                    colors={['#8BC852', '#9BFF58']}
+                                />
+                                <CustomAnimated
+                                    onpress={goToFashion}
+                                    imageswitch={imageswitch?.fashion}
+                                    colors={['#FF41F2', '#FF5757']}
+                                />
+                            </View>}
+                            <CustomMainAnimated
+                                enableSwitch={enableSwitch}
+                                imageswitch={imageswitch?.panda}
+                                colors={['#7BE495', '#329D9C']}
+                            />
+                        </Animated.View>
+                    }
+                    {pandaContext?.active === "fashion" &&
+                        <Animated.View style={styles.btnCircleUp}>
+                            {showSwitch && <View style={{ position: 'absolute', bottom: 70, flexDirection: 'row', width: 120, justifyContent: 'space-between' }}>
+                                <CustomAnimated
+                                    onpress={goTogreen}
+                                    imageswitch={imageswitch?.green}
+                                    colors={['#8BC852', '#9BFF58']}
+                                />
+                                <CustomAnimated
+                                    onpress={gotoPanda}
+                                    imageswitch={imageswitch?.panda}
+                                    colors={['#7BE495', '#329D9C']}
+                                />
+                            </View>}
+                            <CustomMainAnimated
+                                enableSwitch={enableSwitch}
+                                imageswitch={imageswitch?.fashion}
+                                colors={['#FF41F2', '#FF5757']}
+                            />
+                        </Animated.View>
+                    }
+
+                </>
             )}
             tabBar={renderTabBar}
         >
             <CurvedBottomBar.Screen
                 name="home"
                 position="LEFT"
-
                 component={HomeNav}
             />
             <CurvedBottomBar.Screen

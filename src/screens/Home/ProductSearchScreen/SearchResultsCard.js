@@ -6,10 +6,16 @@ import reactotron from '../../../ReactotronConfig'
 import { getProduct } from '../../../helper/productHelper'
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import PandaContext from '../../../contexts/Panda'
-const SearchResultsCard = memo(({ item,setValue }) => {
+import AuthContext from '../../../contexts/Auth'
+import CartContext from '../../../contexts/Cart'
+import customAxios from '../../../CustomeAxios'
+
+const SearchResultsCard = memo(({ item, setValue }) => {
 
     const pandaContext = useContext(PandaContext)
 
+    const userContext = useContext(AuthContext)
+    const cartContext = useContext(CartContext)
     const [data, setData] = useState([])
 
 
@@ -29,22 +35,39 @@ const SearchResultsCard = memo(({ item,setValue }) => {
 
     const navigation = useNavigation()
 
-    const handleClick = useCallback((value) => {
-
-        if (item?.type === 'fashion') {
-            pandaContext.setActive('fashion')
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [
-                        { name: 'fashion' }
-                    ]
-                }))
-                setValue('name','')
-        } else {
-            setValue('name','')
-            navigation.navigate('SingleItemScreen', { item: data })
+    const handleswitch = async(type) => {
+        let value = {
+             type:type,
+             user_id: userContext?.userData?._id
         }
+        let result =  await customAxios.post('customer/cart/newshow-cart',value)
+        cartContext.setCart(result?.data?.data)
+
+    }
+
+
+    const handleClick = useCallback((value) => {
+            pandaContext.setActive(item?.type)
+            handleswitch(item?.type)
+            navigation.navigate('SingleItemScreen', { item: data })
+            setValue('name', '')
+
+
+
+        // if (item?.type === 'fashion') {
+        //     pandaContext.setActive('fashion')
+        //     navigation.dispatch(
+        //         CommonActions.reset({
+        //             index: 0,
+        //             routes: [
+        //                 { name: 'fashion' }
+        //             ]
+        //         }))
+        //     setValue('name', '')
+        // } else {
+        //     setValue('name', '')
+        //     navigation.navigate('SingleItemScreen', { item: data })
+        // }
 
 
 
@@ -77,7 +100,7 @@ const SearchResultsCard = memo(({ item,setValue }) => {
         //     );
         // }
 
-    }, [data])
+    }, [data,pandaContext?.active])
 
     return (
         <TouchableOpacity

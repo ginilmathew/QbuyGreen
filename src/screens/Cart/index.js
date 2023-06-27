@@ -39,7 +39,7 @@ const Cart = ({ navigation }) => {
 
     const [cartItemsList, setCartItemsList] = useState([])
 
-   
+    reactotron.log({ cartItemsList })
 
 
     const getCartItems = async () => {

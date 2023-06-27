@@ -29,6 +29,7 @@ import reactotron from 'reactotron-react-native';
 
 const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIcon, mr, ml, mb, getWishlist }) => {
 
+  
 
     const [data, setData] = useState([])
     const [variant, setVariant] = useState(false)
@@ -43,8 +44,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         }
     }, [item])
 
-
-
+   
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
@@ -70,7 +70,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
             })
         }
        
-    }, [data,item])
+    }, [data,data?.status])
 
     const openBottomSheet = useCallback(() => {
         // refRBSheet.current.open()
@@ -215,7 +215,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
                     </View>}
 
-                    {(data?.available  && item?.status === "active") && <View style={styles.addContainer}>
+                    {(data.available && item?.status === "active") && <View style={styles.addContainer}>
                         <CommonAddButton
                             onPress={openBottomSheet}
                         />

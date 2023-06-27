@@ -40,7 +40,7 @@ const CartTest = ({ navigation }) => {
 
     const [cartItemsList, setCartItemsList] = useState([])
 
-  
+    reactotron.log({ cartItemsList }, 'CART LIST ')
 
 
     const getCartItems = async () => {
@@ -50,7 +50,7 @@ const CartTest = ({ navigation }) => {
 
                     let products = response?.data?.data?.product_details;
                     // cartContext?.setCart(response?.data?.data)
-                 
+
                     let finalProducts = [];
                     //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
                     products?.map((pro) => {
@@ -74,7 +74,7 @@ const CartTest = ({ navigation }) => {
                                 image: pro?.image,
                                 type: pro?.type,
                                 // quantity: quantity >= minQty ? quantity : minQty,
-                                quantity: quantity ,
+                                quantity: quantity,
                                 stock: stock,
                                 delivery,
                                 commission: comm,
@@ -82,7 +82,7 @@ const CartTest = ({ navigation }) => {
                                 stock_value,
                                 store: pro?.productdata?.store,
                                 status: pro?.productdata?.status,
-                                availability:pro?.availability
+                                availability: pro?.availability
                             }
                         }
                         else {
@@ -104,7 +104,7 @@ const CartTest = ({ navigation }) => {
                                 image: pro?.image,
                                 type: type,
                                 // quantity: quantity >= minQty ? quantity : minQty,
-                                quantity: quantity ,
+                                quantity: quantity,
                                 stock: stock,
                                 delivery,
                                 commission: comm,
@@ -113,7 +113,7 @@ const CartTest = ({ navigation }) => {
                                 stock_value,
                                 store: pro?.productdata?.store,
                                 status: pro?.productdata?.status,
-                                availability:pro?.availability
+                                availability: pro?.availability
                             }
                         }
 
@@ -121,8 +121,8 @@ const CartTest = ({ navigation }) => {
                             product['available'] = false;
                             finalProducts.push(product)
                         }
-                         
-                         
+
+
                         if (product?.status === "active") {
                             if (stock) {
                                 //products have stock
@@ -133,41 +133,48 @@ const CartTest = ({ navigation }) => {
                                         if (moment(fromDate, "YYYY-MM-DD") <= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") && moment(toDate, "YYYY-MM-DD") >= moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD")) {
                                             let finalPrice = offer * quantity;
                                             product['price'] = finalPrice;
+                                            product['single_price'] = offer;
                                             finalProducts.push(product)
                                         }
                                         else if (fromDate && !toDate) {
                                             if (moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= fromDate) {
                                                 let finalPrice = offer * quantity;
                                                 product['price'] = finalPrice;
+                                                product['single_price'] = offer;
                                                 finalProducts.push(product)
                                             }
                                             else if (regular > 0) {
                                                 let finalPrice = regular * quantity;
                                                 product['price'] = finalPrice;
+                                                product['single_price'] = regular;
                                                 finalProducts.push(product)
                                             }
                                             else {
                                                 let commission = (seller / 100) * comm
                                                 let amount = (seller + commission) * quantity;
                                                 product['price'] = amount;
+                                                product['single_price'] = seller + commission;
                                                 finalProducts.push(product)
                                             }
                                         }
                                         else if (!fromDate && !toDate) {
                                             let finalPrice = offer * quantity;
                                             product['price'] = finalPrice;
+                                            product['single_price'] = offer;
                                             finalProducts.push(product)
                                         }
                                         else {
                                             if (regular > 0) {
                                                 let finalPrice = regular * quantity;
                                                 product['price'] = finalPrice;
+                                                product['single_price'] = regular;
                                                 finalProducts.push(product)
                                             }
                                             else {
                                                 let commission = (seller / 100) * comm
                                                 let amount = (seller + commission) * quantity;
                                                 product['price'] = amount;
+                                                product['single_price'] = seller + commission;
                                                 finalProducts.push(product)
                                             }
                                         }
@@ -175,12 +182,14 @@ const CartTest = ({ navigation }) => {
                                     else if (regular > 0) {
                                         let finalPrice = regular * quantity;
                                         product['price'] = finalPrice;
+                                        product['single_price'] = regular;
                                         finalProducts.push(product)
                                     }
                                     else {
                                         let commission = (seller / 100) * comm
                                         let amount = (seller + commission) * quantity;
                                         product['price'] = amount;
+                                        product['single_price'] = seller + commission;
                                         finalProducts.push(product)
                                     }
                                 }
@@ -196,41 +205,48 @@ const CartTest = ({ navigation }) => {
 
                                         let finalPrice = offer * quantity;
                                         product['price'] = finalPrice;
+                                        product['single_price'] = offer;
                                         finalProducts.push(product)
                                     }
                                     else if (fromDate && !toDate) {
                                         if (moment(moment().format("YYYY-MM-DD"), "YYYY-MM-DD") >= fromDate) {
                                             let finalPrice = offer * quantity;
                                             product['price'] = finalPrice;
+                                            product['single_price'] = offer;
                                             finalProducts.push(product)
                                         }
                                         else if (regular > 0) {
                                             let finalPrice = regular * quantity;
                                             product['price'] = finalPrice;
+                                            product['single_price'] = regular;
                                             finalProducts.push(product)
                                         }
                                         else {
                                             let commission = (seller / 100) * comm
                                             let amount = (seller + commission) * quantity;
                                             product['price'] = amount;
+                                            product['single_price'] = seller + commission;
                                             finalProducts.push(product)
                                         }
                                     }
                                     else if (!fromDate && !toDate) {
                                         let finalPrice = offer * quantity;
                                         product['price'] = finalPrice;
+                                        product['single_price'] = offer;
                                         finalProducts.push(product)
                                     }
                                     else {
                                         if (regular > 0) {
                                             let finalPrice = regular * quantity;
                                             product['price'] = finalPrice;
+                                            product['single_price'] = regular;
                                             finalProducts.push(product)
                                         }
                                         else {
                                             let commission = (seller / 100) * comm
                                             let amount = (seller + commission) * quantity;
                                             product['price'] = amount;
+                                            product['single_price'] = seller + commission;
                                             finalProducts.push(product)
                                         }
                                     }
@@ -239,6 +255,7 @@ const CartTest = ({ navigation }) => {
 
                                     let finalPrice = regular * quantity;
                                     product['price'] = finalPrice;
+                                    product['single_price'] = regular;
                                     finalProducts.push(product)
                                 }
                                 else {
@@ -246,6 +263,7 @@ const CartTest = ({ navigation }) => {
                                     let commission = (seller / 100) * comm
                                     let amount = (seller + commission) * quantity;
                                     product['price'] = amount;
+                                    product['single_price'] = (seller + commission);
                                     finalProducts.push(product)
                                 }
                             }
@@ -292,6 +310,42 @@ const CartTest = ({ navigation }) => {
     }, [])
 
 
+    const checkoutValidation = async () => {
+        await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`).then((response) => {
+            let products = response?.data?.data?.product_details;
+            reactotron.log({ products }, 'PRODUCTS....')
+            let stockcheck = false;
+            products?.map((pro) => {
+                let stock = pro?.productdata?.stock;
+                let availability = pro?.availability;
+                if (availability) {
+                    if (stock) {
+                        let type = pro?.type;
+                        if (type === 'single') {
+                            if (pro?.quantity > pro?.productdata?.stock_value) {
+                                stockcheck = true;
+                            }
+                        } else {
+                            if (pro?.quantity > pro?.variants?.stock_value) {
+                                stockcheck = true;
+                            }
+                        }
+                    }
+                } else {
+                    stockcheck = true;
+                }
+            })
+            if(!stockcheck){
+                navigation.navigate('Checkout')
+            }else{
+                getCartItems()
+            }
+
+
+           
+        })
+    }
+
 
 
 
@@ -299,46 +353,54 @@ const CartTest = ({ navigation }) => {
     const gotoCheckout = useCallback(async () => {
         let cancel = false
 
+
+        // refreshCart()
+        // const satisfiesConditions = cartItemsList.every((item) => {
+        //     return item.available === true && item.availability === true && item?.quantity >= item?.minimum_qty && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
+        // });
+
+        // if (!satisfiesConditions) {
+        //     Toast.show({
+        //         type: 'info',
+        //         text1: 'Please remove products with warnings',
+        //     })
+        //     return false;
+        // }
+
         let allProducts = cartContext?.cart?.product_details;
-    
+
 
         let cartItems = {
             cart_id: cartContext?.cart?._id,
             product_details: allProducts,
             user_id: userContext?.userData?._id
         }
-         await customAxios.post(`customer/cart/update`, cartItems)
-            .then(async response => {
-                cartContext.setCart(response?.data?.data)
-                refreshCart()
-                const satisfiesConditions = cartItemsList.every((item) => {
-                    return item.available === true && item.availability === true && item?.quantity >= item?.minimum_qty && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
-                });
-        
-        
-        
-                if (!satisfiesConditions) {
-                    Toast.show({
-                        type: 'info',
-                        text1: 'Please remove products with warnings',
-                    })
-                    return false;
-                } else {
-                    navigation.navigate('Checkout')
-                }
-            })
-            .catch(async error => {
-                console.log(error)
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
-            })
-        
+        reactotron.log({ cartItems }, 'CARTITEMS CHECKOUT')
+        let cartList = await customAxios.post(`customer/cart/update`, cartItems)
+        cartContext.setCart(cartList?.data?.data)
+        checkoutValidation()
+        //     getCartItems()
+        //    const satisfiesConditions = cartItemsList.every((item) => {
+        //         return item.available === true && item.availability === true && item?.quantity >= item?.minimum_qty && (item.stock !== true || (item.stock === true && parseInt(item.minimum_qty) <= parseInt(item.stock_value)));
+        //     });
+
+
+
+        //     if (!satisfiesConditions) {
+        //         Toast.show({
+        //             type: 'info',
+        //             text1: 'Please remove products with warnings',
+        //         })
+        //         return false;
+        //     }else{
+        //         navigation.navigate('Checkout')
+        //     }
+      
+
         // reactotron.log("Conditions are satisfied:", satisfiesConditions);
 
 
-    }, [cartItemsList,cartContext?.cart])
+    }, [cartItemsList, cartContext?.cart])
 
     const goHome = useCallback(() => {
         navigation.navigate('home')

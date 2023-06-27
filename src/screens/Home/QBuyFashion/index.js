@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, Image, ActivityIndicator, SafeAreaView, RefreshControl } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, Image, ActivityIndicator, SafeAreaView } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import ImageSlider from '../../../Components/ImageSlider';
 import CustomSearch from '../../../Components/CustomSearch';
@@ -18,54 +18,45 @@ import Offer from './Offer';
 import CountDownComponent from '../../../Components/CountDown';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import reactotron from '../../../ReactotronConfig';
+import { useNavigation } from '@react-navigation/native';
 import AuthContext from '../../../contexts/Auth';
 import SearchBox from '../../../Components/SearchBox';
-import Toast from 'react-native-toast-message'
+
 import CartContext from '../../../contexts/Cart';
-import { IMG_URL, env, location } from '../../../config/constants';
+import { env, location } from '../../../config/constants';
 import CategoryCard from '../QBuyGreen/CategoryCard';
-import AvailableStores from '../QBuyGreen/AvailableStores';
 import RecentlyViewed from '../QBuyGreen/RecentlyViewed';
 import AvailableProducts from '../QBuyGreen/AvailableProducts';
-import PandaSuggestions from '../QBuyGreen/PandaSuggestions';
-import Carousel from 'react-native-reanimated-carousel';
-import FastImage from 'react-native-fast-image';
-import reactotron from '../../../ReactotronConfig';
 
 
 const QBuyFashion = () => {
-
-    const { width, height } = useWindowDimensions()
-
-    const navigation = useNavigation()
-
 
     const auth = useContext(AuthContext)
     const cartContext = useContext(CartContext)
 
     let coord = auth.location
 
-    const loadingg = useContext(LoaderContext)
-    let loader = loadingg?.loading
+    reactotron.log({ auth: auth?.userData })
 
+
+    const loadingg = useContext(LoaderContext)
+
+    let loading = loadingg?.loading
+
+    //const homeData = fashionHome?.fashionHomeData
     const [homeData, setHomeData] = useState(null)
 
-    const [availablePdt, setavailablePdt] = useState(null)
-    const [slider, setSlider] = useState(null)
-
-
-
-
     
-    useEffect(() => {
-        let availPdt = homeData?.find((item, index) => item?.type === 'available_products')
-        setavailablePdt(availPdt?.data)
-       
-        let slider = homeData?.find((item, index) => item?.type === 'sliders')
-        setSlider(slider?.data)
-    }, [homeData])
 
+    const { width } = useWindowDimensions()
+
+    const navigation = useNavigation()
+
+    const categories = homeData?.category_list
+    const storeList = homeData?.store_list
+    const recentViewList = homeData?.recently_viewed
+    const availablePdts = homeData?.available_products
 
     const schema = yup.object({
         name: yup.string().required('Name is required'),
@@ -74,6 +65,29 @@ const QBuyFashion = () => {
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema)
     });
+
+
+
+
+
+    // const fashionImg = [
+    //     {
+    //         id: "1",
+    //         img: require('../../../Images/fashionAd.jpeg')
+    //     },
+    //     {
+    //         id: "2",
+    //         img: require('../../../Images/image1.jpeg')
+    //     },
+    //     {
+    //         id: "3",
+    //         img: require('../../../Images/image2.jpeg')
+    //     },
+    //     {
+    //         id: "4",
+    //         img: require('../../../Images/image3.jpeg')
+    //     }
+    // ]
 
     const pickupDropClick = useCallback(() => {
         navigation.navigate('PickupAndDropoff')
@@ -100,71 +114,125 @@ const QBuyFashion = () => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
-    // useEffect(() => {
-    //     getHomedata(coord)
-    // }, [])
+    useEffect(() => {
+        getHomedata(auth.location)
+    }, [])
 
-    useFocusEffect(
-        React.useCallback(() => {
-            getHomedata(coord)
-        }, [])
-      );
 
-    
-    const getHomedata = async (coord) => {
-   
+    const addToCart = async (item) => {
+
+        let cartItems;
+        let url;
+
+        if (item?.variants?.length === 0) {
+            loadingg.setLoading(true)
+            if (cartContext?.cart) {
+                url = "customer/cart/update";
+                let existing = cartContext?.cart?.product_details?.findIndex(prod => prod.product_id === item?._id)
+                if (existing >= 0) {
+                    let cartProducts = cartContext?.cart?.product_details;
+                    cartProducts[existing].quantity = cartProducts[existing].quantity + 1;
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: cartProducts,
+                        user_id: auth?.userData?._id
+                    }
+                }
+                else {
+                    let productDetails = {
+                        product_id: item?._id,
+                        name: item?.name,
+                        image: item?.product_image,
+                        type: 'single',
+                        variants: null,
+                        quantity: 1
+                    };
+
+                    cartItems = {
+                        cart_id: cartContext?.cart?._id,
+                        product_details: [...cartContext?.cart?.product_details, productDetails],
+                        user_id: auth?.userData?._id
+                    }
+                }
+            }
+            else {
+                url = "customer/cart/add";
+                let productDetails = {
+                    product_id: item?._id,
+                    name: item?.name,
+                    image: item?.product_image,
+                    type: "single",
+                    variants: null,
+                    quantity: 1
+                };
+
+                cartItems = {
+                    product_details: [productDetails],
+                    user_id: auth?.userData?._id
+                }
+            }
+
+            await customAxios.post(url, cartItems)
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    await AsyncStorage.setItem("cartId", response?.data?.data?._id)
+                    loadingg.setLoading(false)
+                })
+                .catch(async error => {
+                    loadingg.setLoading(false)
+                })
+        }
+        else {
+            navigation.navigate('SingleItemScreen', { item: item })
+        }
+    }
+
+    const getHomedata = async (coords) => {
         loadingg.setLoading(true)
+
+        reactotron.log({ env, location })
+
         let datas = {
             type: "fashion",
-            // coordinates: env === "dev" ? location : auth.location
-            coordinates: auth?.location
+            coordinates: env === "dev" ? location : auth.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
                 //fashionHome?.setFashionHomeData(response?.data?.data)
-            
                 setHomeData(response?.data?.data)
                 loadingg.setLoading(false)
             })
             .catch(async error => {
                 // console.log(error)
-                Toast.show({
-                    type: 'error',
-                    text1: error
-                });
+                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
                 loadingg.setLoading(false)
             })
     }
 
+    // reactotron.log({category: homeData?.category_list})
+
     const onSearch = useCallback(() => {
-        navigation.navigate('ProductSearchScreen')
+        navigation.navigate('ProductSearchScreen', { mode: 'fashion' })
     }, [])
 
-
-    const renderItems = (item) => {
-        if (item?.type === 'categories') {
+    const renderSections = ({ item }) => {
+        if (item?.type === "categories") {
             return (
-                <>
-                    <CategoryCard data={item?.data} />
-                    {slider?.length > 0 && 
-                    <View style={{ flex: 1 }}>
-                        <Carousel
-                            loop
-                            width={width}
-                            height={width / 2}
-                            autoPlay={true}
-                            data={slider}
-                            scrollAnimationDuration={1000}
-                            renderItem={CarouselCardItem}
-                        />
-                    </View>}
-                </>
+                <CategoryCard data={item?.data} />
             )
         }
-        if (item?.type === 'stores') {
+        else if (item?.type === "stores") {
             return (
                 <>
-                    <AvailableStores data={item?.data} />
+                    {/* <ImageSlider datas={fashionImg} mt={20} /> */}
+                    {item?.data?.length > 0 && <>
+                        <CommonTexts label={'Available Stores'} ml={15} fontSize={13} mt={20} />
+                        <View style={styles.grossCatView}>
+                            {item?.data?.map((item) => (
+                                <ShopCard key={item?._id} item={item} />
+                            ))}
+                        </View>
+                    </>}
                     <View style={styles.pickupReferContainer}>
                         <PickDropAndReferCard
                             onPress={pickupDropClick}
@@ -181,110 +249,50 @@ const QBuyFashion = () => {
                         />
                     </View>
 
-                </>
-            )
-        }
-        if (item?.type === 'offer_array') {
-            return (
-                <>
-                    {item?.data?.length > 0 && <View style={styles.offerView}>
+                    <View style={styles.offerView}>
                         <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
                         <Offer onPress={goToShop} shopName={offer?.hotel} />
-                        {/* <CountDownComponent /> */}
                         <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-                    </View>}
+                    </View>
                 </>
             )
         }
-        if (item?.type === 'recently_viewed') {
+        else if (item?.type === "recentlyviewed" && item?.data?.length > 0) {
             return (
-                <>
-                    <RecentlyViewed data={item?.data} />
-                </>
+                <RecentlyViewed data={item?.data} addToCart={addToCart} />
             )
         }
-        if (item?.type === 'suggested_products') {
+        else if (item?.type === "available_products") {
             return (
-                <>
-                    <PandaSuggestions data={item?.data} />
-                </>
+                <AvailableProducts data={item?.data} addToCart={addToCart} />
             )
         }
-        // if (item?.type === 'available_products') {
-        //     return (
-        //         <>
-        //             <AvailableProducts data={item?.data}  />
-        //         </>
-        //     )
-        // }
-
     }
-    const renderProducts = ({ item }) => {
+
+    const headerComponent = useCallback(() => {
         return (
-            <CommonItemCard
-                item={item}
-                key={item?._id}
-                width={width / 2.25}
-                height={220}
-                // wishlistIcon
-                mr={8}
-                ml={8}
-                mb={15}
-            />
+            <>
+                <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
+                <SearchBox onPress={onSearch} />
+            </>
         )
-    }
-
-    const CarouselCardItem = ({ item, index }) => {
-        return (
-            <View style={{ alignItems: 'center',marginTop:20 }} >
-                <FastImage
-                    source={{ uri: `${IMG_URL}${item?.image}` }}
-                    style={{height:height/5, width: width-35,  borderRadius:20}}
-                // resizeMode='contain'
-                >
-                </FastImage>
-            </View>
-        )
-    }
-
+    }, [])
 
     return (
         <>
+            <Header onPress={onClickDrawer} />
+            <FlatList
+                data={homeData}
+                keyExtractor={({ item }) => item?.type}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={4}
+                renderItem={renderSections}
+                ListHeaderComponent={headerComponent}
+                contentContainerStyle={styles.container}
+            />
+            {/* <ScrollView style={styles.container}>
 
-              <View flex={1} justifyContent={'center'} alignItems={'center'}>
-                    <Text style={{fontSize:20}}>Coming Soon!!!</Text>
-              </View>
-
-            {/* <Header onPress={onClickDrawer} />
-            <View style={styles.container}>
-
-                <ScrollView
-                    removeClippedSubviews
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl refreshing={loader} onRefresh={getHomedata} />
-                    }
-                >
-                    <NameText userName={auth?.userData?.name ? auth?.userData?.name : auth?.userData?.mobile} mt={8} />
-                    <SearchBox onPress={onSearch} />
-                    {homeData?.map(home => renderItems(home))}
-                    {availablePdt?.length > 0 && <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={10} mt={10} />}
-                    <FlatList
-                        data={availablePdt}
-                        keyExtractor={(item, index) => index}
-                        renderItem={renderProducts}
-                        showsVerticalScrollIndicator={false}
-                        initialNumToRender={6}
-                        removeClippedSubviews={true}
-                        windowSize={10}
-                        maxToRenderPerBatch={5}
-                        // refreshing={loader}
-                        // onRefresh={getHomedata}
-                        numColumns={2}
-                        style={{ marginLeft: 5 }}
-                    />
-                </ScrollView> */}
-                {/* <SearchBox onPress={onSearch}/>
+                
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -339,12 +347,11 @@ const QBuyFashion = () => {
                                 item={item}
                                 width={width / 2.5}
                                 marginHorizontal={5}
+                                addToCart={addToCart}
                             />
                         )}
                     </ScrollView>
                 </>}
-
-             
                 {loading ? <ActivityIndicator/> : availablePdts?.length > 0 &&<>
                     <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
                     <View style={styles.productContainer}>
@@ -354,12 +361,14 @@ const QBuyFashion = () => {
                                 item={item}
                                 width={width / 2.25}
                                 height={250}
+                                addToCart={addToCart}
                             />
+                            // <View key={index} style={{backgroundColor:'red', width:50, height:50}}></View>
                         ))}
                     </View>
-                </>}     */}
+                </>}    
 
-            {/* </View>
+            </ScrollView> */}
 
             <CommonSquareButton
                 onPress={gotoChat}
@@ -367,7 +376,7 @@ const QBuyFashion = () => {
                 bottom={10}
                 right={10}
             />
- */}
+
 
         </>
     )

@@ -3,7 +3,7 @@ import React, { memo, useCallback, useContext, useEffect, useState } from 'react
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import FastImage from 'react-native-fast-image'
 import CommonCounter from '../../Components/CommonCounter'
-import { useNavigation } from '@react-navigation/native'
+import { useIsFocused, useNavigation } from '@react-navigation/native'
 import PandaContext from '../../contexts/Panda'
 import CommonSelectDropdown from '../../Components/CommonSelectDropdown'
 import { IMG_URL } from '../../config/constants'
@@ -13,11 +13,12 @@ import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import Toast from 'react-native-toast-message';
 import reactotron from 'reactotron-react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 const CartItemCardtest = ({ item, index, refreshCart }) => {
+    const isFocused = useIsFocused();
 
-    reactotron.log({ item }, 'GOT ITEMM')
 
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
@@ -32,6 +33,8 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
     // }, [item])
 
 
+
+
     const navigation = useNavigation()
 
     const { width } = useWindowDimensions()
@@ -39,8 +42,6 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
 
 
     const addItem = async () => {
-
-
         if (item?.type === "single") {
             if (item?.stock) {
                 if (parseFloat(item?.stock_value) < data?.quantity + 1) {
@@ -71,24 +72,31 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
         allProducts[index].quantity = allProducts[index].quantity + 1;
         //setCount(count + 1)
 
+   
 
         let cartItems = {
             _id: cartContext?.cart?._id,
             product_details: allProducts,
-            user_id: userContext?.userData?._id
+            user_id: userContext?.userData?._id,
+
         }
+
+      
         cartContext.setCart(cartItems)
+  
+
         let result = {
             ...item,
-            price: item?.price * cartItems?.product_details?.[index]?.quantity,
+            price: item?.single_price * cartItems?.product_details?.[index]?.quantity,
             quantity: cartItems?.product_details?.[index]?.quantity
         }
+
         setData(result)
 
-        // 
+
 
         // cartContext.setCart(cartItems)
-  
+
 
         // await customAxios.post(`customer/cart/update`, cartItems)
         //     .then(async response => {
@@ -109,7 +117,7 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
         let minimumQty = data?.minimum_qty ? data?.minimum_qty : 1
         //return false
         let allProducts = cartContext?.cart?.product_details;
-        reactotron.log({ allProducts }, 'ALL PRODUCTS')
+
         let cartItems;
         if (data?.quantity > 1) {
             let quantity = data?.quantity
@@ -123,17 +131,16 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
                     product_details: allProducts,
                     user_id: userContext?.userData?._id
                 }
+
+                
                 cartContext.setCart(cartItems)
 
                 let result = {
                     ...item,
-                    price: item?.price * cartItems?.product_details?.[index]?.quantity,
+                    price: item?.single_price * cartItems?.product_details?.[index]?.quantity,
                     quantity: cartItems?.product_details?.[index]?.quantity
                 }
                 setData(result)
-
-                reactotron.log({ cartItems }, 'WHILE REMOVING')
-
             }
             else {
                 Alert.alert(
@@ -191,9 +198,57 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
     })
 
 
-    
+    const focusedFuction = async () => {
+        let allProducts = cartContext?.cart?.product_details;
+
+        if (allProducts?.length > 0) {
+            let cartItems = {
+                cart_id: cartContext?.cart?._id,
+                product_details: allProducts,
+                user_id: userContext?.userData?._id
+            }
 
 
+            await customAxios.post(`customer/cart/update`, cartItems)
+                .then(async response => {
+                    cartContext.setCart(response?.data?.data)
+                    refreshCart()
+                    //data.quantity = data?.quantity - 1
+                    //navigation.navigate('CartNav',{screen: 'Cart'})
+                })
+                .catch(async error => {
+                    console.log(error)
+                    Toast.show({
+                        type: 'error',
+                        text1: error
+                    });
+                })
+        }
+
+    }
+
+    useEffect(() => {
+        if (!isFocused) {
+            focusedFuction()
+        }
+    }, [!isFocused])
+
+
+    useEffect(async () => {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+            const subscription = AppState.addEventListener('change', async nextAppState => {
+
+                if (nextAppState === 'inactive') {
+
+                    focusedFuction()
+                } 
+            });
+            return () => {
+                subscription.remove();
+            };
+        }
+    }, []);
 
 
 
@@ -222,8 +277,6 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
                         removeItem={removeItem}
                         disabled={!item?.available || item?.status !== 'active' || !item.availability}
                     />
-
-
                 </View>
 
             </View>

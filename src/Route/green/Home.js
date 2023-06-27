@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../../screens/Home';
 import Category from '../../screens/Home/Category';
@@ -19,6 +19,11 @@ import QBuyGreen from '../../screens/Home/QBuyGreen';
 import CategoryScreen from '../../screens/Home/CategoryScreen';
 import StoreScreen from '../../screens/Home/StoreScreen';
 import ViewAllStore from '../../screens/Home/QBuyGreen/ViewAllStore';
+import PandaContext from '../../contexts/Panda';
+import reactotron from '../../ReactotronConfig';
+import QBuyFashion from '../../screens/Home/QBuyFashion';
+import QbuyPanda from '../../screens/Home';
+import TagScreen from '../../screens/Home/TagScreen';
 
 
 
@@ -28,26 +33,42 @@ import ViewAllStore from '../../screens/Home/QBuyGreen/ViewAllStore';
 const Stack = createNativeStackNavigator();
 
 const HomeNav = () => {
+
+    const pandaContext = useContext(PandaContext)
+
+  
+
+
+
     return (
         <View style={{ flex: 1, marginBottom: 70 }}>
-        <Stack.Navigator initialRouteName='Home'  screenOptions={{ headerShown: false }}> 
-            <Stack.Screen name="Home" component={QBuyGreen}/>
-            <Stack.Screen name="SingleHotel" component={SingleHotel}/>
-            <Stack.Screen name="SingleItemScreen" component={SingleItemScreen}/>
-            <Stack.Screen name="Category" component={CategoryScreen}/>
-            <Stack.Screen name="store" component={StoreScreen}/>
-            <Stack.Screen name="PickupAndDropoff" component={PickupAndDropoff}/>
-            <Stack.Screen name="OurFarms" component={OurFarms}/>
-            <Stack.Screen name="RefferRestaurant" component={RefferRestaurant}/>
-            <Stack.Screen name="SellWithUs" component={SellWithUs}/>
-            <Stack.Screen name="WorkWithPanda" component={WorkWithPanda}/>
-            <Stack.Screen name="RegisterAsAffiliate" component={RegisterAsAffiliate}/>
-            <Stack.Screen name="CustomerFeedback" component={CustomerFeedback}/>
-            <Stack.Screen name="ApplyFranchisee" component={ApplyFranchisee}/>
-            <Stack.Screen name="ViewAllStore" component={ViewAllStore}/>
-            <Stack.Screen name="Wishlist" component={Wishlist}/>
-            <Stack.Screen name="FashionCategory" component={FashionCategory}/>           
-        </Stack.Navigator>
+            <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Home"
+                    component={
+                        pandaContext?.active === "green" ?
+                            QBuyGreen :
+                            pandaContext?.active === "panda" ?
+                                QbuyPanda :
+                                pandaContext?.active === "fashion" ?
+                                    QBuyFashion : QBuyGreen
+                    } />
+                <Stack.Screen name="SingleHotel" component={SingleHotel} />
+                <Stack.Screen name="SingleItemScreen" component={SingleItemScreen} />
+                <Stack.Screen name="Category" component={CategoryScreen} />
+                <Stack.Screen name="store" component={StoreScreen} />
+                <Stack.Screen name="PickupAndDropoff" component={PickupAndDropoff} />
+                <Stack.Screen name="OurFarms" component={OurFarms} />
+                <Stack.Screen name="RefferRestaurant" component={RefferRestaurant} />
+                <Stack.Screen name="SellWithUs" component={SellWithUs} />
+                <Stack.Screen name="WorkWithPanda" component={WorkWithPanda} />
+                <Stack.Screen name="RegisterAsAffiliate" component={RegisterAsAffiliate} />
+                <Stack.Screen name="CustomerFeedback" component={CustomerFeedback} />
+                <Stack.Screen name="ApplyFranchisee" component={ApplyFranchisee} />
+                <Stack.Screen name="ViewAllStore" component={ViewAllStore} />
+                <Stack.Screen name="Wishlist" component={Wishlist} />
+                <Stack.Screen name="FashionCategory" component={FashionCategory} />
+                <Stack.Screen name="tagScreen" component={TagScreen}/>
+            </Stack.Navigator>
         </View>
     )
 }

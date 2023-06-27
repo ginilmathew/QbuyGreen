@@ -12,25 +12,26 @@ import Toast from 'react-native-toast-message';
 import AddressProvider from './contexts/Address/AddressContext'
 import SplashScreen from 'react-native-splash-screen'
 //import messaging from '@react-native-firebase/messaging';
-import {PermissionsAndroid} from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import notifee from '@notifee/react-native';
 import reactotron from 'reactotron-react-native'
 import Geolocation from 'react-native-geolocation-service';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import customAxios from './CustomeAxios'
+import RouteTest from './RouteText'
 
 
 
 const App = () => {
 
 
-    if(Platform.OS === 'ios'){
+    if (Platform.OS === 'ios') {
         //SplashScreen.hide()
     }
 
     // useEffect(() => {
     //     getCurrentLocation()
-        
+
     //     onAppBootstrap()
     // }, [])
 
@@ -66,7 +67,7 @@ const App = () => {
     //     // Register the device with FCM
     //     let userDetails = await AsyncStorage.getItem("user");
     //     await messaging().registerDeviceForRemoteMessages();
-      
+
     //     if(userDetails){
     //         let user = JSON.parse(userDetails)
 
@@ -88,10 +89,10 @@ const App = () => {
     //         reactotron.log({token})
 
     //     }
-       
 
-       
-      
+
+
+
     //     // Save the token
     //     //await postToApi('/users/1234/tokens', { token });
     // }
@@ -118,10 +119,10 @@ const App = () => {
     //         //setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
     //         }
     //   });
-    
+
     //     return unsubscribe;
     // }, []);
-    
+
     // const getCurrentLocation = useCallback(async () => {
     //     if (Platform.OS === 'ios') {
     //         const status = await Geolocation.requestAuthorization('whenInUse');
@@ -173,16 +174,16 @@ const App = () => {
     // }, [])
 
     // async function requestUserPermission() {
-        
+
     //     if(Platform.OS === 'android'){
     //         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     //     }
-        
+
     //     const authStatus = await messaging().requestPermission();
     //     const enabled =
     //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-      
+
     //     if (enabled) {
     //       console.log('Authorization status:', authStatus);
     //     }
@@ -197,15 +198,15 @@ const App = () => {
             <LoadProvider>
                 <AuthProvider>
                     <AddressProvider>
-                        <CartProvider>
-                            <PandaProvider>
-                                <Route />
+                        <PandaProvider>
+                            <CartProvider>
+                                <RouteTest />
                                 <Toast
                                     position='bottom'
                                     bottomOffset={20}
                                 />
-                            </PandaProvider>
-                        </CartProvider>
+                            </CartProvider>
+                        </PandaProvider>
                     </AddressProvider>
                 </AuthProvider>
             </LoadProvider>

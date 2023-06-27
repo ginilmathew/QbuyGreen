@@ -29,7 +29,7 @@ const MyOrders = () => {
 
     const getOrderList = async () => {
         loadingg.setLoading(true)
-        await customAxios.get(`customer/order/list`)
+        await customAxios.get(`customer/order/list/${contextPanda?.active}`)
             .then(async response => {
                 setOrderList(response?.data?.data)
                 loadingg.setLoading(false)
