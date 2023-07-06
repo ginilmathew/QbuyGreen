@@ -42,82 +42,93 @@ const Category = ({ route }) => {
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [categories, setCategories] = useState([])
+    const [stores, setStore] = useState([])
+    const [relatedProduct, setRelatedProduct] = useState([])
+
 
     const [selected, setSelected] = useState(false)
 
 
-  reactotron.log({availablePdts},'AVAILIBLE PRODUCTS')
+    reactotron.log({ mode }, 'MODE')
+
 
     useEffect(() => {
         getProductBasedCat()
     }, [])
 
-    const getProductBasedCat = async() => {
+    const getProductBasedCat = async () => {
         loadingContex.setLoading(true)
 
         let datas = {
-            category_id:  item?._id,
+            category_id: item?._id,
             // coordinates :  env === "dev" ? location : userContext?.location
-            coordinates: userContext?.location
+            coordinates: userContext?.location,
+            type: contextPanda?.active
         }
-    
+
         await customAxios.post(`customer/product/category-based`, datas)
-        .then(async response => {
-            setAvailabelPdts(response?.data?.data)
-            loadingContex.setLoading(false)
-        })
-        .catch(async error => {
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-            loadingContex.setLoading(false)
-        })
+            .then(async response => {
+
+                let categories = response?.data?.data?.find(home => home?.type === "categories")
+                setAvailabelPdts(categories?.data)
+                let stores = response?.data?.data?.find(home => home?.type === "stores")
+                setStore(stores?.data)
+                let related_product = response?.data?.data?.find(home => home?.type === "related_product")
+                setRelatedProduct(related_product?.data)
+                loadingContex.setLoading(false)
+            })
+            .catch(async error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+                loadingContex.setLoading(false)
+            })
     }
 
     useEffect(() => {
         getCategories()
     }, [])
 
-    const getCategories = async() => {
+    const getCategories = async () => {
         loadingContex.setLoading(true)
 
         let datas = {
             type: contextPanda?.active
         }
-    
+
         await customAxios.post(`customer/categories`, datas)
-        .then(async response => {
-            setCategories(response?.data?.data)
-            loadingContex.setLoading(false)
-        })
-        .catch(async error => {
-            Toast.show({
-                type: 'error',
-                text1: error
-            });
-            loadingContex.setLoading(false)
-        })
+            .then(async response => {
+                setCategories(response?.data?.data)
+                loadingContex.setLoading(false)
+            })
+            .catch(async error => {
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+                loadingContex.setLoading(false)
+            })
     }
 
 
 
     return (
         <>
-            <HeaderWithTitle title={name} />
-            <ScrollView 
+            <HeaderWithTitle title={item?.name} />
+            <ScrollView
                 style={{ flex: 1, backgroundColor: grocery ? '#F4FFE9' : fashion ? '#FFF5F7' : '#fff', }}
                 showsVerticalScrollIndicator={false}
             >
                 <View style={{ paddingHorizontal: 10 }}>
                     <FastImage
-                        source={{ uri: `${IMG_URL}${item?.image}`}} 
+                        source={{ uri: `${IMG_URL}${item?.image}` }}
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
                         style={styles.mainImage}
                         borderRadius={15}
                     />
-                       
-            
+
+
                     {mode === 'store' && <StoreAddressCard />}
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
@@ -140,19 +151,19 @@ const Category = ({ route }) => {
                         )}
                     </ScrollView>}
 
-                {mode !== 'store' && mode !== 'grocery' &&
+                    {stores && stores?.length > 0  &&
                     <CommonTexts label={'Available Shops'} mt={15} mb={5} ml={10} fontSize={13} />}
-                {mode !== 'store' && mode !== 'grocery' && name != 'Restaurant' &&
+                {stores && stores?.length > 0  &&
                     <View style={{ paddingBottom: 10, marginTop: 5 }}>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            style={{ flexDirection: 'row', marginTop: 5 }}
+                        <View
+                            style={[styles.categoryView]}
                         >
-                            {groceryType?.map((item, index) =>
-                                (<TypeCard item={item} key={index} />)
+                             {stores?.map((item, index) =>
+                                <View style={{ width:'22%'}} key={index}>
+                                    <TypeCard item={item} key={index} />
+                                </View>
                             )}
-                        </ScrollView>
+                        </View>
                     </View>}
 
 
@@ -180,24 +191,9 @@ const Category = ({ route }) => {
                     ))}
                 </View>}
 
-                {mode !== 'store' && mode !== 'grocery' && <View style={{ marginTop: 20, backgroundColor: '#F7F7F7', paddingVertical: 10, marginBottom: 100, paddingLeft: 5 }}>
-                    <CommonTexts label={'Recommented Products'} fontSize={13} ml={10} mb={5} />
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        {recomment.map((item) =>
-                            <CommonItemCard
-                                key={item?._id}
-                                item={item}
-                                width={width / 2.5}
-                                marginHorizontal={5}
-                            />
-                        )}
-                    </ScrollView>
-                </View>}
+             
 
-                {mode === 'store' && <CommonTexts label={'Available Stores'} my={15} ml={10} fontSize={13} />}
+                {/* {mode === 'store' && <CommonTexts label={'Available Stores'} my={15} ml={10} fontSize={13} />}
 
                 {mode === 'store' && <View style={styles.hotelView}>
                     {stores?.map((item) => (
@@ -206,11 +202,11 @@ const Category = ({ route }) => {
                             key={item?._id}
                         />
                     ))}
-                </View>}
+                </View>} */}
 
-{/* fashion categories */}
+                {/* fashion categories */}
 
-                {mode === 'grocery' &&
+                {/* {mode === 'grocery' &&
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -223,14 +219,14 @@ const Category = ({ route }) => {
                             setSelected={setSelected}
                         />)
                         )}
-                    </ScrollView>}
+                    </ScrollView>} */}
 
-                    
-{/* fashion available products */}
-                {mode === 'grocery' &&
-                <>
-                    {loadingg ? <ActivityIndicator/> : availablePdts && <>                    
-                        <CommonTexts label={'Avalable Products'} mt={15} ml={10} fontSize={13} mb={5} />
+
+                {/* fashion available products */}
+             
+                    <>
+
+                    {availablePdts?.length > 0 && <CommonTexts label={'Avalable Products'} mt={15} ml={10} fontSize={13} mb={5} />}
                         <View style={styles.itemContainer}>
                             {availablePdts?.map((item) => (
                                 <CommonItemCard
@@ -238,35 +234,50 @@ const Category = ({ route }) => {
                                     key={item?._id}
                                     width={width / 2.2}
                                     height={250}
-                                    // wishlistIcon={fashion ? true : false}
+                                // wishlistIcon={fashion ? true : false}
                                 />
                             ))}
                         </View>
-                    </>}
-
-                </>
-                }
 
 
-
-                {mode === 'grocery' &&
-                <View style={styles.recommPdtBox}>
-                    <CommonTexts label={'Recommanded Products'} fontSize={13} ml={15} mb={5} />
+                    </>
+{/*                 
+                    {mode !== 'store' && mode !== 'grocery' && <View style={{ marginTop: 20, backgroundColor: '#F7F7F7', paddingVertical: 10, marginBottom: 100, paddingLeft: 5 }}>
+                    <CommonTexts label={'Recommented Products'} fontSize={13} ml={10} mb={5} />
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        style={{ flexDirection: 'row', paddingLeft: 7 }}
-                    >
-                        {recentView.map((item) =>
+                    > */}
+                        {/* {recomment.map((item) =>
                             <CommonItemCard
                                 key={item?._id}
                                 item={item}
                                 width={width / 2.5}
                                 marginHorizontal={5}
                             />
-                        )}
-                    </ScrollView>
-                </View>}
+                        )} */}
+                    {/* </ScrollView>
+                </View>} */}
+
+
+                {mode === 'grocery' &&
+                    <View style={styles.recommPdtBox}>
+                        <CommonTexts label={'Recommanded Products'} fontSize={13} ml={15} mb={5} />
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={{ flexDirection: 'row', paddingLeft: 7 }}
+                        >
+                            {recentView.map((item) =>
+                                <CommonItemCard
+                                    key={item?._id}
+                                    item={item}
+                                    width={width / 2.5}
+                                    marginHorizontal={5}
+                                />
+                            )}
+                        </ScrollView>
+                    </View>}
 
             </ScrollView>
         </>
@@ -320,6 +331,12 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 10,
         paddingHorizontal: '3%'
-    }
+    },
+    categoryView: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 5,
+        //justifyContent: 'center'
+    },
 
 })

@@ -577,7 +577,7 @@ const Checkout = ({ navigation }) => {
 
     const updatePaymentResponse = async (data) => {
         let details = data
-        let orderID = details.ORDERID.replace(/^ORDER_/, "")
+        let orderID = details.ORDERID?.replace(/^ORDER_/, "")
 
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {

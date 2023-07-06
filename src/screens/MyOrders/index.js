@@ -51,6 +51,7 @@ const MyOrders = () => {
             <View
                 style={{ flex: 1, paddingBottom: 60, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
             >
+                {orderList?.length > 0 ?
                 <ScrollView
 
                     refreshControl={
@@ -59,7 +60,7 @@ const MyOrders = () => {
                     style={{ paddingHorizontal: 10, paddingTop: 10, marginBottom: 20 }}
                 >
                     {orderList?.map((ord, index) => <OrderCard key={index} item={ord} refreshOrder={getOrderList} />)}
-                </ScrollView>
+                </ScrollView> : <Text style={styles.emptyMessageStyle}>No Order Found..!</Text>}
             </View>
         </>
     )
@@ -68,5 +69,10 @@ const MyOrders = () => {
 export default MyOrders
 
 const styles = StyleSheet.create({
-
+    emptyMessageStyle: {
+        textAlign: 'center',
+        fontFamily: 'Poppins-Medium',
+        fontSize: 16,
+        marginTop: '80%',
+    }
 })

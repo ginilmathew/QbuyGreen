@@ -75,6 +75,7 @@ const CartItemCard = ({ item, index, refreshCart }) => {
 
         await customAxios.post(`customer/cart/update`, cartItems)
             .then(async response => {
+               
                 cartContext.setCart(response?.data?.data)
                 refreshCart()
                 //data.quantity = data?.quantity + 1

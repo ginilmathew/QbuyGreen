@@ -21,7 +21,7 @@ const CategoryScreen = ({ route, navigation }) => {
     const { width } = useWindowDimensions()
 
 
-    const contextPanda = useContext(PandaContext)
+    const { active } = useContext(PandaContext)
     const auth = useContext(AuthContext)
 
 
@@ -35,10 +35,10 @@ const CategoryScreen = ({ route, navigation }) => {
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [filterProducts, setFilterProduct] = useState([])
-
     const [selected, setSelected] = useState(null);
 
 
+  
 
 
     //code for filter by subCategory.......
@@ -69,27 +69,28 @@ const CategoryScreen = ({ route, navigation }) => {
 
 
     const getProductBasedCat = async (coords) => {
-
         loadingContex.setLoading(true)
         let datas = {
             category_id: item?._id ? item?._id : item?.id,
             // coordinates: env === "dev" ? location : auth?.location
-            coordinates: auth?.location
+            coordinates: auth?.location,
+            type: active,
         }
+
 
 
         await customAxios.post(`customer/product/category-based`, datas)
             .then(async response => {
-
                 if (storeId) {
-
-                    let products = response?.data?.data?.filter(prod => prod?.store?._id === storeId);
-                    setAvailabelPdts(products)
+                    let products = response?.data?.data?.find((res) => res?.type === 'categories')?.data?.filter(res => res?.store?._id === storeId);
+                    setAvailabelPdts(products);
+                    setFilterProduct(products);
                 }
                 else {
-                    setSelected(null)
-                    setAvailabelPdts(response?.data?.data)
-                    setFilterProduct(response?.data?.data)
+                    setSelected(null);
+                    const result = response?.data?.data?.find((res) => res?.type === 'categories');
+                    setAvailabelPdts(result?.data);
+                    setFilterProduct(result?.data);
                 }
                 loadingContex.setLoading(false)
             })
@@ -113,7 +114,7 @@ const CategoryScreen = ({ route, navigation }) => {
         <>
             <HeaderWithTitle mode={mode} title={name} />
             <ScrollView
-                style={{ flex: 1, backgroundColor: contextPanda.active === "green" ? '#F4FFE9' : contextPanda.active === "fashion" ? '#FFF5F7' : '#fff', }}
+                style={{ flex: 1, backgroundColor: active === "green" ? '#F4FFE9' : active === "fashion" ? '#FFF5F7' : '#fff', }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={loadingContex?.loading} onRefresh={getProductBasedCat} />
@@ -129,21 +130,21 @@ const CategoryScreen = ({ route, navigation }) => {
                     <Text style={styles.description}>{item?.seo_description === null ? '' : item?.seo_description}</Text>
                 </View>
 
-       
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={{ backgroundColor: '#76867314', marginTop: 5 }}
-                    >
-                        {item?.subcategories?.map((item, index) =>
-                        (<CommonItemSelect
-                            item={item}
-                            key={index}
-                            selected={selected}
-                            setSelected={setSelected}
-                        />)
-                        )}
-                    </ScrollView>
+
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={{ backgroundColor: '#76867314', marginTop: 5 }}
+                >
+                    {item?.subcategories?.map((item, index) =>
+                    (<CommonItemSelect
+                        item={item}
+                        key={index}
+                        selected={selected}
+                        setSelected={setSelected}
+                    />)
+                    )}
+                </ScrollView>
 
                 {availablePdts?.length > 0 && <>
                     <CommonTexts label={'Available Products'} mt={15} ml={10} fontSize={13} mb={5} />

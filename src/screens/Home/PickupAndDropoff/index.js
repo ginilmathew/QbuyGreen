@@ -52,7 +52,10 @@ const PickupAndDropoff = () => {
     return (
         <>
             <HeaderWithTitle title={'Pick Up & Drop Off'}/>
-            <ScrollView 
+            <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                <Text style={{fontSize:18}}>Coming Soon!...</Text>
+            </View>
+            {/* <ScrollView 
                 style={{ 
                     flex:1, 
                     backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff',
@@ -177,7 +180,7 @@ const PickupAndDropoff = () => {
                     
                 />
                 
-            </ScrollView>
+            </ScrollView> */}
         </>
     )
 }

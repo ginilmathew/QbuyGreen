@@ -33,7 +33,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
     const navigation = useNavigation()
 
-    const {width, height} = useWindowDimensions()
+    const { width, height } = useWindowDimensions()
 
 
     useEffect(() => {
@@ -56,7 +56,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     }, [])
 
     const clickRateOrder = useCallback(() => {
-        navigation.navigate('RateOrder', { item: item})
+        navigation.navigate('RateOrder', { item: item })
     }, [])
 
     const payWithPayTM = async (data) => {
@@ -75,14 +75,14 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             true,//appInvokeRestricted
-          `paytm${paymentDetails?.mid}`//urlScheme
-         ).then((result) => {
-         
-            if(has(result, "STATUS")){
-                
+            `paytm${paymentDetails?.mid}`//urlScheme
+        ).then((result) => {
+
+            if (has(result, "STATUS")) {
+
                 updatePaymentResponse(result)
             }
-            else{
+            else {
                 let data = {
                     STATUS: 'TXN_FAILURE',
                     RESPMSG: 'User Cancelled transaction',
@@ -91,8 +91,8 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 updatePaymentResponse(data)
             }
             console.log("PAYTM =>", JSON.stringify(result));
-            
-            
+
+
         }).catch((err) => {
             // console.log("PAYTM Error =>", JSON.stringify(err));
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
@@ -106,34 +106,35 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
     }
 
-    const updatePaymentResponse = async(data) => {
+    const updatePaymentResponse = async (data) => {
         let details = data
         await customAxios.post(`customer/order/payment/status`, data)
-        .then(async response => {
-            if (details?.STATUS == "TXN_SUCCESS") {
-                Toast.show({ type: 'success', text1: 'Payment Success' })
+            .then(async response => {
+                if (details?.STATUS == "TXN_SUCCESS") {
+                    Toast.show({ type: 'success', text1: 'Payment Success' })
+                    refreshOrder()
+                } else {
+                    Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
+                    refreshOrder()
+                }
+
+            }).catch(async error => {
+
+                Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
                 refreshOrder()
-            } else {
-                Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
-                refreshOrder()
-            }
-            
-        }).catch(async error => {
-        
-            Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
-            refreshOrder()
-        })
+            })
     }
 
-    const payAmount = useCallback(async() => {
+    const payAmount = useCallback(async () => {
         loadingg.setLoading(true)
+        cartContext.setCart(null);
         let data = {
             id: item?._id
         }
-        await customAxios.post(`customer/order/paynow`,data)
+
+        await customAxios.post(`customer/order/paynow`, data)
             .then(async response => {
-                const { data } = response
-              
+                const { data } = response;
                 cartContext.setCart(data?.data)
                 navigation.navigate('cart')
                 // if (data?.status) {
@@ -144,14 +145,14 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 loadingg.setLoading(false)
             })
             .catch(async error => {
-              
+
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
                 loadingg.setLoading(false)
             })
-    }, [item])
+    }, [item, cartContext?.cart?._id, cartContext?.cart])
 
 
     return (
@@ -162,7 +163,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                     <CommonTexts label={item?.order_id} />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.dateText}>{moment(item?.created_at).format("DD-MM-YYYY") }</Text>
+                    <Text style={styles.dateText}>{moment(item?.created_at).format("DD-MM-YYYY")}</Text>
                 </View>
             </View>
             <View style={styles.itemsContainer}>
@@ -176,7 +177,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Current Status'}</Text>
-                    <View 
+                    <View
                         style={
                             item?.status === 'pending' ? styles.pendingStatusBox : item?.status === 'completed' ? styles.completedStatusBox : null
                         }
@@ -202,7 +203,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                         <Text style={[styles.textBold, { textAlign: 'center' }]}>{'Qty'}</Text>
                         <Text style={[styles.textBold, { textAlign: 'center' }]}>{'Price'}</Text>
                     </View>
-                    {item?.product_details.map((ite) => 
+                    {item?.product_details.map((ite) =>
                         <ItemsCard item={ite} key={ite?._id} date={item?.created_at} />
                     )}
                     <View style={styles.delivery}>
@@ -230,47 +231,47 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                     <Text style={styles.addressText}>{item?.shipaddress?.area?.address}</Text>
                 </View>}
 
-                {item?.paymentStatus === 'success' && 
-                <>
+                {item?.paymentStatus === 'success' &&
+                    <>
 
-                    {item?.status === 'pending' ? <CustomButton
-                        onPress={clickDetails}
-                        label={'View Details'}
-                        bg = {active === 'green' ? '#FF9C0C' : active === 'fashion' ? '#2D8FFF' : '#576FD0'}
-                        mt={8}
-                    /> : item?.status === 'completed' ? 
-                    <View style={{flex:1,  marginTop:8, flexDirection:'row', justifyContent:'space-between'}}>
-
-                        <CustomButton
+                        {item?.status === 'pending' ? <CustomButton
                             onPress={clickDetails}
-                            label={'Details'}
-                            bg='#576FD0'
-                            width={width/3.5}
-                        />
-                        <CustomButton
-                            // onPress={() => navigation.navigate('ViewDetails', { item: item, qty: qty, totalRate: totalRate })}
-                            label={'Reorder'}
-                            bg='#D0A857'
-                            width={width/3.5}
-                        />
-                        <CustomButton
-                            onPress={clickRateOrder}
-                            label={'Rate Order'}
-                            bg='#58D36E'
-                            width={width/3.5}
-                        />
+                            label={'View Details'}
+                            bg={active === 'green' ? '#FF9C0C' : active === 'fashion' ? '#2D8FFF' : '#576FD0'}
+                            mt={8}
+                        /> : item?.status === 'completed' ?
+                            <View style={{ flex: 1, marginTop: 8, flexDirection: 'row', justifyContent: 'space-between' }}>
+
+                                <CustomButton
+                                    onPress={clickDetails}
+                                    label={'Details'}
+                                    bg='#576FD0'
+                                    width={width / 3.5}
+                                />
+                                <CustomButton
+                                    // onPress={() => navigation.navigate('ViewDetails', { item: item, qty: qty, totalRate: totalRate })}
+                                    label={'Reorder'}
+                                    bg='#D0A857'
+                                    width={width / 3.5}
+                                />
+                                <CustomButton
+                                    onPress={clickRateOrder}
+                                    label={'Rate Order'}
+                                    bg='#58D36E'
+                                    width={width / 3.5}
+                                />
 
 
-                    </View>   : null 
+                            </View> : null
+                        }
+                    </>
+
                 }
-                </>
-                
-                }
 
-                {(item?.status !==  'cancelled' && item?.payment_status === 'pending') && <CustomButton
+                {(item?.status !== 'cancelled' && item?.payment_status === 'pending') && <CustomButton
                     onPress={payAmount}
                     label={'Pay Now'}
-                    bg={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
+                    bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}
                 />}
             </View>
@@ -285,119 +286,119 @@ export default OrderCard
 
 const styles = StyleSheet.create({
     delivery: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        backgroundColor: '#F3F3F3', 
-        justifyContent: 'space-between', 
-        paddingVertical: 10, 
-        borderBottomWidth: 1, 
-        borderColor: '#00000029', 
-        paddingHorizontal: 7 
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F3F3F3',
+        justifyContent: 'space-between',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: '#00000029',
+        paddingHorizontal: 7
     },
-    container : { 
-        borderRadius: 10, 
-        shadowOpacity: 0.1, 
-        shadowRadius: 2, 
-        marginBottom: 20, 
-        backgroundColor: '#fff', 
-        shadowOffset: { height: 5, width: 1 } ,
-        elevation:2,
-        marginHorizontal:2
+    container: {
+        borderRadius: 10,
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        marginBottom: 20,
+        backgroundColor: '#fff',
+        shadowOffset: { height: 5, width: 1 },
+        elevation: 2,
+        marginHorizontal: 2
     },
-    header : { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        backgroundColor: '#F8F8F8', 
-        borderTopRightRadius: 15, 
-        borderTopLeftRadius: 15, 
-        padding: 6, 
-        justifyContent: 'space-between' 
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F8F8F8',
+        borderTopRightRadius: 15,
+        borderTopLeftRadius: 15,
+        padding: 6,
+        justifyContent: 'space-between'
     },
-    itemsRow : { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        marginHorizontal: 7 
+    itemsRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginHorizontal: 7
     },
-    itemsHeadingView : { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        backgroundColor: '#fff', 
-        justifyContent: 'space-between', 
-        marginTop: 10, 
-        marginHorizontal: 7, 
-        marginBottom: 10 
+    itemsHeadingView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        marginHorizontal: 7,
+        marginBottom: 10
     },
-    textMedum : {
+    textMedum: {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,
     },
-    dateText : {
+    dateText: {
         fontFamily: 'Poppins-Regular',
         color: '#555555A3',
         fontSize: 10,
     },
-    itemsContainer : { 
-        flexDirection: 'row', 
+    itemsContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff', 
-        justifyContent: 'space-between', 
-        margin: 7, 
-        borderBottomWidth: 1, 
-        paddingBottom: 10, 
-        borderColor: '#00000029' 
+        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+        margin: 7,
+        borderBottomWidth: 1,
+        paddingBottom: 10,
+        borderColor: '#00000029'
     },
-    textRegular : {
+    textRegular: {
         fontFamily: 'Poppins-Regular',
         color: '#23233C',
         fontSize: 11,
     },
-    pendingStatusBox : { 
-        backgroundColor: '#FFF297', 
-        borderRadius: 5, 
-        alignItems: 'center' 
+    pendingStatusBox: {
+        backgroundColor: '#FFF297',
+        borderRadius: 5,
+        alignItems: 'center'
     },
-    completedStatusBox : { 
-        backgroundColor: '#CEFF97', 
-        borderRadius: 5, 
-        alignItems: 'center' 
+    completedStatusBox: {
+        backgroundColor: '#CEFF97',
+        borderRadius: 5,
+        alignItems: 'center'
     },
-    pendingStatusText : {
+    pendingStatusText: {
         fontFamily: 'Poppins-Regular',
         color: '#B7A000',
         fontSize: 10,
         marginVertical: 4
     },
-    completedStatusText : {
+    completedStatusText: {
         fontFamily: 'Poppins-Regular',
         color: '#23B700',
         fontSize: 10,
         marginVertical: 4
     },
-    
-    textBold : {
+
+    textBold: {
         fontFamily: 'Poppins-Bold',
         color: '#23233C',
         fontSize: 11,
     },
-    addressText : {
+    addressText: {
         fontFamily: 'Poppins-Regular',
         color: '#23233C',
         fontSize: 12, marginTop: 5
     },
-    shippingView : { 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        paddingTop: 5 
+    shippingView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 5
     },
-    addressBox : { 
-        backgroundColor: '#F3F3F3', 
+    addressBox: {
+        backgroundColor: '#F3F3F3',
         padding: 10,
-        borderRadius: 10 
+        borderRadius: 10
     },
-    text1 : {
+    text1: {
         fontFamily: 'Poppins-Medium',
         color: '#23233C',
         fontSize: 12,

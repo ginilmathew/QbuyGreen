@@ -43,7 +43,10 @@ const RefferRestaurant = () => {
     return (
         <>
             <HeaderWithTitle title={active === 'green' ? 'Lets Farm Together' : active === 'fashion' ? "Sell Your Item" : 'Reffer A Restaurant'}/>
-            <ScrollView 
+            <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+                <Text style={{fontSize:18}}>Coming Soon!...</Text>
+            </View>
+            {/* <ScrollView 
                 style={{ 
                     flex:1, 
                     backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff',
@@ -135,7 +138,7 @@ const RefferRestaurant = () => {
                     bg={ active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mb={80}
                 />
-                
+                 */}
                 {/* <View style={{alignItems:'center'}}>
                     {status !== 'approved' && <Text
                         style={{
@@ -161,7 +164,7 @@ const RefferRestaurant = () => {
                 
 
                 
-            </ScrollView>
+            {/* </ScrollView> */}
         </>
     )
 }

@@ -72,14 +72,14 @@ const TabNav = () => {
 
 
 
-    const switchcartUpdate = async(type) => {
+    const switchcartUpdate = async (type) => {
         let value = {
             user_id: userContext?.userData?._id,
-            type :type
+            type: type
 
         }
-     let result =  await customAxios.post('customer/cart/newshow-cart',value)
-     cartContext.setCart(result?.data?.data)
+        let result = await customAxios.post('customer/cart/newshow-cart', value)
+        cartContext.setCart(result?.data?.data)
 
     }
 
@@ -212,6 +212,16 @@ const TabNav = () => {
     const gotoPanda = useCallback(() => {
         switchcartUpdate('panda')
         pandaContext.setActive('panda')
+        startTransition(() => {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'green' },
+                    ],
+                })
+            );
+        })
         setShowSwitch(!showSwitch)
         // startTransition(() => {
         //     navigation.dispatch(
@@ -229,6 +239,16 @@ const TabNav = () => {
     const goToFashion = useCallback(async () => {
         switchcartUpdate('fashion')
         pandaContext.setActive('fashion')
+        startTransition(() => {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'green' },
+                    ],
+                })
+            );
+        })
         setShowSwitch(!showSwitch)
         // if(cartContext?.cart){
         //     await AsyncStorage.setItem("greenCart",JSON.stringify(cartContext?.cart))
@@ -258,6 +278,16 @@ const TabNav = () => {
     const goTogreen = useCallback(() => {
         switchcartUpdate('green')
         pandaContext.setActive('green')
+        startTransition(() => {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'green' },
+                    ],
+                })
+            );
+        })
 
         setShowSwitch(!showSwitch)
     }, [showSwitch, cartContext?.cart])
@@ -407,9 +437,9 @@ const styles = StyleSheet.create({
     },
     bottomBar: {},
     btnCircleUp: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        width: 70,
+        height: 70,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#E8E8E8',

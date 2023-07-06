@@ -25,6 +25,7 @@ import LoadingModal from '../Components/LoadingModal';
 import LocationScreen from '../screens/MyAccount/MyAddresses/LocationScreen';
 import AddNewLocation from '../screens/MyAccount/MyAddresses/LocationScreen/AddNewLocation';
 import Green from '../Route/green';
+import PandaContext from '../contexts/Panda';
 
 
 // import Menu from './Menu';
@@ -35,18 +36,29 @@ const Stack = createNativeStackNavigator();
 const RouteTest = () => {
 
 
-    const userContext = useContext(AuthContext)
-    const cartContext = useContext(CartContext)
-    const loadingContext = useContext(LoaderContext)
-    const [location, setLocation] = useState(null)
+    const userContext = useContext(AuthContext);
+    const cartContext = useContext(CartContext);
+    const loadingContext = useContext(LoaderContext);
+    const { active } = useContext(PandaContext);
+    const [location, setLocation] = useState(null);
 
 
 
     const [initialScreen, setInitialScreen] = useState(null)
+
+
     useEffect(() => {
         getCurrentLocation()
     }, [])
 
+
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         getCurrentLocation()
+        
+    //     }, [])
+    //   );
+    
     // useEffect(() => {
     //     const subscription = AppState.addEventListener('change', nextAppState => {
     //     //   if (
@@ -55,12 +67,12 @@ const RouteTest = () => {
     //     //   ) {
     //     //     console.log('App has come to the foreground!');
     //     //   }
-    
+
     //     //   appState.current = nextAppState;
     //     //   setAppStateVisible(appState.current);
     //       reactotron.log('AppState', nextAppState, cartContext.cart);
     //     });
-    
+
     //     return () => {
     //       subscription.remove();
     //     };
@@ -94,7 +106,7 @@ const RouteTest = () => {
 
             const hasPermission = await PermissionsAndroid.check(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                
+
             );
 
             if (hasPermission) {
@@ -108,7 +120,7 @@ const RouteTest = () => {
 
             if (status === PermissionsAndroid.RESULTS.GRANTED) {
                 getPosition()
-             
+
             }
 
             if (status === PermissionsAndroid.RESULTS.DENIED) {
@@ -143,19 +155,25 @@ const RouteTest = () => {
 
     }, [])
 
-    function getAddressFromCoordinates() {
-        axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location?.latitude},${location?.longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
-            userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
-            //setLocation
-        })
-            .catch(err => {
+    function getAddressFromCoordinates(lat, lng) {
+        if (lat && lng) {
+            axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
+  
+                userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
+                //setLocation
+
+           
             })
+                .catch(err => {
+                })
+        }
+
     }
 
     const getPosition = async () => {
         await Geolocation.getCurrentPosition(
             position => {
-
+               
                 getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
                 setLocation(position?.coords)
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
@@ -216,7 +234,11 @@ const RouteTest = () => {
         let cartId = await AsyncStorage.getItem("cartId");
         if (cartId) {
             loadingContext.setLoading(true);
-            await customAxios.get(`customer/cart/show-cart/${cartId}`)
+            let value = {
+                user_id: userContext?.userData?._id,
+                type: active
+            }
+            await customAxios.get(`customer/cart/newshow-cart/${value}`)
                 .then(async response => {
                     if (isObject(response?.data?.data)) {
                         cartContext.setCart(response?.data?.data)
@@ -282,7 +304,7 @@ const RouteTest = () => {
     }
 
 
-    
+
 
     useEffect(async () => {
         const token = await AsyncStorage.getItem("token");
@@ -290,12 +312,12 @@ const RouteTest = () => {
             const subscription = AppState.addEventListener('change', async nextAppState => {
 
                 if (nextAppState === 'active') {
-              
+
                     await customAxios.post('customer/login-status-update', { login_status: true })
-                
+
                 } else {
                     await customAxios.post('customer/login-status-update', { login_status: false })
-            
+
                 }
             });
             return () => {

@@ -40,7 +40,7 @@ const ProductSearchScreen = ({ route }) => {
     });
 
     const [search, setSearch] = useState('')
-    const [text, setText] = useState("")
+    const [text, setText] = useState(null)
 
     const searchItem = useCallback((data) => {
         setSearch(data)
@@ -60,20 +60,23 @@ const ProductSearchScreen = ({ route }) => {
         }
         loadingg.setLoading(true)
 
-        await customAxios.post(`customer/product-search`, datas)
+        if (text) {
+            await customAxios.post(`customer/product-search`, datas)
 
-            .then(async response => {
-                setFilterResult(response?.data?.data)
-                loadingg.setLoading(false)
-            })
-            .catch(async error => {
-                // Toast.show({
-                //     type: 'error',
-                //     text1: error
-                // });
-                loadingg.setLoading(false)
-            })
-    }, [])
+                .then(async response => {
+                    setFilterResult(response?.data?.data)
+                    loadingg.setLoading(false)
+                })
+                .catch(async error => {
+                    // Toast.show({
+                    //     type: 'error',
+                    //     text1: error
+                    // });
+                    loadingg.setLoading(false)
+                })
+        }
+
+    }, [filterResult,text])
 
 
 

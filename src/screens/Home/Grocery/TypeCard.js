@@ -8,10 +8,12 @@ import PandaContext from '../../../contexts/Panda'
 import reactotron from 'reactotron-react-native'
 
 
-const TypeCard = memo(({ item, mode, onCategoryPress, storeId }) => {
+const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode }) => {
 
 
-    const contextPanda = useContext(PandaContext)
+
+
+    const { active } = useContext(PandaContext)
 
     const { width, fontScale, height } = useWindowDimensions()
 
@@ -20,8 +22,16 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId }) => {
     const styles = makeStyles(fontScale, height);
     const navigation = useNavigation()
 
+    // const onClick = useCallback(() => {
+    //     navigation.navigate('Category', { name: item?.name, mode: contextPanda.active, item: item, storeId })
+    // }, [item])
     const onClick = useCallback(() => {
-        navigation.navigate('Category', { name: item?.name, mode: contextPanda.active, item: item, storeId })
+        if (active === "panda") {
+            navigation.navigate('store', { name: active === "panda" ? item?.store_name : item?.name, mode: 'store', item: item })
+        } else {
+            navigation.navigate('Category', { name: item?.name, mode: active, item: item, storeId })
+        }
+
     }, [item])
 
     return (
@@ -33,7 +43,7 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId }) => {
             >
                 <FastImage
                     style={{ borderRadius: imageWidth / 2, width: '100%', height: '100%' }}
-                    source={{ uri: `${IMG_URL}${item?.image}` }}
+                    source={{ uri: `${IMG_URL}${active === "panda" ? item?.store_logo : item?.image}` }}
                     borderRadius={30}
                 />
 
@@ -41,7 +51,7 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId }) => {
             <Text
                 numberOfLines={2}
                 style={styles.shopName}
-            >{item?.name}</Text>
+            >{active === "panda" ? item?.store_name : item?.name}</Text>
         </View>
     )
 })

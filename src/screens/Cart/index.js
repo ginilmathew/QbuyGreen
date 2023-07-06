@@ -39,7 +39,7 @@ const Cart = ({ navigation }) => {
 
     const [cartItemsList, setCartItemsList] = useState([])
 
-    reactotron.log({ cartItemsList })
+    reactotron.log({ cartContext: cartContext?.cart }, 'GOT CARTCONTEXT RESPONSE')
 
 
     const getCartItems = async () => {
@@ -49,7 +49,7 @@ const Cart = ({ navigation }) => {
 
                     let products = response?.data?.data?.product_details;
                     // cartContext?.setCart(response?.data?.data)
-                    reactotron.log({products})
+                    reactotron.log({ products })
                     let finalProducts = [];
                     //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
                     products?.map((pro) => {
@@ -73,7 +73,7 @@ const Cart = ({ navigation }) => {
                                 image: pro?.image,
                                 type: pro?.type,
                                 // quantity: quantity >= minQty ? quantity : minQty,
-                                quantity: quantity ,
+                                quantity: quantity,
                                 stock: stock,
                                 delivery,
                                 commission: comm,
@@ -81,7 +81,7 @@ const Cart = ({ navigation }) => {
                                 stock_value,
                                 store: pro?.productdata?.store,
                                 status: pro?.productdata?.status,
-                                availability:pro?.availability
+                                availability: pro?.availability
                             }
                         }
                         else {
@@ -103,7 +103,7 @@ const Cart = ({ navigation }) => {
                                 image: pro?.image,
                                 type: type,
                                 // quantity: quantity >= minQty ? quantity : minQty,
-                                quantity: quantity ,
+                                quantity: quantity,
                                 stock: stock,
                                 delivery,
                                 commission: comm,
@@ -112,7 +112,7 @@ const Cart = ({ navigation }) => {
                                 stock_value,
                                 store: pro?.productdata?.store,
                                 status: pro?.productdata?.status,
-                                availability:pro?.availability
+                                availability: pro?.availability
                             }
                         }
 
@@ -120,8 +120,8 @@ const Cart = ({ navigation }) => {
                             product['available'] = false;
                             finalProducts.push(product)
                         }
-                         
-                         
+
+
                         if (product?.status === "active") {
                             if (stock) {
                                 //products have stock
@@ -272,7 +272,7 @@ const Cart = ({ navigation }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            if (cartContext?.cart?._id) {
+            if (cartContext?.cart?._id && cartContext?.cart) {
                 getCartItems()
             }
             else {
@@ -280,7 +280,7 @@ const Cart = ({ navigation }) => {
                 //navigation.goBack()
             }
 
-        }, [cartContext?.cart?._id])
+        }, [cartContext?.cart?._id, cartContext?.cart])
     );
 
     useEffect(() => {

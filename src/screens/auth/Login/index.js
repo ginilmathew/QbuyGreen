@@ -17,7 +17,7 @@ import customAxios from '../../../CustomeAxios';
 import Toast from 'react-native-toast-message'
 import SplashScreen from 'react-native-splash-screen'
 import reactotron from 'reactotron-react-native';
-
+import { mode } from '../../../config/constants'
 
 const Login = ({ navigation }) => {
 
@@ -64,13 +64,20 @@ const Login = ({ navigation }) => {
 			})
 	}, [])
 
+	
+    const imageURl = {
+        panda: require('../../../Images/pandaLogo.png'),
+        green: require('../../../Images/loginLogo.png'),
+        fashion: require('../../../Images/loginLogo.png')
+    }
+
 
 	return (
 		<CommonAuthBg>
 			<ScrollView style={{ flex: 1, paddingHorizontal: 20, }}>
 				<FastImage
 					style={styles.logo}
-					source={require('../../../Images/loginLogo.png')}
+					source={imageURl[mode]}
 					resizeMode='contain'
 				/>
 				<CommonAuthHeading

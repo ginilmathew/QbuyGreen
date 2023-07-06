@@ -29,6 +29,7 @@ import FastImage from 'react-native-fast-image';
 import { IMG_URL } from '../../config/constants';
 import reactotron from 'reactotron-react-native';
 import CategoryCard from './QBuyGreen/CategoryCard';
+import { useFocusEffect } from '@react-navigation/native';
 
 const QbuyPanda = ({ navigation }) => {
 
@@ -43,6 +44,8 @@ const QbuyPanda = ({ navigation }) => {
     const [pandaSuggestions, setPandaSuggestions] = useState([])
     const [products, setProducts] = useState([])
     const [sliders, setSliders] = useState([])
+    const [datalist,setDatalist]=useState();
+    const [isloading,setisLoading]=useState(false);
 
     const [selected, setSelected] = useState('')
 
@@ -68,14 +71,13 @@ const QbuyPanda = ({ navigation }) => {
     });
 
 
+    // useEffect(() => {
+    //     getHomedata()
+    // }, [])
+
+
     useEffect(() => {
-        getHomedata()
-    }, [])
-
-
-
-    useEffect(() => {
-        if (filter) {
+        if (filter && userContext?.location) {
             let recents = homeData?.find(home => home?.type === "recentlyviewed")
             if (recents?.data?.length > 0) {
                 if (filter === "all") {
@@ -84,9 +86,6 @@ const QbuyPanda = ({ navigation }) => {
                 else {
                     setRecentLists(recents?.data?.filter(prod => prod?.category_type === filter))
                 }
-
-
-
             }
 
 
@@ -112,7 +111,7 @@ const QbuyPanda = ({ navigation }) => {
 
             }
         }
-    }, [filter])
+    }, [filter,userContext?.location])
 
 
 
@@ -142,12 +141,12 @@ const QbuyPanda = ({ navigation }) => {
 
     const getHomedata = async () => {
 
-        loadingg.setLoading(true)
+        setisLoading(true)
 
         let datas = {
             type: "panda",
             // coordinates: env === "dev" ? location : userContext?.location
-            coordinates: userContext?.location
+            coordinates:userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
@@ -174,13 +173,12 @@ const QbuyPanda = ({ navigation }) => {
 
 
 
-                loadingg.setLoading(false)
+                setisLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
                 }, 500);
 
-            })
-            .catch(async error => {
+            }).catch(async error => {
                 if (error.includes("Unauthenticated")) {
                     navigation.navigate("Login")
                 }
@@ -189,7 +187,7 @@ const QbuyPanda = ({ navigation }) => {
                     type: 'error',
                     text1: error
                 });
-                loadingg.setLoading(false)
+                setisLoading(false)
             })
     }
 
@@ -229,6 +227,11 @@ const QbuyPanda = ({ navigation }) => {
         )
     }
 
+    useFocusEffect(
+        React.useCallback(() => {
+            getHomedata()
+        }, [userContext?.location])
+      );
     return (
         <>
             {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -239,7 +242,7 @@ const QbuyPanda = ({ navigation }) => {
             <ScrollView
                 style={{ flex: 1, backgroundColor: '#fff' }}
                 refreshControl={
-                    <RefreshControl refreshing={loadingg.loading} onRefresh={getHomedata} />
+                    <RefreshControl refreshing={isloading} onRefresh={getHomedata} />
                 }
             >
 
@@ -293,7 +296,7 @@ const QbuyPanda = ({ navigation }) => {
                     <PickDropAndReferCard
                         onPress={referRestClick}
                         lotties={require('../../Lottie/rating.json')}
-                        label={'Refer A Restaurant'}
+                        label={'Reffer A Restaurant'}
                         lottieFlex={0.5}
                     />
                 </View>

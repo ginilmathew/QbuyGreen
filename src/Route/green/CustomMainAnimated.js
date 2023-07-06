@@ -26,7 +26,7 @@ const CustomMainAnimated = (props) => {
 
 
     return (
-        <View>
+     
             <TouchableOpacity
                 style={styles.button}
                 onPress={enableSwitch}
@@ -37,6 +37,7 @@ const CustomMainAnimated = (props) => {
                 >
                     <Animated.Image
                         style={{
+                            
                             transform: [{
                                 rotate: animatedValue.interpolate({
                                     inputRange: [-1, 1],
@@ -48,93 +49,27 @@ const CustomMainAnimated = (props) => {
                     />
                 </LinearGradient>
             </TouchableOpacity>
-        </View>
+     
     )
 }
 
 export default CustomMainAnimated
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    shawdow: {
-        shadowColor: '#DDDDDD',
-        shadowOffset: {
-            width: 0,
-            height: 0,
-        },
-        shadowOpacity: 1,
-        shadowRadius: 5,
-    },
+
     button: {
         flex: 1,
+        height:'100%',
         justifyContent: 'center',
     },
-    bottomBar: {},
-    btnCircleUp: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#E8E8E8',
-        bottom: 18,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.41,
-        elevation: 1,
-    },
-    imgCircle: {
-        width: 30,
-        height: 30,
-        tintColor: 'gray',
-    },
-    tabbarItem: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    img: {
-        width: 30,
-        height: 30,
-    },
-    screen1: {
-        flex: 1,
-        backgroundColor: '#BFEFFF',
-    },
-    screen2: {
-        flex: 1,
-        backgroundColor: '#FFEBCD',
-    },
+
     panda: {
         width: 70,
         height: 70,
-        borderRadius: 50,
+        borderRadius: 35,
+        zIndex:50,
         alignItems: 'center',
         justifyContent: 'center'
     },
-    logo: {
-        width: 60,
-        height: 60,
-        resizeMode: 'contain',
-    },
-    smallPandasLogo: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        resizeMode: 'contain',
-    },
-    smallPandas: {
-        width: 50,
-        height: 50,
-        borderRadius: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+   
 })

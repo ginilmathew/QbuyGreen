@@ -55,6 +55,7 @@ const HomeNav = () => {
                 <Stack.Screen name="SingleHotel" component={SingleHotel} />
                 <Stack.Screen name="SingleItemScreen" component={SingleItemScreen} />
                 <Stack.Screen name="Category" component={CategoryScreen} />
+                <Stack.Screen name="pandaCategory" component={Category} />
                 <Stack.Screen name="store" component={StoreScreen} />
                 <Stack.Screen name="PickupAndDropoff" component={PickupAndDropoff} />
                 <Stack.Screen name="OurFarms" component={OurFarms} />

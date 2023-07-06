@@ -1,5 +1,5 @@
-import React,{useState, useEffect, memo, useCallback, useContext} from 'react'
-import { View, ImageBackground, StyleSheet,TouchableOpacity,useWindowDimensions, Text } from "react-native";
+import React, { useState, useEffect, memo, useCallback, useContext } from 'react'
+import { View, ImageBackground, StyleSheet, TouchableOpacity, useWindowDimensions, Text } from "react-native";
 import { useNavigation } from '@react-navigation/native'
 import Lottie from 'lottie-react-native';
 import FastImage from 'react-native-fast-image';
@@ -8,30 +8,32 @@ import PandaContext from '../../contexts/Panda';
 
 
 
-const CategoriesCard = memo(({item}) => {
+const CategoriesCard = memo(({ item }) => {
 
     const { width, fontScale, height } = useWindowDimensions()
-    const contextPanda = useContext(PandaContext)
+    const { active } = useContext(PandaContext)
 
 
-    let imageWidth = width/6
+    let imageWidth = width / 6
 
     const navigation = useNavigation();
 
+
     const onClick = useCallback(() => {
-        navigation.navigate('Category', {name : item?.name, mode: contextPanda.active, item : item })
+        navigation.navigate(active === 'panda' ? 'pandaCategory' : 'Category', { name: item?.name, mode: active, item: item })
     }, [item])
 
+
     return (
-        <TouchableOpacity 
-            onPress={onClick} 
-            style={{width: width/4.2,height:80,alignItems:'center'}}
+        <TouchableOpacity
+            onPress={onClick}
+            style={{ width: width / 4.2, height: 80, alignItems: 'center' }}
         >
             <View
                 style={styles.lottieView}
             >
                 <FastImage
-                    style={{borderRadius: imageWidth/2, width: '100%', height: '100%' }}
+                    style={{ borderRadius: imageWidth / 2, width: '100%', height: '100%' }}
                     source={{ uri: `${IMG_URL}${item?.image}` }}
                     borderRadius={30}
                 />
@@ -44,17 +46,17 @@ const CategoriesCard = memo(({item}) => {
 export default CategoriesCard
 
 const styles = StyleSheet.create({
-    lottieView : { 
-        width:50, 
-        height:50, 
-        borderRadius:25, 
-        backgroundColor:'#DFEFE2', 
+    lottieView: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: '#DFEFE2',
     },
-    itemText : { 
-        textAlign:'center', 
-        fontSize:11, 
-        marginTop:5, 
-        fontFamily:'Poppins-Medium', 
-        color:'#23233C' 
+    itemText: {
+        textAlign: 'center',
+        fontSize: 11,
+        marginTop: 5,
+        fontFamily: 'Poppins-Medium',
+        color: '#23233C'
     }
 })

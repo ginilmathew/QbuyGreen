@@ -145,6 +145,7 @@ const Route = () => {
 
     function getAddressFromCoordinates() {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location?.latitude},${location?.longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
+          
             userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
             //setLocation
         })

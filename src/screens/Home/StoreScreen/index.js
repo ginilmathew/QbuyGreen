@@ -104,6 +104,7 @@ const StoreScreen = ({ route, navigation }) => {
                 }>
 
                 <View style={{ paddingHorizontal: 10 }}>
+                    
                     <FastImage
                         source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : storeDetails?.store_logo ? { uri: `${IMG_URL}${storeDetails?.store_logo}` } : require('../../../Images/storeImage.jpg')}
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
@@ -119,7 +120,7 @@ const StoreScreen = ({ route, navigation }) => {
                     <StoreAddressCard address={item?.store_address || item?.store_address !== "null" ? item?.store_address : storeDetails?.store_address} />
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
-
+             {active !== 'panda' &&
                 <View style={{ backgroundColor: '#76867314', paddingBottom: 10, }}>
                     <ScrollView
                         horizontal
@@ -127,10 +128,10 @@ const StoreScreen = ({ route, navigation }) => {
                         style={{ flexDirection: 'row', marginTop: 15 }}
                     >
                         {storeDetails?.category_id?.map((cat, index) =>
-                            (<TypeCard item={cat} key={index} storeId={item?._id} />)
+                            (<TypeCard item={cat} key={index} storeId={storeId} mymode={'MYMODE'}/>)
                         )}
                     </ScrollView>
-                </View>
+                </View> }
 
 
                 <CommonTexts label={'Available Products'} my={15} ml={10} fontSize={13} />
