@@ -30,7 +30,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
     let myLocation = userContext?.userLocation
 
-      reactotron.log({myLocation},'MYLOCATION ADDRESSS')
+
 
     const navigation = useNavigation()
 
