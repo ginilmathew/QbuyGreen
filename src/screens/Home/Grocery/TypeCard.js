@@ -8,8 +8,8 @@ import PandaContext from '../../../contexts/Panda'
 import reactotron from 'reactotron-react-native'
 
 
-const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode }) => {
-
+const TypeCard = memo(({ item, mode, onCategoryPress, storeId,mymode }) => {
+    
 
 
 
@@ -27,13 +27,13 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode }) => {
     // }, [item])
     const onClick = useCallback(() => {
         if (active === "panda") {
-            navigation.navigate('store', { name: active === "panda" ? item?.store_name : item?.name, mode: 'store', item: item })
+            navigation.navigate('store', { name: active === "panda" ? item?.store_name : item?.name, mode:'store', item: item })
         } else {
+            reactotron.log("ELSE CALLED")
             navigation.navigate('Category', { name: item?.name, mode: active, item: item, storeId })
         }
 
-    }, [item])
-
+    }, [item,active,item?._id])
     return (
         <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 5 }}>
             <TouchableOpacity

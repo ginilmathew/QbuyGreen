@@ -21,9 +21,14 @@ import CartContext from '../../../contexts/Cart'
 import AuthContext from '../../../contexts/Auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import reactotron from 'reactotron-react-native'
+import { useFocusEffect } from '@react-navigation/native'
 
 
 const Category = ({ route }) => {
+
+
+
+
 
     const { width } = useWindowDimensions()
 
@@ -49,12 +54,19 @@ const Category = ({ route }) => {
     const [selected, setSelected] = useState(false)
 
 
-    reactotron.log({ mode }, 'MODE')
 
 
-    useEffect(() => {
-        getProductBasedCat()
-    }, [])
+    // useEffect(() => {
+    //     getProductBasedCat()
+    // }, [])
+
+    useFocusEffect(
+        React.useCallback(() => {
+
+            getProductBasedCat()
+
+        }, [])
+    );
 
     const getProductBasedCat = async () => {
         loadingContex.setLoading(true)
@@ -151,15 +163,15 @@ const Category = ({ route }) => {
                         )}
                     </ScrollView>}
 
-                    {stores && stores?.length > 0  &&
+                {stores && stores?.length > 0 &&
                     <CommonTexts label={'Available Shops'} mt={15} mb={5} ml={10} fontSize={13} />}
-                {stores && stores?.length > 0  &&
+                {stores && stores?.length > 0 &&
                     <View style={{ paddingBottom: 10, marginTop: 5 }}>
                         <View
                             style={[styles.categoryView]}
                         >
-                             {stores?.map((item, index) =>
-                                <View style={{ width:'22%'}} key={index}>
+                            {stores?.map((item, index) =>
+                                <View style={{ width: '22%' }} key={index}>
                                     <TypeCard item={item} key={index} />
                                 </View>
                             )}
@@ -191,7 +203,7 @@ const Category = ({ route }) => {
                     ))}
                 </View>}
 
-             
+
 
                 {/* {mode === 'store' && <CommonTexts label={'Available Stores'} my={15} ml={10} fontSize={13} />}
 
@@ -223,32 +235,32 @@ const Category = ({ route }) => {
 
 
                 {/* fashion available products */}
-             
-                    <>
+
+                <>
 
                     {availablePdts?.length > 0 && <CommonTexts label={'Avalable Products'} mt={15} ml={10} fontSize={13} mb={5} />}
-                        <View style={styles.itemContainer}>
-                            {availablePdts?.map((item) => (
-                                <CommonItemCard
-                                    item={item}
-                                    key={item?._id}
-                                    width={width / 2.2}
-                                    height={250}
-                                // wishlistIcon={fashion ? true : false}
-                                />
-                            ))}
-                        </View>
+                    <View style={styles.itemContainer}>
+                        {availablePdts?.map((item) => (
+                            <CommonItemCard
+                                item={item}
+                                key={item?._id}
+                                width={width / 2.2}
+                                height={250}
+                            // wishlistIcon={fashion ? true : false}
+                            />
+                        ))}
+                    </View>
 
 
-                    </>
-{/*                 
+                </>
+                {/*                 
                     {mode !== 'store' && mode !== 'grocery' && <View style={{ marginTop: 20, backgroundColor: '#F7F7F7', paddingVertical: 10, marginBottom: 100, paddingLeft: 5 }}>
                     <CommonTexts label={'Recommented Products'} fontSize={13} ml={10} mb={5} />
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
                     > */}
-                        {/* {recomment.map((item) =>
+                {/* {recomment.map((item) =>
                             <CommonItemCard
                                 key={item?._id}
                                 item={item}
@@ -256,7 +268,7 @@ const Category = ({ route }) => {
                                 marginHorizontal={5}
                             />
                         )} */}
-                    {/* </ScrollView>
+                {/* </ScrollView>
                 </View>} */}
 
 
@@ -333,6 +345,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: '3%'
     },
     categoryView: {
+        // justifyContent:'center',
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 5,

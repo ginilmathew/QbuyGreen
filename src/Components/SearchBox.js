@@ -28,8 +28,6 @@ const SearchBox = ({ onPress }) => {
             activeOpacity={0.9}
         >
             <Text style={{ marginLeft: 20, color: '#0C256C21', fontFamily: 'Poppins-SemiBold' }}>Search...</Text>
-
-
             <CommonSquareButton iconName={'search'} onPress={onPress} />
         </TouchableOpacity>
     )

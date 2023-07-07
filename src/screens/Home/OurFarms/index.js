@@ -40,9 +40,13 @@ const OurFarms = ({navigation}) => {
     return (
         <>
             <HeaderWithTitle title={'Our Farms'}/>
-            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            {/* <ScrollView style={styles.container} showsVerticalScrollIndicator={false}> */}
+                <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <Text style={styles.commingtext}>Coming Soon..!</Text>
+                </View>
+             
 
-                <View style={{backgroundColor:'#000', paddingVertical:20, borderRadius:20, marginTop:20}}>
+                {/* <View style={{backgroundColor:'#000', paddingVertical:20, borderRadius:20, marginTop:20}}> */}
                     {/* <VideoPlayer
                         video={require('../../../Videos/farming.mp4')} 
                         // showDuration={true}
@@ -52,9 +56,9 @@ const OurFarms = ({navigation}) => {
                         resizeMode='contain'
                         thumbnail={require('../../../Images/farmThumb.jpeg')}
                     /> */}
-                </View>
+                {/* </View> */}
 
-                <Title 
+                {/* <Title 
                     label={'Introducing Qbuy Panda Farms!'}
                     width={width/5.8}
                 />
@@ -66,30 +70,30 @@ const OurFarms = ({navigation}) => {
                 <Title 
                     label={'Farm Gallery'}
                     width={width/13}
-                />
+                /> */}
 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop:10}}>
+                {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop:10}}> */}
 
                     {/* {farm?.map( item => <Image key={item?._id} source={item?.image} style={{width: width/2.5, height:100, borderRadius:15, marginRight:10}}/>)} */}
 
-                </ScrollView>
+                {/* </ScrollView> */}
 
 
-                <CustomButton
+                {/* <CustomButton
                     onPress={()=>navigation.navigate('RefferRestaurant')}
                     label={'Join Now'}
                     mt={25}
                     bg={ grocery ? '#8ED053' : '#58D36E'}
                     mb={90}
 
-                />
+                /> */}
 
                
 
                 
        
                 
-            </ScrollView>
+            {/* </ScrollView> */}
         </>
     )
 }
@@ -109,6 +113,11 @@ const styles = StyleSheet.create({
         textAlign:'center',
         paddingHorizontal:70,
         marginTop:10
+    },
+    commingtext:{
+        fontFamily: 'Poppins-Medium',
+        color: '#23233C',
+        fontSize: 16,
     }
     
 })

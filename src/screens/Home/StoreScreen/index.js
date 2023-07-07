@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import reactotron from 'reactotron-react-native'
+import { useFocusEffect } from '@react-navigation/native'
 
 
 const StoreScreen = ({ route, navigation }) => {
@@ -44,6 +45,8 @@ const StoreScreen = ({ route, navigation }) => {
     const storeId = route?.params?.storeId
 
 
+
+ 
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
 
@@ -51,9 +54,13 @@ const StoreScreen = ({ route, navigation }) => {
 
     const [selected, setSelected] = useState(false)
 
-    useEffect(() => {
-        getStoreDetails()
-    }, [])
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            getStoreDetails()
+        }, [])
+      );
 
     const getStoreDetails = async () => {
         loadingContex.setLoading(true)
@@ -104,7 +111,6 @@ const StoreScreen = ({ route, navigation }) => {
                 }>
 
                 <View style={{ paddingHorizontal: 10 }}>
-                    
                     <FastImage
                         source={item?.store_logo ? { uri: `${IMG_URL}${item?.store_logo}` } : storeDetails?.store_logo ? { uri: `${IMG_URL}${storeDetails?.store_logo}` } : require('../../../Images/storeImage.jpg')}
                         // source={{ uri: `${IMG_URL}${item?.image}` }}
@@ -120,18 +126,18 @@ const StoreScreen = ({ route, navigation }) => {
                     <StoreAddressCard address={item?.store_address || item?.store_address !== "null" ? item?.store_address : storeDetails?.store_address} />
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
-             {active !== 'panda' &&
-                <View style={{ backgroundColor: '#76867314', paddingBottom: 10, }}>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={{ flexDirection: 'row', marginTop: 15 }}
-                    >
-                        {storeDetails?.category_id?.map((cat, index) =>
-                            (<TypeCard item={cat} key={index} storeId={storeId} mymode={'MYMODE'}/>)
-                        )}
-                    </ScrollView>
-                </View> }
+                {active !== 'panda' &&
+                    <View style={{ backgroundColor: '#76867314', paddingBottom: 10, }}>
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={{ flexDirection: 'row', marginTop: 15 }}
+                        >
+                            {storeDetails?.category_id?.map((cat, index) =>
+                                (<TypeCard item={cat} key={index} storeId={storeId} mymode={'MYMODE'} />)
+                            )}
+                        </ScrollView>
+                    </View>}
 
 
                 <CommonTexts label={'Available Products'} my={15} ml={10} fontSize={13} />

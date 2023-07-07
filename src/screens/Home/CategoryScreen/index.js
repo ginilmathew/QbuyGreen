@@ -14,12 +14,13 @@ import Toast from 'react-native-toast-message'
 import CartContext from '../../../contexts/Cart'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import reactotron from 'reactotron-react-native'
+import { useFocusEffect } from '@react-navigation/native'
 
 
 const CategoryScreen = ({ route, navigation }) => {
 
     const { width } = useWindowDimensions()
-
+    reactotron.log('Signle CATEGORY SCREEN')
 
     const { active } = useContext(PandaContext)
     const auth = useContext(AuthContext)
@@ -31,14 +32,15 @@ const CategoryScreen = ({ route, navigation }) => {
 
     let userData = auth?.userData
 
-    const { name, mode, item, storeId } = route?.params
+    const { name, mode, item, storeId } = route?.params;
+
+    reactotron.log({item},'ITEM IN CATEGORY SCREEN')
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [filterProducts, setFilterProduct] = useState([])
     const [selected, setSelected] = useState(null);
 
 
-  
 
 
     //code for filter by subCategory.......
@@ -61,11 +63,15 @@ const CategoryScreen = ({ route, navigation }) => {
 
 
 
-    useEffect(() => {
-        getProductBasedCat();
-    }, [])
+    // useEffect(() => {
+    //     getProductBasedCat();
+    // }, [])
 
-
+    useFocusEffect(
+        React.useCallback(() => {
+            getProductBasedCat();
+        }, [item?._id,item?.id])
+      );
 
 
     const getProductBasedCat = async (coords) => {

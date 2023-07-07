@@ -66,7 +66,7 @@ const Otp = ({ navigation }) => {
 				navigation.dispatch(CommonActions.reset({
 					index: 0,
 					routes: [
-						{ name: mode }
+						{ name: 'green' }
 					],
 				}))
 

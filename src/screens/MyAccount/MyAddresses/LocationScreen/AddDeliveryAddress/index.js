@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, KeyboardAvoidingView } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Foundation from 'react-native-vector-icons/Foundation'
@@ -26,7 +26,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
 
     let locationData = route?.params?.item;
 
-  
+
     const addressContext = useContext(AddressContext)
     const cartContext = useContext(CartContext)
 
@@ -139,79 +139,80 @@ const AddDeliveryAddress = ({ route, navigation }) => {
                     paddingHorizontal: 15
                 }}
             >
-                <View style={styles.headerView}>
-                    <View style={{ flexDirection: 'row', }}>
-                        {datas?.map((item, index) =>
-                            <ChooseAddressType
-                                item={item}
-                                key={index}
-                                selected={selected}
-                                setSelected={setSelected}
-                            />
-                        )}
-                    </View>
+                <KeyboardAvoidingView>
+                    <View style={styles.headerView}>
+                        <View style={{ flexDirection: 'row', }}>
+                            {datas?.map((item, index) =>
+                                <ChooseAddressType
+                                    item={item}
+                                    key={index}
+                                    selected={selected}
+                                    setSelected={setSelected}
+                                />
+                            )}
+                        </View>
 
-                    <View style={{ paddingTop: 10 }} >
-                        <CommonTexts label={'Default'} fontSize={12} />
-                        <CommonSwitch toggleSwitch={toggleSwitch} isEnabled={isEnabled} />
+                        <View style={{ paddingTop: 10 }} >
+                            <CommonTexts label={'Default'} fontSize={12} />
+                            <CommonSwitch toggleSwitch={toggleSwitch} isEnabled={isEnabled} />
+                        </View>
                     </View>
-                </View>
-                <CommonInput
-                    control={control}
-                    error={errors.name}
-                    fieldName="name"
-                    topLabel={'Name'}
-                />
-                <CommonInput
-                    control={control}
-                    error={errors.location}
-                    fieldName="location"
-                    topLabel={'Area'}
-                />
-                <CommonInput
-                    control={control}
-                    error={errors.address}
-                    fieldName="address"
-                    topLabel={'Address'}
-                    placeholder='Complete Address e.g. house number, street name, etc'
-                    placeholderTextColor='#0C256C21'
-                    top={10}
-                />
-                <CommonInput
-                    control={control}
-                    error={errors.mobile}
-                    fieldName="mobile"
-                    topLabel={'Mobile'}
-                    placeholder='Delivery Mobile Number e.g. mobile of the owner'
-                    placeholderTextColor='#0C256C21'
-                    top={10}
-                />
-                <CommonInput
-                    control={control}
-                    error={errors.pincode}
-                    fieldName="pincode"
-                    topLabel={'Pincode'}
-                    placeholder='Delivery Pincode e.g. 695111'
-                    placeholderTextColor='#0C256C21'
-                    top={10}
-                />
-                <CommonInput
-                    control={control}
-                    error={errors.comments}
-                    fieldName="comments"
-                    topLabel={'Comments (Optional)'}
-                    placeholder='Delivery Instructions e.g. Opposite Gold Souk Mall'
-                    placeholderTextColor='#0C256C21'
-                    top={10}
-                />
-                <CustomButton
-                    onPress={handleSubmit(onSave)}
-                    bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
-                    label='Save'
-                    mt={20}
-                    loading={loadingContext?.loading}
-                />
-
+                    <CommonInput
+                        control={control}
+                        error={errors.name}
+                        fieldName="name"
+                        topLabel={'Name'}
+                    />
+                    <CommonInput
+                        control={control}
+                        error={errors.location}
+                        fieldName="location"
+                        topLabel={'Area'}
+                    />
+                    <CommonInput
+                        control={control}
+                        error={errors.address}  
+                        fieldName="address"
+                        topLabel={'Address'}
+                        placeholder='Complete Address e.g. house number, street name, etc'
+                        placeholderTextColor='#0C256C21'
+                        top={10}
+                    />
+                    <CommonInput
+                        control={control}
+                        error={errors.mobile}
+                        fieldName="mobile"
+                        topLabel={'Mobile'}
+                        placeholder='Delivery Mobile Number e.g. mobile of the owner'
+                        placeholderTextColor='#0C256C21'
+                        top={10}
+                    />
+                    <CommonInput
+                        control={control}
+                        error={errors.pincode}
+                        fieldName="pincode"
+                        topLabel={'Pincode'}
+                        placeholder='Delivery Pincode e.g. 695111'
+                        placeholderTextColor='#0C256C21'
+                        top={10}
+                    />
+                    <CommonInput
+                        control={control}
+                        error={errors.comments}
+                        fieldName="comments"
+                        topLabel={'Comments (Optional)'}
+                        placeholder='Delivery Instructions e.g. Opposite Gold Souk Mall'
+                        placeholderTextColor='#0C256C21'
+                        top={10}
+                    />
+                    <CustomButton
+                        onPress={handleSubmit(onSave)}
+                        bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
+                        label='Save'
+                        mt={20}
+                        loading={loadingContext?.loading}
+                    />
+                </KeyboardAvoidingView>
             </ScrollView>
         </>
 

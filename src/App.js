@@ -10,14 +10,7 @@ import Route from './Route'
 import CartProvider from './contexts/Cart/CartContext'
 import Toast from 'react-native-toast-message';
 import AddressProvider from './contexts/Address/AddressContext'
-import SplashScreen from 'react-native-splash-screen'
-//import messaging from '@react-native-firebase/messaging';
-import { PermissionsAndroid } from 'react-native';
-import notifee from '@notifee/react-native';
-import reactotron from 'reactotron-react-native'
-import Geolocation from 'react-native-geolocation-service';
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import customAxios from './CustomeAxios'
+
 import RouteTest from './RouteText'
 
 
@@ -200,6 +193,7 @@ const App = () => {
                     <AddressProvider>
                         <PandaProvider>
                             <CartProvider>
+                       
                                 <RouteTest />
                                 <Toast
                                     position='bottom'

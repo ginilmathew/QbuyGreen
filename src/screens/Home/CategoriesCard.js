@@ -5,6 +5,7 @@ import Lottie from 'lottie-react-native';
 import FastImage from 'react-native-fast-image';
 import { IMG_URL } from '../../config/constants';
 import PandaContext from '../../contexts/Panda';
+import reactotron from '../../ReactotronConfig';
 
 
 
@@ -19,10 +20,11 @@ const CategoriesCard = memo(({ item }) => {
     const navigation = useNavigation();
 
 
-    const onClick = useCallback(() => {
-        navigation.navigate(active === 'panda' ? 'pandaCategory' : 'Category', { name: item?.name, mode: active, item: item })
-    }, [item])
 
+
+    const onClick = useCallback(() => {
+        navigation.navigate(active === 'panda' ? 'pandaCategory' : 'Category', { name:active === 'panda' ? item?.store_name : item?.name, mode: active, item: item })
+    }, [item])
 
     return (
         <TouchableOpacity

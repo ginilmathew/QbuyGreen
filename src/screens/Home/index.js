@@ -44,8 +44,8 @@ const QbuyPanda = ({ navigation }) => {
     const [pandaSuggestions, setPandaSuggestions] = useState([])
     const [products, setProducts] = useState([])
     const [sliders, setSliders] = useState([])
-    const [datalist,setDatalist]=useState();
-    const [isloading,setisLoading]=useState(false);
+    const [datalist, setDatalist] = useState();
+    const [isloading, setisLoading] = useState(false);
 
     const [selected, setSelected] = useState('')
 
@@ -111,7 +111,7 @@ const QbuyPanda = ({ navigation }) => {
 
             }
         }
-    }, [filter,userContext?.location])
+    }, [filter, userContext?.location])
 
 
 
@@ -146,7 +146,7 @@ const QbuyPanda = ({ navigation }) => {
         let datas = {
             type: "panda",
             // coordinates: env === "dev" ? location : userContext?.location
-            coordinates:userContext?.location
+            coordinates: userContext?.location
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
@@ -178,7 +178,8 @@ const QbuyPanda = ({ navigation }) => {
                     SplashScreen.hide()
                 }, 500);
 
-            }).catch(async error => {
+            })
+            .catch(async error => {
                 if (error.includes("Unauthenticated")) {
                     navigation.navigate("Login")
                 }
@@ -231,7 +232,7 @@ const QbuyPanda = ({ navigation }) => {
         React.useCallback(() => {
             getHomedata()
         }, [userContext?.location])
-      );
+    );
     return (
         <>
             {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

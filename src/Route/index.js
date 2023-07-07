@@ -43,8 +43,12 @@ const Route = () => {
 
 
     const [initialScreen, setInitialScreen] = useState(null)
+
+
     useEffect(() => {
         getCurrentLocation()
+
+        reactotron.log('FISRST CALLL')
     }, [])
 
     // useEffect(() => {
@@ -145,7 +149,6 @@ const Route = () => {
 
     function getAddressFromCoordinates() {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${location?.latitude},${location?.longitude}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
-          
             userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
             //setLocation
         })
@@ -169,6 +172,7 @@ const Route = () => {
                     getProfile()
                     getCartDetails()
                     getAddressList()
+            
                 }
                 setInitialScreen('AddNewLocation');
                 Toast.show({
@@ -238,6 +242,7 @@ const Route = () => {
         }
 
     }, [])
+    
 
     const getAddressList = async () => {
         loadingContext.setLoading(true)
@@ -247,11 +252,13 @@ const Route = () => {
                     if (response?.data?.data?.length === 1) {
                         userContext.setLocation([response?.data?.data?.[0]?.area?.latitude, response?.data?.data?.[0]?.area?.longitude])
                         userContext?.setCurrentAddress(response?.data?.data?.[0]?.area?.address)
+                        reactotron.log('API RESPONSE CALLED IN GEO')
                     }
                     else {
                         let defaultAdd = response?.data?.data?.find(add => add?.default === true)
                         userContext.setLocation([defaultAdd?.area?.latitude, defaultAdd?.area?.longitude])
                         userContext?.setCurrentAddress(defaultAdd?.area?.address)
+                        reactotron.log('API RESPONSE CALLED IN GEO')
                     }
                 }
                 cartContext.setAddress(response?.data?.data)
@@ -276,6 +283,7 @@ const Route = () => {
             getProfile()
             getCartDetails()
             getAddressList()
+            reactotron.log('API CALLED IN ADDDRESS')
         }
         else {
             setInitialScreen('Login');

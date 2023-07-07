@@ -6,6 +6,10 @@ import CommonTexts from '../../Components/CommonTexts';
 
 const PickDropAndReferCard = ({label,lotties, onPress, lottieFlex, ml}) => {
     return (
+
+        // <View style={{flex:1,alignItems:'center'}}>
+        //       <Text>Coming Soon!..</Text>
+        // </View>
         <TouchableOpacity
             onPress={onPress}
             style={styles.container}

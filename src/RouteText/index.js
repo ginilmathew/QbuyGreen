@@ -36,29 +36,23 @@ const Stack = createNativeStackNavigator();
 const RouteTest = () => {
 
 
-    const userContext = useContext(AuthContext);
-    const cartContext = useContext(CartContext);
-    const loadingContext = useContext(LoaderContext);
-    const { active } = useContext(PandaContext);
-    const [location, setLocation] = useState(null);
+    const userContext = useContext(AuthContext)
+    const cartContext = useContext(CartContext)
+    const loadingContext = useContext(LoaderContext)
+    const [location, setLocation] = useState(null)
+    const { active } = useContext(PandaContext)
+    const [user, setUserDetails] = useState(null)
 
 
+    const [initialScreen, setInitialScreen] = useState(null);
 
-    const [initialScreen, setInitialScreen] = useState(null)
+
 
 
     useEffect(() => {
         getCurrentLocation()
     }, [])
 
-
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         getCurrentLocation()
-        
-    //     }, [])
-    //   );
-    
     // useEffect(() => {
     //     const subscription = AppState.addEventListener('change', nextAppState => {
     //     //   if (
@@ -158,11 +152,9 @@ const RouteTest = () => {
     function getAddressFromCoordinates(lat, lng) {
         if (lat && lng) {
             axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
-  
-                userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address)
+                userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address);
+            reactotron.log({ADDRESSCOORDINATES:response?.data?.results[0]?.formatted_address})
                 //setLocation
-
-           
             })
                 .catch(err => {
                 })
@@ -170,10 +162,17 @@ const RouteTest = () => {
 
     }
 
+    useEffect(() => {
+        if (location) {
+            getAddressFromCoordinates()
+        }
+    }, [location])
+
+
     const getPosition = async () => {
         await Geolocation.getCurrentPosition(
             position => {
-               
+
                 getAddressFromCoordinates(position?.coords?.latitude, position.coords?.longitude)
                 setLocation(position?.coords)
                 userContext.setLocation([position?.coords?.latitude, position.coords?.longitude])
@@ -216,8 +215,9 @@ const RouteTest = () => {
         await customAxios.get(`customer/customer-profile`)
             .then(async response => {
                 loadingContext.setLoading(false);
-                userContext.setUserData(response?.data?.data)
-                setInitialScreen(mode);
+                userContext.setUserData(response?.data?.data);
+                setUserDetails(response?.data?.data)
+                setInitialScreen('green');
             })
             .catch(async error => {
                 Toast.show({
@@ -231,14 +231,13 @@ const RouteTest = () => {
     }, [])
 
     const getCartDetails = useCallback(async () => {
-        let cartId = await AsyncStorage.getItem("cartId");
-        if (cartId) {
+        if (user) {
             loadingContext.setLoading(true);
             let value = {
-                user_id: userContext?.userData?._id,
+                user_id: user?._id,
                 type: active
             }
-            await customAxios.get(`customer/cart/newshow-cart/${value}`)
+            await customAxios.post(`customer/cart/newshow-cart`, value)
                 .then(async response => {
                     if (isObject(response?.data?.data)) {
                         cartContext.setCart(response?.data?.data)
@@ -258,7 +257,7 @@ const RouteTest = () => {
                 })
         }
 
-    }, [])
+    }, [user])
 
     const getAddressList = async () => {
         loadingContext.setLoading(true)
@@ -268,12 +267,20 @@ const RouteTest = () => {
                     if (response?.data?.data?.length === 1) {
                         userContext.setLocation([response?.data?.data?.[0]?.area?.latitude, response?.data?.data?.[0]?.area?.longitude])
                         userContext?.setCurrentAddress(response?.data?.data?.[0]?.area?.address)
+
                     }
                     else {
                         let defaultAdd = response?.data?.data?.find(add => add?.default === true)
+
+
                         userContext.setLocation([defaultAdd?.area?.latitude, defaultAdd?.area?.longitude])
                         userContext?.setCurrentAddress(defaultAdd?.area?.address)
+
+
                     }
+                }
+                else {
+                    getAddressFromCoordinates()
                 }
                 cartContext.setAddress(response?.data?.data)
                 loadingContext.setLoading(false)
@@ -303,7 +310,11 @@ const RouteTest = () => {
         }
     }
 
-
+    useEffect(() => {
+        if (user) {
+            getCartDetails()
+        }
+    }, [user])
 
 
     useEffect(async () => {
@@ -340,7 +351,7 @@ const RouteTest = () => {
                 <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
 
                     <Stack.Screen name="SplashScreen" component={SplashScreen} />
-                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Login" component={Login}/>
                     <Stack.Screen name="Otp" component={Otp} />
                     <Stack.Screen name="LocationScreen" component={LocationScreen} options={{ title: 'home' }} />
                     <Stack.Screen name="AddNewLocation" component={AddNewLocation} />

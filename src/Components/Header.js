@@ -28,10 +28,9 @@ const Header = ({ onPress, openAddress, goCart }) => {
 
 
 
-
     let myLocation = userContext?.userLocation
 
-
+      reactotron.log({myLocation},'MYLOCATION ADDRESSS')
 
     const navigation = useNavigation()
 
@@ -66,7 +65,7 @@ const Header = ({ onPress, openAddress, goCart }) => {
         axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${loc[0]},${loc[1]}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
 
             userContext.setUserLocation(response?.data?.results[0]?.formatted_address)
-           
+
             let locality = response?.data?.results?.[0]?.address_components?.find(add => add.types.includes('locality'));
             userContext.setCity(locality?.long_name)
             let value = {

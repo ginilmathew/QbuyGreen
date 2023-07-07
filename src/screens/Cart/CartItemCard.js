@@ -17,8 +17,6 @@ import reactotron from 'reactotron-react-native'
 
 const CartItemCard = ({ item, index, refreshCart }) => {
 
-    reactotron.log({ item })
-
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
@@ -75,7 +73,6 @@ const CartItemCard = ({ item, index, refreshCart }) => {
 
         await customAxios.post(`customer/cart/update`, cartItems)
             .then(async response => {
-               
                 cartContext.setCart(response?.data?.data)
                 refreshCart()
                 //data.quantity = data?.quantity + 1

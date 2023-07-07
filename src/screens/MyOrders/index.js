@@ -45,23 +45,28 @@ const MyOrders = () => {
     }
 
 
+
+
+
     return (
         <>
             <HeaderWithTitle title={'My Orders'} noBack />
-            <View
-                style={{ flex: 1, paddingBottom: 60, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
-            >
-                {orderList?.length > 0 ?
-                <ScrollView
 
-                    refreshControl={
-                        <RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />
-                    }
-                    style={{ paddingHorizontal: 10, paddingTop: 10, marginBottom: 20 }}
+            {!loadingg?.loading &&
+                <View
+                    style={{ flex: 1, paddingBottom: 60, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
                 >
-                    {orderList?.map((ord, index) => <OrderCard key={index} item={ord} refreshOrder={getOrderList} />)}
-                </ScrollView> : <Text style={styles.emptyMessageStyle}>No Order Found..!</Text>}
-            </View>
+                    {orderList?.length > 0 ?
+                        <ScrollView
+
+                            refreshControl={
+                                <RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />
+                            }
+                            style={{ paddingHorizontal: 10, paddingTop: 10, marginBottom: 20 }}
+                        >
+                            {orderList?.map((ord, index) => <OrderCard key={index} item={ord} refreshOrder={getOrderList} />)}
+                        </ScrollView> : <Text style={styles.emptyMessageStyle}>No Order Found..!</Text>}
+                </View>}
         </>
     )
 }
@@ -72,6 +77,7 @@ const styles = StyleSheet.create({
     emptyMessageStyle: {
         textAlign: 'center',
         fontFamily: 'Poppins-Medium',
+
         fontSize: 16,
         marginTop: '80%',
     }

@@ -32,7 +32,6 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 
 const SingleItemScreen = ({ route, navigation }) => {
-    reactotron.log({route:route?.params?.variants},'GOT PARAMS')
 
     const refRBSheet = useRef();
     const contextPanda = useContext(PandaContext)
@@ -58,7 +57,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
     const [item, setItem] = useState(null)
 
-reactotron.log({singleProduct})
+
 
     useEffect(() => {
         if (route?.params?.item) {
@@ -92,6 +91,7 @@ reactotron.log({singleProduct})
             addViewCount(route?.params?.item)
             if (!item?.variant) {
                 if (item?.variant) {
+
                     setAttributes([])
                 }
             }
@@ -165,7 +165,6 @@ reactotron.log({singleProduct})
         setLoading(true);
         await customAxios.get(`customer/product/${item?._id}`)
             .then((res) => {
-        
                 setSingleProduct(res?.data?.data)
                 setLoading(false)
             }).catch(err => {
@@ -221,7 +220,6 @@ reactotron.log({singleProduct})
     }, [])
 
     const addToCart = useCallback(async () => {
-        setAttributes([]);
         let price = item?.variant ? selectedVariant?.price : item?.price;
         if (parseInt(price) < 1) {
             Toast.show({
@@ -229,13 +227,12 @@ reactotron.log({singleProduct})
                 text1: 'Price Should be more than 1'
             });
         } else {
-            
             cartContext.addToCart(item, selectedVariant)
         }
 
 
 
-    }, [selectedVariant, cart?.cart, item, cart?.products,attributes])
+    }, [selectedVariant, cart?.cart, item?.variant, cart?.products])
 
 
 
@@ -418,7 +415,7 @@ reactotron.log({singleProduct})
                 showsVerticalScrollIndicator={false}
             >
 
-                <View style={{ height: 200 }}>
+                <View style={{ height: 250 }}>
                     {courasolArray && courasolArray?.length > 0 ?
                         <Carousel
                             ref={courasol}
