@@ -36,7 +36,9 @@ if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
 end
-
+pod 'FirebaseCoreInternal', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
 target 'QBuyGreen' do
   config = use_native_modules!
   # use_frameworks! :linkage => :static
