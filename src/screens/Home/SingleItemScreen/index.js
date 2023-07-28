@@ -104,7 +104,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             setSelectedImage(0)
             setAttributes([])
         }
-    }, [route?.params?.item,route?.params?.item?.variants])
+    }, [route?.params?.item, route?.params?.item?.variants])
 
 
 
@@ -127,7 +127,7 @@ const SingleItemScreen = ({ route, navigation }) => {
             if (item?.variant) {
                 let selectedVariant = item?.variants?.find(vari => vari?.available === true)
 
-     
+
                 setSelectedVariant(selectedVariant)
 
                 let names = selectedVariant?.title?.split(" ")
@@ -229,10 +229,7 @@ const SingleItemScreen = ({ route, navigation }) => {
         } else {
             cartContext.addToCart(item, selectedVariant)
         }
-
-
-
-    }, [selectedVariant, cart?.cart, item?.variant, cart?.products])
+    }, [selectedVariant, cart?.cart, item?.variant, cart?.products,item])
 
 
 

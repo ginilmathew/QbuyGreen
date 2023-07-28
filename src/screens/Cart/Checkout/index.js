@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable } from 'react-native'
 import React, { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import ItemsCard from '../../MyOrders/ItemsCard'
@@ -67,6 +67,7 @@ const Checkout = ({ navigation }) => {
     const [selected, setSelected] = useState('1')
     const [selectedTip, setSelectedTip] = useState('2')
     const [selectedDelivery, setSelectedDelivery] = useState('1')
+    const [isLoading, setIsLoding] = useState(false)
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
     const [payment, setPayment] = useState([
@@ -83,6 +84,8 @@ const Checkout = ({ navigation }) => {
     ])
 
 
+
+    console.log({ isLoading }, 'ISLODING')
 
 
 
@@ -476,7 +479,7 @@ const Checkout = ({ navigation }) => {
             cart_id: cartContext?.cart?._id,
             address_id: cartContext?.defaultAddress?._id
         }
-
+        setIsLoding(true);
         await customAxios.post('customer/get-cart-product', data).then(async response => {
             let products = [];
             let amount = 0;
@@ -533,7 +536,7 @@ const Checkout = ({ navigation }) => {
                         // console.log("response ==>", JSON.stringify(response.data), response.status)
                         const { data } = response
 
-
+                        setIsLoding(false);
                         if (data?.type === 'cart') {
                             navigation.navigate('Cart')
                         }
@@ -553,7 +556,7 @@ const Checkout = ({ navigation }) => {
                             Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
                         }
                     }).catch(error => {
-
+                        setIsLoding(false);
                         Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
                     })
             }
@@ -562,12 +565,14 @@ const Checkout = ({ navigation }) => {
                     type: 'info',
                     text1: 'Please add some products to cart to proceed'
                 })
+                setIsLoding(false);
             }
         }).catch((err) => {
             Toast.show({
                 type: 'info',
                 text1: JSON.parse(err)
             })
+            setIsLoding(false);
         })
 
 
@@ -625,7 +630,7 @@ const Checkout = ({ navigation }) => {
             true,//appInvokeRestricted
             `paytm${paymentDetails?.mid}`//urlScheme
         ).then((result) => {
-         
+
             if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
             }
@@ -641,7 +646,7 @@ const Checkout = ({ navigation }) => {
 
 
         }).catch((err) => {
-        
+
             let data = {
                 STATUS: 'TXN_FAILURE',
                 RESPMSG: 'User Cancelled transaction',
@@ -881,7 +886,7 @@ const Checkout = ({ navigation }) => {
 
             {/* Bottom View */}
             <View style={styles.addressContainer}>
-                <View style={styles.addrHeader}>
+                <Pressable style={styles.addrHeader} onPress={navigateToAddress}>
                     <View >
                         <Foundation name={'target-two'} color='#FF0000' size={20} marginTop={5} />
                     </View>
@@ -895,7 +900,7 @@ const Checkout = ({ navigation }) => {
                     <TouchableOpacity style={{ position: 'absolute', right: 20, top: 10 }} onPress={navigateToAddress}>
                         <MaterialCommunityIcons name={'lead-pencil'} color={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#5871D3'} size={18} marginTop={5} />
                     </TouchableOpacity>
-                </View>
+                </Pressable>
                 {(!showList && cartItems?.length > 0) && <View style={{ flexDirection: 'row', paddingHorizontal: 40, paddingVertical: 5 }}>
                     <Text
                         style={styles.textMedium}
@@ -985,6 +990,7 @@ const Checkout = ({ navigation }) => {
                         <Ionicons name={showList ? 'chevron-down' : 'chevron-up'} size={20} color='#fff' marginLeft={2} />
                     </TouchableOpacity>
                     <TouchableOpacity
+                        disabled={isLoading}
                         style={{ alignItems: 'flex-end', flex: 0.5 }}
                         onPress={placeOrder}
                     >

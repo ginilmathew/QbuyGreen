@@ -10,7 +10,7 @@ import { has } from 'lodash'
 // that then the request will be aborted.
 const customAxios = axios.create({
     baseURL: BASE_URL,
-    timeout: 10000
+    timeout: 30000
 });
 
 

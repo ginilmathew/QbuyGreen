@@ -361,42 +361,41 @@ const Cart = ({ navigation }) => {
             <HeaderWithTitle title={'Cart'} />
 
             {/* {!loadingg?.loading && */}
-                <ScrollView
-                    // refreshControl={
-                    //     <RefreshControl refreshing={loader} onRefresh={getCartItems} />
-                        
-                    // }
-                    style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
-                    {cartItemsList?.length <= 0 ? <View
-                        style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
-                    >
-                        <View style={{ height: active === 'green' ? 250 : 170 }}>
-                            <Lottie
-                                source={active === 'green' ? require('../../Lottie/emptyGrocery.json') : active === 'fashion' ? require('../../Lottie/shirtss.json') : require('../../Lottie/empty.json')}
-                                autoPlay
-                            />
-                        </View>
-                        <CommonTexts
-                            label={'Oh! Your cart is currently empty!'}
-                            color='#A9A9A9'
-                            textAlign={'center'}
-                            mt={active === 'green' ? -70 : 10}
-                        />
-                        <CustomButton
-                            onPress={goHome}
-                            bg={active === 'green' ? '#FF9C0C' : '#5871D3'}
-                            label='Add Products'
-                            width={150}
-                            alignSelf='center'
-                            mt={20}
-                            mb={20}
-                        />
-                    </View> :
-                        <>
-                            {cartItemsList?.map((item, index) => <CartItemCard item={item} key={index} index={index} refreshCart={refreshCart} />)}
-                        </>}
+            <ScrollView
+                // refreshControl={
+                //     <RefreshControl refreshing={loader} onRefresh={getCartItems} />
 
-
+                // }
+                style={{ flex: 1, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}>
+                {cartItemsList?.length <= 0 ? <View
+                    style={{ backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff', borderBottomWidth: 2, borderColor: '#0C256C21', }}
+                >
+                    <View style={{ height: active === 'green' ? 250 : 170 }}>
+                        <Lottie
+                            source={active === 'green' ? require('../../Lottie/emptyGrocery.json') : active === 'fashion' ? require('../../Lottie/shirtss.json') : require('../../Lottie/empty.json')}
+                            autoPlay
+                        />
+                    </View>
+                    <CommonTexts
+                        label={'Oh! Your cart is currently empty!'}
+                        color='#A9A9A9'
+                        textAlign={'center'}
+                        mt={active === 'green' ? -70 : 10}
+                    />
+                    <CustomButton
+                        onPress={goHome}
+                        bg={active === 'green' ? '#FF9C0C' : '#5871D3'}
+                        label='Add Products'
+                        width={150}
+                        alignSelf='center'
+                        mt={20}
+                        mb={20}
+                    />
+                </View> :
+                    <>
+                        {cartItemsList?.map((item, index) => <CartItemCard item={item} key={index} index={index} refreshCart={refreshCart} />)}
+                    </>}
+                <View>
                     {cartItemsList?.length > 0 &&
                         <CustomButton
                             onPress={gotoCheckout}
@@ -405,7 +404,9 @@ const Cart = ({ navigation }) => {
                             mt={20}
                             mx={10}
                         />}
-                    {/* <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
+                </View>
+
+                {/* <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -420,7 +421,7 @@ const Cart = ({ navigation }) => {
                         />
                     )}
                 </ScrollView> */}
-                    {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={ 15} mb={5} mt={15}/>
+                {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={ 15} mb={5} mt={15}/>
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -435,7 +436,7 @@ const Cart = ({ navigation }) => {
                     />
                 )}
             </ScrollView> */}
-                </ScrollView>
+            </ScrollView>
         </View>
     )
 }

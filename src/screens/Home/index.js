@@ -1,7 +1,6 @@
 import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, RefreshControl } from 'react-native'
 import React, { useCallback, useContext, useState, useEffect } from 'react'
-import ImageSlider from '../../Components/ImageSlider';
-import CustomSearch from '../../Components/CustomSearch';
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
@@ -10,13 +9,10 @@ import CategoriesCard from './CategoriesCard';
 import OfferText from './OfferText';
 import PickDropAndReferCard from './PickDropAndReferCard';
 import Header from '../../Components/Header';
-import PandaContext from '../../contexts/Panda';
-import CommonSquareButton from '../../Components/CommonSquareButton';
-import ShopCard from './Grocery/ShopCard';
+
 import CommonItemSelect from '../../Components/CommonItemSelect';
 import CommonTexts from '../../Components/CommonTexts';
-import CommonItemMenuList from '../../Components/CommonItemMenuList';
-import TypeCard from './Grocery/TypeCard';
+
 import CommonItemCard from '../../Components/CommonItemCard';
 import CommonFiltration from '../../Components/CommonFiltration';
 import SearchBox from '../../Components/SearchBox';
@@ -28,8 +24,9 @@ import Carousel from 'react-native-reanimated-carousel';
 import FastImage from 'react-native-fast-image';
 import { IMG_URL } from '../../config/constants';
 import reactotron from 'reactotron-react-native';
-import CategoryCard from './QBuyGreen/CategoryCard';
+
 import { useFocusEffect } from '@react-navigation/native';
+import CommonWhatsappButton from '../../Components/CommonWhatsappButton';
 
 const QbuyPanda = ({ navigation }) => {
 
@@ -54,8 +51,8 @@ const QbuyPanda = ({ navigation }) => {
     const [filter, setFilter] = useState('')
 
 
-    //reactotron.log({ recentLists, pandaSuggestions, products })
 
+    reactotron.log({ homeData }, "HOME DATA")
 
 
     //let loader = loadingg?.loading
@@ -139,10 +136,8 @@ const QbuyPanda = ({ navigation }) => {
     // ]
 
 
-    const getHomedata = async () => {
-
+    const getHomedata = useCallback(async () => {
         setisLoading(true)
-
         let datas = {
             type: "panda",
             // coordinates: env === "dev" ? location : userContext?.location
@@ -150,6 +145,7 @@ const QbuyPanda = ({ navigation }) => {
         }
         await customAxios.post(`customer/home`, datas)
             .then(async response => {
+                setisLoading(false)
                 setHomeData(response?.data?.data)
 
                 let tags = response?.data?.data?.find(home => home?.type === "tags")
@@ -171,8 +167,6 @@ const QbuyPanda = ({ navigation }) => {
                 let sliders = response?.data?.data?.find(home => home?.type === "sliders")
                 setSliders(sliders?.data)
 
-
-
                 setisLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
@@ -190,29 +184,29 @@ const QbuyPanda = ({ navigation }) => {
                 });
                 setisLoading(false)
             })
-    }
+    }, [isloading, tags, homeData, category, recentLists, pandaSuggestions, products, sliders,userContext?.location])
 
 
 
     const pickupDropClick = useCallback(() => {
         navigation.navigate('PickupAndDropoff')
-    }, [])
+    }, [navigation])
 
     const referRestClick = useCallback(() => {
         navigation.navigate('RefferRestaurant')
-    }, [])
+    }, [navigation])
 
     const gotoChat = useCallback(() => {
         navigation.navigate('Chat')
-    }, [])
+    }, [navigation])
 
     const onClickDrawer = useCallback(() => {
         navigation.openDrawer()
-    }, [])
+    }, [navigation])
 
     const onSearch = useCallback(() => {
         navigation.navigate('ProductSearchScreen', { mode: 'panda' })
-    }, [])
+    }, [navigation])
 
     const CarouselCardItem = ({ item, index }) => {
         return (
@@ -221,12 +215,50 @@ const QbuyPanda = ({ navigation }) => {
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
                     resizeMode='cover'
-
                 >
                 </FastImage>
             </View>
         )
     }
+
+
+    const renderProducts = ({ item, index }) => {
+        return (
+            <View key={index} style={{ flex: 0.5, justifyContent: 'center' }}>
+                <CommonItemCard
+                    item={item}
+                    key={item?._id}
+                    width={width / 2.2}
+                    height={height / 3.6}
+                    mr={4}
+                    ml={4}
+                    mb={15}
+                />
+            </View>
+        )
+    }
+
+
+    const ITEM_HEIGHT = height / 3.6; // fixed height of item component
+    const getItemLayoutProduct = (data, index) => {
+        return {
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index,
+        };
+    };
+
+    const keyExtractorProduct = (item) => item.id;
+    const renderCategory = ({ item, index }) => {
+        return (
+            <View style={styles.categoryView}>
+                {/* {category?.map((item) => ( */}
+                <CategoriesCard key={item?._id} item={item} />
+                {/* // ))} */}
+            </View>
+        )
+    }
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -243,7 +275,7 @@ const QbuyPanda = ({ navigation }) => {
             <ScrollView
                 style={{ flex: 1, backgroundColor: '#fff' }}
                 refreshControl={
-                    <RefreshControl refreshing={isloading} onRefresh={getHomedata} />
+                    <RefreshControl colors={['transparent']} progressBackgroundColor='transparent' refreshing={isloading} onRefresh={getHomedata} />
                 }
             >
 
@@ -279,11 +311,25 @@ const QbuyPanda = ({ navigation }) => {
 
                 <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
 
-                <View style={styles.categoryView}>
-                    {category?.map((item) => (
-                        <CategoriesCard key={item?._id} item={item} />
-                    ))}
-                </View>
+                <FlatList
+                    data={category}
+                    showsVerticalScrollIndicator={false}
+                    initialNumToRender={8}
+                    removeClippedSubviews={true}
+                    windowSize={10}
+                    maxToRenderPerBatch={8}
+                 
+                    // refreshing={loader}
+                    // onRefresh={getHomedata}
+                    numColumns={4}
+                    // style={{ marginLeft: 5 }}
+                    contentContainerStyle={{ justifyContent: 'center', gap: 2 }}
+                    renderItem={renderCategory}
+
+                />
+
+
+
                 {/* <CategoryCard data={category} /> */}
 
 
@@ -349,14 +395,28 @@ const QbuyPanda = ({ navigation }) => {
 
                 <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
                 <View style={styles.menuContainer}>
-                    {products?.map((item) => (
-                        <CommonItemCard
-                            item={item}
-                            key={item?._id}
-                            width={width / 2.25}
-                            height={250}
-                        />
-                    ))}
+                    {/* {products?.map((item) => (
+                       
+                    ))} */}
+
+
+                    <FlatList
+                        data={products}
+                        showsVerticalScrollIndicator={false}
+                        initialNumToRender={6}
+                        removeClippedSubviews={true}
+                        windowSize={10}
+                        maxToRenderPerBatch={6}
+                        // refreshing={loader}
+                        // onRefresh={getHomedata}
+                        getItemLayout={getItemLayoutProduct}
+                        keyExtractor={keyExtractorProduct}
+                        numColumns={2}
+                        // style={{ marginLeft: 5 }}
+                        contentContainerStyle={{ justifyContent: 'center', gap: 2 }}
+                        renderItem={renderProducts}
+
+                    />
                 </View>
 
                 {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
@@ -375,8 +435,7 @@ const QbuyPanda = ({ navigation }) => {
                     )}
                 </ScrollView> */}
             </ScrollView>
-            <CommonSquareButton
-                onPress={gotoChat}
+            <CommonWhatsappButton
                 position='absolute'
                 bottom={10}
                 right={10}

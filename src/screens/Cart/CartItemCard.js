@@ -13,7 +13,7 @@ import CartContext from '../../contexts/Cart'
 import AuthContext from '../../contexts/Auth'
 import Toast from 'react-native-toast-message';
 import reactotron from 'reactotron-react-native'
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const CartItemCard = ({ item, index, refreshCart }) => {
 
@@ -156,7 +156,7 @@ const CartItemCard = ({ item, index, refreshCart }) => {
                     //navigation.navigate('CartNav',{screen: 'Cart'})
                 })
                 .catch(async error => {
-                  
+
                     Toast.show({
                         type: 'error',
                         text1: error
@@ -221,17 +221,14 @@ const CartItemCard = ({ item, index, refreshCart }) => {
                         removeItem={removeItem}
                         disabled={!item?.available || item?.status !== 'active' || !item.availability}
                     />
-                    
-                    
                 </View>
-
             </View>
 
-            <TouchableOpacity 
-            onPress={deleteItem}
-            style={{marginLeft:5,backgroundColor:'red' ,width:15,height:15,borderRadius:7.5,justifyContent:'center',alignItems:'center',position:'absolute',right:5,top:10}}>
-                             <Text style={{color:'white',fontSize:12,fontWeight:'bold'}}>X</Text>
-                        </TouchableOpacity>
+            <TouchableOpacity
+                onPress={deleteItem}
+                style={{ marginLeft: 5, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 15, top: 10 }}>
+                <MaterialCommunityIcons name={"delete-forever"} size={20} color={'red'} />
+            </TouchableOpacity>
             {item?.quantity < item?.minimum_qty && <Text style={styles.outofStock}>{`Min. quantity:${item?.minimum_qty}`}</Text>}
             {!item?.availability && <Text style={styles.outofStock}>{"Not Available"}</Text>}
             {(!item?.available || item?.status !== 'active') && <Text style={styles.outofStock}>{"Out of Stock"}</Text>}

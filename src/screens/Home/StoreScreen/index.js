@@ -46,13 +46,13 @@ const StoreScreen = ({ route, navigation }) => {
 
 
 
- 
+
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
 
 
-
     const [selected, setSelected] = useState(false)
+
 
 
 
@@ -60,7 +60,7 @@ const StoreScreen = ({ route, navigation }) => {
         React.useCallback(() => {
             getStoreDetails()
         }, [])
-      );
+    );
 
     const getStoreDetails = async () => {
         loadingContex.setLoading(true)
@@ -126,18 +126,18 @@ const StoreScreen = ({ route, navigation }) => {
                     <StoreAddressCard address={item?.store_address || item?.store_address !== "null" ? item?.store_address : storeDetails?.store_address} />
                     <Text style={styles.description}>{item?.seo_description}</Text>
                 </View>
-                {active !== 'panda' &&
-                    <View style={{ backgroundColor: '#76867314', paddingBottom: 10, }}>
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            style={{ flexDirection: 'row', marginTop: 15 }}
-                        >
-                            {storeDetails?.category_id?.map((cat, index) =>
-                                (<TypeCard item={cat} key={index} storeId={storeId} mymode={'MYMODE'} />)
-                            )}
-                        </ScrollView>
-                    </View>}
+                {/* {active !== 'panda' && */}
+                <View style={{ backgroundColor: '#76867314', paddingBottom: 10, }}>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={{ flexDirection: 'row', marginTop: 15 }}
+                    >
+                        {storeDetails?.category_id?.map((cat, index) =>
+                            (<TypeCard item={cat} key={index} storeId={storeId} mymode={'MYMODE'} />)
+                        )}
+                    </ScrollView>
+                </View>
 
 
                 <CommonTexts label={'Available Products'} my={15} ml={10} fontSize={13} />

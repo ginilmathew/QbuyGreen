@@ -34,7 +34,7 @@ const CategoryScreen = ({ route, navigation }) => {
 
     const { name, mode, item, storeId } = route?.params;
 
-    reactotron.log({item},'ITEM IN CATEGORY SCREEN')
+    reactotron.log({storeId},'ITEM IN storeId SCREEN')
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [filterProducts, setFilterProduct] = useState([])

@@ -48,7 +48,7 @@ const Route = () => {
     useEffect(() => {
         getCurrentLocation()
 
-        reactotron.log('FISRST CALLL')
+    
     }, [])
 
     // useEffect(() => {

@@ -22,6 +22,7 @@ import AuthContext from '../../../contexts/Auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import reactotron from 'reactotron-react-native'
 import { useFocusEffect } from '@react-navigation/native'
+import PandaShopCard from '../Grocery/PandaShopCard'
 
 
 const Category = ({ route }) => {
@@ -123,7 +124,8 @@ const Category = ({ route }) => {
             })
     }
 
-
+    let lowercse = item.name.toLowerCase();
+    reactotron.log({ lowercse })
 
     return (
         <>
@@ -168,11 +170,11 @@ const Category = ({ route }) => {
                 {stores && stores?.length > 0 &&
                     <View style={{ paddingBottom: 10, marginTop: 5 }}>
                         <View
-                            style={[styles.categoryView]}
+                            style={[styles.categoryView, { gap: 5 }]}
                         >
                             {stores?.map((item, index) =>
-                                <View style={{ width: '22%' }} key={index}>
-                                    <TypeCard item={item} key={index} />
+                                <View style={{ width: lowercse === "restaurants" ? '32%' : "22%" }} key={index}>
+                                    <PandaShopCard name={lowercse} item={item} key={index} />
                                 </View>
                             )}
                         </View>
@@ -348,7 +350,7 @@ const styles = StyleSheet.create({
         // justifyContent:'center',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 5,
+        // gap: 6,
         //justifyContent: 'center'
     },
 

@@ -8,11 +8,7 @@ import PandaContext from '../../../contexts/Panda'
 import reactotron from 'reactotron-react-native'
 
 
-const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode, name }) => {
-
-
-
-
+const PandaShopCard = memo(({ item, mode, onCategoryPress, storeId, mymode, name }) => {
 
     const { active } = useContext(PandaContext)
 
@@ -28,14 +24,9 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode, name }) =
     //     navigation.navigate('Category', { name: item?.name, mode: contextPanda.active, item: item, storeId })
     // }, [item])
     const onClick = useCallback(() => {
-        navigation.navigate('Category', { name: active === "panda" ? item?.store_name : item?.name, mode: active, item: item,storeId })
+        navigation.navigate('store', { name: active === "panda" ? item?.store_name : item?.name, mode: 'store', item: item })
 
-        // if (active === "panda") {
-        //     navigation.navigate('store', { name: active === "panda" ? item?.store_name : item?.name, mode: 'store', item: item })
-            
-        // } else {
-        //     navigation.navigate('Category', { name: item?.name, mode: active, item: item, })
-        // }
+
     }, [item, active, item?._id])
     return (
         <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 5 }}>
@@ -59,7 +50,7 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode, name }) =
     )
 })
 
-export default TypeCard
+export default PandaShopCard
 
 const makeStyles = (fontScale, width) => StyleSheet.create({
     shopName: {

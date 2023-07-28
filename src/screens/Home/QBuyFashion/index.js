@@ -28,6 +28,7 @@ import { env, location } from '../../../config/constants';
 import CategoryCard from '../QBuyGreen/CategoryCard';
 import RecentlyViewed from '../QBuyGreen/RecentlyViewed';
 import AvailableProducts from '../QBuyGreen/AvailableProducts';
+import CommonWhatsappButton from '../../../Components/CommonWhatsappButton';
 
 
 const QBuyFashion = () => {
@@ -47,7 +48,7 @@ const QBuyFashion = () => {
     //const homeData = fashionHome?.fashionHomeData
     const [homeData, setHomeData] = useState(null)
 
-    
+
 
     const { width } = useWindowDimensions()
 
@@ -370,14 +371,18 @@ const QBuyFashion = () => {
 
             </ScrollView> */}
 
-            <CommonSquareButton
+            {/* <CommonSquareButton
                 onPress={gotoChat}
                 position='absolute'
                 bottom={10}
                 right={10}
+            /> */}
+
+            <CommonWhatsappButton
+                position='absolute'
+                bottom={10}
+                right={10}
             />
-
-
         </>
     )
 }

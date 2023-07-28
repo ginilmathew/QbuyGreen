@@ -186,7 +186,7 @@ const EditProfile = ({ navigation }) => {
                     control={control}
                     error={errors.email}
                     fieldName="email"
-                    topLabel={'email'}
+                    topLabel={'Email'}
                     top={10}
 
                 />

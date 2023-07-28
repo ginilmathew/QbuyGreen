@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl, PermissionsAndroid } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl, PermissionsAndroid, Pressable } from 'react-native'
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react'
 import ImageSlider from '../../../Components/ImageSlider';
 import CustomSearch from '../../../Components/CustomSearch';
@@ -36,6 +36,7 @@ import { getProduct } from '../../../helper/productHelper';
 import FastImage from 'react-native-fast-image';
 import reactotron from 'reactotron-react-native';
 import SplashScreen from 'react-native-splash-screen'
+import CommonWhatsappButton from '../../../Components/CommonWhatsappButton';
 //import messaging from '@react-native-firebase/messaging';
 
 
@@ -122,7 +123,7 @@ const QBuyGreen = ({ navigation }) => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
     }, [])
 
- 
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -174,18 +175,34 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
+    const CarouselSelect = (item) => {
+        switch (item?.screentype) {
+            case "product":
+                let data = getProduct(item?.product)
+                navigation.navigate('SingleItemScreen', { item: data })
+                break;
+            case "store":
+                navigation.navigate('store', { name: item?.vendor?.store_name, mode: 'store', item: item?.vendor, storeId: item?.vendor?._id })
+                break;
+            default:
+            return false;
+        }
+
+    }
+
 
 
     const CarouselCardItem = ({ item, index }) => {
+
         return (
-            <View style={{ alignItems: 'center', marginTop: 20, width: '100%', height: '85%' }} >
+            <Pressable onPress={() => CarouselSelect(item)} style={{ alignItems: 'center', marginTop: 20, width: '100%', height: '85%' }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
                     resizeMode='cover'
                 >
                 </FastImage>
-            </View>
+            </Pressable>
         )
     }
 
@@ -199,17 +216,18 @@ const QBuyGreen = ({ navigation }) => {
                 <>
                     <CategoryCard data={item?.data} />
                     <SearchBox onPress={onSearch} />
-                    {slider?.length > 0 && <View>
-                        <Carousel
-                            loop
-                            width={width}
-                            height={height / 5}
-                            autoPlay={true}
-                            data={slider}
-                            scrollAnimationDuration={1000}
-                            renderItem={CarouselCardItem}
-                        />
-                    </View>}
+                    {slider?.length > 0 &&
+                        <View>
+                            <Carousel
+                                loop
+                                width={width}
+                                height={height / 5}
+                                autoPlay={true}
+                                data={slider}
+                                scrollAnimationDuration={1000}
+                                renderItem={CarouselCardItem}
+                            />
+                        </View>}
 
                     {/* {slider?.length > 0 && <ImageSlider datas={slider} mt={20} />} */}
                 </>
@@ -441,9 +459,14 @@ const QBuyGreen = ({ navigation }) => {
                 </>} */}
 
             </View>
-
+            {/* 
             <CommonSquareButton
                 onPress={gotoChat}
+                position='absolute'
+                bottom={10}
+                right={10}
+            /> */}
+            <CommonWhatsappButton
                 position='absolute'
                 bottom={10}
                 right={10}

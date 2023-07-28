@@ -34,6 +34,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
     const [data, setData] = useState([])
     const [variant, setVariant] = useState(false)
 
+
+   
     const { fontScale, height: height1 } = useWindowDimensions()
 
     const styles = makeStyles(height1);
@@ -65,6 +67,8 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
 
     const handleClick = useCallback(() => {
+
+        reactotron.log('MY RELATEDPRODUCT')
         if(item?.status === "active"){
             startTransition(() => {
                 navigation.navigate('SingleItemScreen', { item: data })
@@ -100,7 +104,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
         }
 
         //navigation.navigate('SingleItemScreen', { item: item })
-    }, [data, cartContext.cart, cartContext?.products])
+    }, [data, cartContext.cart, cartContext?.products,item])
 
 
 
