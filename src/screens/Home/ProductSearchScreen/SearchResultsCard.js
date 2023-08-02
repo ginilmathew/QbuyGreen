@@ -12,6 +12,8 @@ import customAxios from '../../../CustomeAxios'
 
 const SearchResultsCard = memo(({ item, setValue }) => {
 
+    reactotron.log({item},'ITEM IN SEARCH')
+
     const pandaContext = useContext(PandaContext)
 
     const userContext = useContext(AuthContext)
@@ -41,6 +43,8 @@ const SearchResultsCard = memo(({ item, setValue }) => {
              user_id: userContext?.userData?._id
         }
         let result =  await customAxios.post('customer/cart/newshow-cart',value)
+
+        reactotron.log({result},'RESULT RESULT')
         cartContext.setCart(result?.data?.data)
 
     }

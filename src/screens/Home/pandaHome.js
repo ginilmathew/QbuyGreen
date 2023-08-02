@@ -1,38 +1,31 @@
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, ToastAndroid, RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, useWindowDimensions, FlatList } from 'react-native'
 import React, { useCallback, useContext, useState, useEffect } from 'react'
-
+import AuthContext from '../../contexts/Auth';
+import CommonItemCard from '../../Components/CommonItemCard';
+import customAxios from '../../CustomeAxios';
+import SplashScreen from 'react-native-splash-screen';
+import reactotron from 'reactotron-react-native';
+import Header from '../../Components/Header';
+import LoaderContext from '../../contexts/Loader';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import NameText from './NameText';
-import CategoriesCard from './CategoriesCard';
-import OfferText from './OfferText';
-import PickDropAndReferCard from './PickDropAndReferCard';
-import Header from '../../Components/Header';
-
-import CommonItemSelect from '../../Components/CommonItemSelect';
-import CommonTexts from '../../Components/CommonTexts';
-
-import CommonItemCard from '../../Components/CommonItemCard';
-import CommonFiltration from '../../Components/CommonFiltration';
-import SearchBox from '../../Components/SearchBox';
-import AuthContext from '../../contexts/Auth';
-import LoaderContext from '../../contexts/Loader';
-import SplashScreen from 'react-native-splash-screen';
-import customAxios from '../../CustomeAxios';
-import Carousel from 'react-native-reanimated-carousel';
 import FastImage from 'react-native-fast-image';
-import { IMG_URL } from '../../config/constants';
-import reactotron from 'reactotron-react-native';
-
+import Carousel from 'react-native-reanimated-carousel';
+import CommonItemSelect from '../../Components/CommonItemSelect';
+import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
+import SearchBox from '../../Components/SearchBox';
+import NameText from './NameText';
+import PickDropAndReferCard from './PickDropAndReferCard';
+import CategoriesCard from './CategoriesCard';
+import CommonFiltration from '../../Components/CommonFiltration';
+import CommonTexts from '../../Components/CommonTexts';
+import OfferText from './OfferText';
 import { useFocusEffect } from '@react-navigation/native';
-import CommonWhatsappButton from '../../Components/CommonWhatsappButton';
+import { IMG_URL } from '../../config/constants';
+export default function PandaHome({ navigation }) {
 
-const QbuyPanda = ({ navigation }) => {
-
-    // const contextPanda = useContext(PandaContext)
-    // let grocery = contextPanda.greenPanda
-    // let fashion = contextPanda.pinkPanda
+    const { height, width } = useWindowDimensions();
 
     const [homeData, setHomeData] = useState([])
     const [tags, setTags] = useState([])
@@ -53,11 +46,6 @@ const QbuyPanda = ({ navigation }) => {
 
 
 
-
-    //let loader = loadingg?.loading
-
-    const { width, height } = useWindowDimensions()
-
     const schema = yup.object({
         name: yup.string().required('Name is required'),
     }).required();
@@ -67,9 +55,27 @@ const QbuyPanda = ({ navigation }) => {
     });
 
 
-    // useEffect(() => {
-    //     getHomedata()
-    // }, [])
+
+    const pickupDropClick = useCallback(() => {
+        navigation.navigate('PickupAndDropoff')
+    }, [navigation])
+
+    const referRestClick = useCallback(() => {
+        navigation.navigate('RefferRestaurant')
+    }, [navigation])
+
+    const gotoChat = useCallback(() => {
+        navigation.navigate('Chat')
+    }, [navigation])
+
+    const onClickDrawer = useCallback(() => {
+        navigation.openDrawer()
+    }, [navigation])
+
+    const onSearch = useCallback(() => {
+        navigation.navigate('ProductSearchScreen', { mode: 'panda' })
+    }, [navigation])
+
 
 
     useEffect(() => {
@@ -109,31 +115,163 @@ const QbuyPanda = ({ navigation }) => {
         }
     }, [filter, userContext?.location])
 
+    const CarouselCardItem = ({ item, index }) => {
+        return (
+            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
+                <FastImage
+                    source={{ uri: `${IMG_URL}${item?.original_image}` }}
+                    style={{ height: '100%', width: '95%', borderRadius: 20 }}
+                    resizeMode='cover'
+                >
+                </FastImage>
+            </View>
+        )
+    }
+
+    const keyExtractorCategory = (item) => item._id;
+    const renderCategory = ({ item, index }) => {
+        return (
+            <View style={styles.categoryView}>
+                <CategoriesCard item={item} />
+            </View>
+        )
+    }
+
+    const MainHeader = () => {
+        return (
+            <View>
+                {sliders?.length > 0 && <View>
+                    <Carousel
+                        loop
+                        width={width}
+                        height={height / 5}
+                        autoPlay={true}
+                        data={sliders}
+                        scrollAnimationDuration={1000}
+                        renderItem={CarouselCardItem}
+                    />
+                </View>}
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.foodTypeView}
+                >
+                    {tags?.map((item, index) =>
+                    (<CommonItemSelect
+                        item={item} key={index}
+                        selected={selected}
+                        setSelected={setSelected}
+                        screen={'home'}
+                    />)
+                    )}
+                </ScrollView>
+                <SearchBox onPress={onSearch} />
+                <View style={{ marginHorizontal: 2 }}>
+                    <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
+                </View>
+
+                <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            isRefreshing={isloading}
+                            onRefresh={getHomedata}
+                        // colors={[Colors.GreenLight]} // for android
+                        // tintColor={Colors.GreenLight} // for ios
+                        />
+                    }
+                    data={category}
+                    showsVerticalScrollIndicator={false}
+                    initialNumToRender={6}
+                    removeClippedSubviews={true}
+                    windowSize={10}
+                    maxToRenderPerBatch={6}
+                    keyExtractorCategory={keyExtractorCategory}
+                    refreshing={isloading}
+                    onRefresh={getHomedata}
+                    numColumns={4}
+                    // style={{ marginLeft: 5 }}
+                    contentContainerStyle={{ justifyContent: 'center', gap: 2 }}
+                    renderItem={renderCategory}
+
+                />
+                <View style={styles.pickupReferContainer}>
+                    <PickDropAndReferCard
+                        onPress={pickupDropClick}
+                        lotties={require('../../Lottie/deliveryBike.json')}
+                        label={'Pick Up & Drop Off'}
+                        lottieFlex={0.5}
+                    />
+                    <PickDropAndReferCard
+                        onPress={referRestClick}
+                        lotties={require('../../Lottie/rating.json')}
+                        label={'Reffer A Restaurant'}
+                        lottieFlex={0.5}
+                    />
+                </View>
+                <View style={styles.offerView}>
+                    <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
+                    <OfferText />
+                    {/* <CountDownComponent/> */}
+                    <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
+                </View>
+
+                <View
+                    style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginBottom: 5, justifyContent: 'space-between', marginRight: 5 }}
+                >
+                    <CommonTexts label={'Recently Viewed'} fontSize={13} />
+                    <CommonFiltration onChange={setFilter} />
+                </View>
+                {recentLists?.length > 0 && <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={{ flexDirection: 'row', paddingLeft: 7, }}
+                >
+                    {recentLists?.map((item, index) =>
+                        <CommonItemCard
+                            key={index}
+                            item={item}
+                            width={width / 2.5}
+                            marginHorizontal={5}
+                        />
+                    )}
+                </ScrollView>}
+
+                <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
+                {pandaSuggestions?.length > 0 && <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={{ flexDirection: 'row', paddingLeft: 7, }}
+                >
+                    {pandaSuggestions.map((item, index) =>
+                        <CommonItemCard
+                            key={index}
+                            item={item}
+                            width={width / 2.5}
+                            marginHorizontal={5}
+                        />
+                    )}
+                </ScrollView>}
+                <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
+            </View>
+        )
+    }
 
 
+    const ListEmptyComponents = () => {
+        return (
+            <View style={{ height: height / 3.6, }}>
+                <Text>No Products Found!...</Text>
+            </View>
+        )
+
+    }
 
 
+    const FooterComponent = () => {
+        return (<View style={{ height: 100 }}>
 
-
-    // const images = [
-    //     {
-    //         id: "1",
-    //         img: require('../../Images/ads.png')
-    //     },
-    //     {
-    //         id: "2",
-    //         img: require('../../Images/image1.jpeg')
-    //     },
-    //     {
-    //         id: "3",
-    //         img: require('../../Images/image2.jpeg')
-    //     },
-    //     {
-    //         id: "4",
-    //         img: require('../../Images/image3.jpeg')
-    //     }
-    // ]
-
+        </View>)
+    }
 
     const getHomedata = useCallback(async () => {
         setisLoading(true)
@@ -187,40 +325,6 @@ const QbuyPanda = ({ navigation }) => {
 
 
 
-    const pickupDropClick = useCallback(() => {
-        navigation.navigate('PickupAndDropoff')
-    }, [navigation])
-
-    const referRestClick = useCallback(() => {
-        navigation.navigate('RefferRestaurant')
-    }, [navigation])
-
-    const gotoChat = useCallback(() => {
-        navigation.navigate('Chat')
-    }, [navigation])
-
-    const onClickDrawer = useCallback(() => {
-        navigation.openDrawer()
-    }, [navigation])
-
-    const onSearch = useCallback(() => {
-        navigation.navigate('ProductSearchScreen', { mode: 'panda' })
-    }, [navigation])
-
-    const CarouselCardItem = ({ item, index }) => {
-        return (
-            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
-                <FastImage
-                    source={{ uri: `${IMG_URL}${item?.original_image}` }}
-                    style={{ height: '100%', width: '95%', borderRadius: 20 }}
-                    resizeMode='cover'
-                >
-                </FastImage>
-            </View>
-        )
-    }
-
-
     const renderProducts = ({ item, index }) => {
         return (
             <View key={index} style={{ flex: 0.5, justifyContent: 'center' }}>
@@ -247,200 +351,51 @@ const QbuyPanda = ({ navigation }) => {
         };
     };
 
-    const keyExtractorCategory = (item) => item._id;
-    const renderCategory = ({ item, index }) => {
-        return (
-            <View style={styles.categoryView}>
-                {/* {category?.map((item) => ( */}
-                <CategoriesCard  item={item} />
-                {/* // ))} */}
-            </View>
-        )
-    }
-
-
     useFocusEffect(
         React.useCallback(() => {
             getHomedata()
         }, [userContext?.location])
     );
+
+
     return (
-        <>
-            {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 20 }}>Coming Soon!!!</Text>
-            </View> */}
-
+        <View>
             <Header onPress={onClickDrawer} />
-            <ScrollView
-                style={{ flex: 1, backgroundColor: '#fff' }}
-                refreshControl={
-                    <RefreshControl colors={['transparent']} progressBackgroundColor='transparent' refreshing={isloading} onRefresh={getHomedata} />
-                }
-            >
 
-                {sliders?.length > 0 && <View>
-                    <Carousel
-                        loop
-                        width={width}
-                        height={height / 5}
-                        autoPlay={true}
-                        data={sliders}
-                        scrollAnimationDuration={1000}
-                        renderItem={CarouselCardItem}
-                    />
-                </View>}
-
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.foodTypeView}
-                >
-                    {tags?.map((item, index) =>
-                    (<CommonItemSelect
-                        item={item} key={index}
-                        selected={selected}
-                        setSelected={setSelected}
-                        screen={'home'}
-                    />)
-                    )}
-                </ScrollView>
-
-                <SearchBox onPress={onSearch} />
-
-
-                <NameText userName={userContext?.userData?.name ? userContext?.userData?.name : userContext?.userData?.mobile} mt={8} />
+            <View style={styles.menuContainer}>
 
                 <FlatList
-                    data={category}
+                    ListHeaderComponent={MainHeader}
+                    data={products}
                     showsVerticalScrollIndicator={false}
-                    initialNumToRender={6}
-                    removeClippedSubviews={true}
+                    initialNumToRender={8}
+                    // removeClippedSubviews={true}
                     windowSize={10}
-                    maxToRenderPerBatch={6}
-                    keyExtractorCategory={keyExtractorCategory}
-                    // refreshing={loader}
-                    // onRefresh={getHomedata}
-                    numColumns={4}
+                    // refreshControl={
+                    //     <RefreshControl
+                    //         isRefreshing={isloading}
+                    //         onRefresh={getHomedata}
+                    //         // colors={[Colors.GreenLight]} // for android
+                    //         // tintColor={Colors.GreenLight} // for ios
+                    //     />
+                    // }
+                    maxToRenderPerBatch={8}
+                    refreshing={isloading}
+                    onRefresh={getHomedata}
+                    // getItemLayout={getItemLayoutProduct}
+                    keyExtractor={keyExtractorProduct}
+                    numColumns={2}
+                    ListEmptyComponents={ListEmptyComponents}
                     // style={{ marginLeft: 5 }}
                     contentContainerStyle={{ justifyContent: 'center', gap: 2 }}
-                    renderItem={renderCategory}
+                    renderItem={renderProducts}
+                    ListFooterComponent={FooterComponent}
 
                 />
-
-
-
-                {/* <CategoryCard data={category} /> */}
-
-
-                <View style={styles.pickupReferContainer}>
-                    <PickDropAndReferCard
-                        onPress={pickupDropClick}
-                        lotties={require('../../Lottie/deliveryBike.json')}
-                        label={'Pick Up & Drop Off'}
-                        lottieFlex={0.5}
-                    />
-                    <PickDropAndReferCard
-                        onPress={referRestClick}
-                        lotties={require('../../Lottie/rating.json')}
-                        label={'Reffer A Restaurant'}
-                        lottieFlex={0.5}
-                    />
-                </View>
-
-                <View style={styles.offerView}>
-                    <Text style={styles.discountText}>{'50% off Upto Rs 125!'}</Text>
-                    <OfferText />
-                    {/* <CountDownComponent/> */}
-                    <Text style={styles.offerValText}>{'Offer valid till period!'}</Text>
-                </View>
-
-                <View
-                    style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 15, marginBottom: 5, justifyContent: 'space-between', marginRight: 5 }}
-                >
-                    <CommonTexts label={'Recently Viewed'} fontSize={13} />
-                    <CommonFiltration onChange={setFilter} />
-                </View>
-
-                {recentLists?.length > 0 && <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7, }}
-                >
-                    {recentLists?.map((item,index) =>
-                        <CommonItemCard
-                            key={index}
-                            item={item}
-                            width={width / 2.5}
-                            marginHorizontal={5}
-                        />
-                    )}
-                </ScrollView>}
-
-                <CommonTexts label={'Panda Suggestions'} fontSize={13} ml={15} mb={5} mt={15} />
-                {pandaSuggestions?.length > 0 && <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7, }}
-                >
-                    {pandaSuggestions.map((item,index) =>
-                        <CommonItemCard
-                            key={index}
-                            item={item}
-                            width={width / 2.5}
-                            marginHorizontal={5}
-                        />
-                    )}
-                </ScrollView>}
-
-                <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
-                <View style={styles.menuContainer}>
-
-
-                    <FlatList
-                        data={products}
-                        showsVerticalScrollIndicator={false}
-                        initialNumToRender={6}
-                        removeClippedSubviews={true}
-                        windowSize={10}
-                        maxToRenderPerBatch={6}
-                        // refreshing={loader}
-                        // onRefresh={getHomedata}
-                        getItemLayout={getItemLayoutProduct}
-                        keyExtractor={keyExtractorProduct}
-                        numColumns={2}
-                        // style={{ marginLeft: 5 }}
-                        contentContainerStyle={{ justifyContent: 'center', gap: 2 }}
-                        renderItem={renderProducts}
-
-                    />
-                </View>
-
-                {/* <CommonTexts label={'Trending Sales'} fontSize={13} ml={15} mb={5} mt={15} />
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={{ flexDirection: 'row', paddingLeft: 7, marginBottom: 80 }}
-                >
-                    {trend.map((item) =>
-                        <CommonItemCard
-                            key={item?._id}
-                            item={item}
-                            width={width / 2.5}
-                            marginHorizontal={5}
-                        />
-                    )}
-                </ScrollView> */}
-            </ScrollView>
-            <CommonWhatsappButton
-                position='absolute'
-                bottom={10}
-                right={10}
-            />
-        </>
+            </View>
+        </View>
     )
 }
-
-export default QbuyPanda
 
 const styles = StyleSheet.create({
 
@@ -472,6 +427,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#F7F7F7',
         marginTop: 20,
+        marginBottom: 5,
         justifyContent: 'space-evenly'
     },
     offerView: {
@@ -502,8 +458,8 @@ const styles = StyleSheet.create({
     },
     menuContainer: {
         flexDirection: 'row',
-   
- 
+
+        gap: 17,
         paddingHorizontal: '3%'
     }
 })

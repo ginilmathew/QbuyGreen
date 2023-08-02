@@ -23,14 +23,10 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     const cartContext = useContext(CartContext)
     const loadingg = useContext(LoaderContext)
     let active = contextPanda.active
-
-
     const [showItems, setShowItems] = useState(false)
     const [showAddress, setShowAddress] = useState(false)
-
     const [qty, setQty] = useState('')
     const [totalRate, setTotalRate] = useState('')
-
     const navigation = useNavigation()
 
     const { width, height } = useWindowDimensions()
@@ -60,7 +56,10 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     }, [])
 
     const payWithPayTM = async (data) => {
+        reactotron.log({ data }, 'INSDE DATA')
+        reactotron.log('BUTTON CALLEDD')
         const { paymentDetails } = data
+        reactotron.log({ paymentDetails }, "PAYMENT DETAILS")
         let orderId = paymentDetails?.orderId
         let isStaging = env === "live" ? false : true
         const callbackUrl = {
@@ -80,7 +79,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
             if (has(result, "STATUS")) {
 
-                updatePaymentResponse(result)
+                updatepaymentdata(result)
             }
             else {
                 let data = {
@@ -88,7 +87,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                     RESPMSG: 'User Cancelled transaction',
                     ORDERID: paymentDetails?.orderId
                 }
-                updatePaymentResponse(data)
+                updatepaymentdata(data)
             }
             console.log("PAYTM =>", JSON.stringify(result));
 
@@ -106,9 +105,59 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
     }
 
+
+    const payAmountBalance = useCallback(async () => {
+        loadingg.setLoading(true)
+        let data = {
+            id: item?._id
+        }
+        await customAxios.post(`/customer/order/update-payment`, data)
+            .then(async response => {
+                const { data } = response
+
+                console.log({ response }, 'PAY NOW RESPONSE')
+                if (data?.message === "Success") {
+                    payWithPayTM(data?.data)
+                } else {
+                    Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
+                }
+                loadingg.setLoading(false)
+            })
+            .catch(async error => {
+                console.log(error)
+                Toast.show({
+                    type: 'error',
+                    text1: error
+                });
+                loadingg.setLoading(false)
+            })
+    }, [])
+
+
+
     const updatePaymentResponse = async (data) => {
         let details = data
         await customAxios.post(`customer/order/payment/status`, data)
+            .then(async response => {
+                if (details?.STATUS == "TXN_SUCCESS") {
+                    Toast.show({ type: 'success', text1: 'Payment Success' })
+                    refreshOrder()
+                } else {
+                    Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
+                    refreshOrder()
+                }
+
+            }).catch(async error => {
+
+                Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                refreshOrder()
+            })
+    }
+
+
+    const updatepaymentdata= async (data) => {
+        let details = data
+        await customAxios.post(`customer/order/update-paymentdata`, data)
             .then(async response => {
                 if (details?.STATUS == "TXN_SUCCESS") {
                     Toast.show({ type: 'success', text1: 'Payment Success' })
@@ -173,7 +222,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Total Payment'}</Text>
-                    <Text style={styles.textBold}>{item?.grand_total}</Text>
+                    <Text style={styles.textBold}>{item?.pendingBalance ? item?.pendingBalance?.toFixed(2) : item?.grand_total?.toFixed(2)}</Text>
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Current Status'}</Text>
@@ -260,8 +309,6 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                                     bg='#58D36E'
                                     width={width / 3.5}
                                 />
-
-
                             </View> : null
                         }
                     </>
@@ -271,6 +318,13 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 {(item?.status !== 'cancelled' && item?.payment_status === 'pending') && <CustomButton
                     onPress={payAmount}
                     label={'Pay Now'}
+                    bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
+                    mt={8}
+                />}
+
+                {item?.pendingBalance && <CustomButton
+                    onPress={payAmountBalance}
+                    label={'Pay Balance'}
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}
                 />}

@@ -27,7 +27,7 @@ import PandaShopCard from '../Grocery/PandaShopCard'
 
 const Category = ({ route }) => {
 
-
+    const { name, mode, item } = route?.params;
 
 
 
@@ -44,7 +44,7 @@ const Category = ({ route }) => {
     let loadingg = loadingContex?.loading
     let userData = userContext?.userData
 
-    const { name, mode, item } = route?.params;
+
 
     const [availablePdts, setAvailabelPdts] = useState([])
     const [categories, setCategories] = useState([])
@@ -125,7 +125,7 @@ const Category = ({ route }) => {
     }
 
     let lowercse = item.name.toLowerCase();
-    reactotron.log({ lowercse })
+
 
     return (
         <>

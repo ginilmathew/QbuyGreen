@@ -19,6 +19,9 @@ import SwitchHome from './SwitchHome';
 import CategoryScreen from '../screens/Home/CategoryScreen';
 import StoreScreen from '../screens/Home/StoreScreen';
 import ViewAllStore from '../screens/Home/QBuyGreen/ViewAllStore';
+import QbuyPanda from '../screens/Home';
+import QBuyGreen from '../screens/Home/QBuyGreen';
+import QBuyFashion from '../screens/Home/QBuyFashion';
 
 
 

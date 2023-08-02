@@ -60,7 +60,7 @@ const AddDeliveryAddress = ({ route, navigation }) => {
         )
             // .matches(/^\s*[\S]+(\s[\S]+)+\s*$/gms, 'Please enter your full name.')
             .required('Name is Required'),
-        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10).required('Mobile number is required')
+        mobile: yup.string().matches(phoneRegExp, '10 digit phone number is required').min(10).max(10).nullable()
     }).required();
 
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({

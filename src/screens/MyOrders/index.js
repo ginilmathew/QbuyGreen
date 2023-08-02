@@ -1,4 +1,4 @@
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import CommonTexts from '../../Components/CommonTexts'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -10,9 +10,12 @@ import LoaderContext from '../../contexts/Loader'
 import AuthContext from '../../contexts/Auth'
 import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-toast-message';
+import { FlatList } from 'react-native-gesture-handler'
 
 
 const MyOrders = () => {
+
+    const { height } = useWindowDimensions();
     const contextPanda = useContext(PandaContext)
     let active = contextPanda.active
 
@@ -44,19 +47,31 @@ const MyOrders = () => {
             })
     }
 
+    const keyExtractorOrder = (item) => item._id;
 
+    const renderOrder = ({ item, index }) => {
+        return (
+            <View>
+                <OrderCard key={index} item={item} refreshOrder={getOrderList} />
+            </View>
+        )
+    }
 
-
+    const ListEmptyComponents = () => {
+        return (
+            <View style={{ height: height / 1.3, alignItems: 'center', justifyContent: 'center', fontFamily: 'Poppins-Medium', }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>No Order Found!...</Text>
+            </View>
+        )
+    }
 
     return (
         <>
             <HeaderWithTitle title={'My Orders'} noBack />
-
-            {!loadingg?.loading &&
-                <View
-                    style={{ flex: 1, paddingBottom: 60, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
-                >
-                    {orderList?.length > 0 ?
+            <View
+                style={{ flex: 1, paddingBottom: 60, paddingTop: 10, paddingHorizontal: 10, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
+            >
+                {/* {orderList?.length > 0 ?
                         <ScrollView
 
                             refreshControl={
@@ -65,8 +80,24 @@ const MyOrders = () => {
                             style={{ paddingHorizontal: 10, paddingTop: 10, marginBottom: 20 }}
                         >
                             {orderList?.map((ord, index) => <OrderCard key={index} item={ord} refreshOrder={getOrderList} />)}
-                        </ScrollView> : <Text style={styles.emptyMessageStyle}>No Order Found..!</Text>}
-                </View>}
+                        </ScrollView> : <Text style={styles.emptyMessageStyle}>No Order Found..!</Text>} */}
+                <FlatList
+                    refreshControl={<RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />}
+                    data={orderList}
+                    showsVerticalScrollIndicator={false}
+                    initialNumToRender={4}
+                    removeClippedSubviews={true}
+                    windowSize={10}
+                    maxToRenderPerBatch={4}
+                    keyExtractorCategory={keyExtractorOrder}
+                    refreshing={loadingg?.loading}
+                    onRefresh={getOrderList}
+                    // style={{ marginLeft: 5 }}
+                    ListEmptyComponent={ListEmptyComponents}
+                    contentContainerStyle={{ justifyContent: 'center' }}
+                    renderItem={renderOrder}
+                />
+            </View>
         </>
     )
 }

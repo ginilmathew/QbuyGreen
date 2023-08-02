@@ -33,6 +33,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
     const [data, setData] = useState([])
     const [variant, setVariant] = useState(false)
+    const calculation = useMemo(() => getProduct(item), [item]);
 
 
    
@@ -42,7 +43,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
     useEffect(() => {
         if (item) {
-            setData(getProduct(item))
+            setData(calculation)
         }
     }, [item])
 
@@ -68,7 +69,7 @@ const CommonItemCard = memo(({ height, width, item, marginHorizontal, wishlistIc
 
     const handleClick = useCallback(() => {
 
-        reactotron.log('MY RELATEDPRODUCT')
+ 
         if(item?.status === "active"){
             startTransition(() => {
                 navigation.navigate('SingleItemScreen', { item: data })

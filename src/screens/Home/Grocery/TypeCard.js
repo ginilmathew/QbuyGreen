@@ -28,11 +28,11 @@ const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode, name }) =
     //     navigation.navigate('Category', { name: item?.name, mode: contextPanda.active, item: item, storeId })
     // }, [item])
     const onClick = useCallback(() => {
-        navigation.navigate('Category', { name: active === "panda" ? item?.store_name : item?.name, mode: active, item: item,storeId })
+        navigation.navigate('Category', { name: active === "panda" ? item?.store_name : item?.name, mode: active, item: item, storeId })
 
         // if (active === "panda") {
         //     navigation.navigate('store', { name: active === "panda" ? item?.store_name : item?.name, mode: 'store', item: item })
-            
+
         // } else {
         //     navigation.navigate('Category', { name: item?.name, mode: active, item: item, })
         // }

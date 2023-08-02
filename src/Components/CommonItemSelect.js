@@ -6,7 +6,7 @@ import reactotron from 'reactotron-react-native'
 import { useNavigation } from '@react-navigation/native'
 
 
-const CommonItemSelect = memo(({ item, setSelected, selected, screen }) => {
+const CommonItemSelect = memo(({ item, setSelected, selected, screen, key }) => {
     const navigation = useNavigation()
 
     const contextPanda = useContext(PandaContext)
@@ -26,7 +26,7 @@ const CommonItemSelect = memo(({ item, setSelected, selected, screen }) => {
     return (
 
         <TouchableOpacity
-            key={item?._id}
+            key={key}
             onPress={onClick}
             style={{ backgroundColor: selected === item?._id ? grocery ? '#8ED053' : fashion ? '#FF7190' : '#58D36E' : '#fff', borderRadius: 10, elevation: 10, alignItems: 'center', justifyContent: "center", marginLeft: 10, marginVertical: 10, shadowOpacity: 0.1, shadowRadius: 1, }}
         >

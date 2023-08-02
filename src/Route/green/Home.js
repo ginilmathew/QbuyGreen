@@ -24,6 +24,8 @@ import reactotron from '../../ReactotronConfig';
 import QBuyFashion from '../../screens/Home/QBuyFashion';
 import QbuyPanda from '../../screens/Home';
 import TagScreen from '../../screens/Home/TagScreen';
+import PandaHome from '../../screens/Home/pandaHome';
+
 
 
 
@@ -48,7 +50,7 @@ const HomeNav = () => {
                         pandaContext?.active === "green" ?
                             QBuyGreen :
                             pandaContext?.active === "panda" ?
-                                QbuyPanda :
+                            PandaHome :
                                 pandaContext?.active === "fashion" ?
                                     QBuyFashion : QBuyGreen
                     } />

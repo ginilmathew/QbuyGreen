@@ -85,7 +85,7 @@ const Checkout = ({ navigation }) => {
 
 
 
-    console.log({ isLoading }, 'ISLODING')
+
 
 
 
@@ -591,6 +591,7 @@ const Checkout = ({ navigation }) => {
                 await AsyncStorage.removeItem("cartId");
                 if (details?.STATUS == "TXN_SUCCESS") {
                     navigation.navigate('OrderPlaced', { item: { created_at: details?.TXNDATE, order_id: orderID } })
+                    cartContext?.setCart(null)
                 } else {
                     Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
                     navigation.navigate("order")
@@ -610,9 +611,9 @@ const Checkout = ({ navigation }) => {
 
 
 
-
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
+        reactotron.log({paymentDetails},'PAYMENT DETAILS')
         let orderId = paymentDetails?.orderId
         let isStaging = env === "live" ? false : true
         const callbackUrl = {

@@ -341,7 +341,9 @@ const Cart = ({ navigation }) => {
             })
             return false;
         } else {
-            navigation.navigate('Checkout')
+          
+            navigation.navigate('Checkout');
+            setCartItemsList([])
         }
         // reactotron.log("Conditions are satisfied:", satisfiesConditions);
 

@@ -23,7 +23,7 @@ const CategoriesCard = memo(({ item }) => {
 
 
     const onClick = useCallback(() => {
-        navigation.navigate(active === 'panda' ? 'pandaCategory' : 'Category', { name:active === 'panda' ? item?.store_name : item?.name, mode: active, item: item })
+        navigation.navigate(active === 'panda' ? 'pandaCategory' : 'Category', { name: active === 'panda' ? item?.store_name : item?.name, mode: active, item: item })
     }, [item])
 
     return (
@@ -40,7 +40,7 @@ const CategoriesCard = memo(({ item }) => {
                     borderRadius={30}
                 />
             </View>
-            <Text style={styles.itemText}>{item?.name}</Text>
+            <Text style={styles.itemText} numberOfLines={1}>{item?.name}</Text>
         </TouchableOpacity>
     )
 })
