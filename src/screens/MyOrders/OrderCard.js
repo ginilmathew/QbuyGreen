@@ -18,7 +18,7 @@ import { env } from '../../config/constants'
 
 const OrderCard = memo(({ item, refreshOrder }) => {
 
-
+    console.log({ item }, 'ITEM HELLO')
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const loadingg = useContext(LoaderContext)
@@ -56,43 +56,48 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     }, [])
 
     const payWithPayTM = async (data) => {
-        reactotron.log({ data }, 'INSDE DATA')
-        reactotron.log('BUTTON CALLEDD')
-        const { paymentDetails } = data
-        reactotron.log({ paymentDetails }, "PAYMENT DETAILS")
-        let orderId = paymentDetails?.orderId
+        
+        const { newpaymentDetails } = data
+        let orderId = newpaymentDetails?.orderId
         let isStaging = env === "live" ? false : true
+
+       
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
+     
         await AllInOneSDKManager.startTransaction(
-            paymentDetails?.orderId,//orderId
-            paymentDetails?.mid,//mid
-            paymentDetails?.txnToken,//txnToken
-            paymentDetails?.amount.toFixed(2),//amount
-            `${callbackUrl[isStaging]}${paymentDetails?.orderId}`,//callbackUrl
+
+            newpaymentDetails?.orderId,//orderId
+            newpaymentDetails?.mid,//mid
+            newpaymentDetails?.txnToken,//txnToken
+            parseFloat(newpaymentDetails?.amount)?.toFixed(),//amount
+            `${callbackUrl[isStaging]}${newpaymentDetails?.orderId}`,//callbackUrl
             isStaging,//isStaging
             true,//appInvokeRestricted
-            `paytm${paymentDetails?.mid}`//urlScheme
+            `paytm${newpaymentDetails?.mid}`
+            //urlScheme
+           
         ).then((result) => {
 
+              reactotron.log('AN ERROR OCCURED')
             if (has(result, "STATUS")) {
-
                 updatepaymentdata(result)
             }
             else {
                 let data = {
                     STATUS: 'TXN_FAILURE',
                     RESPMSG: 'User Cancelled transaction',
-                    ORDERID: paymentDetails?.orderId
+                    ORDERID: newpaymentDetails?.orderId
                 }
                 updatepaymentdata(data)
             }
-            console.log("PAYTM =>", JSON.stringify(result));
+            // console.log("PAYTM =>", JSON.stringify(result));
 
 
         }).catch((err) => {
+            reactotron.log({err})
             // console.log("PAYTM Error =>", JSON.stringify(err));
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
             let data = {
@@ -102,6 +107,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             }
             updatePaymentResponse(data)
         });
+        reactotron.log({newpaymentDetails})
 
     }
 
@@ -115,7 +121,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             .then(async response => {
                 const { data } = response
 
-                console.log({ response }, 'PAY NOW RESPONSE')
+                  
                 if (data?.message === "Success") {
                     payWithPayTM(data?.data)
                 } else {
@@ -131,7 +137,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 });
                 loadingg.setLoading(false)
             })
-    }, [])
+    }, [item?._id])
 
 
 
@@ -155,7 +161,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     }
 
 
-    const updatepaymentdata= async (data) => {
+    const updatepaymentdata = async (data) => {
         let details = data
         await customAxios.post(`customer/order/update-paymentdata`, data)
             .then(async response => {
@@ -204,6 +210,9 @@ const OrderCard = memo(({ item, refreshOrder }) => {
     }, [item, cartContext?.cart?._id, cartContext?.cart])
 
 
+
+
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -222,7 +231,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Total Payment'}</Text>
-                    <Text style={styles.textBold}>{item?.pendingBalance ? item?.pendingBalance?.toFixed(2) : item?.grand_total?.toFixed(2)}</Text>
+                    <Text style={styles.textBold}>{(has(item, "pendingBalance")) ? item?.pendingBalance : item?.grand_total?.toFixed(2)}</Text>
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Current Status'}</Text>
@@ -322,12 +331,13 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                     mt={8}
                 />}
 
-                {item?.pendingBalance && <CustomButton
+                {item?.pendingBalance && item?.payment_type === "online" && <CustomButton
                     onPress={payAmountBalance}
                     label={'Pay Balance'}
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}
                 />}
+
             </View>
 
 

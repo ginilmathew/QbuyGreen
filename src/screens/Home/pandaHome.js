@@ -268,7 +268,7 @@ export default function PandaHome({ navigation }) {
 
 
     const FooterComponent = () => {
-        return (<View style={{ height: 100 }}>
+        return (<View style={{ height: 150 }}>
 
         </View>)
     }

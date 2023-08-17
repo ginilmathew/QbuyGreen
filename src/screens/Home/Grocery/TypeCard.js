@@ -5,18 +5,14 @@ import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import { IMG_URL } from '../../../config/constants'
 import PandaContext from '../../../contexts/Panda'
-import reactotron from 'reactotron-react-native'
+
 
 
 const TypeCard = memo(({ item, mode, onCategoryPress, storeId, mymode, name }) => {
 
-
-
-
-
     const { active } = useContext(PandaContext)
 
-    const { width, fontScale, height } = useWindowDimensions()
+    const { width, fontScale, height } = useWindowDimensions();
 
     let imageWidth = width / 6
     let restauranWidth = width / 4.5

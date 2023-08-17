@@ -60,7 +60,7 @@ const MyOrders = () => {
     const ListEmptyComponents = () => {
         return (
             <View style={{ height: height / 1.3, alignItems: 'center', justifyContent: 'center', fontFamily: 'Poppins-Medium', }}>
-                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>No Order Found!...</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>No Order Found!..</Text>
             </View>
         )
     }

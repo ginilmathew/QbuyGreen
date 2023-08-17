@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable } from 'react-native'
+import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable,ActivityIndicator } from 'react-native'
 import React, { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import ItemsCard from '../../MyOrders/ItemsCard'
@@ -459,8 +459,6 @@ const Checkout = ({ navigation }) => {
 
     const placeOrder = async () => {
 
-
-
         let franchise = await customAxios.post('customer/get-franchise', { coordinates: authContext.location })
 
         if (!franchise) {
@@ -574,9 +572,6 @@ const Checkout = ({ navigation }) => {
             })
             setIsLoding(false);
         })
-
-
-
     }
 
 
@@ -613,7 +608,6 @@ const Checkout = ({ navigation }) => {
 
     const payWithPayTM = async (data) => {
         const { paymentDetails } = data
-        reactotron.log({paymentDetails},'PAYMENT DETAILS')
         let orderId = paymentDetails?.orderId
         let isStaging = env === "live" ? false : true
         const callbackUrl = {
@@ -995,7 +989,7 @@ const Checkout = ({ navigation }) => {
                         style={{ alignItems: 'flex-end', flex: 0.5 }}
                         onPress={placeOrder}
                     >
-                        <CommonTexts label={'Place Order'} color='#fff' fontSize={17} />
+                        <CommonTexts label={isLoading ?   "Loading.."  : 'Place Order'} color='#fff' fontSize={17} />
                     </TouchableOpacity>
                 </View>
 

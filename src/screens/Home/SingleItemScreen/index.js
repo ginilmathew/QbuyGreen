@@ -56,7 +56,7 @@ const SingleItemScreen = ({ route, navigation }) => {
 
 
     const [item, setItem] = useState(null)
-    reactotron.log({item},'ITEM PAGE!!!')
+
 
 
     useEffect(() => {

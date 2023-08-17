@@ -236,7 +236,9 @@ const QBuyGreen = ({ navigation }) => {
         if (item?.type === 'stores') {
             return (
                 <>
-                    {item?.data?.length > 0 && <AvailableStores data={item?.data} />}
+                    {item?.data?.length > 0 && 
+                    <AvailableStores data={item?.data} />
+                    }
                     <View style={styles.pickupReferContainer}>
                         <PickDropAndReferCard
                             onPress={ourFarm}
@@ -299,7 +301,7 @@ const QBuyGreen = ({ navigation }) => {
 
 
 
-    const renderProducts = ({ item, index }) => {
+    const renderProducts = ({ item, index }) => { 
         return (
             <View key={index} style={{ flex: 0.5, justifyContent: 'center' }}>
                 <CommonItemCard
@@ -314,6 +316,7 @@ const QBuyGreen = ({ navigation }) => {
             </View>
         )
     }
+    
 
     return (
         <>
