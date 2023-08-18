@@ -42,10 +42,8 @@ const SearchResultsCard = memo(({ item, setValue }) => {
              type:type,
              user_id: userContext?.userData?._id
         }
-        let result =  await customAxios.post('customer/cart/newshow-cart',value)
-
-        reactotron.log({result},'RESULT RESULT')
-        cartContext.setCart(result?.data?.data)
+        let result =  await customAxios.post('customer/cart/newshow-cart',value);
+        cartContext.setCart(result?.data?.data);
 
     }
 

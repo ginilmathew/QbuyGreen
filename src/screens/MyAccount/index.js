@@ -27,7 +27,6 @@ const MyAccount = ({ navigation }) => {
     const userContext = useContext(AuthContext)
     let active = contextPanda.active
 
-    reactotron.log({ active })
     const user = useContext(AuthContext)
     let userData = user?.userData
 

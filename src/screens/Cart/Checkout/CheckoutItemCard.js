@@ -11,6 +11,7 @@ import reactotron from '../../../ReactotronConfig'
 
 const CheckoutItemCard = ({ item, index, refreshCart, view }) => {
 
+
     const navigation = useNavigation()
 
     const cartContext = useContext(CartContext)
@@ -259,9 +260,17 @@ const CheckoutItemCard = ({ item, index, refreshCart, view }) => {
 
 
 
+    // const gotoStore = useCallback(() => {
+    //     navigation.navigate('home', { screen: 'store', params: { name: item?.store?.name, mode: 'checkoutItem', storeId: item?.store?._id } })
+    // })
+
+
+
     const gotoStore = useCallback(() => {
-        navigation.navigate('home', { screen: 'store', params: { name: item?.store?.name, mode: 'checkoutItem', storeId: item?.store?._id } })
-    })
+        navigation.navigate('home', { screen: 'store', params: { name: item?.store?.name, mode: 'checkoutItem', storeId: item?.store?._id, item: { store_address: item?.store_address } } })
+    }, [navigation])
+
+
 
 
  

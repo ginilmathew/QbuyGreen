@@ -217,7 +217,7 @@ const CartItemCardtest = ({ item, index, refreshCart }) => {
                     //navigation.navigate('CartNav',{screen: 'Cart'})
                 })
                 .catch(async error => {
-                    console.log(error)
+              
                     Toast.show({
                         type: 'error',
                         text1: error

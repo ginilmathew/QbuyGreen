@@ -131,6 +131,7 @@ const Checkout = ({ navigation }) => {
                         toDate = moment(pro?.productdata?.offer_date_to).isValid() ? moment(pro?.productdata?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.productdata?.stock_value ? parseFloat(pro?.productdata?.stock_value) : 0
                         product = {
+                            store_address : pro?.productdata?.vendors.store_address,
                             product_id: pro?.product_id,
                             name: pro?.name,
                             image: pro?.image,
@@ -159,6 +160,7 @@ const Checkout = ({ navigation }) => {
                         toDate = moment(pro?.variants?.offer_date_to).isValid() ? moment(pro?.variants?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
                         product = {
+                            store_address : pro?.productdata?.vendors.store_address,
                             product_id: pro?.product_id,
                             name: pro?.name,
                             image: pro?.image,
@@ -577,7 +579,7 @@ const Checkout = ({ navigation }) => {
 
     const updatePaymentResponse = async (data) => {
         let details = data
-        let orderID = details.ORDERID.replace(/^ORDER_/, "")
+        let orderID = details.ORDERID?.replace(/^ORDER_/, "")
 
         await customAxios.post(`customer/order/payment/status`, data)
             .then(async response => {
@@ -637,7 +639,7 @@ const Checkout = ({ navigation }) => {
                 }
                 updatePaymentResponse(data)
             }
-            console.log("PAYTM =>", JSON.stringify(result));
+            // console.log("PAYTM =>", JSON.stringify(result));
 
 
         }).catch((err) => {

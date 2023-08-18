@@ -23,6 +23,8 @@ import CommonTexts from '../../Components/CommonTexts';
 import OfferText from './OfferText';
 import { useFocusEffect } from '@react-navigation/native';
 import { IMG_URL } from '../../config/constants';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import { getProduct } from '../../helper/productHelper';
 export default function PandaHome({ navigation }) {
 
     const { height, width } = useWindowDimensions();
@@ -115,16 +117,33 @@ export default function PandaHome({ navigation }) {
         }
     }, [filter, userContext?.location])
 
+
+    const CarouselSelect = (item) => {
+        switch (item?.screentype) {
+            case "product":
+                let data = getProduct(item?.product)
+                navigation.navigate('SingleItemScreen', { item: data })
+                break;
+            case "store":
+                navigation.navigate('store', { name: item?.vendor?.store_name, mode: 'store', item: item?.vendor, storeId: item?.vendor?._id })
+                break;
+            default:
+                return false;
+        }
+
+    }
+
+
     const CarouselCardItem = ({ item, index }) => {
         return (
-            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
+            <TouchableOpacity onPress={() => CarouselSelect(item)} style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
                     resizeMode='cover'
                 >
                 </FastImage>
-            </View>
+            </TouchableOpacity>
         )
     }
 

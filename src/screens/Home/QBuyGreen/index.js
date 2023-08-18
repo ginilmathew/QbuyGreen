@@ -101,19 +101,19 @@ const QBuyGreen = ({ navigation }) => {
 
     const ourFarm = useCallback(() => {
         navigation.navigate('OurFarms')
-    }, [])
+    }, [navigation])
 
     const referRestClick = useCallback(() => {
         navigation.navigate('RefferRestaurant')
-    }, [])
+    }, [navigation])
 
     const gotoChat = useCallback(() => {
         navigation.navigate('Chat')
-    }, [])
+    }, [navigation])
 
     const onClickDrawer = useCallback(() => {
         navigation.openDrawer()
-    }, [])
+    }, [navigation])
 
     let offer = {
         hotel: 'Farm N Fresh'
@@ -121,7 +121,7 @@ const QBuyGreen = ({ navigation }) => {
 
     const goToShop = useCallback(() => {
         navigation.navigate('SingleHotel', { item: offer, mode: 'offers' })
-    }, [])
+    }, [navigation])
 
 
 
@@ -193,16 +193,15 @@ const QBuyGreen = ({ navigation }) => {
 
 
     const CarouselCardItem = ({ item, index }) => {
-
         return (
-            <Pressable onPress={() => CarouselSelect(item)} style={{ alignItems: 'center', marginTop: 20, width: '100%', height: '85%' }} >
+            <TouchableOpacity onPress={() => CarouselSelect(item)} style={{ alignItems: 'center', marginTop: 20, width: '100%', height: '85%' }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
                     resizeMode='cover'
                 >
                 </FastImage>
-            </Pressable>
+            </TouchableOpacity>
         )
     }
 

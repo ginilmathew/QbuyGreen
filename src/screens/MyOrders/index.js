@@ -60,7 +60,7 @@ const MyOrders = () => {
     const ListEmptyComponents = () => {
         return (
             <View style={{ height: height / 1.3, alignItems: 'center', justifyContent: 'center', fontFamily: 'Poppins-Medium', }}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>No Order Found!..</Text>
+                <Text style={{ fontSize: 18 }}>No Order Found!..</Text>
             </View>
         )
     }
@@ -90,8 +90,8 @@ const MyOrders = () => {
                     windowSize={10}
                     maxToRenderPerBatch={4}
                     keyExtractorCategory={keyExtractorOrder}
-                    refreshing={loadingg?.loading}
-                    onRefresh={getOrderList}
+                    // refreshing={loadingg?.loading}
+                    // onRefresh={getOrderList}
                     // style={{ marginLeft: 5 }}
                     ListEmptyComponent={ListEmptyComponents}
                     contentContainerStyle={{ justifyContent: 'center' }}

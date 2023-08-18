@@ -69,6 +69,7 @@ const CartTest = ({ navigation }) => {
                             toDate = moment(pro?.productdata?.offer_date_to).isValid() ? moment(pro?.productdata?.offer_date_to, "YYYY-MM-DD") : null
                             stock_value = pro?.productdata?.stock_value ? parseFloat(pro?.productdata?.stock_value) : 0
                             product = {
+                                store_address : pro?.productdata?.vendors.store_address,
                                 product_id: pro?.product_id,
                                 name: pro?.name,
                                 image: pro?.image,
@@ -97,6 +98,7 @@ const CartTest = ({ navigation }) => {
                             toDate = moment(pro?.variants?.offer_date_to).isValid() ? moment(pro?.variants?.offer_date_to, "YYYY-MM-DD") : null
                             stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
                             product = {
+                                store_address : pro?.productdata?.vendors.store_address,
                                 product_id: pro?.product_id,
                                 variant_id: pro?.variants?._id,
                                 attributs: pro?.variants?.attributs,
@@ -335,14 +337,14 @@ const CartTest = ({ navigation }) => {
                     stockcheck = true;
                 }
             })
-            if(!stockcheck){
+            if (!stockcheck) {
                 navigation.navigate('Checkout')
-            }else{
+            } else {
                 getCartItems()
             }
 
 
-           
+
         })
     }
 
@@ -395,7 +397,7 @@ const CartTest = ({ navigation }) => {
         //     }else{
         //         navigation.navigate('Checkout')
         //     }
-      
+
 
         // reactotron.log("Conditions are satisfied:", satisfiesConditions);
 
@@ -404,14 +406,20 @@ const CartTest = ({ navigation }) => {
 
     const goHome = useCallback(() => {
         navigation.navigate('home')
-    }, [])
+    }, [navigation])
 
     const refreshCart = useCallback(() => {
         getCartItems()
     }, [])
 
     return (
-        <View style={{ height: height - 50, paddingBottom: 50, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }} >
+        <View
+            style={{
+                height: height - 50,
+                paddingBottom: 50,
+                backgroundColor: active === 'green' ? '#F4FFE9'
+                    : active === 'fashion' ? '#FFF5F7' : '#fff'
+            }} >
             <HeaderWithTitle title={'Cart'} />
 
             <ScrollView

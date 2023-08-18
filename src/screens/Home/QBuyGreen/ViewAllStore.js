@@ -16,7 +16,6 @@ const ViewAllStore = ({ route, navigation }) => {
     const { width, height } = useWindowDimensions()
     const styles = makeStyles(height);
 
-    reactotron.log({ styles })
 
     const loadingg = useContext(LoaderContext)
     const userContext = useContext(AuthContext)

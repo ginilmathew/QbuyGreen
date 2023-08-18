@@ -24,7 +24,7 @@ const WorkWithPanda = ({ navigation, route }) => {
 
     let regSuccess = route?.params?.mode
 
-    console.log({regSuccess})
+
 
     let status = 'approved'
 

@@ -17,6 +17,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 const CartItemCard = ({ item, index, refreshCart }) => {
 
+
+
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const userContext = useContext(AuthContext)
@@ -26,6 +28,8 @@ const CartItemCard = ({ item, index, refreshCart }) => {
     useEffect(() => {
         setData(item)
     }, [item])
+
+
 
 
     const navigation = useNavigation()
@@ -180,7 +184,7 @@ const CartItemCard = ({ item, index, refreshCart }) => {
                 //navigation.navigate('CartNav',{screen: 'Cart'})
             })
             .catch(async error => {
-                console.log(error)
+              
                 Toast.show({
                     type: 'error',
                     text1: error
@@ -188,9 +192,10 @@ const CartItemCard = ({ item, index, refreshCart }) => {
             })
     }
 
+
     const gotoStore = useCallback(() => {
-        navigation.navigate('home', { screen: 'store', params: { name: item?.store?.name, mode: 'cartItem', storeId: item?.store?._id } })
-    })
+        navigation.navigate('home', { screen: 'store', params: { name: item?.store?.name, mode: 'cartItem', storeId: item?.store?._id, item: { store_address: item?.store_address } } })
+    }, [navigation])
 
 
 

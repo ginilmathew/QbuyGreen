@@ -46,7 +46,6 @@ const StoreScreen = ({ route, navigation }) => {
 
 
 
-
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
 
@@ -93,11 +92,11 @@ const StoreScreen = ({ route, navigation }) => {
 
     const backToCart = useCallback(() => {
         navigation.navigate('Cart')
-    }, [])
+    }, [navigation])
 
     const backToCheckout = useCallback(() => {
         navigation.navigate('Checkout')
-    }, [])
+    }, [navigation])
 
 
     return (

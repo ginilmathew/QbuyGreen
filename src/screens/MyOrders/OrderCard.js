@@ -18,7 +18,6 @@ import { env } from '../../config/constants'
 
 const OrderCard = memo(({ item, refreshOrder }) => {
 
-    console.log({ item }, 'ITEM HELLO')
     const contextPanda = useContext(PandaContext)
     const cartContext = useContext(CartContext)
     const loadingg = useContext(LoaderContext)
@@ -97,7 +96,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
 
         }).catch((err) => {
-            reactotron.log({err})
+            // reactotron.log({err})
             // console.log("PAYTM Error =>", JSON.stringify(err));
             Toast.show({ type: 'error', text1: err || "Something went wrong !!!" });
             let data = {
@@ -107,7 +106,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             }
             updatePaymentResponse(data)
         });
-        reactotron.log({newpaymentDetails})
+        // reactotron.log({newpaymentDetails})
 
     }
 
@@ -130,7 +129,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 loadingg.setLoading(false)
             })
             .catch(async error => {
-                console.log(error)
+              
                 Toast.show({
                     type: 'error',
                     text1: error
@@ -324,24 +323,20 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
                 }
 
-                {(item?.status !== 'cancelled' && item?.payment_status === 'pending') && <CustomButton
+                {(item?.status !== 'cancelled' && item?.payment_status === 'cancelled') && <CustomButton
                     onPress={payAmount}
                     label={'Pay Now'}
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}
                 />}
 
-                {item?.pendingBalance && item?.payment_type === "online" && <CustomButton
+                {item?.pendingBalance && item?.payment_type === "online" && item?.payment_status === 'pending' && <CustomButton
                     onPress={payAmountBalance}
                     label={'Pay Balance'}
                     bg={active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E'}
                     mt={8}
                 />}
-
             </View>
-
-
-
         </View>
     )
 })

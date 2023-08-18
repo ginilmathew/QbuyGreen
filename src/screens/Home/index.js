@@ -27,6 +27,7 @@ import reactotron from 'reactotron-react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 import CommonWhatsappButton from '../../Components/CommonWhatsappButton';
+import { getProduct } from '../../helper/productHelper';
 
 const QbuyPanda = ({ navigation }) => {
 
@@ -43,9 +44,7 @@ const QbuyPanda = ({ navigation }) => {
     const [sliders, setSliders] = useState([])
     const [datalist, setDatalist] = useState();
     const [isloading, setisLoading] = useState(false);
-
     const [selected, setSelected] = useState('')
-
     const userContext = useContext(AuthContext)
     const loadingg = useContext(LoaderContext)
     const [filter, setFilter] = useState('')
@@ -207,16 +206,32 @@ const QbuyPanda = ({ navigation }) => {
         navigation.navigate('ProductSearchScreen', { mode: 'panda' })
     }, [navigation])
 
+    const CarouselSelect = (item) => {
+        switch (item?.screentype) {
+            case "product":
+                let data = getProduct(item?.product)
+                navigation.navigate('SingleItemScreen', { item: data })
+                break;
+            case "store":
+                navigation.navigate('store', { name: item?.vendor?.store_name, mode: 'store', item: item?.vendor, storeId: item?.vendor?._id })
+                break;
+            default:
+                return false;
+        }
+
+    }
+
+
     const CarouselCardItem = ({ item, index }) => {
         return (
-            <View style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
+            <TouchableOpacity onPress={() => CarouselSelect(item)} style={{ width: '100%', height: '85%', alignItems: 'center', marginTop: 20 }} >
                 <FastImage
                     source={{ uri: `${IMG_URL}${item?.original_image}` }}
                     style={{ height: '100%', width: '95%', borderRadius: 20 }}
                     resizeMode='cover'
                 >
                 </FastImage>
-            </View>
+            </TouchableOpacity>
         )
     }
 
@@ -252,7 +267,7 @@ const QbuyPanda = ({ navigation }) => {
         return (
             <View style={styles.categoryView}>
                 {/* {category?.map((item) => ( */}
-                <CategoriesCard  item={item} />
+                <CategoriesCard item={item} />
                 {/* // ))} */}
             </View>
         )
@@ -366,7 +381,7 @@ const QbuyPanda = ({ navigation }) => {
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
                 >
-                    {recentLists?.map((item,index) =>
+                    {recentLists?.map((item, index) =>
                         <CommonItemCard
                             key={index}
                             item={item}
@@ -382,7 +397,7 @@ const QbuyPanda = ({ navigation }) => {
                     showsHorizontalScrollIndicator={false}
                     style={{ flexDirection: 'row', paddingLeft: 7, }}
                 >
-                    {pandaSuggestions.map((item,index) =>
+                    {pandaSuggestions.map((item, index) =>
                         <CommonItemCard
                             key={index}
                             item={item}
@@ -502,8 +517,8 @@ const styles = StyleSheet.create({
     },
     menuContainer: {
         flexDirection: 'row',
-   
- 
+
+
         paddingHorizontal: '3%'
     }
 })
