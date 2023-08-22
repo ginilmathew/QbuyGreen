@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable,ActivityIndicator } from 'react-native'
+import { Image, StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native'
 import React, { useRef, useState, useEffect, useContext, useCallback } from 'react'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
 import ItemsCard from '../../MyOrders/ItemsCard'
@@ -131,7 +131,7 @@ const Checkout = ({ navigation }) => {
                         toDate = moment(pro?.productdata?.offer_date_to).isValid() ? moment(pro?.productdata?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.productdata?.stock_value ? parseFloat(pro?.productdata?.stock_value) : 0
                         product = {
-                            store_address : pro?.productdata?.vendors.store_address,
+                            store_address: pro?.productdata?.vendors.store_address,
                             product_id: pro?.product_id,
                             name: pro?.name,
                             image: pro?.image,
@@ -160,7 +160,7 @@ const Checkout = ({ navigation }) => {
                         toDate = moment(pro?.variants?.offer_date_to).isValid() ? moment(pro?.variants?.offer_date_to, "YYYY-MM-DD") : null
                         stock_value = pro?.variants?.stock_value ? parseFloat(pro?.variants?.stock_value) : 0
                         product = {
-                            store_address : pro?.productdata?.vendors.store_address,
+                            store_address: pro?.productdata?.vendors.store_address,
                             product_id: pro?.product_id,
                             name: pro?.name,
                             image: pro?.image,
@@ -536,7 +536,7 @@ const Checkout = ({ navigation }) => {
                         // console.log("response ==>", JSON.stringify(response.data), response.status)
                         const { data } = response
 
-                        setIsLoding(false);
+
                         if (data?.type === 'cart') {
                             navigation.navigate('Cart')
                         }
@@ -548,16 +548,19 @@ const Checkout = ({ navigation }) => {
                                 setCartItems(null)
                                 await AsyncStorage.removeItem("cartId");
                                 navigation.navigate('OrderPlaced', { item: response.data?.data })
+                                setIsLoding(false);
                             }
                         } else {
                             cartContext?.setCart(null)
                             setCartItems(null)
                             navigation.goBack()
                             Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
+                            setIsLoding(false);
                         }
                     }).catch(error => {
                         setIsLoding(false);
                         Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
+                        setIsLoding(false);
                     })
             }
             else {
@@ -590,14 +593,14 @@ const Checkout = ({ navigation }) => {
                     navigation.navigate('OrderPlaced', { item: { created_at: details?.TXNDATE, order_id: orderID } })
                     cartContext?.setCart(null)
                 } else {
-                    Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
                     navigation.navigate("order")
+                    Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
+                  
                 }
 
             }).catch(async error => {
                 cartContext?.setCart(null)
                 setCartItems(null)
-                navigation.navigate("order")
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
                 cartContext?.setCart(null)
                 setCartItems(null)
@@ -630,6 +633,7 @@ const Checkout = ({ navigation }) => {
 
             if (has(result, "STATUS")) {
                 updatePaymentResponse(result)
+                setIsLoding(false);
             }
             else {
                 let data = {
@@ -637,7 +641,9 @@ const Checkout = ({ navigation }) => {
                     RESPMSG: 'User Cancelled transaction',
                     ORDERID: orderId
                 }
+                reactotron.log('CANCEL PAYMENT')
                 updatePaymentResponse(data)
+                setIsLoding(false);
             }
             // console.log("PAYTM =>", JSON.stringify(result));
 
@@ -649,7 +655,10 @@ const Checkout = ({ navigation }) => {
                 RESPMSG: 'User Cancelled transaction',
                 ORDERID: orderId
             }
+
+            reactotron.log('CANCEL PAYMENT 2')
             updatePaymentResponse(data)
+            setIsLoding(false);
         });
 
     }
@@ -686,7 +695,7 @@ const Checkout = ({ navigation }) => {
 
     const backToCart = useCallback(() => {
         navigation.navigate('Cart')
-    }, [])
+    }, [navigation])
 
 
     return (
@@ -991,7 +1000,7 @@ const Checkout = ({ navigation }) => {
                         style={{ alignItems: 'flex-end', flex: 0.5 }}
                         onPress={placeOrder}
                     >
-                        <CommonTexts label={isLoading ?   "Loading.."  : 'Place Order'} color='#fff' fontSize={17} />
+                        <CommonTexts label={isLoading ? "Loading..." : 'Place Order'} color='#fff' fontSize={17} />
                     </TouchableOpacity>
                 </View>
 

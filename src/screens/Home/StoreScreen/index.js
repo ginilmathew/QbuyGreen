@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList, useWindowDimensions, TouchableOpacity, ActivityIndicator, RefreshControl, BackHandler } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import CommonTexts from '../../../Components/CommonTexts'
 import HeaderWithTitle from '../../../Components/HeaderWithTitle'
@@ -19,10 +19,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import reactotron from 'reactotron-react-native'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 
 
-const StoreScreen = ({ route, navigation }) => {
+const StoreScreen = ({ route }) => {
+
+    const navigation = useNavigation();
 
     const { width, height } = useWindowDimensions()
 
@@ -45,14 +47,14 @@ const StoreScreen = ({ route, navigation }) => {
     const storeId = route?.params?.storeId
 
 
+   
 
     const [storeDetails, setStoreDetails] = useState([])
     const [categories, setCategories] = useState([])
-
+    const [isSelectionModeEnabled, setIsSelectionModeEnabled] =
+    React.useState(false);
 
     const [selected, setSelected] = useState(false)
-
-
 
 
     useFocusEffect(
@@ -85,9 +87,29 @@ const StoreScreen = ({ route, navigation }) => {
             })
     }
 
-
-
-
+    useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            if (isSelectionModeEnabled) {
+              setIsSelectionModeEnabled(false);
+             
+              return true;
+            } else {
+                if(mode === "cartItem"){
+                    navigation.navigate('Cart')
+                }
+              return false;
+            }
+          };
+    
+          const subscription = BackHandler.addEventListener(
+            'hardwareBackPress',
+            onBackPress
+          );
+    
+          return () => subscription.remove();
+        }, [isSelectionModeEnabled])
+      );
 
 
     const backToCart = useCallback(() => {

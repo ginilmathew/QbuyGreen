@@ -48,24 +48,24 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
     const clickDetails = useCallback(() => {
         navigation.navigate('ViewDetails', { item: item, qty: qty, totalRate: totalRate })
-    }, [])
+    }, [navigation])
 
     const clickRateOrder = useCallback(() => {
         navigation.navigate('RateOrder', { item: item })
-    }, [])
+    }, [navigation])
 
     const payWithPayTM = async (data) => {
-        
+
         const { newpaymentDetails } = data
         let orderId = newpaymentDetails?.orderId
         let isStaging = env === "live" ? false : true
 
-       
+
         const callbackUrl = {
             true: "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=",
             false: "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="
         }
-     
+
         await AllInOneSDKManager.startTransaction(
 
             newpaymentDetails?.orderId,//orderId
@@ -77,12 +77,13 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             true,//appInvokeRestricted
             `paytm${newpaymentDetails?.mid}`
             //urlScheme
-           
+
         ).then((result) => {
 
-              reactotron.log('AN ERROR OCCURED')
+
             if (has(result, "STATUS")) {
                 updatepaymentdata(result)
+                refreshOrder();
             }
             else {
                 let data = {
@@ -91,6 +92,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                     ORDERID: newpaymentDetails?.orderId
                 }
                 updatepaymentdata(data)
+                refreshOrder();
             }
             // console.log("PAYTM =>", JSON.stringify(result));
 
@@ -105,6 +107,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 ORDERID: orderId
             }
             updatePaymentResponse(data)
+            refreshOrder();
         });
         // reactotron.log({newpaymentDetails})
 
@@ -120,21 +123,24 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             .then(async response => {
                 const { data } = response
 
-                  
+
                 if (data?.message === "Success") {
                     payWithPayTM(data?.data)
+                    refreshOrder();
                 } else {
                     Toast.show({ type: 'error', text1: data?.message || "Something went wrong !!!" });
+                    refreshOrder();
                 }
                 loadingg.setLoading(false)
             })
             .catch(async error => {
-              
+
                 Toast.show({
                     type: 'error',
                     text1: error
                 });
                 loadingg.setLoading(false)
+                refreshOrder();
             })
     }, [item?._id])
 
@@ -153,7 +159,6 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 }
 
             }).catch(async error => {
-
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
                 refreshOrder()
             })
@@ -175,7 +180,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             }).catch(async error => {
 
                 Toast.show({ type: 'error', text1: error || "Something went wrong !!!" });
-                refreshOrder()
+                refreshOrder();
             })
     }
 
@@ -191,6 +196,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                 const { data } = response;
                 cartContext.setCart(data?.data)
                 navigation.navigate('cart')
+                refreshOrder();
                 // if (data?.status) {
                 //     payWithPayTM(data?.data)
                 // } else {
@@ -204,7 +210,9 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                     type: 'error',
                     text1: error
                 });
+
                 loadingg.setLoading(false)
+                refreshOrder();
             })
     }, [item, cartContext?.cart?._id, cartContext?.cart])
 

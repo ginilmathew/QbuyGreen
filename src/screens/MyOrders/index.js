@@ -11,6 +11,7 @@ import AuthContext from '../../contexts/Auth'
 import customAxios from '../../CustomeAxios'
 import Toast from 'react-native-toast-message';
 import { FlatList } from 'react-native-gesture-handler'
+import { useFocusEffect } from '@react-navigation/native'
 
 
 const MyOrders = () => {
@@ -23,19 +24,19 @@ const MyOrders = () => {
     const user = useContext(AuthContext)
     let loader = loadingg?.loading
 
-    const [orderList, setOrderList] = useState([])
+    const [orderList, setOrderList] = useState([]);
+    const [isLoading,setIsLoading]=useState(false);
 
 
-    useEffect(() => {
-        getOrderList()
-    }, [])
+  
+
 
     const getOrderList = async () => {
-        loadingg.setLoading(true)
+       setIsLoading(true)
         await customAxios.get(`customer/order/list/${contextPanda?.active}`)
             .then(async response => {
                 setOrderList(response?.data?.data)
-                loadingg.setLoading(false)
+               setIsLoading(false)
             })
             .catch(async error => {
                 console.log(error)
@@ -43,11 +44,20 @@ const MyOrders = () => {
                     type: 'error',
                     text1: error
                 });
-                loadingg.setLoading(false)
+                setIsLoading(false)
             })
     }
 
-    const keyExtractorOrder = (item) => item._id;
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            getOrderList()
+        }, [])
+      );
+    
+
+    const keyExtractorOrder = (item) => item?._id;
 
     const renderOrder = ({ item, index }) => {
         return (
@@ -71,18 +81,15 @@ const MyOrders = () => {
             <View
                 style={{ flex: 1, paddingBottom: 60, paddingTop: 10, paddingHorizontal: 10, backgroundColor: active === 'green' ? '#F4FFE9' : active === 'fashion' ? '#FFF5F7' : '#fff' }}
             >
-                {/* {orderList?.length > 0 ?
-                        <ScrollView
-
-                            refreshControl={
-                                <RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />
-                            }
-                            style={{ paddingHorizontal: 10, paddingTop: 10, marginBottom: 20 }}
-                        >
-                            {orderList?.map((ord, index) => <OrderCard key={index} item={ord} refreshOrder={getOrderList} />)}
-                        </ScrollView> : <Text style={styles.emptyMessageStyle}>No Order Found..!</Text>} */}
                 <FlatList
-                    refreshControl={<RefreshControl refreshing={loadingg?.loading} onRefresh={getOrderList} />}
+                    
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={isLoading}
+                          onRefresh={getOrderList}
+                   
+                        />
+                      }
                     data={orderList}
                     showsVerticalScrollIndicator={false}
                     initialNumToRender={4}
@@ -90,7 +97,7 @@ const MyOrders = () => {
                     windowSize={10}
                     maxToRenderPerBatch={4}
                     keyExtractorCategory={keyExtractorOrder}
-                    // refreshing={loadingg?.loading}
+                    // refreshing={isLoading}
                     // onRefresh={getOrderList}
                     // style={{ marginLeft: 5 }}
                     ListEmptyComponent={ListEmptyComponents}
