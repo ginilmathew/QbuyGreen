@@ -70,6 +70,7 @@ const Checkout = ({ navigation }) => {
     const [isLoading, setIsLoding] = useState(false)
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
+    const [platformCharge,setPlatformCharge]=useState('')
     const [payment, setPayment] = useState([
         {
             _id: 'online',
@@ -103,11 +104,24 @@ const Checkout = ({ navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             if (cartContext?.cart?._id) {
-                getCartItems()
+                getCartItems();
+                getplatformCharge();
             }
 
         }, [cartContext?.cart?._id])
+
     );
+
+
+    const getplatformCharge = async ()=>{
+        try {
+            const response = await customAxios.get('common/platformcharge');
+            setPlatformCharge(response?.data?.data)
+
+        }catch(err){
+
+        }
+    }
 
     const getCartItems = async () => {
         await customAxios.get(`customer/cart/show/${cartContext?.cart?._id}`)
@@ -527,7 +541,9 @@ const Checkout = ({ navigation }) => {
                 franchise: cartItems?.[0]?.franchisee?._id,
                 cart_id: cartItems?.[0]?.cartId,
                 store: uniqueStore,
-                delivery_date: moment().format("YYYY-MM-DD HH:mm:ss")
+                delivery_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+                platform_charge:platformCharge?.platformCharge
+
             }
 
             if (products?.length > 0) {

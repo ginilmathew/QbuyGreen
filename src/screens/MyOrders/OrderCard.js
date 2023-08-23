@@ -234,7 +234,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
             <View style={styles.itemsContainer}>
                 <View>
                     <Text style={styles.textRegular}>{'Total Items'}</Text>
-                    <Text style={styles.textBold}>{item?.product_details.length}</Text>
+                    <Text style={styles.textBold}>{item?.product_details?.length}</Text>
                 </View>
                 <View>
                     <Text style={styles.textRegular}>{'Total Payment'}</Text>

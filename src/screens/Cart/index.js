@@ -51,7 +51,7 @@ const Cart = ({ navigation }) => {
                     let products = response?.data?.data?.product_details;
 
                     // cartContext?.setCart(response?.data?.data)
-                    reactotron.log({ products })
+                  
                     let finalProducts = [];
                     //let quantity = pro?.quantity ? parseFloat(pro?.quantity) : 0
                     products?.map((pro) => {

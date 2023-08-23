@@ -484,7 +484,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             letterSpacing: 1,
                             fontSize: 10,
 
-                        }}>width :</Text>
+                        }}>Width :</Text>
                         <Text style={{
                             fontFamily: 'Poppins',
                             letterSpacing: 1,
@@ -500,7 +500,7 @@ const SingleItemScreen = ({ route, navigation }) => {
                             letterSpacing: 1,
                             fontSize: 10,
 
-                        }}>height :</Text>
+                        }}>Height :</Text>
                         <Text style={{
                             fontFamily: 'Poppins',
                             letterSpacing: 1,

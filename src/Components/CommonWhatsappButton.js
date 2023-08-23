@@ -35,6 +35,7 @@ const CommonWhatsappButton = ({ position, bottom, right,iconName }) => {
     return (
         <TouchableOpacity
             style={{
+              zIndex:100,
                 width: 50,
                 height: 50,
                 backgroundColor: active === 'green' ? '#8ED053' : active === 'fashion' ? '#FF7190' : '#58D36E',

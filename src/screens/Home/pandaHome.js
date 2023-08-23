@@ -25,6 +25,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { IMG_URL } from '../../config/constants';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { getProduct } from '../../helper/productHelper';
+import CommonWhatsappButton from '../../Components/CommonWhatsappButton';
 export default function PandaHome({ navigation }) {
 
     const { height, width } = useWindowDimensions();
@@ -271,6 +272,8 @@ export default function PandaHome({ navigation }) {
                     )}
                 </ScrollView>}
                 <CommonTexts label={'Available Products'} fontSize={13} ml={15} mb={5} mt={15} />
+
+
             </View>
         )
     }
@@ -287,9 +290,11 @@ export default function PandaHome({ navigation }) {
 
 
     const FooterComponent = () => {
-        return (<View style={{ height: 150 }}>
+        return (
+            <View style={{ height: 150 }}>
 
-        </View>)
+            </View>
+        )
     }
 
     const getHomedata = useCallback(async () => {
@@ -356,6 +361,7 @@ export default function PandaHome({ navigation }) {
                     ml={4}
                     mb={15}
                 />
+
             </View>
         )
     }
@@ -381,6 +387,7 @@ export default function PandaHome({ navigation }) {
         <View>
             <Header onPress={onClickDrawer} />
 
+
             <View style={styles.menuContainer}>
 
                 <FlatList
@@ -405,13 +412,22 @@ export default function PandaHome({ navigation }) {
                     keyExtractor={keyExtractorProduct}
                     numColumns={2}
                     ListEmptyComponents={ListEmptyComponents}
-                    // style={{ marginLeft: 5 }}
+
                     contentContainerStyle={{ justifyContent: 'center', gap: 2 }}
                     renderItem={renderProducts}
                     ListFooterComponent={FooterComponent}
 
                 />
+                
+
             </View>
+            <CommonWhatsappButton
+                 position={'absolute'}
+                    bottom={95}
+                    right={10}
+
+                />
+
         </View>
     )
 }
@@ -477,7 +493,7 @@ const styles = StyleSheet.create({
     },
     menuContainer: {
         flexDirection: 'row',
-
+        // flex:1,
         gap: 17,
         paddingHorizontal: '3%'
     }

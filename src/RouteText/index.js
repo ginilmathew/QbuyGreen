@@ -153,7 +153,7 @@ const RouteTest = () => {
         if (lat && lng) {
             axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=AIzaSyBBcghyB0FvhqML5Vjmg3uTwASFdkV8wZY`).then(response => {
                 userContext.setCurrentAddress(response?.data?.results[0]?.formatted_address);
-            reactotron.log({ADDRESSCOORDINATES:response?.data?.results[0]?.formatted_address})
+        
                 //setLocation
             })
                 .catch(err => {
