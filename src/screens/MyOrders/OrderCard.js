@@ -40,7 +40,7 @@ const OrderCard = memo(({ item, refreshOrder }) => {
 
     const clickItem = useCallback(() => {
         setShowItems(!showItems)
-    })
+    }) 
 
     const clickAddress = useCallback(() => {
         setShowAddress(!showAddress)
@@ -277,6 +277,13 @@ const OrderCard = memo(({ item, refreshOrder }) => {
                         </View>
                         <Text style={[styles.text1, { textAlign: 'center' }]}></Text>
                         <Text style={[styles.text1, { textAlign: 'center' }]}>₹ {item?.delivery_charge}</Text>
+                    </View>
+                    <View style={styles.delivery}>
+                        <View style={{ flex: 0.5 }}>
+                            <Text style={[styles.text1, { textAlign: 'left' }]}>{`Platform Charge`}</Text>
+                        </View>
+                        <Text style={[styles.text1, { textAlign: 'center' }]}></Text>
+                        <Text style={[styles.text1, { textAlign: 'center' }]}>₹ {item?.platform_charge}</Text>
                     </View>
                 </>}
             </View>

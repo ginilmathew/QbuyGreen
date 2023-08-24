@@ -70,7 +70,7 @@ const Checkout = ({ navigation }) => {
     const [isLoading, setIsLoding] = useState(false)
     const [price, setPrice] = useState('')
     const [showList, setShowList] = useState(false)
-    const [platformCharge,setPlatformCharge]=useState('')
+    const [platformCharge, setPlatformCharge] = useState('')
     const [payment, setPayment] = useState([
         {
             _id: 'online',
@@ -113,12 +113,12 @@ const Checkout = ({ navigation }) => {
     );
 
 
-    const getplatformCharge = async ()=>{
+    const getplatformCharge = async () => {
         try {
             const response = await customAxios.get('common/platformcharge');
             setPlatformCharge(response?.data?.data)
 
-        }catch(err){
+        } catch (err) {
 
         }
     }
@@ -542,7 +542,7 @@ const Checkout = ({ navigation }) => {
                 cart_id: cartItems?.[0]?.cartId,
                 store: uniqueStore,
                 delivery_date: moment().format("YYYY-MM-DD HH:mm:ss"),
-                platform_charge:platformCharge?.platformCharge
+                platform_charge: platformCharge?.platformCharge
 
             }
 
@@ -611,7 +611,7 @@ const Checkout = ({ navigation }) => {
                 } else {
                     navigation.navigate("order")
                     Toast.show({ type: 'error', text1: details?.RESPMSG || "Something went wrong !!!" })
-                  
+
                 }
 
             }).catch(async error => {
@@ -895,12 +895,16 @@ const Checkout = ({ navigation }) => {
                         <Text style={styles.textMedium}>{'Delivery Fee'}</Text>
                         <Text style={styles.textMedium}>₹ {cartItems?.length > 0 ? parseFloat(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2) : null} </Text>
                     </View>}
+                    {cartItems?.length > 0 && <View style={styles.grandTotalMid}>
+                        <Text style={styles.textMedium}>{'Platform Charge'}</Text>
+                        <Text style={styles.textMedium}>₹ {cartItems?.length > 0 ? parseFloat(platformCharge?.platformCharge).toFixed(2) : null} </Text>
+                    </View>}
 
                     {cartItems?.length > 0 && <View style={styles.grandTotalBottom}>
                         <Text style={styles.boldText}>{'Grand Total'}</Text>
                         <Text style={styles.boldText}>₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                        }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery + platformCharge?.platformCharge).toFixed(2)}</Text>
                     </View>}
                 </View>
 
@@ -931,7 +935,7 @@ const Checkout = ({ navigation }) => {
                         style={styles.boldText}
                     >₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                         return previousVal + currentVal?.price;
-                    }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                    }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery + platformCharge?.platformCharge).toFixed(2)}</Text>
                 </View>}
 
                 {(showList && cartItems?.length > 0) && <>
