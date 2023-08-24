@@ -970,6 +970,18 @@ const Checkout = ({ navigation }) => {
                         >₹ {parseFloat(cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
 
                     </View>
+                    <View style={styles.charges}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {/* {item?.flashIcon && <Fontisto name={'flash'} color={'#FF0000'} size={12} marginRight={4}/>} */}
+                            <Text
+                                style={styles.textMedium}
+                            >{"Platform Charge"}</Text>
+                        </View>
+                        <Text
+                            style={styles.textMedium}
+                        >₹ {platformCharge?.platformCharge}</Text>
+
+                    </View>
                     {/* {charges.map(item => 
                         (<View key={item?._id} style={styles.charges}>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
@@ -992,7 +1004,7 @@ const Checkout = ({ navigation }) => {
                             style={styles.boldText}
                         >₹ {parseFloat(cartItems?.reduce(function (previousVal, currentVal) {
                             return previousVal + currentVal?.price;
-                        }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery).toFixed(2)}</Text>
+                        }, 0) + cartItems?.reduce((a, b) => a.delivery > b.delivery ? a : b).delivery + platformCharge?.platformCharge).toFixed(2)}</Text>
                     </View>
                 </>}
 
