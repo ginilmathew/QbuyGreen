@@ -103,7 +103,7 @@ const Login = ({ navigation }) => {
 
 				<CustomButton
 					onPress={handleSubmit(onSubmit)}
-					bg='#58D36E'
+					bg={ mode === 'fashion' ? '#FF7190' : '#58D36E'}
 					label={'Sign In'}
 					mt={20}
 					loading={loader}

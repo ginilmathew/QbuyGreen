@@ -1,14 +1,21 @@
 import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Switch, Platform, useWindowDimensions, SafeAreaView, RefreshControl, PermissionsAndroid, Pressable } from 'react-native'
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react'
+import ImageSlider from '../../../Components/ImageSlider';
+import CustomSearch from '../../../Components/CustomSearch';
+import { useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import OfferText from '../OfferText';
 import PickDropAndReferCard from '../PickDropAndReferCard';
 import Header from '../../../Components/Header';
 import Carousel from 'react-native-reanimated-carousel';
+import CommonSquareButton from '../../../Components/CommonSquareButton';
 import CommonTexts from '../../../Components/CommonTexts';
-
+import TypeCard from '../Grocery/TypeCard';
 import CommonItemCard from '../../../Components/CommonItemCard';
 import NameText from '../NameText';
-
+import ShopCard from '../Grocery/ShopCard';
+import CountDownComponent from '../../../Components/CountDown';
 import Offer from './Offer';
 import LoaderContext from '../../../contexts/Loader';
 import customAxios from '../../../CustomeAxios';
@@ -23,12 +30,14 @@ import AvailableStores from './AvailableStores';
 import RecentlyViewed from './RecentlyViewed';
 import AvailableProducts from './AvailableProducts';
 import PandaSuggestions from './PandaSuggestions';
+import { isEmpty } from 'lodash'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProduct } from '../../../helper/productHelper';
 import FastImage from 'react-native-fast-image';
 import reactotron from 'reactotron-react-native';
 import SplashScreen from 'react-native-splash-screen'
 import CommonWhatsappButton from '../../../Components/CommonWhatsappButton';
-
+import { navigate } from '../../../Navigations/RootNavigation';
 //import messaging from '@react-native-firebase/messaging';
 
 
@@ -145,7 +154,7 @@ const QBuyGreen = ({ navigation }) => {
                 loadingg.setLoading(false)
                 setTimeout(() => {
                     SplashScreen.hide()
-                }, 100);
+                }, 500);
                 loadingg.setLoading(false)
             })
             .catch(async error => {
