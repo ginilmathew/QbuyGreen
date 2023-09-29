@@ -67,7 +67,7 @@ const Login = ({ navigation }) => {
 	const imageURl = {
         panda: require('../../../Images/pandaLogo.png'),
         green: require('../../../Images/loginLogo.png'),
-        fashion: require('../../../Images/loginLogo.png')
+        fashion: require('../../../Images/FashionLogo.png')
     }
 
 
